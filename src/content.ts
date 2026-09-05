@@ -6942,13 +6942,13 @@ function scheduleOpacityUpdate() {
     // perceivable mid-scroll, and running the getComputedStyle walk over every
     // badge each frame is expensive (13%+ of main thread in Firefox profiles).
     if (Date.now() - lastScrollTime < TOOLTIP_SCROLL_SUPPRESS_MS) {
-      setTimeout(tryRun, 150);
+      setTimeout(() => requestAnimationFrame(tryRun), 150);
       return;
     }
     opacityUpdateScheduled = false;
     updateBadgesOpacity();
   };
-  tryRun();
+  requestAnimationFrame(tryRun);
 }
 
 const dimmingObserver = new MutationObserver((mutations) => {
