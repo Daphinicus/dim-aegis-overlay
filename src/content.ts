@@ -5258,7 +5258,9 @@ function injectBadge(el: HTMLElement, result: ScoringResult) {
       return;
     }
   } else {
-    badgeTarget = itemContainer.querySelector('.item-tile, [class*="StoreItem"], [class*="InventoryItem"], [class*="ItemTile"]') as HTMLElement | null;
+    badgeTarget = itemContainer.matches('.item, .item-tile')
+      ? itemContainer
+      : itemContainer.querySelector<HTMLElement>('.item, .item-tile') || itemContainer.querySelector<HTMLElement>('[class*="StoreItem"], [class*="InventoryItem"], [class*="ItemTile"]');
     if (!badgeTarget) {
       badgeTarget = itemContainer;
     }
@@ -5277,6 +5279,7 @@ function injectBadge(el: HTMLElement, result: ScoringResult) {
 
   if (existingBadges.length > 0) {
     badge = existingBadges[0] as HTMLDivElement;
+    if (badge.parentElement !== badgeTarget) badgeTarget.appendChild(badge);
     for (let i = 1; i < existingBadges.length; i++) {
       existingBadges[i].remove();
     }
@@ -5406,7 +5409,7 @@ function injectBadge(el: HTMLElement, result: ScoringResult) {
 function removeBadge(el: HTMLElement) {
   const itemContainer = (el.closest('[data-aegis-item-hash]') as HTMLElement) || el;
   itemContainer.classList.remove('aegis-gold-glow');
-  const badgeTarget = itemContainer.querySelector('.item-tile, [class*="StoreItem"], [class*="InventoryItem"], [class*="ItemTile"]');
+  const badgeTarget = itemContainer.querySelector('.item, .item-tile') || itemContainer.querySelector('[class*="StoreItem"], [class*="InventoryItem"], [class*="ItemTile"]');
   if (badgeTarget) {
     badgeTarget.classList.remove('aegis-gold-glow');
   }
