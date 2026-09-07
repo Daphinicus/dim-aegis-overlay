@@ -1,5 +1,5 @@
 import { ScoringResult, AegisSheetWeapon, TooltipPerk, AegisArmorSet, SheetPerksGroup, AegisShoppingItem, DualSheetInfo } from './types';
-import { t, getLocalizedElement } from './i18n';
+import { t, getLocalizedElement, getLocalizedRole } from './i18n';
 import { getOriginalEvaluationText, getLocalizedSource } from './evaluation-i18n';
 import { getLocalizedPerkName, getPerkIcon } from './hash-translator';
 import { renderLocalizedName, renderLocalizedWeaponReference } from './localized-display';
@@ -399,7 +399,8 @@ export function renderShoppingBannerHtml(
   if (shoppingItem) {
     const priKey = PRIORITY_KEY_MAP[shoppingItem.priority];
     const priLabel = (priKey ? t(priKey as any) : null) || (shoppingItem.priority ? shoppingItem.priority.toUpperCase() : 'HIGH');
-    const bannerTitle = sourceName ? `${sourceName.toUpperCase()} SHOPPING LIST` : t('shoppingBannerTitle');
+    const isAegis = !sourceName || sourceName.toLowerCase() === 'aegis';
+    const bannerTitle = isAegis ? t('shoppingBannerTitle') : `${sourceName.toUpperCase()} SHOPPING LIST`;
     return `
       <div class="aegis-tooltip-shopping-banner aegis-priority-${shoppingItem.priority}" style="margin-bottom: 6px;">
         <div class="aegis-shopping-banner-header">
@@ -408,20 +409,21 @@ export function renderShoppingBannerHtml(
         </div>
         ${shoppingItem.role ? `
           <div class="aegis-shopping-banner-meta">
-            <span><strong style="color: #ffd700;">Role:</strong> ${shoppingItem.role}</span>
+            <span><strong style="color: #ffd700;">${t('itemRole')}:</strong> ${getLocalizedRole(shoppingItem.role)}</span>
           </div>
         ` : ''}
       </div>
     `;
   } else if (shoppingAlt) {
-    const bannerTitle = sourceName ? `${sourceName.toUpperCase()} SHOPPING LIST (ALT)` : t('shoppingAltBannerTitle');
+    const isAegis = !sourceName || sourceName.toLowerCase() === 'aegis';
+    const bannerTitle = isAegis ? t('shoppingAltBannerTitle') : `${sourceName.toUpperCase()} SHOPPING LIST (ALT)`;
     return `
       <div class="aegis-tooltip-shopping-alt-banner" style="margin-bottom: 6px;">
         <div class="aegis-shopping-banner-header">
           <span class="aegis-shopping-banner-title">${bannerTitle}</span>
         </div>
         <div class="aegis-shopping-banner-meta">
-          <span>${t('fallbackFor')}: <strong style="color: #ffd700;">${shoppingAlt.primaryName}</strong> (${shoppingAlt.role})</span>
+          <span>${t('fallbackFor')}: <strong style="color: #ffd700;">${renderLocalizedWeaponReference(shoppingAlt.primaryName)}</strong> (${getLocalizedRole(shoppingAlt.role)})</span>
         </div>
       </div>
     `;
@@ -498,7 +500,7 @@ export function showTooltip(
         ${shoppingBannerHtml}
         <div class="aegis-tooltip-title-row" style="display: flex; align-items: center; justify-content: space-between; gap: 8px;">
           <div style="display: flex; align-items: center; gap: 6px;">
-            <span class="aegis-tooltip-weapon-name" style="color: #88c0d0;">${weaponName}</span>
+            <span class="aegis-tooltip-weapon-name" style="color: #88c0d0;">${renderLocalizedName('weapon', weaponName)}</span>
           </div>
           <span class="aegis-tooltip-grade aegis-grade-s" style="font-size: 13px;">${result.grade}</span>
         </div>
@@ -780,7 +782,7 @@ export function showTooltip(
       ${shoppingBannerHtml}
       <div class="aegis-tooltip-title-row" style="display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap;">
         <div style="display: flex; align-items: center; gap: 5px; flex-wrap: wrap;">
-          <span class="aegis-tooltip-weapon-name">${weaponName}</span>
+          <span class="aegis-tooltip-weapon-name">${renderLocalizedName('weapon', weaponName)}</span>
           ${elementBadgeHtml}
           ${stunBadgeHtml}
         </div>

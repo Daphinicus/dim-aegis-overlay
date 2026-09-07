@@ -1,4 +1,4 @@
-import { AegisSheetDatabase, AegisSheetWeapon } from './types';
+import { AegisSheetDatabase, AegisSheetWeapon, AegisShoppingDatabase } from './types';
 
 export interface EvaluationLocaleBundle {
   locale: string;
@@ -18,10 +18,16 @@ const EVALUATION_LOCALE_CACHE_TTL_MS = 60 * 60 * 1000;
 const sourceTextHashCache = new Map<string, Promise<string>>();
 const originalEvaluationText = new WeakMap<AegisSheetWeapon, { notes: string; description?: string }>();
 const localizedSources = new WeakMap<AegisSheetWeapon, { source: string; translation: string }>();
+const sourceTranslationCache = new Map<string, string>();
 
 export function getLocalizedSource(weapon: AegisSheetWeapon): string {
   const localized = localizedSources.get(weapon);
   return localized && localized.source === weapon.source ? localized.translation : weapon.source || '';
+}
+
+export function getLocalizedSourceText(source: string): string {
+  if (!source) return '';
+  return sourceTranslationCache.get(source.trim()) || sourceTranslationCache.get(source) || source;
 }
 
 function isValidLocale(locale: string): boolean {
@@ -151,16 +157,21 @@ export function getOriginalEvaluationText(
 
 export async function applyEvaluationLocale(
   database: AegisSheetDatabase | null,
-  bundle: EvaluationLocaleBundle | null
+  bundle: EvaluationLocaleBundle | null,
+  shoppingDbs?: (AegisShoppingDatabase | null | undefined)[]
 ): Promise<void> {
-  if (!database) return;
+  if (!database && (!shoppingDbs || shoppingDbs.length === 0)) return;
 
   const translate = async (source: string): Promise<string> => {
     if (!source || !bundle) return source;
     return bundle.entries[await sourceTextHash(source)] || source;
   };
 
-  const weapons = databaseWeapons(database);
+  if (!bundle) {
+    sourceTranslationCache.clear();
+  }
+
+  const weapons = database ? databaseWeapons(database) : [];
 
   // Synchronously record original source snapshot for all weapons BEFORE starting async operations
   for (const weapon of weapons) {
@@ -178,6 +189,41 @@ export async function applyEvaluationLocale(
     const sourceDescription = source.description || '';
     weapon.notes = await translate(sourceNotes);
     weapon.description = sourceDescription ? await translate(sourceDescription) : undefined;
-    localizedSources.set(weapon, { source: weapon.source || '', translation: await translate(weapon.source || '') });
+    const transSource = await translate(weapon.source || '');
+    localizedSources.set(weapon, { source: weapon.source || '', translation: transSource });
+    if (weapon.source && transSource && transSource !== weapon.source) {
+      sourceTranslationCache.set(weapon.source.trim(), transSource);
+      sourceTranslationCache.set(weapon.source, transSource);
+    }
   }));
+
+  // Also translate armor sets in database
+  if (database) {
+    const armorSets = [...Object.values(database.armor || {}), ...Object.values(database.armorAegis || {})];
+    await Promise.all(armorSets.map(async (set) => {
+      if (set.source) {
+        const trans = await translate(set.source);
+        if (trans && trans !== set.source) {
+          sourceTranslationCache.set(set.source.trim(), trans);
+          sourceTranslationCache.set(set.source, trans);
+        }
+      }
+    }));
+  }
+
+  // Also translate shopping database sources
+  if (shoppingDbs) {
+    for (const sDb of shoppingDbs) {
+      if (!sDb?.items) continue;
+      await Promise.all(sDb.items.map(async (item) => {
+        if (item.source) {
+          const trans = await translate(item.source);
+          if (trans && trans !== item.source) {
+            sourceTranslationCache.set(item.source.trim(), trans);
+            sourceTranslationCache.set(item.source, trans);
+          }
+        }
+      }));
+    }
+  }
 }

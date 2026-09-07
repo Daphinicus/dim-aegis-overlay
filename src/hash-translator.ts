@@ -105,6 +105,10 @@ export function getWeaponHashFromEnglish(englishName: string): number | null {
   const clean = cleanName(base);
   if (ENGLISH_WEAPON_TO_HASH[clean]) return ENGLISH_WEAPON_TO_HASH[clean];
 
+  // Fallback to perk/armor canonical dictionary
+  const perkHash = getPerkHashFromEnglish(englishName);
+  if (perkHash) return perkHash;
+
   return null;
 }
 
@@ -131,7 +135,7 @@ export function getLocalizedPerkName(englishNameOrHash: string | number, fallbac
 }
 
 /**
- * Translates an English weapon name or hash to the localized name in the user's active DIM language.
+ * Translates an English weapon or armor name or hash to the localized name in the user's active DIM language.
  */
 export function getLocalizedWeaponName(englishNameOrHash: string | number, fallback?: string): string {
   let hash: number | null = typeof englishNameOrHash === 'number' ? englishNameOrHash : null;
@@ -141,6 +145,9 @@ export function getLocalizedWeaponName(englishNameOrHash: string | number, fallb
 
   if (hash && localizedWeaponRegistry[hash]) {
     return localizedWeaponRegistry[hash];
+  }
+  if (hash && localizedPerkRegistry[hash]?.name) {
+    return localizedPerkRegistry[hash].name;
   }
   if (hash) requestNames(hash, true);
 

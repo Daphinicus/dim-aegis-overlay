@@ -1,4 +1,5 @@
 import { getLocalizedPerkName, getLocalizedWeaponName, getLocalizedStatName, getPerkIcon } from './hash-translator';
+import { getLocalizedArmorSetName } from './i18n';
 
 type NameKind = 'perk' | 'weapon' | 'stat';
 
@@ -9,9 +10,14 @@ function escapeAttribute(value: string): string {
 }
 
 function localizedName(kind: NameKind, source: string, fallback: string): string {
+  if (kind === 'weapon') {
+    const armorSet = getLocalizedArmorSetName(source);
+    if (armorSet) return armorSet;
+    const key = /^\d+$/.test(source) ? Number(source) : source;
+    return getLocalizedWeaponName(key, fallback);
+  }
   const key = /^\d+$/.test(source) ? Number(source) : source;
   if (kind === 'perk') return getLocalizedPerkName(key, fallback);
-  if (kind === 'weapon') return getLocalizedWeaponName(key, fallback);
   return getLocalizedStatName(source);
 }
 
