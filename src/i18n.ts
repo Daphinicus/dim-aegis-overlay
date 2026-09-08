@@ -3,6 +3,8 @@
  * Complete translation support for English (en), Spanish (es), Korean (ko), Japanese (ja), Simplified Chinese (zh-CHS), and Traditional Chinese (zh-CHT).
  */
 
+import { getLocalizedRoleText } from './evaluation-i18n';
+
 export type SupportedLanguage = 'en' | 'es' | 'ko' | 'ja' | 'zh-CHS' | 'zh-CHT';
 
 export const LANGUAGE_NAMES: Record<SupportedLanguage, string> = {
@@ -725,7 +727,7 @@ const translations: Record<SupportedLanguage, Record<string, string>> = {
     fallbackFor: '대체 대상',
     ownedInVault: '금고 보유 중',
     bestRollInVault: '보유 중 최고 등급',
-    countInVault: '금고 {count}개',
+    countInVault: '보관함에 {count}개',
     noAlternatives: '이 무기에 등록된 대체 가능 장비가 없습니다.',
     dataSourceTitle: '커스텀 위시리스트',
     dataSourceDesc: '원하는 DIM 위시리스트 URL을 동기화하세요.',
@@ -1972,11 +1974,11 @@ const ROLE_TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     heavy: '중화기',
     legendary: '전설',
     exotic: '경이',
-    'area denial': '구역 차단',
+    'area denial': '지역 제어',
     'burst dps': '순간 DPS',
     'sustained dps': '지속 DPS',
-    'burst damage': '순간 폭딜',
-    'sustained damage': '지속 딜링',
+    'burst damage': '순간 피해',
+    'sustained damage': '지속 피해',
     'total damage': '총 누적 피해',
     dps: 'DPS',
     'add clear': '잡몹 처치',
@@ -1995,9 +1997,9 @@ const ROLE_TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     'general dr (4 pcs.)': '일반 피해 저항 (4세트)',
     'general dr': '일반 피해 저항',
     dr: '피해 저항',
-    'super regen': '궁극기 재생',
-    'ability regen': '능력 재생',
-    'orb generation': '보주 생성',
+    'super regen': '궁극기 에너지 회복',
+    'ability regen': '능력 에너지 회복',
+    'orb generation': '힘의 보주 생성',
     '2 pcs.': '2세트',
     '2 pcs': '2세트',
     '4 pcs.': '4세트',
@@ -2006,7 +2008,7 @@ const ROLE_TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     pcs: '세트',
     movement: '기동성',
     survivability: '생존력',
-    'neutral game': '기본 게임플레이',
+    'neutral game': '일반 전투',
     pvp: 'PvP',
     pve: 'PvE',
   },
@@ -2166,17 +2168,20 @@ export function getLocalizedRole(role: string): string {
   if (!role) return '';
   if (currentLanguage === 'en') return role;
 
+  const translatedRole = getLocalizedRoleText(role, currentLanguage);
+  if (translatedRole) return translatedRole;
+
   const langTerms = ROLE_TRANSLATIONS[currentLanguage];
   if (!langTerms) return role;
 
-  const lower = role.toLowerCase().trim();
-  if (langTerms[lower]) return langTerms[lower];
+  const lower = role.toLowerCase();
+  if (langTerms[lower.trim()]) return langTerms[lower.trim()];
 
   const sortedPhrases = Object.keys(langTerms).sort((a, b) => b.length - a.length);
   const matches: { start: number; end: number; replacement: string }[] = [];
 
   for (const phrase of sortedPhrases) {
-    const escaped = phrase.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const escaped = phrase.replace(/[^a-zA-Z0-9 ]/g, '\\$&');
     const leadingBoundary = /^\w/.test(phrase) ? '(?<=^|[^a-zA-Z0-9])' : '';
     const trailingBoundary = /\w$/.test(phrase) ? '(?=$|[^a-zA-Z0-9])' : '';
     const regex = new RegExp(`${leadingBoundary}${escaped}${trailingBoundary}`, 'gi');
@@ -2184,7 +2189,7 @@ export function getLocalizedRole(role: string): string {
     while ((m = regex.exec(lower)) !== null) {
       const start = m.index;
       const end = start + m[0].length;
-      const overlap = matches.some(prev => (start >= prev.start && start < prev.end) || (end > prev.start && end <= prev.end));
+      const overlap = matches.some(prev => start < prev.end && end > prev.start);
       if (!overlap) {
         matches.push({ start, end, replacement: langTerms[phrase] });
       }
@@ -2193,50 +2198,54 @@ export function getLocalizedRole(role: string): string {
 
   if (matches.length === 0) return role;
   matches.sort((a, b) => a.start - b.start);
-  return matches.map(m => m.replacement).join(' ');
+  let result = '';
+  let cursor = 0;
+  for (const match of matches) {
+    result += role.slice(cursor, match.start) + match.replacement;
+    cursor = match.end;
+  }
+  return result + role.slice(cursor);
 }
 
 export const ARMOR_SET_TRANSLATIONS: Record<string, Record<string, string>> = {
   ko: {
     crystocrene: '크리스토크렌',
     "atheon's memory": '아테온의 기억',
-    promised: '약속',
-    'yearning echo': '갈망의 메아리',
-    'exodus down': '엑소더스 블랙',
-    'deep explorer': '가장 깊은 탐험가',
+    promised: '약속되다',
+    'yearning echo': '갈망하는 메아리',
+    'exodus down': '엑소더스의 추락',
+    'deep explorer': '심층 탐사자',
     'resonant fury': '공명하는 분노',
-    "techeun's regalia": '테칸의 의복',
-    'eidolon pursuant': '추적하는 에이돌론',
-    'sunlit armor': '햇살받은 방어구',
+    "techeun's regalia": '테키언의 예복',
+    'eidolon pursuant': '허깨비 추종',
+    'sunlit armor': '일조 방어구',
     'braytech survival suit': '브레이테크 생존복',
     'great hunt': '위대한 사냥',
     "legacy's oath": '유산의 맹세',
-    'reverie dawn': '몽상지심',
-    'twisted mountain': '비틀린 산맥',
+    'reverie dawn': '몽상의 여명',
     'roar of the wyrm': '고룡의 포효',
-    'noxious armor': '유독성 방어구',
-    'iron forerunner': '강철의 선구자',
-    'smoke jumper': '낙하산 소방대원',
-    thunderhead: '뇌운',
+    'iron forerunner': '강철 선구자',
+    'smoke jumper': '산불 진화 요원',
+    thunderhead: '적란운',
     'dark age': '암흑기',
-    'first ascent': '첫 번째 등정',
+    'first ascent': '첫 등정',
     bushido: '무사도',
     'seventh seraph': '일곱 번째 세라프',
     "crota's memory": '크로타의 기억',
     "oryx's memory": '오릭스의 기억',
-    'twofold crown': '이중 왕관',
-    dreambane: '악몽의 파멸',
-    'kentarch 3': '켄타르크 3',
+    'twofold crown': '두 개의 왕좌',
+    dreambane: '꿈의 파멸',
+    'kentarch 3': '켄타크 3',
     veritas: '진리',
-    wildwood: '야생 숲',
-    coda: '코다',
-    'last discipline': '마지막 규율',
+    wildwood: '원시림',
+    coda: 'CODA',
+    'last discipline': '마지막 의지',
     circuit: '회로',
     spacewalk: '우주 유영',
-    'collective psyche': '집단 정신',
-    'cyberserpent null': '사이버서펜트 널',
-    'iron panoply': '강철 갑주',
-    'iron battalion': '강철 대대',
+    'collective psyche': '집단 심리',
+    'cyberserpent null': '사이버뱀 무효',
+    'iron panoply': '강철 집합',
+    'iron battalion': '철의 대대',
   },
   es: {
     crystocrene: 'Cristocrene',

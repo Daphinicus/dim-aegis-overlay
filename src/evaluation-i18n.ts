@@ -18,7 +18,9 @@ const EVALUATION_LOCALE_CACHE_TTL_MS = 60 * 60 * 1000;
 const sourceTextHashCache = new Map<string, Promise<string>>();
 const originalEvaluationText = new WeakMap<AegisSheetWeapon, { notes: string; description?: string }>();
 const localizedSources = new WeakMap<AegisSheetWeapon, { source: string; translation: string }>();
-const sourceTranslationCache = new Map<string, string>();
+let sourceTranslationCache = new Map<string, string>();
+let roleTranslationCache = new Map<string, string>();
+let activeLocaleBundle: EvaluationLocaleBundle | null | undefined;
 
 export function getLocalizedSource(weapon: AegisSheetWeapon): string {
   const localized = localizedSources.get(weapon);
@@ -28,6 +30,10 @@ export function getLocalizedSource(weapon: AegisSheetWeapon): string {
 export function getLocalizedSourceText(source: string): string {
   if (!source) return '';
   return sourceTranslationCache.get(source.trim()) || sourceTranslationCache.get(source) || source;
+}
+
+export function getLocalizedRoleText(role: string, locale: string): string | undefined {
+  return activeLocaleBundle?.locale === locale ? roleTranslationCache.get(role) : undefined;
 }
 
 function isValidLocale(locale: string): boolean {
@@ -160,16 +166,19 @@ export async function applyEvaluationLocale(
   bundle: EvaluationLocaleBundle | null,
   shoppingDbs?: (AegisShoppingDatabase | null | undefined)[]
 ): Promise<void> {
+  if (activeLocaleBundle !== bundle) {
+    activeLocaleBundle = bundle;
+    sourceTranslationCache = new Map();
+    roleTranslationCache = new Map();
+  }
+  const sourceCache = sourceTranslationCache;
+  const roleCache = roleTranslationCache;
   if (!database && (!shoppingDbs || shoppingDbs.length === 0)) return;
 
   const translate = async (source: string): Promise<string> => {
     if (!source || !bundle) return source;
     return bundle.entries[await sourceTextHash(source)] || source;
   };
-
-  if (!bundle) {
-    sourceTranslationCache.clear();
-  }
 
   const weapons = database ? databaseWeapons(database) : [];
 
@@ -192,8 +201,8 @@ export async function applyEvaluationLocale(
     const transSource = await translate(weapon.source || '');
     localizedSources.set(weapon, { source: weapon.source || '', translation: transSource });
     if (weapon.source && transSource && transSource !== weapon.source) {
-      sourceTranslationCache.set(weapon.source.trim(), transSource);
-      sourceTranslationCache.set(weapon.source, transSource);
+      sourceCache.set(weapon.source.trim(), transSource);
+      sourceCache.set(weapon.source, transSource);
     }
   }));
 
@@ -204,8 +213,8 @@ export async function applyEvaluationLocale(
       if (set.source) {
         const trans = await translate(set.source);
         if (trans && trans !== set.source) {
-          sourceTranslationCache.set(set.source.trim(), trans);
-          sourceTranslationCache.set(set.source, trans);
+          sourceCache.set(set.source.trim(), trans);
+          sourceCache.set(set.source, trans);
         }
       }
     }));
@@ -219,9 +228,13 @@ export async function applyEvaluationLocale(
         if (item.source) {
           const trans = await translate(item.source);
           if (trans && trans !== item.source) {
-            sourceTranslationCache.set(item.source.trim(), trans);
-            sourceTranslationCache.set(item.source, trans);
+            sourceCache.set(item.source.trim(), trans);
+            sourceCache.set(item.source, trans);
           }
+        }
+        if (item.role) {
+          const translatedRole = await translate(item.role);
+          if (translatedRole !== item.role) roleCache.set(item.role, translatedRole);
         }
       }));
     }

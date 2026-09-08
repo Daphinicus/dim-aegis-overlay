@@ -272,6 +272,7 @@ async function refreshEvaluationLocale(force = false, reprocess = true): Promise
     for (const db of uniqueDbs) {
       await applyEvaluationLocale(db, bundle, shoppingDbs);
     }
+    if (uniqueDbs.length === 0) await applyEvaluationLocale(null, bundle, shoppingDbs);
     if (token === evaluationLocaleRequestToken && reprocess) reprocessAllElements();
   });
   await evaluationLocaleApplyQueue;
@@ -293,7 +294,7 @@ function resolveShoppingItem(
   alt: { primaryName: string; role: string; priority: string; priorityNum: number } | null;
 } {
   if (!normalizedName && !itemHash) return { item: null, alt: null };
-  const canonicalEnglish = itemHash ? getEnglishWeaponNameFromHash(itemHash) : null;
+  const canonicalEnglish = itemHash ? (getEnglishWeaponNameFromHash(itemHash) || getEnglishPerkNameFromHash(itemHash)) : null;
   const canonicalNorm = canonicalEnglish ? normName(canonicalEnglish) : null;
 
   const namesToTry = [canonicalNorm, normalizedName].filter(Boolean) as string[];
@@ -3841,14 +3842,17 @@ chrome.storage.onChanged.addListener((changes, namespace) => {
     }
     if (changes.aegisShoppingDb) {
       aegisShoppingDb = changes.aegisShoppingDb.newValue || null;
+      evaluationLocaleRefreshNeeded = true;
       changed = true;
     }
     if (changes.aegisShoppingDbPvE) {
       aegisShoppingDbPvE = changes.aegisShoppingDbPvE.newValue || null;
+      evaluationLocaleRefreshNeeded = true;
       changed = true;
     }
     if (changes.aegisShoppingDbPvP) {
       aegisShoppingDbPvP = changes.aegisShoppingDbPvP.newValue || null;
+      evaluationLocaleRefreshNeeded = true;
       changed = true;
     }
     if (changes.aegisSheetDbPvE) {
@@ -5508,10 +5512,10 @@ function processElement(el: HTMLElement) {
         shoppingAlt,
       });
 
-      if (sheetArmor) {
-        const rating2Val = getGradeValue(sheetArmor.piece2Rating);
-        const rating4Val = getGradeValue(sheetArmor.piece4Rating);
-        const bestRating = rating2Val >= rating4Val ? sheetArmor.piece2Rating : sheetArmor.piece4Rating;
+      if (sheetArmor || shoppingItem || shoppingAlt) {
+        const rating2Val = getGradeValue(sheetArmor?.piece2Rating || '');
+        const rating4Val = getGradeValue(sheetArmor?.piece4Rating || '');
+        const bestRating = sheetArmor ? (rating2Val >= rating4Val ? sheetArmor.piece2Rating : sheetArmor.piece4Rating) : '';
 
         let armorPerks: string[] = [];
         const armorPerksStr = el.getAttribute('data-aegis-armor-perks');
@@ -5531,7 +5535,7 @@ function processElement(el: HTMLElement) {
           grade: bestRating,
           element: el,
           isPerfect: false,
-          hash: 0,
+          hash: parseInt(itemHashStr, 10),
           armorPerks,
           armorStats,
           instanceId: rawInstanceId,

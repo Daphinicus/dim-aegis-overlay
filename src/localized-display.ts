@@ -41,15 +41,15 @@ export function refreshLocalizedNames(root: ParentNode = document): void {
     const previousName = label.textContent || '';
     if (previousName !== name) label.textContent = name;
 
-    const chip = label.closest<HTMLElement>('.aegis-perk-chip, .aegis-mw-badge');
+    const chip = label.closest<HTMLElement>('.aegis-perk-chip, .aegis-mw-badge, .aegis-shopping-perk-chip');
     if (chip && previousName && previousName !== name) chip.title = chip.title.replace(previousName, name);
     if (kind !== 'perk' || !chip) continue;
     const icon = getPerkIcon(/^\d+$/.test(source) ? Number(source) : source);
     if (!icon) continue;
-    let image = chip.querySelector<HTMLImageElement>('.aegis-chip-icon');
+    let image = chip.querySelector<HTMLImageElement>('.aegis-chip-icon, .aegis-shopping-chip-icon');
     if (!image) {
       image = document.createElement('img');
-      image.className = 'aegis-chip-icon';
+      image.className = chip.classList.contains('aegis-shopping-perk-chip') ? 'aegis-shopping-chip-icon' : 'aegis-chip-icon';
       chip.prepend(image);
     }
     const url = `https://www.bungie.net${icon}`;

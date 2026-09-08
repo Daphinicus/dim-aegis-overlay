@@ -399,8 +399,7 @@ export function renderShoppingBannerHtml(
   if (shoppingItem) {
     const priKey = PRIORITY_KEY_MAP[shoppingItem.priority];
     const priLabel = (priKey ? t(priKey as any) : null) || (shoppingItem.priority ? shoppingItem.priority.toUpperCase() : 'HIGH');
-    const isAegis = !sourceName || sourceName.toLowerCase() === 'aegis';
-    const bannerTitle = isAegis ? t('shoppingBannerTitle') : `${sourceName.toUpperCase()} SHOPPING LIST`;
+    const bannerTitle = t('shoppingBannerTitle').replace(/aegis/i, () => sourceName?.toUpperCase() || 'Aegis');
     return `
       <div class="aegis-tooltip-shopping-banner aegis-priority-${shoppingItem.priority}" style="margin-bottom: 6px;">
         <div class="aegis-shopping-banner-header">
@@ -415,8 +414,7 @@ export function renderShoppingBannerHtml(
       </div>
     `;
   } else if (shoppingAlt) {
-    const isAegis = !sourceName || sourceName.toLowerCase() === 'aegis';
-    const bannerTitle = isAegis ? t('shoppingAltBannerTitle') : `${sourceName.toUpperCase()} SHOPPING LIST (ALT)`;
+    const bannerTitle = t('shoppingAltBannerTitle').replace(/aegis/i, () => sourceName?.toUpperCase() || 'Aegis');
     return `
       <div class="aegis-tooltip-shopping-alt-banner" style="margin-bottom: 6px;">
         <div class="aegis-shopping-banner-header">
