@@ -34,7 +34,7 @@ export function initGradeSettings() {
         <div class="grade-color-preview" data-color role="img" aria-label="Selected grade color"></div>
         <input type="text" data-hex maxlength="7" spellcheck="false" aria-label="Selected grade hex color">
       </div>
-      <div class="grade-color-sliders">${['Hue', 'Saturation', 'Brightness'].map((label, index) => `<div class="grade-color-slider"><input type="range" data-hsv="${index}" min="0" max="${index === 0 ? 360 : 100}" step="1" aria-label="${label}"><span data-hsv-value="${index}" aria-hidden="true"></span></div>`).join('')}</div>
+      <div class="grade-color-sliders">${['Hue', 'Saturation', 'Brightness'].map((label, index) => `<div class="grade-color-slider"><input type="range" data-hsv="${index}" min="0" max="${index === 0 ? 360 : 100}" step="1" aria-label="${label}"><div class="grade-hsv-field"><input type="number" data-hsv-value="${index}" min="0" max="${index === 0 ? 360 : 100}" step="1" required aria-label="${label} (${index === 0 ? 'degrees' : 'percent'})"><span aria-hidden="true">${index === 0 ? '°' : '%'}</span></div></div>`).join('')}</div>
       <div class="grade-actions grade-color-actions"><button type="button" class="btn btn-secondary" data-reset-color>Reset selected</button><button type="button" class="btn btn-secondary" data-reset-colors>Reset all</button></div>
 </div></div></dialog><dialog id="grade-rules-modal" class="grade-modal" aria-labelledby="grade-rules-modal-title"><div class="grade-editor-card"><div class="grade-editor-header"><h2 id="grade-rules-modal-title" class="grade-editor-title">Customize Grading Criteria</h2><button type="button" class="changelog-close-x" data-close aria-label="Close Grading criteria">&times;</button></div><div class="grade-editor-body"><div class="grade-profile-row">
         <label class="grade-check"><input type="checkbox" data-setting="separatePvp"> Separate PvP</label>
@@ -154,7 +154,8 @@ export function initGradeSettings() {
       const index = Number(input.dataset.hsv);
       input.value = String(hsv[index]);
       input.setAttribute('aria-valuetext', `${Math.round(hsv[index])}${index === 0 ? ' degrees' : ' percent'}`);
-      get(`[data-hsv-value="${index}"]`).textContent = `${Math.round(hsv[index])}${index === 0 ? '°' : '%'}`;
+      const field = get<HTMLInputElement>(`[data-hsv-value="${index}"]`);
+      if (document.activeElement !== field) field.value = String(Math.round(hsv[index]));
     });
     get('[data-hsv="1"]').style.background = `linear-gradient(to right, ${hsvToHex([hsv[0], 0, hsv[2]])}, ${hsvToHex([hsv[0], 100, hsv[2]])})`;
     get('[data-hsv="2"]').style.background = `linear-gradient(to right, #000000, ${hsvToHex([hsv[0], hsv[1], 100])})`;
@@ -209,8 +210,12 @@ export function initGradeSettings() {
     else r.extras = input.value as GradeRule['extras'];
     render(); saveRules();
   }));
-  el.querySelectorAll<HTMLInputElement>('[data-hsv]').forEach(input => input.addEventListener('input', () => {
-    hsv[Number(input.dataset.hsv)] = Number(input.value);
+  el.querySelectorAll<HTMLInputElement>('[data-hsv-value]').forEach(input => input.addEventListener('blur', () => {
+    input.value = String(Math.round(hsv[Number(input.dataset.hsvValue)]));
+  }));
+  el.querySelectorAll<HTMLInputElement>('[data-hsv], [data-hsv-value]').forEach(input => input.addEventListener('input', () => {
+    if (!input.validity.valid) return;
+    hsv[Number(input.dataset.hsv ?? input.dataset.hsvValue)] = input.valueAsNumber;
     const color = hsvToHex(hsv);
     draft.colors[selected] = color;
     get<HTMLInputElement>('[data-hex]').value = color.toUpperCase();

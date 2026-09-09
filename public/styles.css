@@ -234,8 +234,13 @@
 #aegis-grade-settings select, #aegis-grade-settings input[type="text"] { width: 100%; min-width: 0; background: #20232b; color: #eef0f5; border: 1px solid #555c68; border-radius: 5px; padding: 7px; }
 #aegis-grade-settings .grade-color-preview { min-height: 32px; border: 1px solid #555c68; border-radius: 5px; }
 #aegis-grade-settings .grade-color-sliders { display: grid; gap: 12px; }
-#aegis-grade-settings .grade-color-slider { display: grid; grid-template-columns: minmax(0, 1fr) 40px; align-items: center; gap: 8px; }
-#aegis-grade-settings [data-hsv-value] { font-size: 12px; font-variant-numeric: tabular-nums; text-align: right; }
+#aegis-grade-settings .grade-color-slider { display: grid; grid-template-columns: minmax(0, 1fr) 64px; align-items: center; gap: 8px; }
+#aegis-grade-settings .grade-hsv-field { display: flex; align-items: center; gap: 2px; height: 28px; padding: 0 7px; background: #20232b; border: 1px solid #555c68; border-radius: 5px; color: #a9a9b5; font-size: 12px; }
+#aegis-grade-settings .grade-hsv-field:hover { border-color: #858591; }
+#aegis-grade-settings .grade-hsv-field:focus-within { border-color: #ffd700; outline: 1px solid #ffd700; }
+#aegis-grade-settings input[data-hsv-value] { appearance: textfield; color-scheme: dark; width: 100%; min-width: 0; padding: 0; border: 0; outline: none; background: transparent; color: #eef0f5; font: inherit; font-variant-numeric: tabular-nums; text-align: right; }
+#aegis-grade-settings input[data-hsv-value]::-webkit-inner-spin-button, #aegis-grade-settings input[data-hsv-value]::-webkit-outer-spin-button { appearance: none; margin: 0; }
+#aegis-grade-settings input[data-hsv-value]:invalid { color: #ff9b8f; }
 #aegis-grade-settings input[data-hsv] { appearance: none; width: 100%; height: 16px; margin: 5px 0; padding: 0; border: 1px solid #555c68; border-radius: 8px; }
 #aegis-grade-settings input[data-hsv="0"] { background: linear-gradient(to right, #f00, #ff0, #0f0, #0ff, #00f, #f0f, #f00); }
 #aegis-grade-settings input[data-hsv]::-moz-range-track { background: transparent; }
