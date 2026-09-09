@@ -49,6 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
     chrome.storage.local.get(
       [
         'aegisGradeSettings',
+        'aegisGradeColors',
         'wishlistUrl',
         'lastUpdated',
         'parsedCount',
@@ -82,7 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
       ],
       (res: any) => {
         localizePopup(res.aegisLanguage);
-        setGradeColors(normalizeGradeSettings(res.aegisGradeSettings));
+        setGradeColors(normalizeGradeSettings(res.aegisGradeSettings, res.aegisGradeColors));
 
         // Auto-show Changelog Modal once for new version updates
         const currentVer = chrome.runtime.getManifest().version;
@@ -1176,6 +1177,12 @@ document.addEventListener('DOMContentLoaded', () => {
   // Listen for storage updates in real-time
   chrome.storage.onChanged.addListener((_changes, namespace) => {
     if (namespace === 'local') {
+      if (_changes.aegisGradeColors && Object.keys(_changes).length === 1) {
+        setGradeColors(normalizeGradeSettings(_changes.aegisGradeColors.newValue));
+        const mockBadge = document.getElementById('mock-aegis-badge');
+        if (mockBadge) applyGradeColors(mockBadge);
+        return;
+      }
       updateUI();
     }
   });

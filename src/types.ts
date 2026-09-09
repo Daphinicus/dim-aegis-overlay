@@ -45,6 +45,7 @@ export type AegisMode = 'pve' | 'pvp' | 'both';
  */
 export interface LocalStorageSchema {
   aegisGradeSettings?: GradeSettings;
+  aegisGradeColors?: Pick<GradeSettings, 'version' | 'colorsEnabled' | 'colors'>;
   wishlistUrl?: string;
   wishlistData?: WishlistDatabase;
   lastUpdated?: number;
@@ -280,5 +281,4 @@ export interface WeaponEvaluationPayload {
   isBestInClassPvE?: boolean;
   isBestInClassPvP?: boolean;
 }
-
 
