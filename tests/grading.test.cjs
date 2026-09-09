@@ -12,7 +12,7 @@ function load(name) {
   return module.exports;
 }
 const { GRADES, computeGrade, defaultRules, defaultGradeSettings, normalizeGradeSettings, evaluateRules, evaluateCustomRoll, gradeValue, unreachableGrades } = load('grading');
-const { displayGrade, rollGradeDisplay, contrastText } = load('grade-colors');
+const { displayGrade, rollGradeDisplay } = load('grade-colors');
 const { hexToHsv, hsvToHex } = load('color-picker');
 for (const [hex, hsv] of [['#ff0000', [0, 100, 100]], ['#00ff00', [120, 100, 100]], ['#0000ff', [240, 100, 100]], ['#ffffff', [0, 0, 100]], ['#000000', [0, 100, 0]]]) {
   assert.deepEqual(hexToHsv(hex), hsv);
@@ -68,6 +68,6 @@ assert.notEqual(normalized.pve, normalized.pvp);
 assert.equal(defaultGradeSettings().colors.S, undefined);
 for (const [input, expected] of [['S+', 'S+'], ['SS+', 'S+'], ['S+F', 'F'], ['A+S+', 'S+'], ['BS➔S+', 'S+'], ['B+F→A+', 'A+'], ['★ S+ ▲', 'S+'], ['✦ A+', 'A+'], ['—', ''], ['S/A+', 'S']]) assert.equal(displayGrade(input), expected, input);
 assert.equal(rollGradeDisplay('B+S➔S+'), 'S➔S+');
-assert.equal(contrastText('#ffffff'), '#000000');
-assert.equal(contrastText('#000000'), '#ffffff');
+assert.equal(normalizeGradeSettings({ ...defaultGradeSettings(), rulesEnabled: true }, { version: 1, colorsEnabled: true, colors: { S: '#00ff00' } }).rulesEnabled, true);
+assert.deepEqual(normalizeGradeSettings(defaultGradeSettings(), { version: 1, colorsEnabled: true, colors: { S: '#00ff00' } }).colors, { S: '#00ff00' });
 console.log('Passed: 486 default parity cases, 7,290 custom roll/potential cases, exact-grade parsing/order, and preference validation.');

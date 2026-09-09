@@ -34,7 +34,12 @@ export function defaultGradeSettings(): GradeSettings {
   return { version: 1, colorsEnabled: false, colors: {}, rulesEnabled: false, separatePvp: false, pve: defaultRules(), pvp: defaultRules() };
 }
 
-export function normalizeGradeSettings(value: unknown): GradeSettings {
+export function normalizeGradeSettings(value: unknown, palette?: unknown): GradeSettings {
+  if (palette !== undefined) {
+    const rules = normalizeGradeSettings(value);
+    const colors = normalizeGradeSettings(palette);
+    return { ...rules, colorsEnabled: colors.colorsEnabled, colors: colors.colors };
+  }
   const defaults = defaultGradeSettings();
   if (!value || typeof value !== 'object' || (value as GradeSettings).version !== 1) return defaults;
   const input = value as GradeSettings;

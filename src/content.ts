@@ -201,6 +201,9 @@ let aegisHoverEnabled = true;
 let aegisArmorSource = 'lowco';
 let aegisMode: 'pve' | 'pvp' | 'both' = 'pve';
 let gradeSettings = defaultGradeSettings();
+let storedGradeSettings: unknown;
+let gradePalette: unknown;
+let paletteFrame = 0;
 const customGradeCache = new Map<string, ReturnType<typeof evaluateCustomRoll>>();
 let aegisCompactPerksMatrix = false;
 let aegisInlineHeader = true;
@@ -3680,9 +3683,11 @@ function showWinnowerWelcomeModal() {
   closeBtn?.addEventListener('click', dismissModal);
 }
 
-chrome.storage.local.get(['wishlistData', 'enhancedToNormal', 'scoringSource', 'lightggData', 'aegisSheetDb', 'aegisSheetDbPvE', 'aegisSheetDbPvP', 'aegisShoppingDb', 'aegisShoppingDbPvE', 'aegisShoppingDbPvP', 'perkRegistry', 'aegisLayoutSide', 'aegisPerkOrder', 'aegisDbMode', 'aegisMode', 'aegisTwoTier', 'aegisBadgePosition', 'aegisBadgeStyle', 'aegisBadgeScale', 'aegisFadeHover', 'aegisGradeDisplayMode', 'aegisHoverEnabled', 'aegisCompactPerksMatrix', 'aegisInlineHeader', 'aegisPopupSummaryMode', 'aegisAutoMaxHeight', 'aegisTooltipWidthMode', 'aegisTooltipWidth', 'aegisArmorSource', 'aegisCompletedWeapons', 'aegisChaseList', 'aegisWelcomeDismissed', 'aegisLanguage', 'aegisGradeSettings'], (res) => {
+chrome.storage.local.get(['wishlistData', 'enhancedToNormal', 'scoringSource', 'lightggData', 'aegisSheetDb', 'aegisSheetDbPvE', 'aegisSheetDbPvP', 'aegisShoppingDb', 'aegisShoppingDbPvE', 'aegisShoppingDbPvP', 'perkRegistry', 'aegisLayoutSide', 'aegisPerkOrder', 'aegisDbMode', 'aegisMode', 'aegisTwoTier', 'aegisBadgePosition', 'aegisBadgeStyle', 'aegisBadgeScale', 'aegisFadeHover', 'aegisGradeDisplayMode', 'aegisHoverEnabled', 'aegisCompactPerksMatrix', 'aegisInlineHeader', 'aegisPopupSummaryMode', 'aegisAutoMaxHeight', 'aegisTooltipWidthMode', 'aegisTooltipWidth', 'aegisArmorSource', 'aegisCompletedWeapons', 'aegisChaseList', 'aegisWelcomeDismissed', 'aegisLanguage', 'aegisGradeSettings', 'aegisGradeColors'], (res) => {
   initLanguage(res.aegisLanguage);
-  gradeSettings = normalizeGradeSettings(res.aegisGradeSettings);
+  storedGradeSettings = res.aegisGradeSettings;
+  gradePalette = res.aegisGradeColors;
+  gradeSettings = normalizeGradeSettings(storedGradeSettings, gradePalette);
   customGradeCache.clear();
   setGradeColors(gradeSettings);
   wishlistDb = res.wishlistData || {};
@@ -3742,8 +3747,21 @@ chrome.storage.local.get(['wishlistData', 'enhancedToNormal', 'scoringSource', '
 chrome.storage.onChanged.addListener((changes, namespace) => {
   if (namespace === 'local') {
     let changed = false;
+    if (changes.aegisGradeColors) {
+      gradePalette = changes.aegisGradeColors.newValue;
+      gradeSettings = normalizeGradeSettings(storedGradeSettings, gradePalette);
+      setGradeColors(gradeSettings);
+      if (!paletteFrame) paletteFrame = requestAnimationFrame(() => {
+        paletteFrame = 0;
+        applyGradeColors(document.body);
+        document.querySelectorAll<HTMLElement>('.aegis-gold-glow').forEach(tile => {
+          applyGradeGlow(tile, tile.querySelector('.aegis-badge')?.textContent || '');
+        });
+      });
+    }
     if (changes.aegisGradeSettings) {
-      gradeSettings = normalizeGradeSettings(changes.aegisGradeSettings.newValue);
+      storedGradeSettings = changes.aegisGradeSettings.newValue;
+      gradeSettings = normalizeGradeSettings(storedGradeSettings, gradePalette);
       customGradeCache.clear();
       setGradeColors(gradeSettings);
       hideTooltip();

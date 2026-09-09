@@ -2,7 +2,7 @@ import { Grade, GradeSettings, defaultGradeSettings, gradeValue } from './gradin
 
 let settings = defaultGradeSettings();
 const originals = new WeakMap<HTMLElement, [string, string, string][]>();
-const colorProperties = ['background', 'color', 'text-shadow', 'box-shadow'];
+const colorProperties = ['background', 'color', 'text-shadow'];
 const badgeSelector = '.aegis-badge, .aegis-split-half, .aegis-title-badge, .aegis-popup-grade-badge, .aegis-tooltip-grade, .aegis-shopping-item-badge';
 
 export function setGradeColors(value: GradeSettings) { settings = value; }
@@ -21,12 +21,6 @@ export function rollGradeDisplay(text: string): string {
   return text.split(/[➔→]/).map(displayGrade).join('➔');
 }
 
-export function contrastText(hex: string): string {
-  const rgb = hex.slice(1).match(/../g)!.map(x => parseInt(x, 16) / 255)
-    .map(x => x <= .04045 ? x / 12.92 : ((x + .055) / 1.055) ** 2.4);
-  return rgb[0] * .2126 + rgb[1] * .7152 + rgb[2] * .0722 > .179 ? '#000000' : '#ffffff';
-}
-
 export function applyGradeColors(root: HTMLElement, palette = settings) {
   const badges = [...(root.matches(badgeSelector) ? [root] : []), ...root.querySelectorAll<HTMLElement>(badgeSelector)];
   for (const badge of badges) {
@@ -43,9 +37,8 @@ export function applyGradeColors(root: HTMLElement, palette = settings) {
     if (!color) continue;
     originals.set(badge, colorProperties.map(property => [property, badge.style.getPropertyValue(property), badge.style.getPropertyPriority(property)]));
     badge.style.setProperty('background', color, 'important');
-    badge.style.setProperty('color', contrastText(color), 'important');
-    badge.style.setProperty('text-shadow', 'none', 'important');
-    badge.style.setProperty('box-shadow', 'none', 'important');
+    badge.style.setProperty('color', '#ffffff', 'important');
+    badge.style.setProperty('text-shadow', '0 1px 2px rgba(0, 0, 0, 0.8)', 'important');
   }
 }
 
