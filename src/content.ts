@@ -6921,6 +6921,8 @@ function updateBadgesOpacity() {
   });
 }
 
+const diagnosticLogs: string[] = [];
+
 // Run initial scan once script loads
 reprocessAllElements();
 if (!IS_WINNOWER_HOST) {
@@ -6984,8 +6986,6 @@ function startDimmingObserver() {
 startDimmingObserver();
 
 // Diagnostic logging framework
-const diagnosticLogs: string[] = [];
-
 function addDiagnosticLog(msg: string) {
   const time = new Date().toTimeString().split(' ')[0];
   const formatted = `[${time}] ${msg}`;
