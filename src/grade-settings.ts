@@ -133,12 +133,11 @@ export function initGradeSettings() {
   function saveColors() {
     const palette = { version: 1, colorsEnabled: draft.colorsEnabled, colors: { ...draft.colors } };
     colorWrites++;
-    get('[data-color-status]').textContent = 'Saving colors…';
+    get('[data-color-status]').textContent = '';
     chrome.storage.local.set({ aegisGradeColors: palette }, () => {
       colorWrites--;
       const error = chrome.runtime.lastError;
       if (error) get('[data-color-status]').textContent = `Could not save colors: ${error.message}. Adjust a color to retry.`;
-      else if (!colorWrites) get('[data-color-status]').textContent = 'Colors saved. DIM updates automatically.';
     });
   }
   function preview() {

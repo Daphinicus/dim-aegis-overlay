@@ -218,6 +218,7 @@
 .popup-header .header-actions { flex-shrink: 0; gap: 2px; }
 #aegis-grade-settings * { box-sizing: border-box; }
 #aegis-grade-settings .description { color: #aeb0ba; }
+#aegis-grade-settings [data-color-status]:empty { display: none; }
 #aegis-grade-settings h3 { font-size: 13px; }
 #aegis-grade-settings label { display: flex; flex-direction: column; gap: 5px; min-width: 0; font-size: 12px; }
 #aegis-grade-settings .grade-check { flex-direction: row; align-items: center; min-height: 32px; }
