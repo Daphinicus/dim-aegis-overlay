@@ -99,13 +99,13 @@ export function initGradeSettings() {
     safeSetInnerHTML(guide, profiles.map(([label, rules]) => {
       const unreachable = unreachableGrades(rules);
       const standard = JSON.stringify(rules) === JSON.stringify(defaults);
-      return `${label ? `<p class="tooltip-desc">${label}</p>` : ''}<div class="tooltip-grid">${GRADES.filter(grade => grade !== 'E' || rules.E.enabled).map(grade => {
+      return `${label ? `<p class="tooltip-desc">${label}</p>` : ''}<div class="tooltip-grid">${GRADES.filter(grade => grade === 'F' || rules[grade].enabled).map(grade => {
         const rule = grade === 'F' ? null : rules[grade];
         let description = standard ? defaultGuide[grade] : 'No enabled grade matched';
         if (!standard && rule && grade !== 'F') {
           const traits = { both: 'Traits 1 & 2', mixed: '1 Trait active + 1 selectable', one: '1 Trait matched', available: '1 Trait active/selectable' };
           const extras = { none: '', mag: 'Mag', barrel: 'Barrel', either: 'Mag/Barrel', both: 'Mag + Barrel' };
-          description = !rule.enabled ? 'Disabled' : JSON.stringify(rule) === JSON.stringify(defaults[grade]) ? defaultGuide[grade]
+          description = JSON.stringify(rule) === JSON.stringify(defaults[grade]) ? defaultGuide[grade]
             : [traits[rule.traits], extras[rule.extras], rule.origin ? 'Origin' : '', rule.masterwork ? 'MW' : ''].filter(Boolean).join(' + ');
         }
         return `<span class="grade-pill grade-${grade[0].toLowerCase()}-pill" data-aegis-grade="${grade}">${grade}</span><span${unreachable.includes(grade) ? ' title="Unreachable: higher grades always match first"' : ''}>${description}</span>`;
