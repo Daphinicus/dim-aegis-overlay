@@ -212,7 +212,7 @@
 .grade-guide-heading { display: flex; align-items: center; gap: 6px; }
 .grade-guide-heading .tooltip-section-header { flex: 1; }
 .grade-guide-heading button { flex-shrink: 0; }
-.aegis-help-tooltip .grade-guide-demo { min-width: 48px; height: 24px; }
+.aegis-help-tooltip .grade-guide-demo { position: absolute; bottom: 4px; left: 3px; min-width: 32px; height: 18px; }
 .popup-body .aegis-help-tooltip { max-height: calc(100dvh - 96px); overflow-y: auto; overscroll-behavior: contain; }
 .popup-header .logo-wrapper { min-width: 0; }
 .popup-header .header-actions { flex-shrink: 0; gap: 2px; }
@@ -1439,7 +1439,13 @@
   margin-top: 4px;
 }
 
+.two-tier-demo-tile {
+  position: relative;
+  flex-shrink: 0;
+}
+
 .two-tier-demo-img {
+  display: block;
   width: 72px;
   height: auto;
   border-radius: 4px;
