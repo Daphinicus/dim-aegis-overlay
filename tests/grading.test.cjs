@@ -44,6 +44,8 @@ for (let profile = 0; profile < 30; profile++) {
   }
 }
 for (let i = 1; i < GRADES.length; i++) assert.ok(gradeValue(GRADES[i - 1]) > gradeValue(GRADES[i]));
+assert.equal(gradeValue('S-'), 100);
+assert.equal(gradeValue('SS+'), 100);
 assert.deepEqual(normalizeGradeSettings(null), defaultGradeSettings());
 assert.deepEqual(normalizeGradeSettings({ version: 2, rulesEnabled: true }), defaultGradeSettings());
 const settings = defaultGradeSettings();settings.colorsEnabled = true;settings.colors = { S: '#abcdef', 'S+': 'red; position:fixed' };settings.pve.S.origin = 'invalid';
