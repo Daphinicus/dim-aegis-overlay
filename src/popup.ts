@@ -352,6 +352,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const fadeHoverVal = res.aegisFadeHover === true ? 'true' : 'false';
         const fadeHoverSegmented = document.getElementById('aegis-fade-hover-segmented');
         if (fadeHoverSegmented) {
+          const fadeHoverGroup = fadeHoverSegmented.closest<HTMLElement>('.input-group');
+          if (fadeHoverGroup) fadeHoverGroup.hidden = badgeStyleVal === 'footer';
           fadeHoverSegmented.querySelectorAll('button').forEach(btn => {
             if (btn.getAttribute('data-value') === fadeHoverVal) {
               btn.classList.add('active');
