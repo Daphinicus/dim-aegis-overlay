@@ -1,3 +1,5 @@
+import type { GradeSettings } from './grading';
+
 /**
  * Represents a single parsed wishlist entry.
  */
@@ -18,6 +20,7 @@ export type WishlistDatabase = Record<number, WishlistRoll[]>;
  * Result of scoring a weapon roll against a wishlist entry.
  */
 export interface ScoringResult {
+  customGrading?: boolean;
   grade: string | null;
   matchPercentage: number;
   matchedPerks: number[];
@@ -41,6 +44,7 @@ export type AegisMode = 'pve' | 'pvp' | 'both';
  * Storage schema for chrome.storage.local
  */
 export interface LocalStorageSchema {
+  aegisGradeSettings?: GradeSettings;
   wishlistUrl?: string;
   wishlistData?: WishlistDatabase;
   lastUpdated?: number;
@@ -276,6 +280,5 @@ export interface WeaponEvaluationPayload {
   isBestInClassPvE?: boolean;
   isBestInClassPvP?: boolean;
 }
-
 
 

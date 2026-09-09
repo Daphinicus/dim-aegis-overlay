@@ -1,3 +1,6 @@
+import { initGradeSettings } from './grade-settings';
+import { normalizeGradeSettings } from './grading';
+import { setGradeColors, applyGradeColors } from './grade-colors';
 import { initLanguage, t } from './i18n';
 import { LocalStorageSchema, AegisMode } from './types';
 
@@ -27,6 +30,7 @@ const DEFAULT_URL =
   'https://raw.githubusercontent.com/charlesxcaliber/DIMAegisWeaponWishlist/main/MrCharlesWishlist_MRB_PPC2.txt';
 
 document.addEventListener('DOMContentLoaded', () => {
+  initGradeSettings();
   const urlInput = document.getElementById('wishlist-url') as HTMLInputElement;
   const syncBtn = document.getElementById('sync-button') as HTMLButtonElement;
   const syncStatus = document.getElementById('sync-status') as HTMLSpanElement;
@@ -44,6 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function updateUI() {
     chrome.storage.local.get(
       [
+        'aegisGradeSettings',
         'wishlistUrl',
         'lastUpdated',
         'parsedCount',
@@ -77,6 +82,7 @@ document.addEventListener('DOMContentLoaded', () => {
       ],
       (res: any) => {
         localizePopup(res.aegisLanguage);
+        setGradeColors(normalizeGradeSettings(res.aegisGradeSettings));
 
         // Auto-show Changelog Modal once for new version updates
         const currentVer = chrome.runtime.getManifest().version;
@@ -320,6 +326,7 @@ document.addEventListener('DOMContentLoaded', () => {
             mockBadge.classList.remove('aegis-badge-split');
             mockBadge.textContent = isTwoTier ? 'SS+' : 'S+';
           }
+          applyGradeColors(mockBadge);
         }
 
         const cornerTargets = document.querySelectorAll('.interactive-weapon-tile .corner-target');

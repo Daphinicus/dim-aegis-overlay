@@ -203,6 +203,24 @@
 }
 
 /* Badge Grade Gradients */
+#aegis-grade-settings summary { cursor: pointer; font-weight: 600; }
+#aegis-grade-settings label { display: flex; flex-direction: column; gap: 5px; min-width: 0; font-size: 12px; }
+#aegis-grade-settings .grade-check { flex-direction: row; align-items: center; min-height: 32px; }
+#aegis-grade-settings input[type="checkbox"] { width: auto; accent-color: #ffd700; }
+#aegis-grade-settings .grade-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin: 12px 0; }
+#aegis-grade-settings select, #aegis-grade-settings input[type="text"] { width: 100%; min-width: 0; background: #20232b; color: #eef0f5; border: 1px solid #555c68; border-radius: 5px; padding: 7px; }
+#aegis-grade-settings input[type="color"] { width: 100%; height: 32px; padding: 2px; background: #20232b; border: 1px solid #555c68; border-radius: 5px; }
+#aegis-grade-settings .grade-pills, #aegis-grade-settings .grade-actions, #aegis-grade-settings .grade-results { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
+#aegis-grade-settings .grade-pills button { background: #292d37; color: #eef0f5; border: 1px solid #555c68; border-radius: 18px; padding: 7px 10px; min-width: 36px; cursor: pointer; }
+#aegis-grade-settings .grade-pills button[aria-pressed="true"] { outline: 2px solid #ffd700; outline-offset: 1px; }
+#aegis-grade-settings .grade-rule-section, #aegis-grade-settings .grade-example { border-top: 1px solid #414652; margin-top: 14px; padding-top: 14px; }
+#aegis-grade-settings .grade-warning { color: #ffcb7b; font-size: 12px; }
+#aegis-grade-settings .grade-results { align-items: center; font-size: 12px; }
+#aegis-grade-settings .grade-results p { flex-basis: 100%; }
+#aegis-grade-settings [hidden] { display: none !important; }
+#aegis-grade-settings button:disabled, #aegis-grade-settings input:disabled, #aegis-grade-settings select:disabled { opacity: .5; cursor: default; }
+@media (max-width: 380px) { #aegis-grade-settings .grade-fields { grid-template-columns: 1fr; } }
+
 .aegis-badge-s {
   background: linear-gradient(135deg, #ffd700, #ff8c00) !important; /* Gold */
   box-shadow: 0 0 6px rgba(255, 215, 0, 0.5), 0 2px 4px rgba(0, 0, 0, 0.6) !important;
@@ -1682,19 +1700,19 @@ body.aegis-scrolling div[id^="item-"][data-aegis-item-hash]:hover {
 
 /* Gold Glow for God Rolls (S-tier) */
 .aegis-gold-glow {
-  box-shadow: 0 0 10px rgba(255, 179, 0, 0.5) !important;
-  border: 1px solid rgba(255, 179, 0, 0.6) !important;
+  box-shadow: 0 0 10px var(--aegis-glow-color, rgba(255, 179, 0, 0.5)) !important;
+  border: 1px solid var(--aegis-glow-color, rgba(255, 179, 0, 0.6)) !important;
   animation: aegis-gold-pulse 2s infinite alternate !important;
 }
 
 @keyframes aegis-gold-pulse {
   from {
-    box-shadow: 0 0 6px rgba(255, 179, 0, 0.35) !important;
-    border-color: rgba(255, 179, 0, 0.45) !important;
+    box-shadow: 0 0 6px var(--aegis-glow-color, rgba(255, 179, 0, 0.35)) !important;
+    border-color: var(--aegis-glow-color, rgba(255, 179, 0, 0.45)) !important;
   }
   to {
-    box-shadow: 0 0 14px rgba(255, 179, 0, 0.7) !important;
-    border-color: rgba(255, 179, 0, 0.8) !important;
+    box-shadow: 0 0 14px var(--aegis-glow-color, rgba(255, 179, 0, 0.7)) !important;
+    border-color: var(--aegis-glow-color, rgba(255, 179, 0, 0.8)) !important;
   }
 }
 
@@ -2458,8 +2476,8 @@ body.aegis-scrolling div[id^="item-"][data-aegis-item-hash]:hover {
 
 .aegis-fab:hover {
   transform: scale(1.1) rotate(5deg) !important;
-  border-color: rgba(255, 179, 0, 0.8) !important;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5), 0 0 15px rgba(255, 179, 0, 0.35) !important;
+  border-color: var(--aegis-glow-color, rgba(255, 179, 0, 0.8)) !important;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5), 0 0 15px var(--aegis-glow-color, rgba(255, 179, 0, 0.35)) !important;
 }
 
 .aegis-fab svg {
@@ -2797,13 +2815,13 @@ body.aegis-scrolling div[id^="item-"][data-aegis-item-hash]:hover {
   padding: 6px 8px !important;
   border-radius: 4px !important;
   margin-top: 2px !important;
-  border-left: 2px solid rgba(255, 179, 0, 0.5) !important;
+  border-left: 2px solid var(--aegis-glow-color, rgba(255, 179, 0, 0.5)) !important;
 }
 
 /* DIM search bar feedback pulse */
 @keyframes aegis-pulse-glow {
   0% {
-    box-shadow: 0 0 0 0 rgba(255, 179, 0, 0.6);
+    box-shadow: 0 0 0 0 var(--aegis-glow-color, rgba(255, 179, 0, 0.6));
   }
   70% {
     box-shadow: 0 0 0 6px rgba(255, 179, 0, 0);
@@ -2865,7 +2883,7 @@ body.aegis-scrolling div[id^="item-"][data-aegis-item-hash]:hover {
 
 .aegis-btn-highlight:hover {
   background: rgba(255, 179, 0, 0.18) !important;
-  border-color: rgba(255, 179, 0, 0.5) !important;
+  border-color: var(--aegis-glow-color, rgba(255, 179, 0, 0.5)) !important;
 }
 
 .aegis-btn-report {
@@ -5307,5 +5325,4 @@ body.aegis-scrolling div[id^="item-"][data-aegis-item-hash]:hover {
   flex: 1 1 540px !important;
   max-width: 680px !important;
 }
-
 

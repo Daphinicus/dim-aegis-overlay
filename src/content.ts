@@ -1,3 +1,5 @@
+import { computeGrade, defaultGradeSettings, normalizeGradeSettings, evaluateCustomRoll, gradeValue as getGradeValue, Slots } from './grading';
+import { setGradeColors, applyGradeColors, applyGradeGlow, displayGrade, rollGradeDisplay } from './grade-colors';
 import { scoreWeapon } from './scorer';
 import { WishlistDatabase, ScoringResult, AegisSheetDatabase, AegisSheetWeapon, TooltipPerk, AegisArmorSet, SheetPerksGroup, AegisShoppingDatabase, AegisShoppingItem, DualSheetInfo, ManifestWeapon, AegisChaseItem, WeaponEvaluationPayload } from './types';
 import { showTooltip, hideTooltip, extractRecommendedMasterwork, renderViabilityMatrix, formatFormattedNotes, renderShoppingBannerHtml } from './tooltip';
@@ -24,21 +26,6 @@ function winnowerNameCell(row: HTMLElement): HTMLElement | null {
   return (row.querySelector('[data-aegis-badge-slot]')?.closest('td') as HTMLElement | null) ?? null;
 }
 
-function getGradeValue(grade: string): number {
-  const g = (grade || '').trim().toUpperCase();
-  if (g.startsWith('S')) return 100;
-  if (g === 'A+') return 90;
-  if (g === 'A') return 85;
-  if (g === 'B+') return 75;
-  if (g === 'B') return 70;
-  if (g === 'C+') return 60;
-  if (g === 'C') return 55;
-  if (g === 'D') return 45;
-  if (g === 'PVP') return 40;
-  if (g === 'E') return 30;
-  if (g === 'F') return 10;
-  return 0;
-}
 
 function findAegisArmorSet(itemName: string): AegisArmorSet | null {
   const activeDb = (aegisMode === 'pvp' ? aegisSheetDbPvP : aegisSheetDbPvE) || aegisSheetDb;
@@ -213,6 +200,8 @@ let aegisGradeDisplayMode: 'equipped' | 'dual' | 'potential' = 'equipped';
 let aegisHoverEnabled = true;
 let aegisArmorSource = 'lowco';
 let aegisMode: 'pve' | 'pvp' | 'both' = 'pve';
+let gradeSettings = defaultGradeSettings();
+const customGradeCache = new Map<string, ReturnType<typeof evaluateCustomRoll>>();
 let aegisCompactPerksMatrix = false;
 let aegisInlineHeader = true;
 let aegisPopupSummaryMode: 'full' | 'badge' | 'hidden' = 'full';
@@ -1030,69 +1019,6 @@ function isPerkMatch(perkName: string, recName: string): boolean {
   return false;
 }
 
-function computeGrade(
-  p1: 'active' | 'selectable' | 'missing',
-  p2: 'active' | 'selectable' | 'missing',
-  mag: 'active' | 'selectable' | 'missing',
-  barrel: 'active' | 'selectable' | 'missing',
-  origin: 'active' | 'selectable' | 'missing',
-  treatSelectableAsActive: boolean
-): 'S+' | 'S' | 'A+' | 'A' | 'B+' | 'B' | 'C' | 'D' | 'F' {
-  const effectiveP1 = p1 === 'active' || (treatSelectableAsActive && p1 === 'selectable');
-  const effectiveP2 = p2 === 'active' || (treatSelectableAsActive && p2 === 'selectable');
-  const effectiveMag = mag === 'active' || (treatSelectableAsActive && mag === 'selectable');
-  const effectiveBarrel = barrel === 'active' || (treatSelectableAsActive && barrel === 'selectable');
-  const effectiveOrigin = origin === 'active' || (treatSelectableAsActive && origin === 'selectable');
-
-  const activeTraitsCount = (p1 === 'active' ? 1 : 0) + (p2 === 'active' ? 1 : 0);
-  const selectableTraitsCount = (p1 === 'selectable' ? 1 : 0) + (p2 === 'selectable' ? 1 : 0);
-  const hasActiveMag = mag === 'active';
-  const hasActiveBarrel = barrel === 'active';
-
-  // 1. S+ : Traits (P1 & P2) + Mag + Barrel + Origin all active
-  if (effectiveP1 && effectiveP2 && effectiveMag && effectiveBarrel && effectiveOrigin) {
-    return 'S+';
-  }
-
-  // 2. S : Traits (P1 & P2) + Mag active
-  if (effectiveP1 && effectiveP2 && effectiveMag) {
-    return 'S';
-  }
-
-  // 3. A+ : Traits (P1 & P2) + Barrel active
-  if (effectiveP1 && effectiveP2 && effectiveBarrel) {
-    return 'A+';
-  }
-
-  // 4. A : Traits (P1 & P2) active
-  if (effectiveP1 && effectiveP2) {
-    return 'A';
-  }
-
-  // 5. B+ : One active Trait + One selectable Trait + Mag or Barrel active
-  if (!treatSelectableAsActive) {
-    if (activeTraitsCount === 1 && selectableTraitsCount === 1 && (hasActiveMag || hasActiveBarrel)) {
-      return 'B+';
-    }
-    // 6. B : One active Trait + One selectable Trait
-    if (activeTraitsCount === 1 && selectableTraitsCount === 1) {
-      return 'B';
-    }
-  }
-
-  // 7. C : One active Trait + Mag or Barrel active
-  const effectiveActiveTraitsCount = (effectiveP1 ? 1 : 0) + (effectiveP2 ? 1 : 0);
-  if (effectiveActiveTraitsCount === 1 && (effectiveMag || effectiveBarrel)) {
-    return 'C';
-  }
-
-  // 8. D : One active or selectable Trait
-  if (effectiveActiveTraitsCount === 1 || (!treatSelectableAsActive && selectableTraitsCount === 1)) {
-    return 'D';
-  }
-
-  return 'F';
-}
 
 interface EvaluatedPerk {
   name: string;
@@ -1207,7 +1133,8 @@ function getSlotStatusFromEvaluations(evals: EvaluatedPerk[]): 'active' | 'selec
 function scoreSheetWeapon(
   sheetWeapon: AegisSheetWeapon,
   perksMap: Record<number, { name: string; icon: string }>,
-  activeHashes: number[]
+  activeHashes: number[],
+  context: 'pve' | 'pvp' = aegisMode === 'pvp' ? 'pvp' : 'pve'
 ): {
   result: ScoringResult;
   potentialGrade: string;
@@ -1256,8 +1183,15 @@ function scoreSheetWeapon(
   const p2Status = getSlotStatusFromEvaluations(p2Evals);
   const originStatus = getSlotStatusFromEvaluations(originEvals);
 
-  const currentGrade = computeGrade(p1Status, p2Status, magStatus, barrelStatus, originStatus, false);
-  const potentialGrade = computeGrade(p1Status, p2Status, magStatus, barrelStatus, originStatus, true);
+  const statuses: Slots = [p1Status, p2Status, magStatus, barrelStatus, originStatus];
+  let custom: ReturnType<typeof evaluateCustomRoll> | null = null;
+  if (gradeSettings.rulesEnabled && scoringSource !== 'lightgg') {
+    const key = `${context}:${statuses.join(',')}`;
+    custom = customGradeCache.get(key) || evaluateCustomRoll(statuses, context === 'pvp' && gradeSettings.separatePvp ? gradeSettings.pvp : gradeSettings.pve);
+    customGradeCache.set(key, custom);
+  }
+  const currentGrade = custom?.grade ?? computeGrade(...statuses, false);
+  const potentialGrade = custom?.potentialGrade ?? computeGrade(...statuses, true);
 
   let pct = 0;
   const slots = [barrelStatus, magStatus, p1Status, p2Status];
@@ -1321,9 +1255,15 @@ function scoreSheetWeapon(
   const isOmniRoll = missingList.length === 0 && matchedList.length >= 4;
 
   let upgradeAdvice = '';
-  const gradeOrder = ['F', 'D', 'C', 'B', 'B+', 'A', 'A+', 'S', 'S+'];
-  const curIdx = gradeOrder.indexOf(currentGrade);
-  const potIdx = gradeOrder.indexOf(potentialGrade);
+  const curIdx = getGradeValue(currentGrade);
+  const potIdx = getGradeValue(potentialGrade);
+  if (custom) {
+    const evaluations = [p1Evals, p2Evals, magEvals, barrelEvals, originEvals];
+    selectablePerkNames.splice(0, selectablePerkNames.length, ...custom.swaps.flatMap(index => {
+      const perk = evaluations[index].find(p => p.status === 'selectable');
+      return perk ? [perk.name.replace(/\b\w/g, c => c.toUpperCase())] : [];
+    }));
+  }
 
   if (potIdx > curIdx && selectablePerkNames.length > 0) {
     const perksStr = selectablePerkNames.join(' / ');
@@ -1336,6 +1276,7 @@ function scoreSheetWeapon(
   return {
     result: {
       grade: finalGrade,
+      customGrading: !!custom,
       matchPercentage: pct,
       matchedPerks: [],
       missingPerks: [],
@@ -3739,8 +3680,11 @@ function showWinnowerWelcomeModal() {
   closeBtn?.addEventListener('click', dismissModal);
 }
 
-chrome.storage.local.get(['wishlistData', 'enhancedToNormal', 'scoringSource', 'lightggData', 'aegisSheetDb', 'aegisSheetDbPvE', 'aegisSheetDbPvP', 'aegisShoppingDb', 'aegisShoppingDbPvE', 'aegisShoppingDbPvP', 'perkRegistry', 'aegisLayoutSide', 'aegisPerkOrder', 'aegisDbMode', 'aegisMode', 'aegisTwoTier', 'aegisBadgePosition', 'aegisBadgeStyle', 'aegisBadgeScale', 'aegisFadeHover', 'aegisGradeDisplayMode', 'aegisHoverEnabled', 'aegisCompactPerksMatrix', 'aegisInlineHeader', 'aegisPopupSummaryMode', 'aegisAutoMaxHeight', 'aegisTooltipWidthMode', 'aegisTooltipWidth', 'aegisArmorSource', 'aegisCompletedWeapons', 'aegisChaseList', 'aegisWelcomeDismissed', 'aegisLanguage'], (res) => {
+chrome.storage.local.get(['wishlistData', 'enhancedToNormal', 'scoringSource', 'lightggData', 'aegisSheetDb', 'aegisSheetDbPvE', 'aegisSheetDbPvP', 'aegisShoppingDb', 'aegisShoppingDbPvE', 'aegisShoppingDbPvP', 'perkRegistry', 'aegisLayoutSide', 'aegisPerkOrder', 'aegisDbMode', 'aegisMode', 'aegisTwoTier', 'aegisBadgePosition', 'aegisBadgeStyle', 'aegisBadgeScale', 'aegisFadeHover', 'aegisGradeDisplayMode', 'aegisHoverEnabled', 'aegisCompactPerksMatrix', 'aegisInlineHeader', 'aegisPopupSummaryMode', 'aegisAutoMaxHeight', 'aegisTooltipWidthMode', 'aegisTooltipWidth', 'aegisArmorSource', 'aegisCompletedWeapons', 'aegisChaseList', 'aegisWelcomeDismissed', 'aegisLanguage', 'aegisGradeSettings'], (res) => {
   initLanguage(res.aegisLanguage);
+  gradeSettings = normalizeGradeSettings(res.aegisGradeSettings);
+  customGradeCache.clear();
+  setGradeColors(gradeSettings);
   wishlistDb = res.wishlistData || {};
   enhancedToNormalMap = res.enhancedToNormal || {};
   completedWeapons = res.aegisCompletedWeapons || {};
@@ -3798,6 +3742,13 @@ chrome.storage.local.get(['wishlistData', 'enhancedToNormal', 'scoringSource', '
 chrome.storage.onChanged.addListener((changes, namespace) => {
   if (namespace === 'local') {
     let changed = false;
+    if (changes.aegisGradeSettings) {
+      gradeSettings = normalizeGradeSettings(changes.aegisGradeSettings.newValue);
+      customGradeCache.clear();
+      setGradeColors(gradeSettings);
+      hideTooltip();
+      changed = true;
+    }
     let evaluationLocaleRefreshNeeded = false;
     let forceEvaluationLocaleRefresh = false;
     if (changes.aegisLanguage) {
@@ -4208,20 +4159,7 @@ function handleMouseLeave() {
  * Extracts the primary grade letter from a display grade string (handles single tier, 2-tier, and exotics).
  */
 export function getGradeLetterFromDisplay(gradeStr: string): string {
-  if (!gradeStr || gradeStr === '—') return 'none';
-  if (gradeStr.includes('➔')) {
-    const parts = gradeStr.split('➔');
-    const potPart = parts[1] || parts[0];
-    const clean = potPart.replace(/[^a-z]/gi, '');
-    if (!clean) return 'none';
-    return (clean.length >= 2 ? clean.charAt(1) : clean.charAt(0)).toLowerCase();
-  }
-  const clean = gradeStr.replace(/[^a-z]/gi, '');
-  if (!clean) return 'none';
-  if (clean.length >= 2) {
-    return clean.charAt(1).toLowerCase();
-  }
-  return clean.charAt(0).toLowerCase();
+  return displayGrade(gradeStr).charAt(0).toLowerCase() || 'none';
 }
 
 /**
@@ -4812,6 +4750,7 @@ function injectPopupSummary(
         : baseGradeLetter;
       titleBadge.classList.add(`aegis-badge-${popupBaseGradeLetter}`);
       titleBadge.textContent = result.grade;
+      applyGradeColors(titleBadge);
     }
     if (titleEl) {
       titleEl.appendChild(titleBadge);
@@ -5286,6 +5225,7 @@ function injectBadge(el: HTMLElement, result: ScoringResult) {
   // S-tier gold glow is DIM-only; Winnower styles its chip in its own CSS.
   if (!IS_WINNOWER_HOST) {
     badgeTarget.classList.toggle('aegis-gold-glow', result.grade?.startsWith('S') ?? false);
+    applyGradeGlow(badgeTarget, result.grade || '');
   }
 
   // Purge any duplicate badges within itemContainer and reuse the primary badge
@@ -5402,6 +5342,9 @@ function injectBadge(el: HTMLElement, result: ScoringResult) {
     upgradeArrow.textContent = '▲';
     badge.appendChild(upgradeArrow);
   }
+
+  applyGradeColors(badge);
+  badge.title = result.customGrading ? 'Custom perk grading' : '';
 
   // Winnower: click the badge to pin its tooltip (hover-only tooltips can't
   // be moused into for reading long notes or the perk checklist).
@@ -5752,7 +5695,7 @@ function processElement(el: HTMLElement) {
 
       let pveGradeRaw = '';
       if (sheetWeaponPvE) {
-        const scorePvE = scoreSheetWeapon(sheetWeaponPvE, perksMap, activeHashes);
+        const scorePvE = scoreSheetWeapon(sheetWeaponPvE, perksMap, activeHashes, 'pve');
         pveResult = scorePvE.result;
         sheetPerksPvE = scorePvE.sheetPerks;
         pveResult.potentialGrade = scorePvE.potentialGrade;
@@ -5798,7 +5741,7 @@ function processElement(el: HTMLElement) {
 
       let pvpGradeRaw = '';
       if (sheetWeaponPvP) {
-        const scorePvP = scoreSheetWeapon(sheetWeaponPvP, perksMap, activeHashes);
+        const scorePvP = scoreSheetWeapon(sheetWeaponPvP, perksMap, activeHashes, 'pvp');
         pvpResult = scorePvP.result;
         sheetPerksPvP = scorePvP.sheetPerks;
         pvpResult.potentialGrade = scorePvP.potentialGrade;
@@ -5847,6 +5790,7 @@ function processElement(el: HTMLElement) {
         const pvpDisplay = pvpGradeRaw || '—';
         result = {
           grade: `${pveDisplay} | ${pvpDisplay}`,
+          customGrading: !!(pveResult?.customGrading || pvpResult?.customGrading),
           matchPercentage: Math.max(pveResult?.matchPercentage || 0, pvpResult?.matchPercentage || 0),
           matchedPerks: [...(pveResult?.matchedPerks || []), ...(pvpResult?.matchedPerks || [])],
           missingPerks: [],
@@ -6145,19 +6089,6 @@ function processElement(el: HTMLElement) {
   }
 }
 
-const GRADE_VALUES: Record<string, number> = {
-  's+': 9,
-  's': 8,
-  'a+': 7,
-  'a': 6,
-  'b+': 5,
-  'b': 4,
-  'c': 3,
-  'd': 2,
-  'f': 1,
-  'none': 0
-};
-
 function compareGrades(itemGrade: string, queryStr: string): boolean {
   let normalizedGrade = itemGrade.toLowerCase().trim();
   
@@ -6179,8 +6110,8 @@ function compareGrades(itemGrade: string, queryStr: string): boolean {
   if (match) {
     const op = match[1];
     const targetRank = match[2].trim().toLowerCase();
-    const valItem = GRADE_VALUES[rollGradePart] ?? GRADE_VALUES[normalizedGrade] ?? 0;
-    const valTarget = GRADE_VALUES[targetRank] ?? 0;
+    const valItem = getGradeValue(rollGradePart) || getGradeValue(normalizedGrade);
+    const valTarget = getGradeValue(targetRank);
     
     if (op === '>=') return valItem >= valTarget;
     if (op === '>') return valItem > valTarget;
@@ -6539,17 +6470,11 @@ function evaluateAegisFiltering() {
         isMatch = false;
       } else {
         const isSplit = grade.includes('|');
-        const pvePart = result?.pveGrade?.toLowerCase() || (isSplit ? grade.split('|')[0].trim() : '');
-        const pvpPart = result?.pvpGrade?.toLowerCase() || (isSplit ? grade.split('|')[1].trim() : '');
+        const pvePart = rollGradeDisplay(result?.pveGrade || (isSplit ? grade.split('|')[0] : ''));
+        const pvpPart = rollGradeDisplay(result?.pvpGrade || (isSplit ? grade.split('|')[1] : ''));
 
         const weaponRank = sheetW?.tier || '';
-        let perkRank = '';
-        const isTwoTier = !isSplit && (grade.length > 2 || (grade.length === 2 && !grade.endsWith('+') && !grade.endsWith('-')));
-        if (isTwoTier) {
-          perkRank = grade.substring(1);
-        } else if (!isSplit) {
-          perkRank = grade;
-        }
+        const perkRank = isSplit ? '' : rollGradeDisplay(grade);
 
         if (targetQuery === '5/5' || targetQuery === 'perfect' || targetQuery === '5of5' || targetQuery === 'godroll') {
           isMatch = !!result?.isPerfect5of5;
@@ -7087,4 +7012,3 @@ chrome.runtime.onMessage.addListener((message) => {
 
 // Notify the background service worker that DIM is running
 chrome.runtime.sendMessage({ action: 'dimLaunched' }).catch(() => {});
-
