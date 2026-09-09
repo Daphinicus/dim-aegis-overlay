@@ -1706,6 +1706,19 @@ body.aegis-scrolling div[id^="item-"][data-aegis-item-hash]:hover {
   }
 }
 
+.item-drag-container:has(> .item.aegis-gold-glow) {
+  /* The tile still clips its contents; only its outer decoration escapes. */
+  contain: layout style;
+}
+
+.item-drag-container > .item.aegis-gold-glow {
+  box-shadow: 0 0 0 1px rgba(255, 179, 0, 0.6), 0 0 10px rgba(255, 179, 0, 0.5) !important;
+}
+
+.item-drag-container > .item.aegis-gold-glow::after {
+  content: none;
+}
+
 /* Side-panel details summary card */
 .aegis-popup-summary {
   margin-top: 10px !important;
