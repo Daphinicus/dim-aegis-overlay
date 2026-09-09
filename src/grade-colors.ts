@@ -67,7 +67,7 @@ export function gradeGradient(color: string): string {
 
 const gradientSamples = [
   ['#ffd700', '#ff8c00'], ['#da70d6', '#8a2be2'], ['#00f2fe', '#4facfe'],
-  ['#bdc3c7', '#2c3e50'], ['#e67e22', '#d35400'], ['#e74c3c', '#c0392b'],
+  ['#bdc3c7', '#2c3e50'], ['#e67e22', '#d35400'], ['#7f8c8d', '#5a5a5a'], ['#e74c3c', '#c0392b'],
 ].map(([base, end]) => ({ base: hexToHsv(base), end: hexToHsv(end), lightRatio: luminance(end) / luminance(base) }));
 
 export function applyGradeColors(root: HTMLElement, palette = settings) {
