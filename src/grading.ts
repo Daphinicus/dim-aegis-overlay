@@ -6,6 +6,7 @@ export type GradeRule = {
   traits: 'both' | 'mixed' | 'one' | 'available';
   extras: 'none' | 'mag' | 'barrel' | 'either' | 'both';
   origin: boolean;
+  masterwork: boolean;
   enabled: boolean;
 };
 export type Rules = Record<Exclude<Grade, 'F'>, GradeRule>;
@@ -20,7 +21,7 @@ export type GradeSettings = {
 };
 
 const rule = (traits: GradeRule['traits'], extras: GradeRule['extras'] = 'none', origin = false): GradeRule =>
-  ({ traits, extras, origin, enabled: true });
+  ({ traits, extras, origin, masterwork: false, enabled: true });
 
 export function defaultRules(): Rules {
   return {
@@ -52,7 +53,7 @@ export function normalizeGradeSettings(value: unknown, palette?: unknown): Grade
       if (!r || !['both', 'mixed', 'one', 'available'].includes(r.traits) ||
           !['none', 'mag', 'barrel', 'either', 'both'].includes(r.extras) ||
           typeof r.origin !== 'boolean' || typeof r.enabled !== 'boolean') return defaultRules();
-      result[grade] = { traits: r.traits, extras: r.extras, origin: r.origin, enabled: r.enabled };
+      result[grade] = { traits: r.traits, extras: r.extras, origin: r.origin, masterwork: r.masterwork === true, enabled: r.enabled };
     }
     return result;
   };
@@ -69,7 +70,7 @@ export function gradeValue(grade: string): number {
   return ({ 'S+': 105, S: 100, 'A+': 90, A: 85, 'B+': 75, B: 70, 'C+': 60, C: 55, D: 45, PVP: 40, E: 30, F: 10 } as Record<string, number>)[normalized] || (normalized.startsWith('S') ? 100 : 0);
 }
 
-export function evaluateRules(slots: Slots, rules: Rules): Grade {
+export function evaluateRules(slots: Slots, rules: Rules, masterworkMatched = true): Grade {
   const [p1, p2, mag, barrel, origin] = slots;
   const active = Number(p1 === 'active') + Number(p2 === 'active');
   const selectable = Number(p1 === 'selectable') + Number(p2 === 'selectable');
@@ -79,13 +80,13 @@ export function evaluateRules(slots: Slots, rules: Rules): Grade {
     if (!r.enabled) continue;
     const traits = { both: active === 2, mixed: active === 1 && selectable === 1, one: active === 1, available: active === 1 || selectable === 1 }[r.traits];
     const extras = { none: true, mag: mag === 'active', barrel: barrel === 'active', either: mag === 'active' || barrel === 'active', both: mag === 'active' && barrel === 'active' }[r.extras];
-    if (traits && extras && (!r.origin || origin === 'active')) return grade;
+    if (traits && extras && (!r.origin || origin === 'active') && (!r.masterwork || masterworkMatched)) return grade;
   }
   return 'F';
 }
 
-export function evaluateCustomRoll(slots: Slots, rules: Rules) {
-  const grade = evaluateRules(slots, rules);
+export function evaluateCustomRoll(slots: Slots, rules: Rules, masterworkMatched = true) {
+  const grade = evaluateRules(slots, rules, masterworkMatched);
   let potentialGrade = grade;
   let swaps: number[] = [];
   const selectable = slots.flatMap((status, index) => status === 'selectable' ? [index] : []);
@@ -93,7 +94,7 @@ export function evaluateCustomRoll(slots: Slots, rules: Rules) {
     const candidate = [...slots] as Slots;
     const chosen = selectable.filter((_, bit) => mask & (1 << bit));
     chosen.forEach(index => { candidate[index] = 'active'; });
-    const next = evaluateRules(candidate, rules);
+    const next = evaluateRules(candidate, rules, masterworkMatched);
     if (gradeValue(next) > gradeValue(potentialGrade) || (next === potentialGrade && chosen.length < swaps.length)) {
       potentialGrade = next;
       swaps = chosen;
@@ -108,6 +109,7 @@ export function unreachableGrades(rules: Rules): Grade[] {
   for (let n = 0; n < 243; n++) {
     const slots = Array.from({ length: 5 }, (_, i) => statuses[Math.floor(n / 3 ** i) % 3]) as Slots;
     reached.add(evaluateRules(slots, rules));
+    reached.add(evaluateRules(slots, rules, false));
   }
   return GRADES.filter(grade => grade !== 'F' && rules[grade].enabled && !reached.has(grade));
 }

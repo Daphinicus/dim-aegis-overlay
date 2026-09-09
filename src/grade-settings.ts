@@ -26,6 +26,7 @@ export function initGradeSettings() {
   let saving = false;
   let colorWrites = 0;
   let hsv: Hsv = [0, 100, 100];
+  let masterworkMatched = true;
   const slots: Slots = ['active', 'active', 'active', 'missing', 'active'];
   const get = <T extends HTMLElement>(selector: string) => el.querySelector<T>(selector)!;
   const options = (labels: Record<string, string>) => Object.entries(labels).map(([value, label]) => `<option value="${value}">${label}</option>`).join('');
@@ -49,6 +50,7 @@ export function initGradeSettings() {
           <label>Main traits <select data-rule="traits">${options(traitLabels)}</select></label>
           <label>Barrel / magazine <select data-rule="extras">${options(extraLabels)}</select></label>
           <label class="grade-check"><input type="checkbox" data-rule="origin"> Origin trait equipped</label>
+          <label class="grade-check" title="Ignored when no masterwork is recommended"><input type="checkbox" data-rule="masterwork"> Recommended masterwork matched</label>
           <label class="grade-check"><input type="checkbox" data-rule="enabled"> Enable this grade</label>
         </div>
         <p class="description" data-fallback>F is the fallback when no enabled rule matches.</p>
@@ -59,6 +61,7 @@ export function initGradeSettings() {
       <details class="grade-example" open>
         <summary>Try an example roll</summary>
         <div class="grade-fields">${slotLabels.map((label, index) => `<label>${label}<select data-slot="${index}"><option value="active">Equipped</option><option value="selectable">Selectable</option><option value="missing">Missing</option></select></label>`).join('')}</div>
+        <label class="grade-check"><input type="checkbox" data-masterwork-match checked> Recommended MW matched</label>
         <div class="grade-results" aria-live="polite">
           <span>Default <span class="aegis-popup-grade-badge" data-result="default"></span></span>
           <span>Your rules <span class="aegis-popup-grade-badge" data-result="current"></span></span>
@@ -102,7 +105,7 @@ export function initGradeSettings() {
           const traits = { both: 'Traits 1 & 2', mixed: '1 Trait active + 1 selectable', one: '1 Trait matched', available: '1 Trait active/selectable' };
           const extras = { none: '', mag: 'Mag', barrel: 'Barrel', either: 'Mag/Barrel', both: 'Mag + Barrel' };
           description = !rule.enabled ? 'Disabled' : JSON.stringify(rule) === JSON.stringify(defaults[grade]) ? defaultGuide[grade]
-            : [traits[rule.traits], extras[rule.extras], rule.origin ? 'Origin' : ''].filter(Boolean).join(' + ');
+            : [traits[rule.traits], extras[rule.extras], rule.origin ? 'Origin' : '', rule.masterwork ? 'MW' : ''].filter(Boolean).join(' + ');
         }
         return `<span class="grade-pill grade-${grade[0].toLowerCase()}-pill" data-aegis-grade="${grade}">${grade}</span><span${unreachable.includes(grade) ? ' title="Unreachable: higher grades always match first"' : ''}>${description}</span>`;
       }).join('')}</div>`;
@@ -136,7 +139,7 @@ export function initGradeSettings() {
   }
   function preview() {
     const defaultGrade = computeGrade(...slots, false);
-    const custom = draft.rulesEnabled ? evaluateCustomRoll(slots, profile()) : { grade: defaultGrade, potentialGrade: computeGrade(...slots, true) };
+    const custom = draft.rulesEnabled ? evaluateCustomRoll(slots, profile(), masterworkMatched) : { grade: defaultGrade, potentialGrade: computeGrade(...slots, true) };
     for (const [key, grade] of Object.entries({ default: defaultGrade, current: custom.grade, potential: custom.potentialGrade })) {
       const badge = get(`[data-result="${key}"]`);
       badge.className = `aegis-popup-grade-badge aegis-badge-${grade[0].toLowerCase()}`;
@@ -145,7 +148,7 @@ export function initGradeSettings() {
     const grade = custom.grade;
     const r = draft.rulesEnabled && grade !== 'F' ? profile()[grade] : null;
     get('[data-reason]').textContent = !draft.rulesEnabled ? 'Original grading rules.' : r
-      ? `${grade}: ${traitLabels[r.traits]}; ${extraLabels[r.extras].toLowerCase()}${r.origin ? '; origin trait equipped' : ''}.`
+      ? `${grade}: ${traitLabels[r.traits]}; ${extraLabels[r.extras].toLowerCase()}${r.origin ? '; origin trait equipped' : ''}${r.masterwork ? '; MW matched' : ''}.`
       : 'No enabled rule matched.';
     applyGradeColors(el, draft);
   }
@@ -200,7 +203,7 @@ export function initGradeSettings() {
   el.querySelectorAll<HTMLInputElement | HTMLSelectElement>('[data-rule]').forEach(input => input.addEventListener('change', () => {
     if (selected === 'F') return;
     const r = profile()[selected];
-    if (input instanceof HTMLInputElement) r[input.dataset.rule as 'origin' | 'enabled'] = input.checked;
+    if (input instanceof HTMLInputElement) r[input.dataset.rule as 'origin' | 'masterwork' | 'enabled'] = input.checked;
     else if (input.dataset.rule === 'traits') r.traits = input.value as GradeRule['traits'];
     else r.extras = input.value as GradeRule['extras'];
     render();
@@ -224,6 +227,7 @@ export function initGradeSettings() {
   get('[data-reset-colors]').addEventListener('click', () => { draft.colors = {}; render(); saveColors(); });
   get('[data-reset-rules]').addEventListener('click', () => { draft[context === 'pvp' && draft.separatePvp ? 'pvp' : 'pve'] = defaultRules(); render(); });
   el.querySelectorAll<HTMLSelectElement>('[data-slot]').forEach(select => select.addEventListener('change', () => { slots[Number(select.dataset.slot)] = select.value as Slots[number]; preview(); }));
+  get<HTMLInputElement>('[data-masterwork-match]').addEventListener('change', event => { masterworkMatched = (event.target as HTMLInputElement).checked; preview(); });
   get('[data-cancel]').addEventListener('click', () => { draft = { ...structuredClone(saved), colors: draft.colors, colorsEnabled: draft.colorsEnabled }; render(); });
   get('[data-apply]').addEventListener('click', () => {
     if (saving) return;

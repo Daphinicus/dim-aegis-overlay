@@ -26,6 +26,26 @@ for (let value=0;value<=0xffffff;value+=4093) {
   assert.ok(brightness(end)<=brightness(color)+.0001, 'Gradient endpoint must be darker: '+color);
 }
 const { hexToHsv, hsvToHex } = load('color-picker');
+const { normalizeMasterwork, masterworkMatches } = load('masterwork');
+assert.equal(normalizeMasterwork('Tier 1Reload Speed Masterwork'), 'reload');
+assert.equal(normalizeMasterwork('Projectile Speed'), 'velocity');
+assert.equal(masterworkMatches(['Range', 'Handling'], 'Tier 10 Handling'), true);
+assert.equal(masterworkMatches(['Reload'], 'Reload Speed'), true);
+assert.equal(masterworkMatches(['Range'], ''), false);
+assert.equal(masterworkMatches(['Range'], 'Rangefinder'), false);
+assert.equal(masterworkMatches([], ''), true);
+const mwRules = defaultRules();mwRules['S+'].masterwork = true;
+const fullRoll = Array(5).fill('active');
+assert.equal(evaluateRules(fullRoll, mwRules, true), 'S+');
+assert.equal(evaluateRules(fullRoll, mwRules, false), 'S');
+assert.equal(evaluateCustomRoll(Array(5).fill('selectable'), mwRules, false).potentialGrade, 'S');
+assert.equal(evaluateCustomRoll(Array(5).fill('selectable'), mwRules, true).potentialGrade, 'S+');
+mwRules['S+'].extras = 'mag';mwRules['S+'].origin = false;
+assert.ok(!unreachableGrades(mwRules).includes('S'));
+const legacy = defaultGradeSettings();legacy.pve.S.extras = 'none';
+for (const rule of Object.values(legacy.pve)) delete rule.masterwork;
+assert.equal(normalizeGradeSettings(legacy).pve.S.masterwork,false);
+assert.equal(normalizeGradeSettings(legacy).pve.S.extras,'none');
 for (const [hex, hsv] of [['#ff0000', [0, 100, 100]], ['#00ff00', [120, 100, 100]], ['#0000ff', [240, 100, 100]], ['#ffffff', [0, 0, 100]], ['#000000', [0, 100, 0]]]) {
   assert.deepEqual(hexToHsv(hex), hsv);
   assert.equal(hsvToHex(hsv), hex);
@@ -56,15 +76,16 @@ const pick = values => { seed = (seed * 16807) % 2147483647; return values[seed 
 for (let profile = 0; profile < 30; profile++) {
   const custom = defaultRules();
   for (const grade of GRADES.filter(g => g !== 'F')) {
-    custom[grade] = { traits: pick(['both', 'mixed', 'one', 'available']), extras: pick(['none', 'mag', 'barrel', 'either', 'both']), origin: pick([true, false]), enabled: pick([true, true, false]) };
+    custom[grade] = { traits: pick(['both', 'mixed', 'one', 'available']), extras: pick(['none', 'mag', 'barrel', 'either', 'both']), origin: pick([true, false]), masterwork: pick([true, false]), enabled: pick([true, true, false]) };
   }
   for (let n = 0; n < 243; n++) {
     const slots = Array.from({ length: 5 }, (_, i) => states[Math.floor(n / 3 ** i) % 3]);
-    const result = evaluateCustomRoll(slots, custom);
+    const mwMatched = pick([true,false]);
+    const result = evaluateCustomRoll(slots, custom, mwMatched);
     assert.ok(gradeValue(result.potentialGrade) >= gradeValue(result.grade));
     const candidate = [...slots];
     for (const index of result.swaps) { assert.equal(slots[index], 'selectable'); candidate[index] = 'active'; }
-    assert.equal(evaluateRules(candidate, custom), result.potentialGrade);
+    assert.equal(evaluateRules(candidate, custom, mwMatched), result.potentialGrade);
   }
 }
 for (let i = 1; i < GRADES.length; i++) assert.ok(gradeValue(GRADES[i - 1]) > gradeValue(GRADES[i]));
