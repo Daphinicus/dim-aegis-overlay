@@ -4545,6 +4545,7 @@ function injectPopupSummary(
         titleBadge.className = `aegis-title-badge ${gradeClass}`;
         titleBadge.textContent = result.grade;
         titleEl.appendChild(titleBadge);
+        applyGradeColors(titleBadge);
       }
     } else if (summaryEl) {
       safeSetInnerHTML(

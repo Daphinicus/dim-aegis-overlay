@@ -204,10 +204,14 @@
 
 /* Badge Grade Gradients */
 #aegis-grade-settings summary { cursor: pointer; font-weight: 600; }
+#aegis-grade-settings * { box-sizing: border-box; }
+#aegis-grade-settings .description { color: #aeb0ba; }
+#aegis-grade-settings h3 { font-size: 13px; }
 #aegis-grade-settings label { display: flex; flex-direction: column; gap: 5px; min-width: 0; font-size: 12px; }
 #aegis-grade-settings .grade-check { flex-direction: row; align-items: center; min-height: 32px; }
 #aegis-grade-settings input[type="checkbox"] { width: auto; accent-color: #ffd700; }
 #aegis-grade-settings .grade-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin: 12px 0; }
+#aegis-grade-settings .grade-rule-section .grade-fields { grid-template-columns: 1fr; }
 #aegis-grade-settings select, #aegis-grade-settings input[type="text"] { width: 100%; min-width: 0; background: #20232b; color: #eef0f5; border: 1px solid #555c68; border-radius: 5px; padding: 7px; }
 #aegis-grade-settings input[type="color"] { width: 100%; height: 32px; padding: 2px; background: #20232b; border: 1px solid #555c68; border-radius: 5px; }
 #aegis-grade-settings .grade-pills, #aegis-grade-settings .grade-actions, #aegis-grade-settings .grade-results { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
@@ -2476,8 +2480,8 @@ body.aegis-scrolling div[id^="item-"][data-aegis-item-hash]:hover {
 
 .aegis-fab:hover {
   transform: scale(1.1) rotate(5deg) !important;
-  border-color: var(--aegis-glow-color, rgba(255, 179, 0, 0.8)) !important;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5), 0 0 15px var(--aegis-glow-color, rgba(255, 179, 0, 0.35)) !important;
+  border-color: rgba(255, 179, 0, 0.8) !important;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5), 0 0 15px rgba(255, 179, 0, 0.35) !important;
 }
 
 .aegis-fab svg {
