@@ -2,7 +2,8 @@ import { computeGrade, defaultGradeSettings, normalizeGradeSettings, evaluateCus
 import { setGradeColors, applyGradeColors, applyGradeGlow, displayGrade, rollGradeDisplay } from './grade-colors';
 import { scoreWeapon } from './scorer';
 import { WishlistDatabase, ScoringResult, AegisSheetDatabase, AegisSheetWeapon, TooltipPerk, AegisArmorSet, SheetPerksGroup, AegisShoppingDatabase, AegisShoppingItem, DualSheetInfo, ManifestWeapon, AegisChaseItem, WeaponEvaluationPayload } from './types';
-import { showTooltip, hideTooltip, extractRecommendedMasterwork, renderViabilityMatrix, formatFormattedNotes, renderShoppingBannerHtml } from './tooltip';
+import { showTooltip, hideTooltip, extractRecommendedMasterwork, getRecommendedMasterworks, renderViabilityMatrix, formatFormattedNotes, renderShoppingBannerHtml } from './tooltip';
+import { masterworkMatches } from './masterwork';
 import { initLanguage, t, getCurrentLanguage, getLocalizedElement, getLocalizedFrame, getLocalizedCategory, getLocalizedArchetypeLabel, getLocalizedRole } from './i18n';
 import { updateLocalizedRegistries, getLocalizedPerkName, getLocalizedWeaponName, getLocalizedStatName, getPerkIcon, getPerkHashFromEnglish, getEnglishWeaponNameFromHash, getEnglishPerkNameFromHash } from './hash-translator';
 import { applyEvaluationLocale, EvaluationLocaleBundle, getOriginalEvaluationText, getLocalizedSource, getLocalizedSourceText } from './evaluation-i18n';
@@ -1137,7 +1138,8 @@ function scoreSheetWeapon(
   sheetWeapon: AegisSheetWeapon,
   perksMap: Record<number, { name: string; icon: string }>,
   activeHashes: number[],
-  context: 'pve' | 'pvp' = aegisMode === 'pvp' ? 'pvp' : 'pve'
+  context: 'pve' | 'pvp' = aegisMode === 'pvp' ? 'pvp' : 'pve',
+  equippedMasterwork = ''
 ): {
   result: ScoringResult;
   potentialGrade: string;
@@ -1189,8 +1191,10 @@ function scoreSheetWeapon(
   const statuses: Slots = [p1Status, p2Status, magStatus, barrelStatus, originStatus];
   let custom: ReturnType<typeof evaluateCustomRoll> | null = null;
   if (gradeSettings.rulesEnabled && scoringSource !== 'lightgg') {
-    const key = `${context}:${statuses.join(',')}`;
-    custom = customGradeCache.get(key) || evaluateCustomRoll(statuses, context === 'pvp' && gradeSettings.separatePvp ? gradeSettings.pvp : gradeSettings.pve);
+    const rules = context === 'pvp' && gradeSettings.separatePvp ? gradeSettings.pvp : gradeSettings.pve;
+    const masterworkMatched = !Object.values(rules).some(rule => rule.enabled && rule.masterwork) || masterworkMatches(getRecommendedMasterworks(sheetWeapon), equippedMasterwork);
+    const key = `${context}:${statuses.join(',')}:${masterworkMatched}`;
+    custom = customGradeCache.get(key) || evaluateCustomRoll(statuses, rules, masterworkMatched);
     customGradeCache.set(key, custom);
   }
   const currentGrade = custom?.grade ?? computeGrade(...statuses, false);
@@ -1605,7 +1609,7 @@ function getLiveEvaluatedCopyInfo(copy: PlayerOwnedItemInfo, sheetWFallback?: Ae
     const activeHashes = data.activeHashes;
     const sheetW = findAegisWeapon(copy.name, perksMap, activeHashes, undefined, copy.hash) || sheetWFallback;
     if (sheetW) {
-      const score = scoreSheetWeapon(sheetW, perksMap, activeHashes);
+      const score = scoreSheetWeapon(sheetW, perksMap, activeHashes, undefined, data.equippedMasterwork || '');
       return {
         grade: score.result.grade || copy.grade,
         potentialGrade: score.potentialGrade,
@@ -5667,7 +5671,7 @@ function processElement(el: HTMLElement) {
         }
 
         if (useSheet) {
-          const sheetScore = scoreSheetWeapon(sheetWeapon!, perksMap, activeHashes);
+          const sheetScore = scoreSheetWeapon(sheetWeapon!, perksMap, activeHashes, undefined, equippedMasterwork);
           aegisResult = sheetScore.result;
           sheetPerks = sheetScore.sheetPerks;
           aegisResult.upgradeAdvice = sheetScore.upgradeAdvice;
@@ -5714,7 +5718,7 @@ function processElement(el: HTMLElement) {
 
       let pveGradeRaw = '';
       if (sheetWeaponPvE) {
-        const scorePvE = scoreSheetWeapon(sheetWeaponPvE, perksMap, activeHashes, 'pve');
+        const scorePvE = scoreSheetWeapon(sheetWeaponPvE, perksMap, activeHashes, 'pve', equippedMasterwork);
         pveResult = scorePvE.result;
         sheetPerksPvE = scorePvE.sheetPerks;
         pveResult.potentialGrade = scorePvE.potentialGrade;
@@ -5760,7 +5764,7 @@ function processElement(el: HTMLElement) {
 
       let pvpGradeRaw = '';
       if (sheetWeaponPvP) {
-        const scorePvP = scoreSheetWeapon(sheetWeaponPvP, perksMap, activeHashes, 'pvp');
+        const scorePvP = scoreSheetWeapon(sheetWeaponPvP, perksMap, activeHashes, 'pvp', equippedMasterwork);
         pvpResult = scorePvP.result;
         sheetPerksPvP = scorePvP.sheetPerks;
         pvpResult.potentialGrade = scorePvP.potentialGrade;
@@ -5841,7 +5845,7 @@ function processElement(el: HTMLElement) {
       }
 
       if (useSheet) {
-        const sheetScore = scoreSheetWeapon(sheetWeapon!, perksMap, activeHashes);
+        const sheetScore = scoreSheetWeapon(sheetWeapon!, perksMap, activeHashes, undefined, equippedMasterwork);
         result = sheetScore.result;
         sheetPerks = sheetScore.sheetPerks;
         result.upgradeAdvice = sheetScore.upgradeAdvice;

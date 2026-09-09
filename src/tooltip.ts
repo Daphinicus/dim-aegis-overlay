@@ -4,6 +4,7 @@ import { getOriginalEvaluationText, getLocalizedSource } from './evaluation-i18n
 import { getLocalizedPerkName, getPerkIcon } from './hash-translator';
 import { renderLocalizedName, renderLocalizedWeaponReference } from './localized-display';
 import { safeSetInnerHTML } from './dom-utils';
+import { masterworkMatches } from './masterwork';
 
 
 
@@ -144,12 +145,21 @@ function positionTooltip(target: HTMLElement, tooltip: HTMLElement) {
  */
 export function extractRecommendedMasterwork(notes: string): string | null {
   if (!notes) return null;
-  const match = notes.match(/\b(range|reload|handling|stability|velocity|blast\s+radius|draw\s+time|impact)(?:\s*[\/\\]\s*(?:range|reload|handling|stability|velocity|blast\s+radius|draw\s+time|impact))?\s+(mw|masterwork)\b/i);
+  const stat = 'range|reload(?:\\s+speed)?|handling|stability|velocity|projectile\\s+speed|blast\\s+radius|draw\\s+time|charge\\s+time|swing\\s+speed|impact';
+  const match = notes.match(new RegExp(`\\b(${stat})(?:\\s*[\\/\\\\]\\s*(?:${stat}))*\\s+(mw|masterwork)\\b`, 'i'));
   if (match) {
     const rawVal = match[0].split(/\s+(?:mw|masterwork)/i)[0].trim();
     return rawVal.split(/[\/\\]/).map(w => w.trim().charAt(0).toUpperCase() + w.trim().slice(1).toLowerCase()).join('/');
   }
   return null;
+}
+
+export function getRecommendedMasterworks(sheetWeapon: AegisSheetWeapon): string[] {
+  const raw = sheetWeapon.mw?.trim() || '';
+  const explicit = /^(?:any|none|n\/a|-|—)$/i.test(raw) ? [] : tokenizeRecommendationPerks(raw);
+  if (explicit.length) return explicit;
+  const notes = getOriginalEvaluationText(sheetWeapon, 'notes') + ' ' + getOriginalEvaluationText(sheetWeapon, 'description');
+  return tokenizeRecommendationPerks(extractRecommendedMasterwork(notes));
 }
 
 /**
@@ -178,19 +188,10 @@ function renderSheetWeaponSection(
   aegisPerkOrder: 'sheet' | 'owned'
 ): { metaHtml: string; bodyHtml: string; recMod?: string } {
   // Extract recommended Masterworks & Mod
-  const recMWs: string[] = [];
-  if (sheetWeapon?.mw) {
-    recMWs.push(...tokenizeRecommendationPerks(sheetWeapon.mw));
-  }
+  const recMWs = getRecommendedMasterworks(sheetWeapon);
   const notesText = getOriginalEvaluationText(sheetWeapon, 'notes')
     + ' '
     + getOriginalEvaluationText(sheetWeapon, 'description');
-  if (recMWs.length === 0) {
-    const foundMW = extractRecommendedMasterwork(notesText);
-    if (foundMW) {
-      recMWs.push(...tokenizeRecommendationPerks(foundMW));
-    }
-  }
   const recMod = extractRecommendedMod(notesText) || undefined;
 
   // Assemble sheet metadata
@@ -320,12 +321,7 @@ function renderSheetWeaponSection(
   if (recMWs.length > 0) {
     const eqMW = (equippedMasterwork || '').toLowerCase();
     const badges = recMWs.map(mw => {
-      const mwLower = mw.toLowerCase();
-      const isMatch = eqMW && (
-        mwLower === eqMW ||
-        eqMW.startsWith(mwLower) ||
-        mwLower.startsWith(eqMW)
-      );
+      const isMatch = masterworkMatches([mw], eqMW);
       const icon = isMatch ? '✓' : '☆';
       const matchStyle = isMatch
         ? 'display: inline-block !important; background: linear-gradient(135deg, rgba(255, 215, 0, 0.38), rgba(255, 140, 0, 0.28)) !important; border: 1.5px solid #ffd700 !important; color: #ffffff !important; text-shadow: 0 0 6px rgba(255, 215, 0, 0.8) !important; box-shadow: 0 0 10px rgba(255, 191, 0, 0.65) !important;'
