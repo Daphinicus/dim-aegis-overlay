@@ -5334,7 +5334,13 @@ body.aegis-scrolling div[id^="item-"][data-aegis-item-hash]:hover {
   flex-direction: column !important;
 }
 
-.aegis-badge.aegis-style-footer {
+.item-drag-container > .item:has(> .aegis-style-footer) > .item-img {
+  /* Match DIM's loaded tile height, including the one-pixel border overlap. */
+  max-height: calc(1.2 * var(--item-size) + 3px);
+}
+
+.aegis-badge.aegis-style-footer,
+.aegis-badge.aegis-style-footer.aegis-badge-wide {
   order: 1 !important;
   position: relative !important;
   inset: auto !important;
