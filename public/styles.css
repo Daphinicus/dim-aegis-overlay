@@ -185,15 +185,18 @@
   position: absolute !important;
   top: -6px !important;
   right: -6px !important;
-  font-size: 0 !important;
-  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M6 1 11 10.5H1Z' fill='%2322c55e' stroke='white' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat !important;
-  width: 12px !important;
-  height: 12px !important;
-  display: block !important;
-  border: 0 !important;
-  box-shadow: none !important;
-  text-shadow: none !important;
-  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.75)) !important;
+  font-size: 5.5px !important;
+  background: linear-gradient(135deg, #4ade80, #16a34a) !important;
+  color: #ffffff !important;
+  width: 10px !important;
+  height: 10px !important;
+  border-radius: 50% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border: 1px solid #ffffff !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.75) !important;
+  font-family: sans-serif !important;
   z-index: 110 !important;
   line-height: 1 !important;
   pointer-events: none !important;
@@ -5462,6 +5465,14 @@ body.aegis-scrolling div[id^="item-"][data-aegis-item-hash]:hover {
 }
 
 .aegis-badge.aegis-style-footer .aegis-badge-upgrade-arrow {
+  font-size: 0 !important;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M6 1 11 10.5H1Z' fill='%2322c55e' stroke='white' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat !important;
+  display: block !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.75)) !important;
+  border-radius: 0 !important;
   position: static !important;
   flex: 0 0 9px !important;
   width: 9px !important;
