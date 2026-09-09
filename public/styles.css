@@ -210,7 +210,7 @@
 #aegis-grade-settings .grade-editor-title { padding-right: 24px; }
 #aegis-grade-settings .grade-editor-header .changelog-close-x { top: 0; right: 0; }
 #aegis-grade-settings .grade-editor-body { display: flex; flex-direction: column; gap: 4px; }
-.popup-header:has(.grade-modal[open]) .aegis-help-tooltip { visibility: hidden; opacity: 0; pointer-events: none; }
+.popup-header:has(.grade-modal[open]) .aegis-help-tooltip { visibility: hidden; opacity: 0; pointer-events: none; transition: none; }
 .grade-guide-heading { display: flex; align-items: center; gap: 6px; }
 .grade-guide-heading .tooltip-section-header { flex: 1; }
 .grade-guide-heading button { flex-shrink: 0; }
