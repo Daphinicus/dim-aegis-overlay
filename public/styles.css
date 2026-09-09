@@ -1689,8 +1689,7 @@ body.aegis-scrolling div[id^="item-"][data-aegis-item-hash]:hover {
 .aegis-gold-glow::after {
   content: '';
   position: absolute;
-  /* Preserve DIM's own outer border indicators. */
-  inset: 1px;
+  inset: 0;
   z-index: 120;
   pointer-events: none;
   box-sizing: border-box;
