@@ -1,5 +1,5 @@
 import { computeGrade, defaultGradeSettings, normalizeGradeSettings, evaluateCustomRoll, gradeValue as getGradeValue, Slots } from './grading';
-import { setGradeColors, applyGradeColors, applyGradeGlow, displayGrade, rollGradeDisplay } from './grade-colors';
+import { setGradeColors, setTwoTierColors, setMaxTierGlow, applyGradeColors, applyGradeGlow, displayGrade, rollGradeDisplay } from './grade-colors';
 import { scoreWeapon } from './scorer';
 import { WishlistDatabase, ScoringResult, AegisSheetDatabase, AegisSheetWeapon, TooltipPerk, AegisArmorSet, SheetPerksGroup, AegisShoppingDatabase, AegisShoppingItem, DualSheetInfo, ManifestWeapon, AegisChaseItem, WeaponEvaluationPayload } from './types';
 import { showTooltip, hideTooltip, extractRecommendedMasterwork, getRecommendedMasterworks, renderViabilityMatrix, formatFormattedNotes, renderShoppingBannerHtml } from './tooltip';
@@ -193,6 +193,8 @@ let aegisLayoutSide = 'side';
 let aegisPerkOrder: 'sheet' | 'owned' = 'sheet';
 let aegisDbMode = 'both';
 let aegisTwoTier = false;
+let aegisTwoTierColors = false;
+let aegisMaxTierGlow = false;
 let aegisBadgePosition: 'bottom-left' | 'top-left' | 'top-right' | 'bottom-right' = 'bottom-left';
 let aegisBadgeStyle: 'classic' | 'pill' | 'notch' | 'footer' = 'classic';
 let aegisBadgeScale = 100;
@@ -3687,7 +3689,7 @@ function showWinnowerWelcomeModal() {
   closeBtn?.addEventListener('click', dismissModal);
 }
 
-chrome.storage.local.get(['wishlistData', 'enhancedToNormal', 'scoringSource', 'lightggData', 'aegisSheetDb', 'aegisSheetDbPvE', 'aegisSheetDbPvP', 'aegisShoppingDb', 'aegisShoppingDbPvE', 'aegisShoppingDbPvP', 'perkRegistry', 'aegisLayoutSide', 'aegisPerkOrder', 'aegisDbMode', 'aegisMode', 'aegisTwoTier', 'aegisBadgePosition', 'aegisBadgeStyle', 'aegisBadgeScale', 'aegisFadeHover', 'aegisGradeDisplayMode', 'aegisHoverEnabled', 'aegisCompactPerksMatrix', 'aegisInlineHeader', 'aegisPopupSummaryMode', 'aegisAutoMaxHeight', 'aegisTooltipWidthMode', 'aegisTooltipWidth', 'aegisArmorSource', 'aegisCompletedWeapons', 'aegisChaseList', 'aegisWelcomeDismissed', 'aegisLanguage', 'aegisGradeSettings', 'aegisGradeColors'], (res) => {
+chrome.storage.local.get(['wishlistData', 'enhancedToNormal', 'scoringSource', 'lightggData', 'aegisSheetDb', 'aegisSheetDbPvE', 'aegisSheetDbPvP', 'aegisShoppingDb', 'aegisShoppingDbPvE', 'aegisShoppingDbPvP', 'perkRegistry', 'aegisLayoutSide', 'aegisPerkOrder', 'aegisDbMode', 'aegisMode', 'aegisTwoTier', 'aegisTwoTierColors', 'aegisMaxTierGlow', 'aegisBadgePosition', 'aegisBadgeStyle', 'aegisBadgeScale', 'aegisFadeHover', 'aegisGradeDisplayMode', 'aegisHoverEnabled', 'aegisCompactPerksMatrix', 'aegisInlineHeader', 'aegisPopupSummaryMode', 'aegisAutoMaxHeight', 'aegisTooltipWidthMode', 'aegisTooltipWidth', 'aegisArmorSource', 'aegisCompletedWeapons', 'aegisChaseList', 'aegisWelcomeDismissed', 'aegisLanguage', 'aegisGradeSettings', 'aegisGradeColors'], (res) => {
   initLanguage(res.aegisLanguage);
   storedGradeSettings = res.aegisGradeSettings;
   gradePalette = res.aegisGradeColors;
@@ -3704,6 +3706,10 @@ chrome.storage.local.get(['wishlistData', 'enhancedToNormal', 'scoringSource', '
   aegisDbMode = res.aegisDbMode || 'both';
   aegisMode = res.aegisMode || 'pve';
   aegisTwoTier = res.aegisTwoTier || false;
+  aegisTwoTierColors = res.aegisTwoTierColors === true;
+  aegisMaxTierGlow = res.aegisMaxTierGlow === true;
+  setMaxTierGlow(aegisTwoTier && aegisMaxTierGlow);
+  setTwoTierColors(aegisTwoTier && aegisTwoTierColors);
   aegisBadgePosition = res.aegisBadgePosition || 'bottom-left';
   aegisBadgeStyle = (res.aegisBadgeStyle === 'pill' || res.aegisBadgeStyle === 'notch' || res.aegisBadgeStyle === 'footer') ? res.aegisBadgeStyle : 'classic';
   aegisBadgeScale = typeof res.aegisBadgeScale === 'number' ? res.aegisBadgeScale : 100;
@@ -3751,15 +3757,25 @@ chrome.storage.local.get(['wishlistData', 'enhancedToNormal', 'scoringSource', '
 chrome.storage.onChanged.addListener((changes, namespace) => {
   if (namespace === 'local') {
     let changed = false;
-    if (changes.aegisGradeColors) {
-      gradePalette = changes.aegisGradeColors.newValue;
+    if (changes.aegisTwoTierColors) {
+      aegisTwoTierColors = changes.aegisTwoTierColors.newValue === true;
+      setTwoTierColors(aegisTwoTier && aegisTwoTierColors);
+    }
+    if (changes.aegisMaxTierGlow) {
+      aegisMaxTierGlow = changes.aegisMaxTierGlow.newValue === true;
+      setMaxTierGlow(aegisTwoTier && aegisMaxTierGlow);
+    }
+    if (changes.aegisGradeColors || changes.aegisTwoTierColors || changes.aegisMaxTierGlow) {
+      if (changes.aegisGradeColors) gradePalette = changes.aegisGradeColors.newValue;
       gradeSettings = normalizeGradeSettings(storedGradeSettings, gradePalette);
       setGradeColors(gradeSettings);
       if (!paletteFrame) paletteFrame = requestAnimationFrame(() => {
         paletteFrame = 0;
         applyGradeColors(document.body);
-        document.querySelectorAll<HTMLElement>('.aegis-gold-glow').forEach(tile => {
-          applyGradeGlow(tile, tile.querySelector('.aegis-badge')?.textContent || '');
+        if (!IS_WINNOWER_HOST) document.querySelectorAll<HTMLElement>('.aegis-badge').forEach(badge => {
+          const halves = badge.querySelectorAll('.aegis-split-half');
+          const grade = halves.length ? Array.from(halves, half => half.textContent || '').join('|') : badge.textContent || '';
+          if (badge.parentElement) applyGradeGlow(badge.parentElement, grade);
         });
       });
     }
@@ -3867,6 +3883,8 @@ chrome.storage.onChanged.addListener((changes, namespace) => {
     }
     if (changes.aegisTwoTier) {
       aegisTwoTier = changes.aegisTwoTier.newValue || false;
+      setTwoTierColors(aegisTwoTier && aegisTwoTierColors);
+      setMaxTierGlow(aegisTwoTier && aegisMaxTierGlow);
       changed = true;
     }
     if (changes.aegisBadgePosition) {
@@ -5247,7 +5265,6 @@ function injectBadge(el: HTMLElement, result: ScoringResult) {
 
   // S-tier gold glow is DIM-only; Winnower styles its chip in its own CSS.
   if (!IS_WINNOWER_HOST) {
-    badgeTarget.classList.toggle('aegis-gold-glow', result.grade?.startsWith('S') ?? false);
     applyGradeGlow(badgeTarget, result.grade || '');
   }
 

@@ -44,6 +44,8 @@ export type AegisMode = 'pve' | 'pvp' | 'both';
  * Storage schema for chrome.storage.local
  */
 export interface LocalStorageSchema {
+  aegisTwoTierColors?: boolean;
+  aegisMaxTierGlow?: boolean;
   aegisGradeSettings?: GradeSettings;
   aegisGradeColors?: Pick<GradeSettings, 'version' | 'colorsEnabled' | 'colors'>;
   wishlistUrl?: string;

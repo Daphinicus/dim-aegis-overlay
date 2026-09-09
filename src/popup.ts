@@ -1,6 +1,6 @@
 import { initGradeSettings } from './grade-settings';
 import { normalizeGradeSettings } from './grading';
-import { setGradeColors, applyGradeColors } from './grade-colors';
+import { setGradeColors, applyGradeColors, setTwoTierColors } from './grade-colors';
 import { initLanguage, t } from './i18n';
 import { LocalStorageSchema, AegisMode } from './types';
 
@@ -63,6 +63,8 @@ document.addEventListener('DOMContentLoaded', () => {
         'aegisDbMode',
         'aegisMode',
         'aegisTwoTier',
+        'aegisTwoTierColors',
+        'aegisMaxTierGlow',
         'aegisBadgePosition',
         'aegisBadgeStyle',
         'aegisBadgeScale',
@@ -84,6 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
       (res: any) => {
         localizePopup(res.aegisLanguage);
         setGradeColors(normalizeGradeSettings(res.aegisGradeSettings, res.aegisGradeColors));
+        setTwoTierColors(res.aegisTwoTier === true && res.aegisTwoTierColors === true);
 
         // Auto-show Changelog Modal once for new version updates
         const currentVer = chrome.runtime.getManifest().version;
@@ -256,6 +259,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // Set Aegis Two-Tier segmented control
+        const twoTierColorsGroup = document.getElementById('aegis-two-tier-options');
+        if (twoTierColorsGroup) twoTierColorsGroup.hidden = res.aegisTwoTier !== true;
+        const twoTierColors = document.getElementById('aegis-two-tier-colors') as HTMLInputElement | null;
+        if (twoTierColors) twoTierColors.checked = res.aegisTwoTierColors === true;
+        const maxTierGlow = document.getElementById('aegis-max-tier-glow') as HTMLInputElement | null;
+        if (maxTierGlow) maxTierGlow.checked = res.aegisMaxTierGlow === true;
         const twoTierVal = res.aegisTwoTier ? 'true' : 'false';
         const twoTierSegmented = document.getElementById('aegis-two-tier-segmented');
         if (twoTierSegmented) {
@@ -320,12 +329,12 @@ document.addEventListener('DOMContentLoaded', () => {
           const isTwoTier = res.aegisTwoTier === true;
           if (aegisModeVal === 'both') {
             mockBadge.classList.add('aegis-badge-split', 'aegis-badge-wide');
-            const pveStr = isTwoTier ? 'SS+' : 'S+';
-            const pvpStr = isTwoTier ? 'AA' : 'A';
+            const pveStr = isTwoTier ? (res.aegisTwoTierColors ? 'BS+' : 'SS+') : 'S+';
+            const pvpStr = isTwoTier ? (res.aegisTwoTierColors ? 'FA' : 'AA') : 'A';
             mockBadge.innerHTML = `<span class="aegis-split-half aegis-split-left aegis-badge-s">${pveStr}</span><span class="aegis-split-half aegis-split-right aegis-badge-a">${pvpStr}</span>`;
           } else {
             mockBadge.classList.remove('aegis-badge-split');
-            mockBadge.textContent = isTwoTier ? 'SS+' : 'S+';
+            mockBadge.textContent = isTwoTier ? (res.aegisTwoTierColors ? 'FA' : 'SS+') : 'S+';
           }
           if (badgeStyleVal === 'footer') {
             const labels = aegisModeVal === 'both' ? mockBadge.querySelectorAll('.aegis-split-half') : [mockBadge];
@@ -806,6 +815,16 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   }
+
+  const twoTierColors = document.getElementById('aegis-two-tier-colors') as HTMLInputElement | null;
+  twoTierColors?.addEventListener('change', () => {
+    chrome.storage.local.set({ aegisTwoTierColors: twoTierColors.checked }, updateUI);
+  });
+
+  const maxTierGlow = document.getElementById('aegis-max-tier-glow') as HTMLInputElement | null;
+  maxTierGlow?.addEventListener('change', () => {
+    chrome.storage.local.set({ aegisMaxTierGlow: maxTierGlow.checked }, updateUI);
+  });
 
   // Handle Badge Style segmented control click
   const badgeStyleSegmented = document.getElementById('aegis-badge-style-segmented');
