@@ -60,7 +60,8 @@ export function normalizeGradeSettings(value: unknown): GradeSettings {
 }
 
 export function gradeValue(grade: string): number {
-  return ({ 'S+': 105, S: 100, 'A+': 90, A: 85, 'B+': 75, B: 70, 'C+': 60, C: 55, D: 45, PVP: 40, E: 30, F: 10 } as Record<string, number>)[grade.trim().toUpperCase()] || 0;
+  const normalized = grade.trim().toUpperCase();
+  return ({ 'S+': 105, S: 100, 'A+': 90, A: 85, 'B+': 75, B: 70, 'C+': 60, C: 55, D: 45, PVP: 40, E: 30, F: 10 } as Record<string, number>)[normalized] || (normalized.startsWith('S') ? 100 : 0);
 }
 
 export function evaluateRules(slots: Slots, rules: Rules): Grade {
