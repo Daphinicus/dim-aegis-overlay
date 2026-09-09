@@ -195,7 +195,6 @@ function renderSheetWeaponSection(
 
   // Assemble sheet metadata
   let sheetMetaHtml = '';
-  if (result.customGrading) tagsHtml += '<span class="aegis-tooltip-tag">Custom perk grading</span>';
   const tierLetter = sheetWeapon.tier ? sheetWeapon.tier.charAt(0).toLowerCase() : '';
   const tierClass = `aegis-tier-${tierLetter}`;
   const rankText = sheetWeapon.rank ? t('rank', { rank: sheetWeapon.rank }) : '';
@@ -345,6 +344,7 @@ function renderSheetWeaponSection(
     `;
   }
 
+  if (result.customGrading) tagsHtml += '<span class="aegis-tooltip-tag">Custom perk grading</span>';
   let sheetBodyHtml = '';
   if (sheetWeapon.notes || sheetWeapon.description || perkBreakdownBlock || sheetWeapon.exoticViability) {
     const sectionTitle = mode === 'pvp' ? t('finnaldPvpMetaAnalysis') : t('aegisMetaAnalysis');
