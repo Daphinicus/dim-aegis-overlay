@@ -203,7 +203,6 @@
 }
 
 /* Badge Grade Gradients */
-#aegis-grade-settings summary { cursor: pointer; font-weight: 600; }
 #aegis-grade-settings .grade-modal { border: 0; padding: 16px; background: transparent; color: #d1d1d6; width: 100%; max-width: 420px; max-height: 100%; margin: auto; }
 #aegis-grade-settings .grade-modal::backdrop { background: rgba(15, 17, 23, 0.82); backdrop-filter: blur(8px); }
 #aegis-grade-settings .grade-modal .changelog-modal-card { max-height: calc(100dvh - 32px); }
@@ -218,13 +217,17 @@
 .popup-header .header-actions { flex-shrink: 0; gap: 2px; }
 #aegis-grade-settings * { box-sizing: border-box; }
 #aegis-grade-settings .description { color: #aeb0ba; }
-#aegis-grade-settings [data-color-status]:empty { display: none; }
-#aegis-grade-settings h3 { font-size: 13px; }
+#aegis-grade-settings [data-color-status]:empty, #aegis-grade-settings [data-status]:empty, #aegis-grade-settings [data-warning]:empty { display: none; }
 #aegis-grade-settings label { display: flex; flex-direction: column; gap: 5px; min-width: 0; font-size: 12px; }
 #aegis-grade-settings .grade-check { flex-direction: row; align-items: center; min-height: 32px; }
 #aegis-grade-settings input[type="checkbox"] { width: auto; accent-color: #ffd700; }
-#aegis-grade-settings .grade-fields, #aegis-grade-settings .grade-color-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin: 12px 0; }
-#aegis-grade-settings .grade-rule-section .grade-fields { grid-template-columns: 1fr; }
+#aegis-grade-settings .grade-color-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin: 12px 0; }
+#aegis-grade-settings .grade-profile-row { display: flex; align-items: center; gap: 12px; }
+#aegis-grade-settings .grade-profile-row label { flex: 1; white-space: nowrap; }
+#aegis-grade-settings .grade-profile-row select { width: auto; }
+#aegis-grade-settings .grade-rule-fields { display: grid; gap: 10px; }
+#aegis-grade-settings .grade-rule-select { display: grid; grid-template-columns: 76px minmax(0, 1fr); align-items: center; gap: 8px; }
+#aegis-grade-settings .grade-rule-checks { display: flex; justify-content: space-between; gap: 8px; }
 #aegis-grade-settings select, #aegis-grade-settings input[type="text"] { width: 100%; min-width: 0; background: #20232b; color: #eef0f5; border: 1px solid #555c68; border-radius: 5px; padding: 7px; }
 #aegis-grade-settings .grade-color-preview { min-height: 32px; border: 1px solid #555c68; border-radius: 5px; }
 #aegis-grade-settings .grade-color-sliders { display: grid; gap: 12px; }
@@ -237,21 +240,17 @@
 #aegis-grade-settings input[data-hsv]::-moz-range-thumb { width: 16px; height: 20px; background: #fff; border: 2px solid #20232b; border-radius: 5px; }
 #aegis-grade-settings input[data-hsv]::-webkit-slider-thumb { appearance: none; width: 20px; height: 24px; background: #fff; border: 2px solid #20232b; border-radius: 5px; }
 #aegis-grade-settings input[data-hsv]:focus-visible { outline: 2px solid #ffd700; outline-offset: 3px; }
-#aegis-grade-settings .grade-pills, #aegis-grade-settings .grade-actions, #aegis-grade-settings .grade-results { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
+#aegis-grade-settings .grade-pills, #aegis-grade-settings .grade-actions { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
 #aegis-grade-settings .grade-pills { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); }
 #aegis-grade-settings .grade-color-actions { flex-wrap: nowrap; }
 #aegis-grade-settings .grade-color-actions button { flex: 1; min-width: 0; white-space: nowrap; }
 #aegis-grade-settings .grade-pills button { background: #292d37; color: #fff; border: 1px solid #555c68; border-radius: 4px; padding: 2px 6px; min-width: 0; height: 24px; font-size: 11px; font-weight: 700; text-shadow: 0 1px 1px rgba(0, 0, 0, 0.5); cursor: pointer; }
 #aegis-grade-settings .grade-pills button[aria-pressed="true"] { outline: 2px solid #ffd700; outline-offset: 1px; }
-#aegis-grade-settings #grade-colors-modal [data-grade] { position: relative; }
-#aegis-grade-settings [data-custom-color]::after { content: ''; position: absolute; top: 2px; right: 2px; width: 6px; height: 6px; box-sizing: border-box; border: 1px solid #20232b; border-radius: 50%; background: #fff; pointer-events: none; }
-#aegis-grade-settings .grade-rule-section, #aegis-grade-settings .grade-example { border-top: 1px solid #414652; margin-top: 14px; padding-top: 14px; }
+#aegis-grade-settings [data-grade] { position: relative; }
+#aegis-grade-settings [data-custom-color]::after, #aegis-grade-settings [data-custom-rule]::after { content: ''; position: absolute; top: 2px; right: 2px; width: 6px; height: 6px; box-sizing: border-box; border: 1px solid #20232b; border-radius: 50%; background: #fff; pointer-events: none; }
 #aegis-grade-settings .grade-warning { color: #ffcb7b; font-size: 12px; }
-#aegis-grade-settings .grade-results { align-items: center; font-size: 12px; }
-#aegis-grade-settings .grade-results p { flex-basis: 100%; }
 #aegis-grade-settings [hidden] { display: none !important; }
 #aegis-grade-settings button:disabled, #aegis-grade-settings input:disabled, #aegis-grade-settings select:disabled { opacity: .5; cursor: default; }
-@media (max-width: 380px) { #aegis-grade-settings .grade-fields { grid-template-columns: 1fr; } }
 
 .aegis-badge-s {
   background: linear-gradient(135deg, #ffd700, #ff8c00) !important; /* Gold */

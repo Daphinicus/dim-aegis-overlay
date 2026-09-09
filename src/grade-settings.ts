@@ -1,12 +1,11 @@
-import { GRADES, Grade, GradeRule, GradeSettings, Slots, defaultGradeSettings, defaultRules, normalizeGradeSettings, evaluateCustomRoll, computeGrade, unreachableGrades } from './grading';
+import { GRADES, Grade, GradeRule, GradeSettings, defaultGradeSettings, defaultRules, normalizeGradeSettings, unreachableGrades } from './grading';
 import { applyGradeColors, gradeGradient } from './grade-colors';
 import { safeSetInnerHTML } from './dom-utils';
 import { Hsv, hexToHsv, hsvToHex } from './color-picker';
 
 const swatches: Record<Grade, string> = { 'S+': '#ffd700', S: '#ffd700', 'A+': '#da70d6', A: '#da70d6', 'B+': '#00f2fe', B: '#00f2fe', C: '#bdc3c7', D: '#e67e22', E: '#7f8c8d', F: '#e74c3c' };
-const traitLabels: Record<GradeRule['traits'], string> = { both: 'Both main traits equipped', mixed: 'One equipped + other selectable', one: 'One main trait equipped', available: 'One equipped or one selectable' };
-const extraLabels: Record<GradeRule['extras'], string> = { none: 'No requirement', mag: 'Magazine equipped', barrel: 'Barrel equipped', either: 'Barrel or magazine equipped', both: 'Barrel and magazine equipped' };
-const slotLabels = ['Main trait 1', 'Main trait 2', 'Magazine', 'Barrel', 'Origin trait'];
+const traitLabels: Record<GradeRule['traits'], string> = { both: 'Both equipped', mixed: 'Equipped + selectable', one: 'One equipped', available: 'Equipped or selectable' };
+const extraLabels: Record<GradeRule['extras'], string> = { none: 'None', mag: 'Magazine', barrel: 'Barrel', either: 'Either', both: 'Both' };
 const defaultGuide: Record<Grade, string> = {
   'S+': 'Traits 1 & 2 + Mag + Barrel + Origin', S: 'Traits 1 & 2 + Magazine matched',
   'A+': 'Traits 1 & 2 + Barrel matched', A: 'Traits 1 & 2 both matched',
@@ -22,12 +21,9 @@ export function initGradeSettings() {
   let draft = defaultGradeSettings();
   let selected: Grade = 'S';
   let context: 'pve' | 'pvp' = 'pve';
-  let dirty = false;
-  let saving = false;
+  let ruleWrites = 0;
   let colorWrites = 0;
   let hsv: Hsv = [0, 100, 100];
-  let masterworkMatched = true;
-  const slots: Slots = ['active', 'active', 'active', 'missing', 'active'];
   const get = <T extends HTMLElement>(selector: string) => el.querySelector<T>(selector)!;
   const options = (labels: Record<string, string>) => Object.entries(labels).map(([value, label]) => `<option value="${value}">${label}</option>`).join('');
   safeSetInnerHTML(el, `
@@ -40,35 +36,23 @@ export function initGradeSettings() {
       </div>
       <div class="grade-color-sliders">${['Hue', 'Saturation', 'Brightness'].map((label, index) => `<div class="grade-color-slider"><input type="range" data-hsv="${index}" min="0" max="${index === 0 ? 360 : 100}" step="1" aria-label="${label}"><span data-hsv-value="${index}" aria-hidden="true"></span></div>`).join('')}</div>
       <div class="grade-actions grade-color-actions"><button type="button" class="btn btn-secondary" data-reset-color>Reset selected</button><button type="button" class="btn btn-secondary" data-reset-colors>Reset all</button></div>
-</div></div></dialog><dialog id="grade-rules-modal" class="grade-modal" aria-labelledby="grade-rules-modal-title"><div class="changelog-modal-card"><div class="changelog-modal-header"><h2 id="grade-rules-modal-title" class="changelog-title">Grading criteria</h2><button type="button" class="changelog-close-x" data-close aria-label="Close Grading criteria">&times;</button></div><div class="changelog-modal-body"><p class="description">Keep Aegis/Finnald recommendations and choose how perk matches translate into grades. Weapon tiers, exotic viability, wishlist and Light.gg grades keep their original rules.</p><div class="grade-pills" role="group" aria-label="Grade to edit">${GRADES.map(g => `<button type="button" class="aegis-badge-${g[0].toLowerCase()}" data-grade="${g}" data-aegis-grade="${g}" aria-pressed="false">${g}</button>`).join('')}</div>      <div class="grade-rule-section">
-        <label class="grade-check"><input type="checkbox" data-setting="separatePvp"> Use different rules for PvP</label>
-        <label data-context-label>Rules to edit <select data-context><option value="pve">PvE</option><option value="pvp">PvP</option></select></label>
-        <h3 data-rule-title></h3>
-        <p class="description" data-optional-grade>E is a weapon tier by default. Enable it below for perk grading.</p>
-        <div class="grade-fields" data-rule-fields>
-          <label>Main traits <select data-rule="traits">${options(traitLabels)}</select></label>
-          <label>Barrel / magazine <select data-rule="extras">${options(extraLabels)}</select></label>
-          <label class="grade-check"><input type="checkbox" data-rule="origin"> Origin trait equipped</label>
-          <label class="grade-check" title="Ignored when no masterwork is recommended"><input type="checkbox" data-rule="masterwork"> Recommended masterwork matched</label>
-          <label class="grade-check"><input type="checkbox" data-rule="enabled"> Enable this grade</label>
-        </div>
-        <p class="description" data-fallback>F is the fallback when no enabled rule matches.</p>
-        <p class="description">All requirements refer to recommended perks. Highest matching grade wins. Slots without a recommendation count as satisfied.</p>
-        <button type="button" class="btn btn-secondary" data-reset-rules>Reset rules for this profile</button>
-        <p class="grade-warning" data-warning role="status"></p>
+</div></div></dialog><dialog id="grade-rules-modal" class="grade-modal" aria-labelledby="grade-rules-modal-title"><div class="changelog-modal-card"><div class="changelog-modal-header"><h2 id="grade-rules-modal-title" class="changelog-title">Grading criteria</h2><button type="button" class="changelog-close-x" data-close aria-label="Close Grading criteria">&times;</button></div><div class="changelog-modal-body"><div class="grade-profile-row">
+        <label class="grade-check"><input type="checkbox" data-setting="separatePvp"> Separate PvP</label>
+        <select data-context aria-label="Profile to edit"><option value="pve">PvE</option><option value="pvp">PvP</option></select>
       </div>
-      <details class="grade-example" open>
-        <summary>Try an example roll</summary>
-        <div class="grade-fields">${slotLabels.map((label, index) => `<label>${label}<select data-slot="${index}"><option value="active">Equipped</option><option value="selectable">Selectable</option><option value="missing">Missing</option></select></label>`).join('')}</div>
-        <label class="grade-check"><input type="checkbox" data-masterwork-match checked> Recommended MW matched</label>
-        <div class="grade-results" aria-live="polite">
-          <span>Default <span class="aegis-popup-grade-badge" data-result="default"></span></span>
-          <span>Your rules <span class="aegis-popup-grade-badge" data-result="current"></span></span>
-          <span>After swaps <span class="aegis-popup-grade-badge" data-result="potential"></span></span>
-          <p class="description" data-reason></p>
+      <div class="grade-pills" role="group" aria-label="Grade to edit">${GRADES.map(g => `<button type="button" class="aegis-badge-${g[0].toLowerCase()}" data-grade="${g}" data-aegis-grade="${g}" aria-pressed="false">${g}</button>`).join('')}</div>
+      <div class="grade-rule-fields" data-rule-fields>
+        <label class="grade-rule-select" title="Match recommended main traits">Main traits <select data-rule="traits">${options(traitLabels)}</select></label>
+        <label class="grade-rule-select" title="Match the recommended barrel and magazine">Barrel / mag <select data-rule="extras">${options(extraLabels)}</select></label>
+        <div class="grade-rule-checks">
+          <label class="grade-check" title="Include this grade in scoring and the overview"><input type="checkbox" data-rule="enabled"> Enabled</label>
+          <label class="grade-check" title="Recommended origin trait equipped"><input type="checkbox" data-rule="origin"> Origin</label>
+          <label class="grade-check" title="Recommended masterwork matched; ignored when none is recommended"><input type="checkbox" data-rule="masterwork"> MW</label>
         </div>
-      </details>
-      <div class="grade-actions"><button type="button" class="btn btn-primary" data-apply>Apply grading rules</button><button type="button" class="btn btn-secondary" data-cancel>Cancel rule changes</button></div>
+      </div>
+      <p class="description" data-fallback>F is the fallback when no grade matches.</p>
+      <p class="grade-warning" data-warning role="status" title="Higher matching grades take priority"></p>
+      <div class="grade-actions grade-color-actions"><button type="button" class="btn btn-secondary" data-reset-rule title="Reset this grade in the selected profile">Reset selected</button><button type="button" class="btn btn-secondary" data-reset-rules title="Reset all criteria, including both PvE and PvP">Reset all</button></div>
       <p class="description" data-status role="status"></p>
 </div></div></dialog>
   `);
@@ -123,12 +107,14 @@ export function initGradeSettings() {
     return { ...structuredClone(settings), colors: settings.colorsEnabled ? { ...settings.colors } : {},
       ...(!settings.rulesEnabled ? { separatePvp: false, pve: defaultRules(), pvp: defaultRules() } : {}) };
   }
-  function setDirty() {
-    const rules = (settings: GradeSettings) => JSON.stringify([settings.separatePvp, settings.pve, settings.separatePvp ? settings.pvp : null]);
-    dirty = rules(draft) !== rules(editableSettings(saved));
-    get<HTMLButtonElement>('[data-apply]').disabled = saving || !dirty;
-    get<HTMLButtonElement>('[data-cancel]').disabled = saving || !dirty;
-    get('[data-status]').textContent = dirty ? 'Unsaved grading rules. Apply to update DIM.' : '';
+  function saveRules() {
+    ruleWrites++;
+    get('[data-status]').textContent = '';
+    chrome.storage.local.set({ aegisGradeSettings: normalizeGradeSettings(draft) }, () => {
+      ruleWrites--;
+      const error = chrome.runtime.lastError;
+      if (error) get('[data-status]').textContent = `Could not save rules: ${error.message}. Change a rule to retry.`;
+    });
   }
   function saveColors() {
     const palette = { version: 1, colorsEnabled: draft.colorsEnabled, colors: { ...draft.colors } };
@@ -139,21 +125,6 @@ export function initGradeSettings() {
       const error = chrome.runtime.lastError;
       if (error) get('[data-color-status]').textContent = `Could not save colors: ${error.message}. Adjust a color to retry.`;
     });
-  }
-  function preview() {
-    const defaultGrade = computeGrade(...slots, false);
-    const custom = draft.rulesEnabled ? evaluateCustomRoll(slots, profile(), masterworkMatched) : { grade: defaultGrade, potentialGrade: computeGrade(...slots, true) };
-    for (const [key, grade] of Object.entries({ default: defaultGrade, current: custom.grade, potential: custom.potentialGrade })) {
-      const badge = get(`[data-result="${key}"]`);
-      badge.className = `aegis-popup-grade-badge aegis-badge-${grade[0].toLowerCase()}`;
-      badge.textContent = grade;
-    }
-    const grade = custom.grade;
-    const r = draft.rulesEnabled && grade !== 'F' ? profile()[grade] : null;
-    get('[data-reason]').textContent = !draft.rulesEnabled ? 'Original grading rules.' : r
-      ? `${grade}: ${traitLabels[r.traits]}; ${extraLabels[r.extras].toLowerCase()}${r.origin ? '; origin trait equipped' : ''}${r.masterwork ? '; MW matched' : ''}.`
-      : 'No enabled rule matched.';
-    applyGradeColors(el, draft);
   }
   function renderColor(color: string) {
     for (const grade of GRADES) {
@@ -189,10 +160,8 @@ export function initGradeSettings() {
     renderColor(color);
     get<HTMLInputElement>('[data-hex]').value = color.toUpperCase();
     get<HTMLInputElement>('[data-hex]').setCustomValidity('');
-    get('[data-context-label]').hidden = !draft.separatePvp;
+    get('[data-context]').hidden = !draft.separatePvp;
     get<HTMLSelectElement>('[data-context]').value = context;
-    get('[data-rule-title]').textContent = `${selected} requirements · ${draft.separatePvp ? context.toUpperCase() : 'PvE + PvP'}`;
-    get('[data-optional-grade]').hidden = selected !== 'E';
     get('[data-rule-fields]').hidden = selected === 'F';
     get('[data-fallback]').hidden = selected !== 'F';
     el.querySelectorAll<HTMLInputElement | HTMLSelectElement>('[data-rule]').forEach(input => {
@@ -201,15 +170,26 @@ export function initGradeSettings() {
       if (input instanceof HTMLInputElement) input.checked = value as boolean;
       else input.value = value as string;
     });
+    const defaults = defaultRules();
+    const isCustom = (grade: Grade) => grade !== 'F' && JSON.stringify(profile()[grade]) !== JSON.stringify(defaults[grade]);
+    el.querySelectorAll<HTMLButtonElement>('#grade-rules-modal [data-grade]').forEach(button => {
+      const grade = button.dataset.grade as Grade;
+      const custom = isCustom(grade);
+      button.toggleAttribute('data-custom-rule', custom);
+      button.title = grade === 'F' ? 'Fallback grade' : custom ? 'Custom criteria' : 'Default criteria';
+      button.setAttribute('aria-label', `${grade}: ${button.title}`);
+    });
+    get<HTMLButtonElement>('[data-reset-rule]').disabled = !isCustom(selected);
+    get<HTMLButtonElement>('[data-reset-rules]').disabled = !draft.separatePvp &&
+      JSON.stringify(draft.pve) === JSON.stringify(defaults) && JSON.stringify(draft.pvp) === JSON.stringify(defaults);
     const unreachable = draft.rulesEnabled ? unreachableGrades(profile()) : [];
-    get('[data-warning]').textContent = unreachable.length ? `Unreachable grades: ${unreachable.join(', ')}. Higher rules always win first.` : '';
-    el.querySelectorAll<HTMLSelectElement>('[data-slot]').forEach(select => { select.value = slots[Number(select.dataset.slot)]; });
-    preview(); setDirty();
+    get('[data-warning]').textContent = unreachable.length ? `Unreachable: ${unreachable.join(', ')}.` : '';
+    applyGradeColors(el, draft);
   }
   get<HTMLInputElement>('[data-setting="separatePvp"]').addEventListener('change', event => {
     draft.separatePvp = (event.target as HTMLInputElement).checked;
     if (!draft.separatePvp) context = 'pve';
-    render();
+    render(); saveRules();
   });
   el.querySelectorAll<HTMLButtonElement>('[data-grade]').forEach(button => button.addEventListener('click', () => { selected = button.dataset.grade as Grade; render(); }));
   get<HTMLSelectElement>('[data-context]').addEventListener('change', event => { context = (event.target as HTMLSelectElement).value as 'pve' | 'pvp'; render(); });
@@ -219,7 +199,7 @@ export function initGradeSettings() {
     if (input instanceof HTMLInputElement) r[input.dataset.rule as 'origin' | 'masterwork' | 'enabled'] = input.checked;
     else if (input.dataset.rule === 'traits') r.traits = input.value as GradeRule['traits'];
     else r.extras = input.value as GradeRule['extras'];
-    render();
+    render(); saveRules();
   }));
   el.querySelectorAll<HTMLInputElement>('[data-hsv]').forEach(input => input.addEventListener('input', () => {
     hsv[Number(input.dataset.hsv)] = Number(input.value);
@@ -227,35 +207,25 @@ export function initGradeSettings() {
     draft.colors[selected] = color;
     get<HTMLInputElement>('[data-hex]').value = color.toUpperCase();
     get<HTMLInputElement>('[data-hex]').setCustomValidity('');
-    renderColor(color); preview(); saveColors();
+    renderColor(color); applyGradeColors(el, draft); saveColors();
   }));
   get<HTMLInputElement>('[data-hex]').addEventListener('input', event => {
     const input = event.target as HTMLInputElement;
     const valid = /^#[0-9a-f]{6}$/i.test(input.value);
     input.setCustomValidity(valid ? '' : 'Enter a six-digit hex color, such as #FFD700.');
-    if (valid) { draft.colors[selected] = input.value.toLowerCase(); hsv = hexToHsv(input.value, hsv); renderColor(input.value); preview(); saveColors(); }
+    if (valid) { draft.colors[selected] = input.value.toLowerCase(); hsv = hexToHsv(input.value, hsv); renderColor(input.value); applyGradeColors(el, draft); saveColors(); }
     else get('[data-color-status]').textContent = 'Enter a six-digit hex color. DIM keeps the last valid color.';
   });
   get('[data-reset-color]').addEventListener('click', () => { delete draft.colors[selected]; render(); saveColors(); });
   get('[data-reset-colors]').addEventListener('click', () => { draft.colors = {}; render(); saveColors(); });
-  get('[data-reset-rules]').addEventListener('click', () => { draft[context === 'pvp' && draft.separatePvp ? 'pvp' : 'pve'] = defaultRules(); render(); });
-  el.querySelectorAll<HTMLSelectElement>('[data-slot]').forEach(select => select.addEventListener('change', () => { slots[Number(select.dataset.slot)] = select.value as Slots[number]; preview(); }));
-  get<HTMLInputElement>('[data-masterwork-match]').addEventListener('change', event => { masterworkMatched = (event.target as HTMLInputElement).checked; preview(); });
-  get('[data-cancel]').addEventListener('click', () => { draft = { ...editableSettings(saved), colors: draft.colors, colorsEnabled: draft.colorsEnabled }; render(); });
-  get('[data-apply]').addEventListener('click', () => {
-    if (saving) return;
-    saving = true;
-    const submitted = normalizeGradeSettings(draft);
-    setDirty();
-    chrome.storage.local.set({ aegisGradeSettings: submitted }, () => {
-      saving = false;
-      const error = chrome.runtime.lastError;
-      if (error) { setDirty(); get('[data-status]').textContent = `Could not save: ${error.message}`; return; }
-      saved = { ...submitted, colors: saved.colors, colorsEnabled: saved.colorsEnabled };
-      renderGuide();
-      setDirty();
-      if (!dirty) get('[data-status]').textContent = 'Applied. DIM updates automatically.';
-    });
+  get('[data-reset-rule]').addEventListener('click', () => {
+    if (selected === 'F') return;
+    profile()[selected] = defaultRules()[selected];
+    render(); saveRules();
+  });
+  get('[data-reset-rules]').addEventListener('click', () => {
+    draft.pve = defaultRules(); draft.pvp = defaultRules(); draft.separatePvp = false; context = 'pve';
+    render(); saveRules();
   });
   chrome.storage.local.get(['aegisGradeSettings', 'aegisGradeColors'], res => { saved = normalizeGradeSettings(res.aegisGradeSettings, res.aegisGradeColors); draft = editableSettings(saved); render(); renderGuide(); });
   chrome.storage.onChanged.addListener((changes, area) => {
@@ -263,7 +233,7 @@ export function initGradeSettings() {
     if (changes.aegisGradeSettings) {
       saved = { ...normalizeGradeSettings(changes.aegisGradeSettings.newValue), colors: saved.colors, colorsEnabled: saved.colorsEnabled };
       renderGuide();
-      if (!dirty) { draft = { ...editableSettings(saved), colors: draft.colors, colorsEnabled: draft.colorsEnabled }; render(); }
+      if (!ruleWrites) { draft = { ...editableSettings(saved), colors: draft.colors, colorsEnabled: draft.colorsEnabled }; render(); }
     }
     if (changes.aegisGradeColors) {
       saved = normalizeGradeSettings(saved, changes.aegisGradeColors.newValue ?? { version: 1 });
