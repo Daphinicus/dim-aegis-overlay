@@ -1,9 +1,8 @@
 import { GRADES, Grade, GradeRule, GradeSettings, defaultGradeSettings, defaultRules, normalizeGradeSettings, unreachableGrades } from './grading';
-import { applyGradeColors, gradeGradient } from './grade-colors';
+import { applyGradeColors, gradeGradient, defaultGradeColors as swatches } from './grade-colors';
 import { safeSetInnerHTML } from './dom-utils';
 import { Hsv, hexToHsv, hsvToHex } from './color-picker';
 
-const swatches: Record<Grade, string> = { 'S+': '#ffd700', S: '#ffd700', 'A+': '#da70d6', A: '#da70d6', 'B+': '#00f2fe', B: '#00f2fe', C: '#bdc3c7', D: '#e67e22', E: '#7f8c8d', F: '#e74c3c' };
 const traitLabels: Record<GradeRule['traits'], string> = { both: 'Both equipped', mixed: 'Equipped + selectable', one: 'One equipped', available: 'Equipped or selectable' };
 const extraLabels: Record<GradeRule['extras'], string> = { none: 'None', mag: 'Magazine', barrel: 'Barrel', either: 'Either', both: 'Both' };
 const defaultGuide: Record<Grade, string> = {

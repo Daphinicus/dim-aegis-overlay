@@ -12,7 +12,7 @@ function load(name) {
   return module.exports;
 }
 const { GRADES, computeGrade, defaultRules, defaultGradeSettings, normalizeGradeSettings, evaluateRules, evaluateCustomRoll, gradeValue, unreachableGrades } = load('grading');
-const { displayGrade, rollGradeDisplay, gradeGradient } = load('grade-colors');
+const { displayGrade, rollGradeDisplay, gradeGradient, twoTierGradient, defaultGradeColors, hasMaxTierGrade } = load('grade-colors');
 for (const [base, end] of [['#ffd700','#ff8c00'],['#da70d6','#8a2be2'],['#00f2fe','#4facfe'],['#bdc3c7','#2c3e50'],['#e67e22','#d35400'],['#e74c3c','#c0392b']]) {
   assert.equal(gradeGradient(base), `linear-gradient(135deg, ${base}, ${end})`);
 }
@@ -125,3 +125,23 @@ assert.equal(rollGradeDisplay('B+S➔S+'), 'S➔S+');
 assert.equal(normalizeGradeSettings({ ...defaultGradeSettings(), rulesEnabled: true }, { version: 1, colorsEnabled: true, colors: { S: '#00ff00' } }).rulesEnabled, true);
 assert.deepEqual(normalizeGradeSettings(defaultGradeSettings(), { version: 1, colorsEnabled: true, colors: { S: '#00ff00' } }).colors, { S: '#00ff00' });
 console.log('Passed: 486 default parity cases, 7,290 custom roll/potential cases, exact-grade parsing/order, and preference validation.');
+
+for (const weapon of GRADES) for (const perk of GRADES) {
+  const gradient=twoTierGradient(weapon+perk);
+  assert.ok(gradient, weapon+perk);
+  if(defaultGradeColors[weapon]===defaultGradeColors[perk]) assert.equal(gradient,gradeGradient(defaultGradeColors[perk]));
+  else assert.ok(gradient.endsWith(`linear-gradient(90deg, ${defaultGradeColors[weapon]}, ${defaultGradeColors[perk]})`));
+}
+for(const text of ['S','S+','F➔A','S/S','FA | BS','FA➔S+ | BA','—','SS+➔garbage','FA➔']) assert.equal(twoTierGradient(text),null,text);
+assert.equal(twoTierGradient('FA➔S+'),twoTierGradient('FS+'));
+assert.equal(twoTierGradient('FA➔FS+'),twoTierGradient('FS+'));
+assert.equal(twoTierGradient(' ★ FA ▲ '),twoTierGradient('FA'));
+const twoTonePalette=defaultGradeSettings();twoTonePalette.colorsEnabled=true;twoTonePalette.colors={'S+':'#112233',S:'#abcdef',F:'#000000',A:'#ffffff'};
+assert.match(twoTierGradient('S+S',twoTonePalette),/90deg, #112233, #abcdef/);
+assert.match(twoTierGradient('FA',twoTonePalette),/90deg, #000000, #ffffff/);
+twoTonePalette.colorsEnabled=false;assert.equal(twoTierGradient('FA',twoTonePalette),twoTierGradient('FA'));
+console.log('Passed: 100 two-tier color pairs, matching-color parity, custom + grades, dual parsing and single/armor/mixed exclusions.');
+
+for(const grade of ['SS+','S+S+','SA➔S+','SF➔SS+','BS | SS+','SS+ | FA']) assert.equal(hasMaxTierGrade(grade),true,grade);
+for(const grade of ['SS','SA','AS+','S+','S/S','BS+ | SS','S➔S+','FA➔S+','—']) assert.equal(hasMaxTierGrade(grade),false,grade);
+console.log('Passed: SS+-only glow selection, mixed-side eligibility and equipped/potential exclusions.');

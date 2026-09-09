@@ -178,6 +178,8 @@ const translations: Record<SupportedLanguage, Record<string, string>> = {
     badgeMode: 'Badge Overlay Mode',
     badgeStandard: 'Standard (S, A, B...)',
     badgeTwoTier: '2-Tier (BS+, SF...)',
+    badgeTwoTierColors: 'Blend weapon and perk colors',
+    badgeMaxTierGlow: 'Glow only for SS+ rolls',
     perkEvaluation: 'Perk Evaluation Basis',
     evalEquipped: 'Equipped Perks',
     evalDual: 'Dual (F ➔ S+)',
