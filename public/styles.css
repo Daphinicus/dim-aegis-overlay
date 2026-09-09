@@ -5326,3 +5326,78 @@ body.aegis-scrolling div[id^="item-"][data-aegis-item-hash]:hover {
   max-width: 680px !important;
 }
 
+.item-drag-container > .item:has(> .aegis-style-footer) {
+  height: auto !important;
+  /* Let the footer determine height while retaining native paint clipping. */
+  contain: layout paint style !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.aegis-badge.aegis-style-footer {
+  order: 1 !important;
+  position: relative !important;
+  inset: auto !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  height: auto !important;
+  min-height: calc(14px * var(--aegis-badge-scale, 1)) !important;
+  margin: 0 !important;
+  padding: 1px 2px !important;
+  box-sizing: border-box !important;
+  border: 0 !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.4) !important;
+  border-radius: 0 0 3px 3px !important;
+  font-size: calc(9px * var(--aegis-badge-scale, 1)) !important;
+  line-height: 1.2 !important;
+  white-space: normal !important;
+  overflow-wrap: anywhere !important;
+  text-align: center !important;
+  gap: 2px !important;
+  transform: none !important;
+}
+
+.aegis-badge.aegis-style-footer .aegis-split-inner {
+  flex: 1 1 0 !important;
+  min-width: 0 !important;
+  height: auto !important;
+}
+
+.aegis-badge.aegis-style-footer.aegis-badge-split {
+  padding: 0 !important;
+  gap: 0 !important;
+}
+
+.aegis-badge.aegis-style-footer .aegis-split-half {
+  flex: 1 1 0 !important;
+  min-width: 0 !important;
+  height: auto !important;
+  padding: 1px !important;
+  white-space: normal !important;
+  line-height: 1.2 !important;
+}
+
+.aegis-badge.aegis-style-footer .aegis-badge-upgrade-arrow {
+  position: static !important;
+  flex: 0 0 9px !important;
+  width: 9px !important;
+  height: 9px !important;
+  box-sizing: border-box !important;
+  align-self: center !important;
+  margin: 0 2px !important;
+}
+
+.interactive-weapon-tile:has(> .aegis-style-footer) {
+  height: auto;
+}
+
+.interactive-weapon-tile:has(> .aegis-style-footer) .mock-weapon-img {
+  height: 84px !important;
+}
+
+.interactive-portrait-container:has(.aegis-style-footer) :is(.corner-target, .portrait-pos-label-row) {
+  display: none;
+}
+
+

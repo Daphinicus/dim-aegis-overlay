@@ -158,6 +158,7 @@ const translations: Record<SupportedLanguage, Record<string, string>> = {
     styleClassic: 'Original',
     stylePill: 'Slim Pill',
     styleNotch: 'Top Notch',
+    styleFooter: 'Bottom Strip',
     fadeOnHover: 'Peek on Hover (Fade Badge)',
     fadeHoverEnabled: 'Enabled',
     fadeHoverDisabled: 'Disabled',

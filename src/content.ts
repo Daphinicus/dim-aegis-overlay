@@ -193,7 +193,7 @@ let aegisPerkOrder: 'sheet' | 'owned' = 'sheet';
 let aegisDbMode = 'both';
 let aegisTwoTier = false;
 let aegisBadgePosition: 'bottom-left' | 'top-left' | 'top-right' | 'bottom-right' = 'bottom-left';
-let aegisBadgeStyle: 'classic' | 'pill' | 'notch' = 'classic';
+let aegisBadgeStyle: 'classic' | 'pill' | 'notch' | 'footer' = 'classic';
 let aegisBadgeScale = 100;
 let aegisFadeHover = false;
 let aegisGradeDisplayMode: 'equipped' | 'dual' | 'potential' = 'equipped';
@@ -1560,7 +1560,7 @@ function formatShoppingBadgeHtml(
     baseLetter = finalGradeStr ? finalGradeStr.charAt(0).toLowerCase() : '';
   }
 
-  const styleKey = aegisBadgeStyle || 'classic';
+  const styleKey = aegisBadgeStyle === 'footer' ? 'notch' : aegisBadgeStyle;
   const classes = [
     'aegis-shopping-item-badge',
     `aegis-badge-${baseLetter}`,
@@ -3696,7 +3696,7 @@ chrome.storage.local.get(['wishlistData', 'enhancedToNormal', 'scoringSource', '
   aegisMode = res.aegisMode || 'pve';
   aegisTwoTier = res.aegisTwoTier || false;
   aegisBadgePosition = res.aegisBadgePosition || 'bottom-left';
-  aegisBadgeStyle = (res.aegisBadgeStyle === 'pill' || res.aegisBadgeStyle === 'notch') ? res.aegisBadgeStyle : 'classic';
+  aegisBadgeStyle = (res.aegisBadgeStyle === 'pill' || res.aegisBadgeStyle === 'notch' || res.aegisBadgeStyle === 'footer') ? res.aegisBadgeStyle : 'classic';
   aegisBadgeScale = typeof res.aegisBadgeScale === 'number' ? res.aegisBadgeScale : 100;
   document.documentElement.style.setProperty('--aegis-badge-scale', (aegisBadgeScale / 100).toString());
   aegisFadeHover = res.aegisFadeHover === true;
@@ -3853,7 +3853,7 @@ chrome.storage.onChanged.addListener((changes, namespace) => {
     }
     if (changes.aegisBadgeStyle) {
       const val = changes.aegisBadgeStyle.newValue;
-      aegisBadgeStyle = (val === 'pill' || val === 'notch') ? val : 'classic';
+      aegisBadgeStyle = (val === 'pill' || val === 'notch' || val === 'footer') ? val : 'classic';
       changed = true;
     }
     if (changes.aegisBadgeScale) {
@@ -5288,11 +5288,11 @@ function injectBadge(el: HTMLElement, result: ScoringResult) {
   badge.classList.add(`aegis-pos-${posKey}`);
 
   // Style class
-  const styleKey = aegisBadgeStyle || 'classic';
+  const styleKey = aegisBadgeStyle === 'footer' && (IS_WINNOWER_HOST || !badgeTarget.matches('.item-drag-container > .item')) ? 'notch' : aegisBadgeStyle;
   badge.classList.add(`aegis-style-${styleKey}`);
 
   // Fade on hover
-  if (aegisFadeHover) {
+  if (aegisFadeHover && styleKey !== 'footer') {
     badge.classList.add('aegis-hover-fade');
   }
 
