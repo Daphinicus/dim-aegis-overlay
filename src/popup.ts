@@ -320,6 +320,15 @@ document.addEventListener('DOMContentLoaded', () => {
             mockBadge.classList.remove('aegis-badge-split');
             mockBadge.textContent = isTwoTier ? 'SS+' : 'S+';
           }
+          if (badgeStyleVal === 'footer') {
+            const labels = aegisModeVal === 'both' ? mockBadge.querySelectorAll('.aegis-split-half') : [mockBadge];
+            for (const label of labels) {
+              const text = document.createElement('span');
+              text.className = 'aegis-grade-text';
+              text.textContent = label.textContent;
+              label.replaceChildren(text);
+            }
+          }
         }
 
         const cornerTargets = document.querySelectorAll('.interactive-weapon-tile .corner-target');
