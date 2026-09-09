@@ -1,9 +1,10 @@
 import { scoreWeapon } from './scorer';
 import { WishlistDatabase, ScoringResult, AegisSheetDatabase, AegisSheetWeapon, TooltipPerk, AegisArmorSet, SheetPerksGroup, AegisShoppingDatabase, AegisShoppingItem, DualSheetInfo, ManifestWeapon, AegisChaseItem, WeaponEvaluationPayload } from './types';
 import { showTooltip, hideTooltip, extractRecommendedMasterwork, renderViabilityMatrix, formatFormattedNotes, renderShoppingBannerHtml } from './tooltip';
-import { initLanguage, t, getCurrentLanguage, getLocalizedElement, getLocalizedFrame, getLocalizedCategory, getLocalizedArchetypeLabel } from './i18n';
-import { updateLocalizedRegistries, getLocalizedPerkName, getLocalizedWeaponName, getPerkIcon, getPerkHashFromEnglish, getEnglishWeaponNameFromHash, getEnglishPerkNameFromHash } from './hash-translator';
-import { applyEvaluationLocale, EvaluationLocaleBundle, getOriginalEvaluationText } from './evaluation-i18n';
+import { initLanguage, t, getCurrentLanguage, getLocalizedElement, getLocalizedFrame, getLocalizedCategory, getLocalizedArchetypeLabel, getLocalizedRole } from './i18n';
+import { updateLocalizedRegistries, getLocalizedPerkName, getLocalizedWeaponName, getLocalizedStatName, getPerkIcon, getPerkHashFromEnglish, getEnglishWeaponNameFromHash, getEnglishPerkNameFromHash } from './hash-translator';
+import { applyEvaluationLocale, EvaluationLocaleBundle, getOriginalEvaluationText, getLocalizedSource, getLocalizedSourceText } from './evaluation-i18n';
+import { renderLocalizedName, refreshLocalizedNames } from './localized-display';
 import { safeSetInnerHTML } from './dom-utils';
 
 /** Strongly typed, GC-safe storage for weapon/armor evaluation data attached to DOM tiles */
@@ -267,9 +268,11 @@ async function refreshEvaluationLocale(force = false, reprocess = true): Promise
     const uniqueDbs = Array.from(
       new Set([aegisSheetDb, aegisSheetDbPvE, aegisSheetDbPvP].filter((db): db is AegisSheetDatabase => db !== null && db !== undefined))
     );
+    const shoppingDbs = [aegisShoppingDb, aegisShoppingDbPvE, aegisShoppingDbPvP];
     for (const db of uniqueDbs) {
-      await applyEvaluationLocale(db, bundle);
+      await applyEvaluationLocale(db, bundle, shoppingDbs);
     }
+    if (uniqueDbs.length === 0) await applyEvaluationLocale(null, bundle, shoppingDbs);
     if (token === evaluationLocaleRequestToken && reprocess) reprocessAllElements();
   });
   await evaluationLocaleApplyQueue;
@@ -284,17 +287,25 @@ function normName(s: string): string {
 function resolveShoppingItem(
   primaryDb: AegisShoppingDatabase | null | undefined,
   fallbackDb: AegisShoppingDatabase | null | undefined,
-  normalizedName: string
+  normalizedName: string,
+  itemHash?: number
 ): {
   item: AegisShoppingItem | null;
   alt: { primaryName: string; role: string; priority: string; priorityNum: number } | null;
 } {
-  if (!normalizedName) return { item: null, alt: null };
-  const item = primaryDb?.byName[normalizedName] ?? fallbackDb?.byName[normalizedName] ?? null;
-  const alt = !item
-    ? (primaryDb?.alternativesMap[normalizedName] ?? fallbackDb?.alternativesMap[normalizedName] ?? null)
-    : null;
-  return { item, alt };
+  if (!normalizedName && !itemHash) return { item: null, alt: null };
+  const canonicalEnglish = itemHash ? (getEnglishWeaponNameFromHash(itemHash) || getEnglishPerkNameFromHash(itemHash)) : null;
+  const canonicalNorm = canonicalEnglish ? normName(canonicalEnglish) : null;
+
+  const namesToTry = [canonicalNorm, normalizedName].filter(Boolean) as string[];
+  for (const name of namesToTry) {
+    const item = primaryDb?.byName[name] ?? fallbackDb?.byName[name] ?? null;
+    const alt = !item
+      ? (primaryDb?.alternativesMap[name] ?? fallbackDb?.alternativesMap[name] ?? null)
+      : null;
+    if (item || alt) return { item, alt };
+  }
+  return { item: null, alt: null };
 }
 interface PlayerOwnedItemInfo {
   name: string;
@@ -460,7 +471,7 @@ function renderCompactShoppingPerkChip(perkName: string, isCol1: boolean): strin
   return `
     <span class="aegis-shopping-perk-chip ${colClass}" title="${trimmed}">
       ${iconHtml}
-      <span class="aegis-shopping-chip-text">${displayName}</span>
+      <span class="aegis-shopping-chip-text">${renderLocalizedName('perk', trimmed, displayName)}</span>
     </span>
   `;
 }
@@ -597,35 +608,25 @@ function setupRegistryObserver() {
     return;
   }
 
+  const syncNames = () => {
+    try {
+      const perks = JSON.parse(registryEl.getAttribute('data-registry') || '{}');
+      const weapons = JSON.parse(document.getElementById('aegis-global-weapon-registry')?.getAttribute('data-registry') || '{}');
+      const stats = JSON.parse(registryEl.getAttribute('data-stats') || '{}');
+      updateLocalizedRegistries(perks, weapons, stats);
+      updatePerkNameToIcon(perks);
+      if (Object.keys(perks).length) schedulePerkRegistryPersist(perks);
+      refreshLocalizedNames();
+    } catch (e) {
+      // Ignore
+    }
+  };
+
   registryObserver = new MutationObserver((mutations) => {
+    if (mutations.some(mutation => mutation.attributeName === 'data-registry' || mutation.attributeName === 'data-stats')) syncNames();
     for (let i = 0; i < mutations.length; i++) {
       const mutation = mutations[i];
       if (mutation.type === 'attributes' && mutation.attributeName === 'data-registry') {
-        const registryStr = registryEl.getAttribute('data-registry');
-        if (registryStr) {
-          try {
-            const parsed = JSON.parse(registryStr);
-            schedulePerkRegistryPersist(parsed);
-            updatePerkNameToIcon(parsed);
-            updateLocalizedRegistries(parsed);
-          } catch (e) {
-            // Ignore
-          }
-        }
-
-        const weaponRegEl = document.getElementById('aegis-global-weapon-registry');
-        if (weaponRegEl) {
-          const weaponStr = weaponRegEl.getAttribute('data-registry');
-          if (weaponStr) {
-            try {
-              const parsedWeapons = JSON.parse(weaponStr);
-              updateLocalizedRegistries({}, parsedWeapons);
-            } catch (e) {
-              // Ignore
-            }
-          }
-        }
-
         if (hoveredElement) {
           const data = weaponDataMap.get(hoveredElement);
           if (data && data.result && data.result.grade) {
@@ -695,8 +696,11 @@ function setupRegistryObserver() {
 
   registryObserver.observe(registryEl, {
     attributes: true,
-    attributeFilter: ['data-registry', 'data-weapon-perks-response'],
+    attributeFilter: ['data-registry', 'data-stats', 'data-weapon-perks-response'],
   });
+  const weaponRegEl = document.getElementById('aegis-global-weapon-registry');
+  if (weaponRegEl) registryObserver.observe(weaponRegEl, { attributes: true, attributeFilter: ['data-registry'] });
+  syncNames();
 }
 
 /**
@@ -1092,6 +1096,7 @@ function computeGrade(
 
 interface EvaluatedPerk {
   name: string;
+  hash?: number;
   icon?: string;
   matched: boolean;
   status: 'active' | 'selectable' | 'missing';
@@ -1164,6 +1169,7 @@ function evaluateCategoryPerks(
     if (foundPerk) {
       results.push({
         name: perksMap[foundPerk.hash]?.name || foundPerk.name,
+        hash: foundPerk.hash,
         icon: foundPerk.icon,
         matched: true,
         status: foundPerk.active ? 'active' : 'selectable',
@@ -1174,6 +1180,7 @@ function evaluateCategoryPerks(
       const missingIcon = getPerkIcon(rawRec) || perkNameToIcon[rec] || perkNameToIcon[displayName.toLowerCase().trim()];
       results.push({
         name: displayName,
+        hash: recHash || undefined,
         icon: missingIcon || undefined,
         matched: false,
         status: 'missing',
@@ -1278,6 +1285,7 @@ function scoreSheetWeapon(
       const perk = cat.evals[i];
       const tooltipPerk: TooltipPerk = {
         name: perk.name,
+        hash: perk.hash,
         icon: perk.icon,
         matched: perk.matched,
         type: cat.type,
@@ -1966,10 +1974,10 @@ function renderResults() {
             <span class="aegis-audit-pct">${readyPct}% (${readyCount}/${totalItemsCount})</span>
           </div>
           <div class="aegis-audit-priority-pills">
-            <span class="aegis-audit-pill pill-high" title="${t('priorityHigh')}">High: <strong>${highReady}/${highTotal}</strong></span>
-            <span class="aegis-audit-pill pill-med" title="${t('priorityMedium')}">Med: <strong>${medReady}/${medTotal}</strong></span>
-            <span class="aegis-audit-pill pill-low" title="${t('priorityLow')}">Rare: <strong>${lowReady}/${lowTotal}</strong></span>
-            <span class="aegis-audit-pill pill-niche" title="${t('priorityNiche')}">Niche: <strong>${nicheReady}/${nicheTotal}</strong></span>
+            <span class="aegis-audit-pill pill-high" title="${t('priorityHigh')}">${t('filterPriorityHigh')}: <strong>${highReady}/${highTotal}</strong></span>
+            <span class="aegis-audit-pill pill-med" title="${t('priorityMedium')}">${t('filterPriorityMedium')}: <strong>${medReady}/${medTotal}</strong></span>
+            <span class="aegis-audit-pill pill-low" title="${t('priorityLow')}">${t('filterPriorityLow')}: <strong>${lowReady}/${lowTotal}</strong></span>
+            <span class="aegis-audit-pill pill-niche" title="${t('priorityNiche')}">${t('filterPriorityNiche')}: <strong>${nicheReady}/${nicheTotal}</strong></span>
           </div>
         </div>
       `;
@@ -2008,7 +2016,7 @@ function renderResults() {
         }
 
         const ownedBadgeHtml = ownedCount > 0
-          ? `<span class="aegis-shopping-vault-count-tag">${ownedCount} in Vault</span>`
+          ? `<span class="aegis-shopping-vault-count-tag">${t('countInVault', { count: ownedCount })}</span>`
           : '';
 
         const validAlts = (item.alternatives || []).filter(a => {
@@ -2021,7 +2029,7 @@ function renderResults() {
           altHtml = `
             <div class="aegis-shopping-copies-drawer">
               <div class="aegis-copies-drawer-title">${t('viableAlternatives').toUpperCase()} (${validAlts.length}):</div>
-              ${validAlts.length === 0 ? `<div class="aegis-copy-empty" style="padding: 3px 6px;">No viable alternatives listed for this weapon.</div>` : `
+              ${validAlts.length === 0 ? `<div class="aegis-copy-empty" style="padding: 3px 6px;">${t('noAlternatives')}</div>` : `
                 <div class="aegis-copies-list">
                   ${validAlts.map((altName, aIdx) => {
                     const normAlt = normName(altName);
@@ -2056,7 +2064,7 @@ function renderResults() {
                       <div class="aegis-shopping-copy-row aegis-shopping-alt-row-item" data-alt-name="${altName.replace(/"/g, '&quot;')}" data-search-name="${altName.replace(/"/g, '&quot;')}">
                         <div class="aegis-copy-info">
                           <span class="aegis-copy-num">#${aIdx + 1}</span>
-                          <span class="aegis-shopping-alt-name" style="font-weight: 700; color: #fff; margin-right: 4px;">${altName}</span>
+                          <span class="aegis-shopping-alt-name" style="font-weight: 700; color: #fff; margin-right: 4px;">${renderLocalizedName('weapon', altName)}</span>
                           ${badgeHtml}
                         </div>
                         <button type="button" class="aegis-btn-locate-copy aegis-btn-find-alt" data-search-name="${altName.replace(/"/g, '&quot;')}">${t('findInVault')}</button>
@@ -2115,7 +2123,7 @@ function renderResults() {
         let copiesDrawerHtml = `
           <div class="aegis-shopping-copies-drawer">
             <div class="aegis-copies-drawer-title">${t('ownedInVault').toUpperCase()} (${ownedList.length}):</div>
-            ${ownedList.length === 0 ? `<div class="aegis-copy-empty" style="padding: 3px 6px;">${t('notInInventory')} (0 in Vault).</div>` : `
+            ${ownedList.length === 0 ? `<div class="aegis-copy-empty" style="padding: 3px 6px;">${t('notInInventory')} (${t('countInVault', { count: 0 })}).</div>` : `
               <div class="aegis-copies-list">
                 ${ownedList.map((copy, cIdx) => {
                   const sheetW = db.weapons[normItemName] || db.weapons[normName(item.name.replace(/\s*\([^)]+\)\s*$/, '').trim())];
@@ -2194,8 +2202,8 @@ function renderResults() {
           expandedContentHtml = `
             <div class="aegis-shopping-card-body">
               <div class="aegis-shopping-meta-row">
-                <span><strong>${t('farmingSource')}:</strong> <span style="color: #ffd700;">${item.source}</span></span>
-                ${item.role ? `<span><strong>${t('itemRole')}:</strong> <span style="color: #88c0d0;">${item.role}</span></span>` : ''}
+                <span><strong>${t('farmingSource')}:</strong> <span style="color: #ffd700;">${getLocalizedSourceText(item.source)}</span></span>
+                ${item.role ? `<span><strong>${t('itemRole')}:</strong> <span style="color: #88c0d0;">${getLocalizedRole(item.role)}</span></span>` : ''}
               </div>
               ${perksSectionHtml}
               ${altHtml}
@@ -2222,8 +2230,8 @@ function renderResults() {
               <div class="aegis-shopping-title-group">
                 <div style="display: flex; align-items: center; gap: 6px;">
                   <span class="aegis-shopping-chevron">${isExpanded ? '▼' : '▶'}</span>
-                  <span class="aegis-shopping-item-name">${item.name}</span>
-                  <span class="aegis-shopping-role-tag">${item.role}</span>
+                  <span class="aegis-shopping-item-name">${renderLocalizedName('weapon', item.name)}</span>
+                  <span class="aegis-shopping-role-tag">${getLocalizedRole(item.role)}</span>
                 </div>
               </div>
               <div class="aegis-shopping-status-group">
@@ -2239,6 +2247,7 @@ function renderResults() {
 
       resultsContainer.innerHTML = html;
       resultsContainer.scrollTop = savedScrollTop;
+      refreshLocalizedNames(resultsContainer);
 
       // Bind Shopping List Card click listeners
       resultsContainer.querySelectorAll('.aegis-shopping-card').forEach(card => {
@@ -3044,27 +3053,27 @@ function initAegisExplorer() {
       <input type="text" class="aegis-explorer-search-input" placeholder="${t('searchPlaceholder')}" />
       <div class="aegis-shopping-filter-bar" style="display: none;">
         <div class="aegis-shopping-filter-group type-group">
-          <button class="aegis-filter-chip active" data-shopping-type="all">All Items</button>
-          <button class="aegis-filter-chip" data-shopping-type="weapon">Weapons</button>
-          <button class="aegis-filter-chip" data-shopping-type="armor">Armor</button>
+          <button class="aegis-filter-chip active" data-shopping-type="all">${t('filterAllItems')}</button>
+          <button class="aegis-filter-chip" data-shopping-type="weapon">${t('filterWeapons')}</button>
+          <button class="aegis-filter-chip" data-shopping-type="armor">${t('filterArmor')}</button>
         </div>
         <div class="aegis-shopping-filter-group rarity-group">
-          <button class="aegis-filter-chip active" data-shopping-rarity="all">All Rarities</button>
-          <button class="aegis-filter-chip" data-shopping-rarity="legendary">Legendary</button>
-          <button class="aegis-filter-chip" data-shopping-rarity="exotic">Exotic</button>
+          <button class="aegis-filter-chip active" data-shopping-rarity="all">${t('filterAllRarities')}</button>
+          <button class="aegis-filter-chip" data-shopping-rarity="legendary">${t('filterLegendary')}</button>
+          <button class="aegis-filter-chip" data-shopping-rarity="exotic">${t('filterExotic')}</button>
         </div>
         <div class="aegis-shopping-filter-group priority-group">
-          <button class="aegis-filter-chip active" data-shopping-priority="all">All Priorities</button>
-          <button class="aegis-filter-chip chip-high" data-shopping-priority="high">High</button>
-          <button class="aegis-filter-chip chip-med" data-shopping-priority="medium">Medium</button>
-          <button class="aegis-filter-chip chip-low" data-shopping-priority="low">Rare</button>
-          <button class="aegis-filter-chip chip-niche" data-shopping-priority="niche">Niche</button>
+          <button class="aegis-filter-chip active" data-shopping-priority="all">${t('filterAllPriorities')}</button>
+          <button class="aegis-filter-chip chip-high" data-shopping-priority="high">${t('filterPriorityHigh')}</button>
+          <button class="aegis-filter-chip chip-med" data-shopping-priority="medium">${t('filterPriorityMedium')}</button>
+          <button class="aegis-filter-chip chip-low" data-shopping-priority="low">${t('filterPriorityLow')}</button>
+          <button class="aegis-filter-chip chip-niche" data-shopping-priority="niche">${t('filterPriorityNiche')}</button>
         </div>
         <div class="aegis-shopping-filter-group status-group">
-          <button class="aegis-filter-chip active" data-shopping-status="all">All Statuses</button>
-          <button class="aegis-filter-chip chip-ready" data-shopping-status="ready">Ready</button>
-          <button class="aegis-filter-chip chip-suboptimal" data-shopping-status="suboptimal">Suboptimal</button>
-          <button class="aegis-filter-chip chip-missing" data-shopping-status="missing">Not Owned</button>
+          <button class="aegis-filter-chip active" data-shopping-status="all">${t('filterAllStatuses')}</button>
+          <button class="aegis-filter-chip chip-ready" data-shopping-status="ready">${t('filterStatusReady')}</button>
+          <button class="aegis-filter-chip chip-suboptimal" data-shopping-status="suboptimal">${t('filterStatusSuboptimal')}</button>
+          <button class="aegis-filter-chip chip-missing" data-shopping-status="missing">${t('filterStatusMissing')}</button>
         </div>
       </div>
       <div class="aegis-explorer-selects">
@@ -3833,14 +3842,17 @@ chrome.storage.onChanged.addListener((changes, namespace) => {
     }
     if (changes.aegisShoppingDb) {
       aegisShoppingDb = changes.aegisShoppingDb.newValue || null;
+      evaluationLocaleRefreshNeeded = true;
       changed = true;
     }
     if (changes.aegisShoppingDbPvE) {
       aegisShoppingDbPvE = changes.aegisShoppingDbPvE.newValue || null;
+      evaluationLocaleRefreshNeeded = true;
       changed = true;
     }
     if (changes.aegisShoppingDbPvP) {
       aegisShoppingDbPvP = changes.aegisShoppingDbPvP.newValue || null;
+      evaluationLocaleRefreshNeeded = true;
       changed = true;
     }
     if (changes.aegisSheetDbPvE) {
@@ -4242,12 +4254,15 @@ function renderWeaponDetailsContent(
       for (const perk of perksToRender) {
         const isMissing = perk.status === 'missing' || !perk.matched;
         const statusClass = isMissing ? 'aegis-chip-missing' : (perk.status === 'active' ? 'aegis-chip-active' : 'aegis-chip-selectable');
-        const iconHtml = perk.icon ? `<img src="https://www.bungie.net${perk.icon}" class="aegis-chip-icon" />` : '';
+        const key = perk.hash || perk.name;
+        const displayName = getLocalizedPerkName(key, perk.name);
+        const icon = getPerkIcon(key) || perk.icon;
+        const iconHtml = icon ? `<img src="https://www.bungie.net${icon}" class="aegis-chip-icon" />` : '';
         const statusLabel = isMissing ? ` (${t('missing')})` : (perk.status === 'active' ? '' : ` (${t('selectable')})`);
         chipsHtml += `
-          <span class="aegis-perk-chip ${statusClass}" title="${perk.name}${statusLabel}">
+          <span class="aegis-perk-chip ${statusClass}" title="${displayName}${statusLabel}">
             ${iconHtml}
-            <span class="aegis-chip-name">${perk.name}</span>
+            ${renderLocalizedName('perk', key, perk.name, 'aegis-chip-name')}
           </span>
         `;
       }
@@ -4255,7 +4270,7 @@ function renderWeaponDetailsContent(
 
     if (!chipsHtml) {
       const rawVal = item.rawVal;
-      const cleanVal = rawVal.split(/[\/\n]/).map(s => s.trim()).filter(Boolean).join(' / ');
+      const cleanVal = rawVal.split(/[\/\n]/).map(s => s.trim()).filter(Boolean).map(name => renderLocalizedName('perk', name)).join(' / ');
       if (!cleanVal) return '';
       chipsHtml = `<span class="aegis-details-value-text">${cleanVal}</span>`;
     }
@@ -4350,7 +4365,7 @@ function renderWeaponDetailsContent(
       ];
 
       let icon = '☆';
-      let title = t('aegisRecommendsMw', { mw });
+      let title = t('aegisRecommendsMw', { mw: getLocalizedStatName(mw) });
 
       if (isMatch) {
         chipStyle.push(
@@ -4374,14 +4389,14 @@ function renderWeaponDetailsContent(
       mwChipsHtml += `
         <span class="aegis-perk-chip" style="${chipStyle.join('; ')}" title="${title}">
           <span style="font-size: 11px !important; line-height: 1 !important; ${isMatch ? 'color: #ffe57f !important;' : ''}">${icon}</span>
-          ${mw}
+          ${renderLocalizedName('stat', mw)}
         </span>
       `;
     }
 
     mwHtml = `
       <div class="aegis-details-row aegis-perk-row">
-        <span class="aegis-details-label">MW</span>
+        <span class="aegis-details-label">${t('masterwork')}</span>
         <div class="aegis-details-value aegis-details-chips-container" style="display: flex !important; flex-wrap: wrap !important; gap: 4px !important;">
           ${mwChipsHtml}
         </div>
@@ -4415,7 +4430,7 @@ function renderWeaponDetailsContent(
       const selfClass = isSelf ? 'aegis-sup-self' : '';
       const labelsStr = item.labels.join(' / ');
       const localizedLabelsStr = getLocalizedArchetypeLabel(labelsStr);
-      const localizedWeaponName = getLocalizedWeaponName(item.weapon.name);
+      const localizedWeaponName = renderLocalizedName('weapon', item.weapon.name);
       
       const tierLetter = item.weapon.tier ? item.weapon.tier.charAt(0).toLowerCase() : '';
       const tierBadgeHtml = `<span class="aegis-mini-tier-badge aegis-badge-${tierLetter}">${item.weapon.tier}</span>`;
@@ -4439,7 +4454,7 @@ function renderWeaponDetailsContent(
       const tierLetter = sheetW.tier ? sheetW.tier.charAt(0).toLowerCase() : '';
       const tierBadgeHtml = `<span class="aegis-mini-tier-badge aegis-badge-${tierLetter}">${sheetW.tier}</span>`;
       const rankHtml = sheetW.rank ? `<span class="aegis-sup-rank-num">#${sheetW.rank}</span>` : '';
-      const localizedWeaponName = getLocalizedWeaponName(sheetW.name);
+      const localizedWeaponName = renderLocalizedName('weapon', sheetW.name);
 
       supRowsHtml += `
         <div class="aegis-details-row aegis-sup-row aegis-sup-row-self">
@@ -4963,7 +4978,7 @@ function injectPopupSummary(
           `
           <div class="aegis-details-header" style="display: flex; justify-content: space-between; align-items: center; gap: 8px;">
             <span>${cardHeaderTitle}</span>
-            ${sheetWeapon.source ? `<span class="aegis-details-source-badge" style="font-size: 10px; font-weight: 500; color: #ffd700; background: rgba(255, 215, 0, 0.08); padding: 2px 6px; border-radius: 4px; border: 1px solid rgba(255, 215, 0, 0.2); font-family: sans-serif; letter-spacing: 0.1px;">${t('source')}: ${sheetWeapon.source}</span>` : ''}
+            ${sheetWeapon.source ? `<span class="aegis-details-source-badge" style="font-size: 10px; font-weight: 500; color: #ffd700; background: rgba(255, 215, 0, 0.08); padding: 2px 6px; border-radius: 4px; border: 1px solid rgba(255, 215, 0, 0.2); font-family: sans-serif; letter-spacing: 0.1px;">${t('source')}: ${getLocalizedSource(sheetWeapon)}</span>` : ''}
           </div>
           ${renderWeaponDetailsContent(sheetWeapon, sheetPerks, aegisMode === 'pvp' ? 'pvp' : 'pve', equippedMasterwork, false)}
         `
@@ -5223,7 +5238,7 @@ function injectArmoryEnhancements(
         `
         <div class="aegis-details-header" style="display: flex; justify-content: space-between; align-items: center; gap: 8px;">
           <span>${cardHeaderTitle}</span>
-          ${sheetWeapon.source ? `<span class="aegis-details-source-badge" style="font-size: 10px; font-weight: 500; color: #ffd700; background: rgba(255, 215, 0, 0.08); padding: 2px 6px; border-radius: 4px; border: 1px solid rgba(255, 215, 0, 0.2); font-family: sans-serif; letter-spacing: 0.1px;">${t('source')}: ${sheetWeapon.source}</span>` : ''}
+          ${sheetWeapon.source ? `<span class="aegis-details-source-badge" style="font-size: 10px; font-weight: 500; color: #ffd700; background: rgba(255, 215, 0, 0.08); padding: 2px 6px; border-radius: 4px; border: 1px solid rgba(255, 215, 0, 0.2); font-family: sans-serif; letter-spacing: 0.1px;">${t('source')}: ${getLocalizedSource(sheetWeapon)}</span>` : ''}
         </div>
         ${renderWeaponDetailsContent(sheetWeapon, sheetPerks, aegisMode === 'pvp' ? 'pvp' : 'pve', equippedMasterwork, false)}
       `
@@ -5454,7 +5469,10 @@ function processElement(el: HTMLElement) {
   if (itemType === 'armor') {
     if (!itemHashStr) return;
     try {
-      const sheetArmor = findAegisArmorSet(weaponName);
+      const englishArmorName = itemHashStr
+        ? (getEnglishPerkNameFromHash(parseInt(itemHashStr, 10)) || getEnglishWeaponNameFromHash(parseInt(itemHashStr, 10)))
+        : null;
+      const sheetArmor = findAegisArmorSet(englishArmorName || weaponName);
       let result: ScoringResult;
 
       if (sheetArmor) {
@@ -5483,7 +5501,7 @@ function processElement(el: HTMLElement) {
       const setShopping = armorSetName ? resolveShoppingItem(aegisShoppingDb, null, armorSetName) : null;
       const { item: shoppingItem, alt: shoppingAlt } = (setShopping && setShopping.item)
         ? setShopping
-        : resolveShoppingItem(aegisShoppingDb, null, normAName);
+        : resolveShoppingItem(aegisShoppingDb, null, normAName, itemHashStr ? parseInt(itemHashStr, 10) : undefined);
 
       weaponDataMap.set(el, {
         result,
@@ -5494,10 +5512,10 @@ function processElement(el: HTMLElement) {
         shoppingAlt,
       });
 
-      if (sheetArmor) {
-        const rating2Val = getGradeValue(sheetArmor.piece2Rating);
-        const rating4Val = getGradeValue(sheetArmor.piece4Rating);
-        const bestRating = rating2Val >= rating4Val ? sheetArmor.piece2Rating : sheetArmor.piece4Rating;
+      if (sheetArmor || shoppingItem || shoppingAlt) {
+        const rating2Val = getGradeValue(sheetArmor?.piece2Rating || '');
+        const rating4Val = getGradeValue(sheetArmor?.piece4Rating || '');
+        const bestRating = sheetArmor ? (rating2Val >= rating4Val ? sheetArmor.piece2Rating : sheetArmor.piece4Rating) : '';
 
         let armorPerks: string[] = [];
         const armorPerksStr = el.getAttribute('data-aegis-armor-perks');
@@ -5517,19 +5535,23 @@ function processElement(el: HTMLElement) {
           grade: bestRating,
           element: el,
           isPerfect: false,
-          hash: 0,
+          hash: parseInt(itemHashStr, 10),
           armorPerks,
           armorStats,
           instanceId: rawInstanceId,
         };
 
-        const existing = playerVaultInventory.get(normAName) || [];
+        const canonicalLookupKey = englishArmorName ? normName(englishArmorName) : normAName;
+        const existing = playerVaultInventory.get(canonicalLookupKey) || [];
         const idx = existing.findIndex(item => (rawInstanceId && item.instanceId === rawInstanceId) || item.element === el);
         if (idx >= 0) existing[idx] = itemInfo;
         else existing.push(itemInfo);
-        playerVaultInventory.set(normAName, existing);
+        playerVaultInventory.set(canonicalLookupKey, existing);
+        if (normAName !== canonicalLookupKey) {
+          playerVaultInventory.set(normAName, existing);
+        }
 
-        if (armorSetName && armorSetName !== normAName) {
+        if (armorSetName && armorSetName !== canonicalLookupKey && armorSetName !== normAName) {
           const existingSet = playerVaultInventory.get(armorSetName) || [];
           const sIdx = existingSet.findIndex(item => (rawInstanceId && item.instanceId === rawInstanceId) || item.element === el);
           if (sIdx >= 0) existingSet[sIdx] = itemInfo;
@@ -5890,10 +5912,11 @@ function processElement(el: HTMLElement) {
       }
     }
 
-    const normWName = normName(weaponName);
-    const { item: shoppingItem, alt: shoppingAlt } = resolveShoppingItem(aegisShoppingDb, null, normWName);
-    const { item: shoppingItemPvE, alt: shoppingAltPvE } = resolveShoppingItem(aegisShoppingDbPvE, aegisShoppingDb, normWName);
-    const { item: shoppingItemPvP, alt: shoppingAltPvP } = resolveShoppingItem(aegisShoppingDbPvP, null, normWName);
+    const canonicalEnglish = itemHash ? getEnglishWeaponNameFromHash(itemHash) : null;
+    const normWName = normName(canonicalEnglish || weaponName);
+    const { item: shoppingItem, alt: shoppingAlt } = resolveShoppingItem(aegisShoppingDb, null, normWName, itemHash);
+    const { item: shoppingItemPvE, alt: shoppingAltPvE } = resolveShoppingItem(aegisShoppingDbPvE, aegisShoppingDb, normWName, itemHash);
+    const { item: shoppingItemPvP, alt: shoppingAltPvP } = resolveShoppingItem(aegisShoppingDbPvP, null, normWName, itemHash);
 
     const dualInfo: DualSheetInfo | undefined = aegisMode === 'both' ? {
       sheetWeaponPvE,

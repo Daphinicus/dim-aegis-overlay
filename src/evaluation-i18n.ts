@@ -1,4 +1,4 @@
-import { AegisSheetDatabase, AegisSheetWeapon } from './types';
+import { AegisSheetDatabase, AegisSheetWeapon, AegisShoppingDatabase } from './types';
 
 export interface EvaluationLocaleBundle {
   locale: string;
@@ -17,6 +17,24 @@ const EVALUATION_LOCALE_CACHE_KEY = 'aegisEvaluationLocaleCache';
 const EVALUATION_LOCALE_CACHE_TTL_MS = 60 * 60 * 1000;
 const sourceTextHashCache = new Map<string, Promise<string>>();
 const originalEvaluationText = new WeakMap<AegisSheetWeapon, { notes: string; description?: string }>();
+const localizedSources = new WeakMap<AegisSheetWeapon, { source: string; translation: string }>();
+let sourceTranslationCache = new Map<string, string>();
+let roleTranslationCache = new Map<string, string>();
+let activeLocaleBundle: EvaluationLocaleBundle | null | undefined;
+
+export function getLocalizedSource(weapon: AegisSheetWeapon): string {
+  const localized = localizedSources.get(weapon);
+  return localized && localized.source === weapon.source ? localized.translation : weapon.source || '';
+}
+
+export function getLocalizedSourceText(source: string): string {
+  if (!source) return '';
+  return sourceTranslationCache.get(source.trim()) || sourceTranslationCache.get(source) || source;
+}
+
+export function getLocalizedRoleText(role: string, locale: string): string | undefined {
+  return activeLocaleBundle?.locale === locale ? roleTranslationCache.get(role) : undefined;
+}
 
 function isValidLocale(locale: string): boolean {
   return /^[a-z]{2}(?:-[A-Za-z]{2,4})?$/.test(locale);
@@ -42,6 +60,21 @@ function isValidBundle(value: unknown, locale: string): value is EvaluationLocal
   return true;
 }
 
+async function withBundledEntries(bundle: EvaluationLocaleBundle): Promise<EvaluationLocaleBundle> {
+  try {
+    const response = await fetch(chrome.runtime.getURL(`data/locales/${encodeURIComponent(bundle.locale)}.json`));
+    if (response.ok) {
+      const bundled: unknown = await response.json();
+      if (isValidBundle(bundled, bundle.locale)) {
+        return { ...bundle, entries: { ...bundled.entries, ...bundle.entries } };
+      }
+    }
+  } catch {
+    // The remote bundle can be used without a bundled locale.
+  }
+  return bundle;
+}
+
 export async function fetchEvaluationLocale(
   locale: string,
   force = false
@@ -53,7 +86,7 @@ export async function fetchEvaluationLocale(
   const cached = cache[locale];
 
   if (!force && cached && cached.bundle && Date.now() - cached.fetchedAt < EVALUATION_LOCALE_CACHE_TTL_MS) {
-    return cached.bundle;
+    return withBundledEntries(cached.bundle);
   }
 
   // 1. Try remote CDN
@@ -66,7 +99,7 @@ export async function fetchEvaluationLocale(
       if (isValidBundle(bundle, locale)) {
         cache[locale] = { bundle, fetchedAt: Date.now() };
         await chrome.storage.local.set({ [EVALUATION_LOCALE_CACHE_KEY]: cache });
-        return bundle;
+        return withBundledEntries(bundle);
       }
     }
   } catch (error) {
@@ -130,16 +163,24 @@ export function getOriginalEvaluationText(
 
 export async function applyEvaluationLocale(
   database: AegisSheetDatabase | null,
-  bundle: EvaluationLocaleBundle | null
+  bundle: EvaluationLocaleBundle | null,
+  shoppingDbs?: (AegisShoppingDatabase | null | undefined)[]
 ): Promise<void> {
-  if (!database) return;
+  if (activeLocaleBundle !== bundle) {
+    activeLocaleBundle = bundle;
+    sourceTranslationCache = new Map();
+    roleTranslationCache = new Map();
+  }
+  const sourceCache = sourceTranslationCache;
+  const roleCache = roleTranslationCache;
+  if (!database && (!shoppingDbs || shoppingDbs.length === 0)) return;
 
   const translate = async (source: string): Promise<string> => {
     if (!source || !bundle) return source;
     return bundle.entries[await sourceTextHash(source)] || source;
   };
 
-  const weapons = databaseWeapons(database);
+  const weapons = database ? databaseWeapons(database) : [];
 
   // Synchronously record original source snapshot for all weapons BEFORE starting async operations
   for (const weapon of weapons) {
@@ -157,5 +198,45 @@ export async function applyEvaluationLocale(
     const sourceDescription = source.description || '';
     weapon.notes = await translate(sourceNotes);
     weapon.description = sourceDescription ? await translate(sourceDescription) : undefined;
+    const transSource = await translate(weapon.source || '');
+    localizedSources.set(weapon, { source: weapon.source || '', translation: transSource });
+    if (weapon.source && transSource && transSource !== weapon.source) {
+      sourceCache.set(weapon.source.trim(), transSource);
+      sourceCache.set(weapon.source, transSource);
+    }
   }));
+
+  // Also translate armor sets in database
+  if (database) {
+    const armorSets = [...Object.values(database.armor || {}), ...Object.values(database.armorAegis || {})];
+    await Promise.all(armorSets.map(async (set) => {
+      if (set.source) {
+        const trans = await translate(set.source);
+        if (trans && trans !== set.source) {
+          sourceCache.set(set.source.trim(), trans);
+          sourceCache.set(set.source, trans);
+        }
+      }
+    }));
+  }
+
+  // Also translate shopping database sources
+  if (shoppingDbs) {
+    for (const sDb of shoppingDbs) {
+      if (!sDb?.items) continue;
+      await Promise.all(sDb.items.map(async (item) => {
+        if (item.source) {
+          const trans = await translate(item.source);
+          if (trans && trans !== item.source) {
+            sourceCache.set(item.source.trim(), trans);
+            sourceCache.set(item.source, trans);
+          }
+        }
+        if (item.role) {
+          const translatedRole = await translate(item.role);
+          if (translatedRole !== item.role) roleCache.set(item.role, translatedRole);
+        }
+      }));
+    }
+  }
 }
