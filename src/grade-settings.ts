@@ -156,7 +156,19 @@ export function initGradeSettings() {
     applyGradeColors(el, draft);
   }
   function renderColor(color: string) {
+    for (const grade of GRADES) {
+      if (draft.colors[grade]?.toLowerCase() === swatches[grade]) delete draft.colors[grade];
+    }
     draft.colorsEnabled = Object.keys(draft.colors).length > 0;
+    el.querySelectorAll<HTMLButtonElement>('#grade-colors-modal [data-grade]').forEach(button => {
+      const grade = button.dataset.grade as Grade;
+      const custom = !!draft.colors[grade];
+      button.toggleAttribute('data-custom-color', custom);
+      button.title = custom ? 'Custom color' : 'Default color';
+      button.setAttribute('aria-label', `${grade}: ${button.title}`);
+    });
+    get<HTMLButtonElement>('[data-reset-color]').disabled = !draft.colors[selected];
+    get<HTMLButtonElement>('[data-reset-colors]').disabled = !draft.colorsEnabled;
     get('[data-color]').style.background = gradeGradient(color);
     get('[data-color]').setAttribute('aria-label', `${selected} color ${color.toUpperCase()}`);
     el.querySelectorAll<HTMLInputElement>('[data-hsv]').forEach(input => {
