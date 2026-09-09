@@ -39,8 +39,11 @@
             <polyline points="10 9 9 9 8 9"></polyline>
           </svg>
         </button>
+        <button type="button" id="open-grade-colors-btn" class="github-link-btn" title="Customize grade colors" aria-label="Customize grade colors" aria-haspopup="dialog">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14 6 4-4a2.8 2.8 0 0 1 4 4l-9 9-4-4 5-5Z"/><path d="M9 13c-6-1-2 7-7 7 5 3 11-1 9-5"/></svg>
+        </button>
         <div class="aegis-help-container">
-          <button type="button" class="aegis-help-icon-btn">
+          <button type="button" class="aegis-help-icon-btn" aria-label="Scoring and guides" title="Scoring &amp; Guides">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
               <circle cx="12" cy="12" r="10"></circle>
               <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
@@ -51,19 +54,8 @@
           <div class="aegis-help-tooltip">
             <h3 class="tooltip-title">Scoring & Guides</h3>
             <div class="tooltip-section">
-              <span class="tooltip-section-header">1. Standard Grading (Match Accuracy)</span>
-              <div class="tooltip-grid">
-                <span class="grade-pill grade-s-pill">S+</span><span>Traits 1 & 2 + Mag + Barrel + Origin</span>
-                <span class="grade-pill grade-s-pill">S</span><span>Traits 1 & 2 + Magazine matched</span>
-                <span class="grade-pill grade-a-pill">A+</span><span>Traits 1 & 2 + Barrel matched</span>
-                <span class="grade-pill grade-a-pill">A</span><span>Traits 1 & 2 both matched</span>
-                <span class="grade-pill grade-b-pill">B+</span><span>1 Trait active + 1 selectable + Mag/Barrel</span>
-                <span class="grade-pill grade-b-pill">B</span><span>1 Trait active + 1 selectable Trait</span>
-                <span class="grade-pill grade-c-pill">C</span><span>1 Trait matched + Magazine or Barrel</span>
-                <span class="grade-pill grade-d-pill">D</span><span>Only 1 Trait matched</span>
-                <span class="grade-pill grade-f-pill">F</span><span>Underperforming (no Traits matched)</span>
-              </div>
-              <span class="tooltip-note">*Main Traits 1 & 2 must match to score A or higher.</span>
+              <div class="grade-guide-heading"><span class="tooltip-section-header">1. Standard Grading (Match Accuracy)</span><button type="button" id="open-grade-rules-btn" class="github-link-btn" title="customize grading criteria" aria-label="customize grading criteria" aria-haspopup="dialog"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 3-.6 3-2 .9-2.6-1.1-2 3.4L4 11v2l-2.2 1.8 2 3.4 2.6-1.1 2 .9.6 3h4l.6-3 2-.9 2.6 1.1 2-3.4L18 13v-2l2.2-1.8-2-3.4-2.6 1.1-2-.9-.6-3Z"/><circle cx="11" cy="12" r="3"/></svg></button></div>
+              <div id="grade-scoring-guide"></div>
             </div>
             
             <div class="tooltip-divider"></div>
@@ -72,10 +64,10 @@
               <span class="tooltip-section-header">2. 2-Tier System (e.g. BS+, SF)</span>
               <p class="tooltip-desc">Combines weapon meta tier with roll accuracy:</p>
               <div class="two-tier-demo-wrapper">
-                <img src="two-tier-demo.png" class="two-tier-demo-img" alt="2-tier grade badge demo" />
+                <span class="grade-pill grade-s-pill grade-guide-demo" data-aegis-grade="S+">BS+</span>
                 <div class="two-tier-demo-text">
                   <div class="tooltip-formula">[Archetype Tier] [Roll Grade]</div>
-                  <span class="tooltip-note">Example: <b>BS+</b> means archetype is <b>B-Tier</b>, but your roll is a perfect <b>S+</b>.</span>
+                  <span class="tooltip-note">Example: <b>BS+</b> means archetype is <b>B-Tier</b>, and its perk roll meets the <b>S+</b> criteria above.</span>
                 </div>
               </div>
             </div>
@@ -379,7 +371,7 @@
         </div>
       </section>
 
-      <section class="settings-card" id="aegis-grade-settings"></section>
+
 
       <section class="settings-card">
         <h2 data-i18n="dataSourceTitle">Custom Wishlist</h2>
@@ -462,6 +454,7 @@
   </div>
 
   <!-- Changelog Modal Popup -->
+  <div id="aegis-grade-settings"></div>
   <div id="changelog-modal" class="changelog-modal-overlay hidden">
     <div class="changelog-modal-card">
       <div class="changelog-modal-header">

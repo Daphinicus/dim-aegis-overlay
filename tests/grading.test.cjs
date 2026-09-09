@@ -12,7 +12,12 @@ function load(name) {
   return module.exports;
 }
 const { GRADES, computeGrade, defaultRules, defaultGradeSettings, normalizeGradeSettings, evaluateRules, evaluateCustomRoll, gradeValue, unreachableGrades } = load('grading');
-const { displayGrade, rollGradeDisplay } = load('grade-colors');
+const { displayGrade, rollGradeDisplay, gradeGradient } = load('grade-colors');
+for (const [base, end] of [['#ffd700','#ff8c00'],['#da70d6','#8a2be2'],['#00f2fe','#4facfe'],['#bdc3c7','#2c3e50'],['#e67e22','#d35400'],['#e74c3c','#c0392b']]) {
+  assert.equal(gradeGradient(base), `linear-gradient(135deg, ${base}, ${end})`);
+}
+assert.equal(gradeGradient('#000000'), 'linear-gradient(135deg, #000000, #000000)');
+assert.match(gradeGradient('#ffffff'), /^linear-gradient\(135deg, #ffffff, #[0-9a-f]{6}\)$/);
 const { hexToHsv, hsvToHex } = load('color-picker');
 for (const [hex, hsv] of [['#ff0000', [0, 100, 100]], ['#00ff00', [120, 100, 100]], ['#0000ff', [240, 100, 100]], ['#ffffff', [0, 0, 100]], ['#000000', [0, 100, 0]]]) {
   assert.deepEqual(hexToHsv(hex), hsv);

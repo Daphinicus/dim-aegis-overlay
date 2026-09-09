@@ -204,6 +204,18 @@
 
 /* Badge Grade Gradients */
 #aegis-grade-settings summary { cursor: pointer; font-weight: 600; }
+#aegis-grade-settings .grade-modal { border: 0; padding: 16px; background: transparent; color: #d1d1d6; width: 100%; max-width: 420px; max-height: 100%; margin: auto; }
+#aegis-grade-settings .grade-modal::backdrop { background: rgba(15, 17, 23, 0.82); backdrop-filter: blur(8px); }
+#aegis-grade-settings .grade-modal .changelog-modal-card { max-height: calc(100dvh - 32px); }
+#aegis-grade-settings .grade-modal .changelog-modal-header { flex-shrink: 0; padding-right: 44px; }
+#aegis-grade-settings .grade-modal .changelog-modal-body { min-height: 0; gap: 4px; }
+.grade-guide-heading { display: flex; align-items: center; gap: 6px; }
+.grade-guide-heading .tooltip-section-header { flex: 1; }
+.grade-guide-heading button { flex-shrink: 0; }
+.aegis-help-tooltip .grade-guide-demo { min-width: 48px; height: 24px; }
+.popup-body .aegis-help-tooltip { max-height: calc(100dvh - 96px); overflow-y: auto; overscroll-behavior: contain; }
+.popup-header .logo-wrapper { min-width: 0; }
+.popup-header .header-actions { flex-shrink: 0; gap: 2px; }
 #aegis-grade-settings * { box-sizing: border-box; }
 #aegis-grade-settings .description { color: #aeb0ba; }
 #aegis-grade-settings h3 { font-size: 13px; }

@@ -1,5 +1,5 @@
 import { GRADES, Grade, GradeRule, Slots, defaultGradeSettings, defaultRules, normalizeGradeSettings, evaluateCustomRoll, computeGrade, unreachableGrades } from './grading';
-import { applyGradeColors } from './grade-colors';
+import { applyGradeColors, gradeGradient } from './grade-colors';
 import { safeSetInnerHTML } from './dom-utils';
 import { Hsv, hexToHsv, hsvToHex } from './color-picker';
 
@@ -24,14 +24,10 @@ export function initGradeSettings() {
   const get = <T extends HTMLElement>(selector: string) => el.querySelector<T>(selector)!;
   const options = (labels: Record<string, string>) => Object.entries(labels).map(([value, label]) => `<option value="${value}">${label}</option>`).join('');
   safeSetInnerHTML(el, `
-    <details>
-      <summary>Grade colors and custom rules</summary>
-      <p class="description">Personalize perk-roll grades while keeping Aegis/Finnald recommendations. Weapon tiers, exotic viability, wishlist grades and Light.gg grades keep their original rules.</p>
-      <label class="grade-check"><input type="checkbox" data-setting="colorsEnabled"> Use custom grade colors</label>
+<dialog id="grade-colors-modal" class="grade-modal" aria-labelledby="grade-colors-modal-title"><div class="changelog-modal-card"><div class="changelog-modal-header"><h2 id="grade-colors-modal-title" class="changelog-title">Grade colors</h2><button type="button" class="changelog-close-x" data-close aria-label="Close Grade colors">&times;</button></div><div class="changelog-modal-body">      <label class="grade-check"><input type="checkbox" data-setting="colorsEnabled"> Use custom grade colors</label>
       <p class="description">Colors save automatically and update DIM as you edit.</p>
       <p class="description" data-color-status role="status"></p>
-      <label class="grade-check"><input type="checkbox" data-setting="rulesEnabled"> Use custom perk grading</label>
-      <div class="grade-pills" role="group" aria-label="Grade to edit">${GRADES.map(g => `<button type="button" data-grade="${g}" aria-pressed="false">${g}</button>`).join('')}</div>
+      <div class="grade-pills" role="group" aria-label="Grade to edit">${GRADES.map(g => `<button type="button" class="aegis-badge-${g[0].toLowerCase()}" data-grade="${g}" data-aegis-grade="${g}" aria-pressed="false">${g}</button>`).join('')}</div>
       <div class="grade-fields">
         <div class="grade-color-preview" data-color role="img" aria-label="Selected grade color"></div>
         <label>Hex color <input type="text" data-hex maxlength="7" spellcheck="false" aria-label="Selected grade hex color"></label>
@@ -39,7 +35,7 @@ export function initGradeSettings() {
       <div class="grade-color-sliders">${['Hue', 'Saturation', 'Brightness'].map((label, index) => `<label>${label}<input type="range" data-hsv="${index}" min="0" max="${index === 0 ? 360 : 100}" step="1" aria-label="${label}"></label>`).join('')}</div>
       <div class="grade-actions"><button type="button" class="btn btn-secondary" data-reset-color>Reset this color</button><button type="button" class="btn btn-secondary" data-reset-colors>Reset all colors</button></div>
       <p class="description" data-color-state></p>
-      <div class="grade-rule-section">
+</div></div></dialog><dialog id="grade-rules-modal" class="grade-modal" aria-labelledby="grade-rules-modal-title"><div class="changelog-modal-card"><div class="changelog-modal-header"><h2 id="grade-rules-modal-title" class="changelog-title">Grading criteria</h2><button type="button" class="changelog-close-x" data-close aria-label="Close Grading criteria">&times;</button></div><div class="changelog-modal-body"><p class="description">Keep Aegis/Finnald recommendations and choose how perk matches translate into grades. Weapon tiers, exotic viability, wishlist and Light.gg grades keep their original rules.</p><label class="grade-check"><input type="checkbox" data-setting="rulesEnabled"> Use custom perk grading</label><div class="grade-pills" role="group" aria-label="Grade to edit">${GRADES.map(g => `<button type="button" class="aegis-badge-${g[0].toLowerCase()}" data-grade="${g}" data-aegis-grade="${g}" aria-pressed="false">${g}</button>`).join('')}</div>      <div class="grade-rule-section">
         <label class="grade-check"><input type="checkbox" data-setting="separatePvp"> Use different rules for PvP</label>
         <label data-context-label>Rules to edit <select data-context><option value="pve">PvE</option><option value="pvp">PvP</option></select></label>
         <h3 data-rule-title></h3>
@@ -66,8 +62,38 @@ export function initGradeSettings() {
       </details>
       <div class="grade-actions"><button type="button" class="btn btn-primary" data-apply>Apply grading rules</button><button type="button" class="btn btn-secondary" data-cancel>Cancel rule changes</button></div>
       <p class="description" data-status role="status"></p>
-    </details>
+</div></div></dialog>
   `);
+
+  for (const [buttonId, dialogId] of [['open-grade-colors-btn', 'grade-colors-modal'], ['open-grade-rules-btn', 'grade-rules-modal']]) {
+    const dialog = get<HTMLDialogElement>(`#${dialogId}`);
+    document.getElementById(buttonId)?.addEventListener('click', () => { if (!dialog.open) dialog.showModal(); });
+    dialog.querySelector('[data-close]')!.addEventListener('click', () => dialog.close());
+    dialog.addEventListener('click', event => { if (event.target === dialog) dialog.close(); });
+    dialog.addEventListener('cancel', event => { event.preventDefault(); dialog.close(); });
+  }
+
+  function renderGuide() {
+    const guide = document.getElementById('grade-scoring-guide');
+    if (!guide) return;
+    const profiles = saved.rulesEnabled && saved.separatePvp ? [['PvE', saved.pve], ['PvP', saved.pvp]] as const
+      : [[saved.rulesEnabled ? 'Custom criteria · PvE + PvP' : 'Default criteria', saved.rulesEnabled ? saved.pve : defaultRules()]] as const;
+    safeSetInnerHTML(guide, profiles.map(([label, rules]) => {
+      const unreachable = unreachableGrades(rules);
+      return `<p class="tooltip-desc">${label}</p><div class="tooltip-grid">${GRADES.map(grade => {
+        const rule = grade === 'F' ? null : rules[grade];
+        const description = !rule ? 'Fallback when no enabled rule matches.' : !rule.enabled ? 'Disabled.'
+          : `${traitLabels[rule.traits]}; ${extraLabels[rule.extras].toLowerCase()}${rule.origin ? '; origin trait equipped' : ''}.${unreachable.includes(grade) ? ' Higher rules always match first.' : ''}`;
+        return `<span class="grade-pill grade-${grade[0].toLowerCase()}-pill" data-aegis-grade="${grade}">${grade}</span><span>${description}</span>`;
+      }).join('')}</div>`;
+    }).join('') + '<span class="tooltip-note">Highest matching enabled grade wins. Requirements refer to equipped recommended perks; slots without a recommendation count as satisfied. Max Potential evaluates available perk swaps.</span>');
+    applyGuideColors();
+  }
+
+  function applyGuideColors() {
+    const guide = document.querySelector<HTMLElement>('.aegis-help-tooltip');
+    if (guide) applyGradeColors(guide, saved);
+  }
 
   function profile() { return draft[context === 'pvp' && draft.separatePvp ? 'pvp' : 'pve']; }
   function setDirty() {
@@ -103,7 +129,7 @@ export function initGradeSettings() {
     applyGradeColors(el, draft);
   }
   function renderColor(color: string) {
-    get('[data-color]').style.background = color;
+    get('[data-color]').style.background = gradeGradient(color);
     get('[data-color]').setAttribute('aria-label', `${selected} color ${color.toUpperCase()}`);
     el.querySelectorAll<HTMLInputElement>('[data-hsv]').forEach(input => {
       const index = Number(input.dataset.hsv);
@@ -113,7 +139,7 @@ export function initGradeSettings() {
     });
     get('[data-hsv="1"]').style.background = `linear-gradient(to right, ${hsvToHex([hsv[0], 0, hsv[2]])}, ${hsvToHex([hsv[0], 100, hsv[2]])})`;
     get('[data-hsv="2"]').style.background = `linear-gradient(to right, #000000, ${hsvToHex([hsv[0], hsv[1], 100])})`;
-    get('[data-color-state]').textContent = draft.colors[selected] ? 'Custom solid color; white text with shadow.' : 'Original gradient. Choose a color to override it.';
+    get('[data-color-state]').textContent = draft.colors[selected] ? 'Gradient follows the original palette; white text with shadow.' : 'Original gradient. Choose a color to override it.';
   }
   function render() {
     el.querySelectorAll<HTMLInputElement>('[data-setting]').forEach(input => { input.checked = draft[input.dataset.setting as 'colorsEnabled' | 'rulesEnabled' | 'separatePvp']; });
@@ -188,19 +214,22 @@ export function initGradeSettings() {
       const error = chrome.runtime.lastError;
       if (error) { setDirty(); get('[data-status]').textContent = `Could not save: ${error.message}`; return; }
       saved = { ...submitted, colors: saved.colors, colorsEnabled: saved.colorsEnabled };
+      renderGuide();
       setDirty();
       if (!dirty) get('[data-status]').textContent = 'Applied. DIM updates automatically.';
     });
   });
-  chrome.storage.local.get(['aegisGradeSettings', 'aegisGradeColors'], res => { saved = normalizeGradeSettings(res.aegisGradeSettings, res.aegisGradeColors); draft = structuredClone(saved); render(); });
+  chrome.storage.local.get(['aegisGradeSettings', 'aegisGradeColors'], res => { saved = normalizeGradeSettings(res.aegisGradeSettings, res.aegisGradeColors); draft = structuredClone(saved); render(); renderGuide(); });
   chrome.storage.onChanged.addListener((changes, area) => {
     if (area !== 'local') return;
     if (changes.aegisGradeSettings) {
       saved = { ...normalizeGradeSettings(changes.aegisGradeSettings.newValue), colors: saved.colors, colorsEnabled: saved.colorsEnabled };
+      renderGuide();
       if (!dirty) { draft = { ...structuredClone(saved), colors: draft.colors, colorsEnabled: draft.colorsEnabled }; render(); }
     }
     if (changes.aegisGradeColors) {
       saved = normalizeGradeSettings(saved, changes.aegisGradeColors.newValue ?? { version: 1 });
+      applyGuideColors();
       if (!colorWrites && (draft.colorsEnabled !== saved.colorsEnabled || JSON.stringify(draft.colors) !== JSON.stringify(saved.colors))) {
         draft.colors = { ...saved.colors }; draft.colorsEnabled = saved.colorsEnabled; render();
       }
