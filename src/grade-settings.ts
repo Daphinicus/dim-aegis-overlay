@@ -32,16 +32,14 @@ export function initGradeSettings() {
   const options = (labels: Record<string, string>) => Object.entries(labels).map(([value, label]) => `<option value="${value}">${label}</option>`).join('');
   safeSetInnerHTML(el, `
 <dialog id="grade-colors-modal" class="grade-modal" aria-labelledby="grade-colors-modal-title"><div class="changelog-modal-card"><div class="changelog-modal-header"><h2 id="grade-colors-modal-title" class="changelog-title">Grade colors</h2><button type="button" class="changelog-close-x" data-close aria-label="Close Grade colors">&times;</button></div><div class="changelog-modal-body">
-      <p class="description">Colors save automatically and update DIM as you edit.</p>
       <p class="description" data-color-status role="status"></p>
       <div class="grade-pills" role="group" aria-label="Grade to edit">${GRADES.map(g => `<button type="button" class="aegis-badge-${g[0].toLowerCase()}" data-grade="${g}" data-aegis-grade="${g}" aria-pressed="false">${g}</button>`).join('')}</div>
-      <div class="grade-fields">
+      <div class="grade-color-fields">
         <div class="grade-color-preview" data-color role="img" aria-label="Selected grade color"></div>
-        <label>Hex color <input type="text" data-hex maxlength="7" spellcheck="false" aria-label="Selected grade hex color"></label>
+        <input type="text" data-hex maxlength="7" spellcheck="false" aria-label="Selected grade hex color">
       </div>
-      <div class="grade-color-sliders">${['Hue', 'Saturation', 'Brightness'].map((label, index) => `<label>${label}<input type="range" data-hsv="${index}" min="0" max="${index === 0 ? 360 : 100}" step="1" aria-label="${label}"></label>`).join('')}</div>
-      <div class="grade-actions"><button type="button" class="btn btn-secondary" data-reset-color>Reset this color</button><button type="button" class="btn btn-secondary" data-reset-colors>Reset all colors</button></div>
-      <p class="description" data-color-state></p>
+      <div class="grade-color-sliders">${['Hue', 'Saturation', 'Brightness'].map((label, index) => `<input type="range" data-hsv="${index}" min="0" max="${index === 0 ? 360 : 100}" step="1" aria-label="${label}">`).join('')}</div>
+      <div class="grade-actions grade-color-actions"><button type="button" class="btn btn-secondary" data-reset-color>Reset selected</button><button type="button" class="btn btn-secondary" data-reset-colors>Reset all</button></div>
 </div></div></dialog><dialog id="grade-rules-modal" class="grade-modal" aria-labelledby="grade-rules-modal-title"><div class="changelog-modal-card"><div class="changelog-modal-header"><h2 id="grade-rules-modal-title" class="changelog-title">Grading criteria</h2><button type="button" class="changelog-close-x" data-close aria-label="Close Grading criteria">&times;</button></div><div class="changelog-modal-body"><p class="description">Keep Aegis/Finnald recommendations and choose how perk matches translate into grades. Weapon tiers, exotic viability, wishlist and Light.gg grades keep their original rules.</p><div class="grade-pills" role="group" aria-label="Grade to edit">${GRADES.map(g => `<button type="button" class="aegis-badge-${g[0].toLowerCase()}" data-grade="${g}" data-aegis-grade="${g}" aria-pressed="false">${g}</button>`).join('')}</div>      <div class="grade-rule-section">
         <label class="grade-check"><input type="checkbox" data-setting="separatePvp"> Use different rules for PvP</label>
         <label data-context-label>Rules to edit <select data-context><option value="pve">PvE</option><option value="pvp">PvP</option></select></label>
@@ -169,7 +167,6 @@ export function initGradeSettings() {
     });
     get('[data-hsv="1"]').style.background = `linear-gradient(to right, ${hsvToHex([hsv[0], 0, hsv[2]])}, ${hsvToHex([hsv[0], 100, hsv[2]])})`;
     get('[data-hsv="2"]').style.background = `linear-gradient(to right, #000000, ${hsvToHex([hsv[0], hsv[1], 100])})`;
-    get('[data-color-state]').textContent = draft.colors[selected] ? 'Gradient follows the original palette; white text with shadow.' : 'Original gradient. Choose a color to override it.';
   }
   function render() {
     draft.rulesEnabled = draft.separatePvp || JSON.stringify(draft.pve) !== JSON.stringify(defaultRules());

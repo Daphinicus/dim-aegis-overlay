@@ -222,7 +222,7 @@
 #aegis-grade-settings label { display: flex; flex-direction: column; gap: 5px; min-width: 0; font-size: 12px; }
 #aegis-grade-settings .grade-check { flex-direction: row; align-items: center; min-height: 32px; }
 #aegis-grade-settings input[type="checkbox"] { width: auto; accent-color: #ffd700; }
-#aegis-grade-settings .grade-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin: 12px 0; }
+#aegis-grade-settings .grade-fields, #aegis-grade-settings .grade-color-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin: 12px 0; }
 #aegis-grade-settings .grade-rule-section .grade-fields { grid-template-columns: 1fr; }
 #aegis-grade-settings select, #aegis-grade-settings input[type="text"] { width: 100%; min-width: 0; background: #20232b; color: #eef0f5; border: 1px solid #555c68; border-radius: 5px; padding: 7px; }
 #aegis-grade-settings .grade-color-preview { min-height: 32px; border: 1px solid #555c68; border-radius: 5px; }
@@ -236,6 +236,8 @@
 #aegis-grade-settings input[data-hsv]:focus-visible { outline: 2px solid #ffd700; outline-offset: 3px; }
 #aegis-grade-settings .grade-pills, #aegis-grade-settings .grade-actions, #aegis-grade-settings .grade-results { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
 #aegis-grade-settings .grade-pills { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); }
+#aegis-grade-settings .grade-color-actions { flex-wrap: nowrap; }
+#aegis-grade-settings .grade-color-actions button { flex: 1; min-width: 0; white-space: nowrap; }
 #aegis-grade-settings .grade-pills button { background: #292d37; color: #fff; border: 1px solid #555c68; border-radius: 4px; padding: 2px 6px; min-width: 0; height: 24px; font-size: 11px; font-weight: 700; text-shadow: 0 1px 1px rgba(0, 0, 0, 0.5); cursor: pointer; }
 #aegis-grade-settings .grade-pills button[aria-pressed="true"] { outline: 2px solid #ffd700; outline-offset: 1px; }
 #aegis-grade-settings .grade-rule-section, #aegis-grade-settings .grade-example { border-top: 1px solid #414652; margin-top: 14px; padding-top: 14px; }
