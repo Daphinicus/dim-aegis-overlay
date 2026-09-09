@@ -213,7 +213,15 @@
 #aegis-grade-settings .grade-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin: 12px 0; }
 #aegis-grade-settings .grade-rule-section .grade-fields { grid-template-columns: 1fr; }
 #aegis-grade-settings select, #aegis-grade-settings input[type="text"] { width: 100%; min-width: 0; background: #20232b; color: #eef0f5; border: 1px solid #555c68; border-radius: 5px; padding: 7px; }
-#aegis-grade-settings input[type="color"] { width: 100%; height: 32px; padding: 2px; background: #20232b; border: 1px solid #555c68; border-radius: 5px; }
+#aegis-grade-settings .grade-color-preview { min-height: 32px; border: 1px solid #555c68; border-radius: 5px; }
+#aegis-grade-settings .grade-color-sliders { display: grid; gap: 12px; }
+#aegis-grade-settings input[data-hsv] { appearance: none; width: 100%; height: 16px; margin: 5px 0; padding: 0; border: 1px solid #555c68; border-radius: 8px; }
+#aegis-grade-settings input[data-hsv="0"] { background: linear-gradient(to right, #f00, #ff0, #0f0, #0ff, #00f, #f0f, #f00); }
+#aegis-grade-settings input[data-hsv]::-moz-range-track { background: transparent; }
+#aegis-grade-settings input[data-hsv]::-webkit-slider-runnable-track { background: transparent; }
+#aegis-grade-settings input[data-hsv]::-moz-range-thumb { width: 16px; height: 20px; background: #fff; border: 2px solid #20232b; border-radius: 5px; }
+#aegis-grade-settings input[data-hsv]::-webkit-slider-thumb { appearance: none; width: 20px; height: 24px; background: #fff; border: 2px solid #20232b; border-radius: 5px; }
+#aegis-grade-settings input[data-hsv]:focus-visible { outline: 2px solid #ffd700; outline-offset: 3px; }
 #aegis-grade-settings .grade-pills, #aegis-grade-settings .grade-actions, #aegis-grade-settings .grade-results { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
 #aegis-grade-settings .grade-pills button { background: #292d37; color: #eef0f5; border: 1px solid #555c68; border-radius: 18px; padding: 7px 10px; min-width: 36px; cursor: pointer; }
 #aegis-grade-settings .grade-pills button[aria-pressed="true"] { outline: 2px solid #ffd700; outline-offset: 1px; }

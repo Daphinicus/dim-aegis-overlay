@@ -13,6 +13,18 @@ function load(name) {
 }
 const { GRADES, computeGrade, defaultRules, defaultGradeSettings, normalizeGradeSettings, evaluateRules, evaluateCustomRoll, gradeValue, unreachableGrades } = load('grading');
 const { displayGrade, rollGradeDisplay, contrastText } = load('grade-colors');
+const { hexToHsv, hsvToHex } = load('color-picker');
+for (const [hex, hsv] of [['#ff0000', [0, 100, 100]], ['#00ff00', [120, 100, 100]], ['#0000ff', [240, 100, 100]], ['#ffffff', [0, 0, 100]], ['#000000', [0, 100, 0]]]) {
+  assert.deepEqual(hexToHsv(hex), hsv);
+  assert.equal(hsvToHex(hsv), hex);
+}
+for (let color = 0; color <= 0xffffff; color += 4093) {
+  const hex = '#' + color.toString(16).padStart(6, '0');
+  assert.equal(hsvToHex(hexToHsv(hex)), hex);
+}
+assert.deepEqual(hexToHsv('#000000', [240, 75, 100]), [240, 75, 0]);
+assert.deepEqual(hexToHsv('#ffffff', [240, 75, 100]), [240, 0, 100]);
+assert.equal(hsvToHex([360, 100, 100]), '#ff0000');
 
 const rules = defaultRules();
 const states = ['active', 'selectable', 'missing'];

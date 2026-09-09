@@ -1,6 +1,7 @@
 import { GRADES, Grade, GradeRule, Slots, defaultGradeSettings, defaultRules, normalizeGradeSettings, evaluateCustomRoll, computeGrade, unreachableGrades } from './grading';
 import { applyGradeColors } from './grade-colors';
 import { safeSetInnerHTML } from './dom-utils';
+import { Hsv, hexToHsv, hsvToHex } from './color-picker';
 
 const swatches: Record<Grade, string> = { 'S+': '#ffd700', S: '#ffd700', 'A+': '#da70d6', A: '#da70d6', 'B+': '#00f2fe', B: '#00f2fe', C: '#bdc3c7', D: '#e67e22', F: '#e74c3c' };
 const traitLabels: Record<GradeRule['traits'], string> = { both: 'Both main traits equipped', mixed: 'One equipped + other selectable', one: 'One main trait equipped', available: 'One equipped or one selectable' };
@@ -17,6 +18,7 @@ export function initGradeSettings() {
   let context: 'pve' | 'pvp' = 'pve';
   let dirty = false;
   let saving = false;
+  let hsv: Hsv = [0, 100, 100];
   const slots: Slots = ['active', 'active', 'active', 'missing', 'active'];
   const get = <T extends HTMLElement>(selector: string) => el.querySelector<T>(selector)!;
   const options = (labels: Record<string, string>) => Object.entries(labels).map(([value, label]) => `<option value="${value}">${label}</option>`).join('');
@@ -28,9 +30,10 @@ export function initGradeSettings() {
       <label class="grade-check"><input type="checkbox" data-setting="rulesEnabled"> Use custom perk grading</label>
       <div class="grade-pills" role="group" aria-label="Grade to edit">${GRADES.map(g => `<button type="button" data-grade="${g}" aria-pressed="false">${g}</button>`).join('')}</div>
       <div class="grade-fields">
-        <label>Badge color <input type="color" data-color aria-label="Selected grade color"></label>
+        <div class="grade-color-preview" data-color role="img" aria-label="Selected grade color"></div>
         <label>Hex color <input type="text" data-hex maxlength="7" spellcheck="false" aria-label="Selected grade hex color"></label>
       </div>
+      <div class="grade-color-sliders">${['Hue', 'Saturation', 'Brightness'].map((label, index) => `<label>${label}<input type="range" data-hsv="${index}" min="0" max="${index === 0 ? 360 : 100}" step="1" aria-label="${label}"></label>`).join('')}</div>
       <div class="grade-actions"><button type="button" class="btn btn-secondary" data-reset-color>Reset this color</button><button type="button" class="btn btn-secondary" data-reset-colors>Reset all colors</button></div>
       <p class="description" data-color-state></p>
       <div class="grade-rule-section">
@@ -85,16 +88,28 @@ export function initGradeSettings() {
       : 'No enabled rule matched.';
     applyGradeColors(el, draft);
   }
+  function renderColor(color: string) {
+    get('[data-color]').style.background = color;
+    get('[data-color]').setAttribute('aria-label', `${selected} color ${color.toUpperCase()}`);
+    el.querySelectorAll<HTMLInputElement>('[data-hsv]').forEach(input => {
+      const index = Number(input.dataset.hsv);
+      input.value = String(hsv[index]);
+      input.disabled = !draft.colorsEnabled;
+      input.setAttribute('aria-valuetext', `${Math.round(hsv[index])}${index === 0 ? ' degrees' : ' percent'}`);
+    });
+    get('[data-hsv="1"]').style.background = `linear-gradient(to right, ${hsvToHex([hsv[0], 0, hsv[2]])}, ${hsvToHex([hsv[0], 100, hsv[2]])})`;
+    get('[data-hsv="2"]').style.background = `linear-gradient(to right, #000000, ${hsvToHex([hsv[0], hsv[1], 100])})`;
+    get('[data-color-state]').textContent = draft.colors[selected] ? 'Custom solid color; text contrast is automatic.' : 'Original gradient. Choose a color to override it.';
+  }
   function render() {
     el.querySelectorAll<HTMLInputElement>('[data-setting]').forEach(input => { input.checked = draft[input.dataset.setting as 'colorsEnabled' | 'rulesEnabled' | 'separatePvp']; });
     el.querySelectorAll<HTMLButtonElement>('[data-grade]').forEach(button => { button.setAttribute('aria-pressed', String(button.dataset.grade === selected)); });
     const color = draft.colors[selected] || swatches[selected];
-    get<HTMLInputElement>('[data-color]').value = color;
+    hsv = hexToHsv(color, hsv);
+    renderColor(color);
     get<HTMLInputElement>('[data-hex]').value = color.toUpperCase();
     get<HTMLInputElement>('[data-hex]').setCustomValidity('');
-    get<HTMLInputElement>('[data-color]').disabled = !draft.colorsEnabled;
     get<HTMLInputElement>('[data-hex]').disabled = !draft.colorsEnabled;
-    get('[data-color-state]').textContent = draft.colors[selected] ? 'Custom solid color; text contrast is automatic.' : 'Original gradient. Choose a color to override it.';
     get('[data-context-label]').hidden = !draft.separatePvp;
     get<HTMLSelectElement>('[data-context]').value = context;
     get('[data-rule-title]').textContent = `${selected} requirements · ${draft.separatePvp ? context.toUpperCase() : 'PvE + PvP'}`;
@@ -128,12 +143,19 @@ export function initGradeSettings() {
     else r.extras = input.value as GradeRule['extras'];
     render();
   }));
-  get<HTMLInputElement>('[data-color]').addEventListener('input', event => { draft.colors[selected] = (event.target as HTMLInputElement).value; render(); });
+  el.querySelectorAll<HTMLInputElement>('[data-hsv]').forEach(input => input.addEventListener('input', () => {
+    hsv[Number(input.dataset.hsv)] = Number(input.value);
+    const color = hsvToHex(hsv);
+    draft.colors[selected] = color;
+    get<HTMLInputElement>('[data-hex]').value = color.toUpperCase();
+    get<HTMLInputElement>('[data-hex]').setCustomValidity('');
+    renderColor(color); preview(); setDirty();
+  }));
   get<HTMLInputElement>('[data-hex]').addEventListener('input', event => {
     const input = event.target as HTMLInputElement;
     const valid = /^#[0-9a-f]{6}$/i.test(input.value);
     input.setCustomValidity(valid ? '' : 'Enter a six-digit hex color, such as #FFD700.');
-    if (valid) { draft.colors[selected] = input.value.toLowerCase(); get<HTMLInputElement>('[data-color]').value = input.value; preview(); setDirty(); }
+    if (valid) { draft.colors[selected] = input.value.toLowerCase(); hsv = hexToHsv(input.value, hsv); renderColor(input.value); preview(); setDirty(); }
     else get<HTMLButtonElement>('[data-apply]').disabled = true;
   });
   get('[data-reset-color]').addEventListener('click', () => { delete draft.colors[selected]; render(); });
