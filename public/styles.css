@@ -227,6 +227,8 @@
 #aegis-grade-settings select, #aegis-grade-settings input[type="text"] { width: 100%; min-width: 0; background: #20232b; color: #eef0f5; border: 1px solid #555c68; border-radius: 5px; padding: 7px; }
 #aegis-grade-settings .grade-color-preview { min-height: 32px; border: 1px solid #555c68; border-radius: 5px; }
 #aegis-grade-settings .grade-color-sliders { display: grid; gap: 12px; }
+#aegis-grade-settings .grade-color-slider { display: grid; grid-template-columns: minmax(0, 1fr) 40px; align-items: center; gap: 8px; }
+#aegis-grade-settings [data-hsv-value] { font-size: 12px; font-variant-numeric: tabular-nums; text-align: right; }
 #aegis-grade-settings input[data-hsv] { appearance: none; width: 100%; height: 16px; margin: 5px 0; padding: 0; border: 1px solid #555c68; border-radius: 8px; }
 #aegis-grade-settings input[data-hsv="0"] { background: linear-gradient(to right, #f00, #ff0, #0f0, #0ff, #00f, #f0f, #f00); }
 #aegis-grade-settings input[data-hsv]::-moz-range-track { background: transparent; }

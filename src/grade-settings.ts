@@ -38,7 +38,7 @@ export function initGradeSettings() {
         <div class="grade-color-preview" data-color role="img" aria-label="Selected grade color"></div>
         <input type="text" data-hex maxlength="7" spellcheck="false" aria-label="Selected grade hex color">
       </div>
-      <div class="grade-color-sliders">${['Hue', 'Saturation', 'Brightness'].map((label, index) => `<input type="range" data-hsv="${index}" min="0" max="${index === 0 ? 360 : 100}" step="1" aria-label="${label}">`).join('')}</div>
+      <div class="grade-color-sliders">${['Hue', 'Saturation', 'Brightness'].map((label, index) => `<div class="grade-color-slider"><input type="range" data-hsv="${index}" min="0" max="${index === 0 ? 360 : 100}" step="1" aria-label="${label}"><span data-hsv-value="${index}" aria-hidden="true"></span></div>`).join('')}</div>
       <div class="grade-actions grade-color-actions"><button type="button" class="btn btn-secondary" data-reset-color>Reset selected</button><button type="button" class="btn btn-secondary" data-reset-colors>Reset all</button></div>
 </div></div></dialog><dialog id="grade-rules-modal" class="grade-modal" aria-labelledby="grade-rules-modal-title"><div class="changelog-modal-card"><div class="changelog-modal-header"><h2 id="grade-rules-modal-title" class="changelog-title">Grading criteria</h2><button type="button" class="changelog-close-x" data-close aria-label="Close Grading criteria">&times;</button></div><div class="changelog-modal-body"><p class="description">Keep Aegis/Finnald recommendations and choose how perk matches translate into grades. Weapon tiers, exotic viability, wishlist and Light.gg grades keep their original rules.</p><div class="grade-pills" role="group" aria-label="Grade to edit">${GRADES.map(g => `<button type="button" class="aegis-badge-${g[0].toLowerCase()}" data-grade="${g}" data-aegis-grade="${g}" aria-pressed="false">${g}</button>`).join('')}</div>      <div class="grade-rule-section">
         <label class="grade-check"><input type="checkbox" data-setting="separatePvp"> Use different rules for PvP</label>
@@ -164,6 +164,7 @@ export function initGradeSettings() {
       const index = Number(input.dataset.hsv);
       input.value = String(hsv[index]);
       input.setAttribute('aria-valuetext', `${Math.round(hsv[index])}${index === 0 ? ' degrees' : ' percent'}`);
+      get(`[data-hsv-value="${index}"]`).textContent = `${Math.round(hsv[index])}${index === 0 ? '°' : '%'}`;
     });
     get('[data-hsv="1"]').style.background = `linear-gradient(to right, ${hsvToHex([hsv[0], 0, hsv[2]])}, ${hsvToHex([hsv[0], 100, hsv[2]])})`;
     get('[data-hsv="2"]').style.background = `linear-gradient(to right, #000000, ${hsvToHex([hsv[0], hsv[1], 100])})`;
