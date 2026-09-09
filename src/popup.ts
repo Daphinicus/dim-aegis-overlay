@@ -304,7 +304,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (mockBadge) {
           // Remove old position and style classes
           mockBadge.classList.remove('aegis-pos-bl', 'aegis-pos-tl', 'aegis-pos-tr', 'aegis-pos-br');
-          mockBadge.classList.remove('aegis-style-classic', 'aegis-style-pill', 'aegis-style-notch');
+          mockBadge.classList.remove('aegis-style-classic', 'aegis-style-pill', 'aegis-style-notch', 'aegis-style-footer');
 
           const posKey = badgePosVal.replace('bottom-left', 'bl').replace('top-left', 'tl').replace('top-right', 'tr').replace('bottom-right', 'br');
           mockBadge.classList.add(`aegis-pos-${posKey}`);
