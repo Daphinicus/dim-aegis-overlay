@@ -7,6 +7,12 @@ const swatches: Record<Grade, string> = { 'S+': '#ffd700', S: '#ffd700', 'A+': '
 const traitLabels: Record<GradeRule['traits'], string> = { both: 'Both main traits equipped', mixed: 'One equipped + other selectable', one: 'One main trait equipped', available: 'One equipped or one selectable' };
 const extraLabels: Record<GradeRule['extras'], string> = { none: 'No requirement', mag: 'Magazine equipped', barrel: 'Barrel equipped', either: 'Barrel or magazine equipped', both: 'Barrel and magazine equipped' };
 const slotLabels = ['Main trait 1', 'Main trait 2', 'Magazine', 'Barrel', 'Origin trait'];
+const defaultGuide: Record<Grade, string> = {
+  'S+': 'Traits 1 & 2 + Mag + Barrel + Origin', S: 'Traits 1 & 2 + Magazine matched',
+  'A+': 'Traits 1 & 2 + Barrel matched', A: 'Traits 1 & 2 both matched',
+  'B+': '1 Trait active + 1 selectable + Mag/Barrel', B: '1 Trait active + 1 selectable Trait',
+  C: '1 Trait matched + Magazine or Barrel', D: 'Only 1 Trait matched', F: 'Underperforming (no Traits matched)',
+};
 
 export function initGradeSettings() {
   const root = document.getElementById('aegis-grade-settings');
@@ -83,17 +89,25 @@ export function initGradeSettings() {
   function renderGuide() {
     const guide = document.getElementById('grade-scoring-guide');
     if (!guide) return;
+    const defaults = defaultRules();
     const profiles = saved.rulesEnabled && saved.separatePvp ? [['PvE', saved.pve], ['PvP', saved.pvp]] as const
-      : [[saved.rulesEnabled ? 'Custom criteria · PvE + PvP' : 'Default criteria', saved.rulesEnabled ? saved.pve : defaultRules()]] as const;
+      : [['', saved.rulesEnabled ? saved.pve : defaults]] as const;
     safeSetInnerHTML(guide, profiles.map(([label, rules]) => {
       const unreachable = unreachableGrades(rules);
-      return `<p class="tooltip-desc">${label}</p><div class="tooltip-grid">${GRADES.map(grade => {
+      const standard = JSON.stringify(rules) === JSON.stringify(defaults);
+      return `${label ? `<p class="tooltip-desc">${label}</p>` : ''}<div class="tooltip-grid">${GRADES.map(grade => {
         const rule = grade === 'F' ? null : rules[grade];
-        const description = !rule ? 'Fallback when no enabled rule matches.' : !rule.enabled ? 'Disabled.'
-          : `${traitLabels[rule.traits]}; ${extraLabels[rule.extras].toLowerCase()}${rule.origin ? '; origin trait equipped' : ''}.${unreachable.includes(grade) ? ' Higher rules always match first.' : ''}`;
-        return `<span class="grade-pill grade-${grade[0].toLowerCase()}-pill" data-aegis-grade="${grade}">${grade}</span><span>${description}</span>`;
+        let description = standard ? defaultGuide[grade] : 'No enabled grade matched';
+        if (!standard && rule && grade !== 'F') {
+          const traits = { both: 'Traits 1 & 2', mixed: '1 Trait active + 1 selectable', one: '1 Trait matched', available: '1 Trait active/selectable' };
+          const extras = { none: '', mag: 'Mag', barrel: 'Barrel', either: 'Mag/Barrel', both: 'Mag + Barrel' };
+          description = !rule.enabled ? 'Disabled' : JSON.stringify(rule) === JSON.stringify(defaults[grade]) ? defaultGuide[grade]
+            : [traits[rule.traits], extras[rule.extras], rule.origin ? 'Origin' : ''].filter(Boolean).join(' + ');
+        }
+        return `<span class="grade-pill grade-${grade[0].toLowerCase()}-pill" data-aegis-grade="${grade}">${grade}</span><span${unreachable.includes(grade) ? ' title="Unreachable: higher grades always match first"' : ''}>${description}</span>`;
       }).join('')}</div>`;
-    }).join('') + '<span class="tooltip-note">Highest matching enabled grade wins. Requirements refer to equipped recommended perks; slots without a recommendation count as satisfied. Max Potential evaluates available perk swaps.</span>');
+    }).join('') + (profiles.every(([, rules]) => (['S+', 'S', 'A+', 'A'] as const).every(grade => !rules[grade].enabled || rules[grade].traits === 'both'))
+      ? '<span class="tooltip-note">*Main Traits 1 & 2 must match to score A or higher.</span>' : ''));
     applyGuideColors();
   }
 
