@@ -18,6 +18,13 @@ for (const [base, end] of [['#ffd700','#ff8c00'],['#da70d6','#8a2be2'],['#00f2fe
 }
 assert.equal(gradeGradient('#000000'), 'linear-gradient(135deg, #000000, #000000)');
 assert.match(gradeGradient('#ffffff'), /^linear-gradient\(135deg, #ffffff, #[0-9a-f]{6}\)$/);
+const brightness = hex => hex.slice(1).match(/../g).map(channel => parseInt(channel,16)/255)
+  .map(v => v<=.04045 ? v/12.92 : ((v+.055)/1.055)**2.4).reduce((sum,v,i)=>sum+v*[.2126,.7152,.0722][i],0);
+for (let value=0;value<=0xffffff;value+=4093) {
+  const color='#'+value.toString(16).padStart(6,'0');
+  const end=gradeGradient(color).match(/#[0-9a-f]{6}/g)[1];
+  assert.ok(brightness(end)<=brightness(color)+.0001, 'Gradient endpoint must be darker: '+color);
+}
 const { hexToHsv, hsvToHex } = load('color-picker');
 for (const [hex, hsv] of [['#ff0000', [0, 100, 100]], ['#00ff00', [120, 100, 100]], ['#0000ff', [240, 100, 100]], ['#ffffff', [0, 0, 100]], ['#000000', [0, 100, 0]]]) {
   assert.deepEqual(hexToHsv(hex), hsv);
