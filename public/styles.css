@@ -1683,19 +1683,27 @@ body.aegis-scrolling div[id^="item-"][data-aegis-item-hash]:hover {
 /* Gold Glow for God Rolls (S-tier) */
 .aegis-gold-glow {
   box-shadow: 0 0 10px rgba(255, 179, 0, 0.5) !important;
-  outline: 1px solid rgba(255, 179, 0, 0.6) !important;
-  outline-offset: -1px;
   animation: aegis-gold-pulse 2s infinite alternate !important;
+}
+
+.aegis-gold-glow::after {
+  content: '';
+  position: absolute;
+  /* Preserve DIM's own outer border indicators. */
+  inset: 1px;
+  z-index: 120;
+  pointer-events: none;
+  box-sizing: border-box;
+  border: 1px solid rgba(255, 179, 0, 0.6);
+  border-radius: inherit;
 }
 
 @keyframes aegis-gold-pulse {
   from {
     box-shadow: 0 0 6px rgba(255, 179, 0, 0.35) !important;
-    outline-color: rgba(255, 179, 0, 0.45) !important;
   }
   to {
     box-shadow: 0 0 14px rgba(255, 179, 0, 0.7) !important;
-    outline-color: rgba(255, 179, 0, 0.8) !important;
   }
 }
 
