@@ -1,4 +1,4 @@
-export const GRADES = ['S+', 'S', 'A+', 'A', 'B+', 'B', 'C', 'D', 'F'] as const;
+export const GRADES = ['S+', 'S', 'A+', 'A', 'B+', 'B', 'C', 'D', 'E', 'F'] as const;
 export type Grade = typeof GRADES[number];
 export type SlotStatus = 'active' | 'selectable' | 'missing';
 export type Slots = [SlotStatus, SlotStatus, SlotStatus, SlotStatus, SlotStatus];
@@ -28,6 +28,7 @@ export function defaultRules(): Rules {
     'S+': rule('both', 'both', true), S: rule('both', 'mag'),
     'A+': rule('both', 'barrel'), A: rule('both'),
     'B+': rule('mixed', 'either'), B: rule('mixed'), C: rule('one', 'either'), D: rule('available'),
+    E: { ...rule('available'), enabled: false },
   };
 }
 
@@ -50,6 +51,7 @@ export function normalizeGradeSettings(value: unknown, palette?: unknown): Grade
     for (const grade of GRADES) {
       if (grade === 'F') continue;
       const r = rules[grade];
+      if (grade === 'E' && r === undefined) continue;
       if (!r || !['both', 'mixed', 'one', 'available'].includes(r.traits) ||
           !['none', 'mag', 'barrel', 'either', 'both'].includes(r.extras) ||
           typeof r.origin !== 'boolean' || typeof r.enabled !== 'boolean') return defaultRules();

@@ -17,6 +17,7 @@ for (const [base, end] of [['#ffd700','#ff8c00'],['#da70d6','#8a2be2'],['#00f2fe
   assert.equal(gradeGradient(base), `linear-gradient(135deg, ${base}, ${end})`);
 }
 assert.equal(gradeGradient('#000000'), 'linear-gradient(135deg, #000000, #000000)');
+assert.equal(gradeGradient('#7f8c8d'), 'linear-gradient(135deg, #7f8c8d, #5a5a5a)');
 assert.match(gradeGradient('#ffffff'), /^linear-gradient\(135deg, #ffffff, #[0-9a-f]{6}\)$/);
 const brightness = hex => hex.slice(1).match(/../g).map(channel => parseInt(channel,16)/255)
   .map(v => v<=.04045 ? v/12.92 : ((v+.055)/1.055)**2.4).reduce((sum,v,i)=>sum+v*[.2126,.7152,.0722][i],0);
@@ -66,6 +67,26 @@ for (let n = 0; n < 243; n++) {
   assert.equal(evaluateCustomRoll(slots, rules).potentialGrade, computeGrade(...slots, true), `default potential ${slots}`);
 }
 assert.deepEqual(unreachableGrades(rules), []);
+const oldSettings = defaultGradeSettings();
+oldSettings.rulesEnabled = true;oldSettings.pve.S.extras = 'none';oldSettings.pvp.D.origin = true;
+delete oldSettings.pve.E;delete oldSettings.pvp.E;
+const migrated = normalizeGradeSettings(oldSettings);
+assert.equal(migrated.pve.S.extras, 'none');
+assert.equal(migrated.pvp.D.origin, true);
+assert.equal(migrated.pve.E.enabled, false);
+assert.equal(migrated.pvp.E.enabled, false);
+const optionalE = defaultRules();optionalE.E.enabled = true;
+assert.ok(unreachableGrades(optionalE).includes('E'));
+optionalE.D.origin = true;
+assert.equal(evaluateRules(['active','missing','missing','missing','missing'],optionalE),'E');
+assert.equal(evaluateCustomRoll(['selectable','missing','missing','missing','missing'],optionalE).potentialGrade,'E');
+assert.equal(evaluateCustomRoll(['active','missing','selectable','missing','missing'],optionalE).potentialGrade,'C');
+assert.equal(evaluateRules(Array(5).fill('missing'),optionalE),'F');
+assert.equal(normalizeGradeSettings({...defaultGradeSettings(),pve:optionalE}).pve.E.enabled,true);
+assert.equal(normalizeGradeSettings({...defaultGradeSettings(),colors:{E:'#123456'}}).colors.E,'#123456');
+assert.equal(displayGrade('BE'),'E');
+assert.equal(displayGrade('ES+'),'S+');
+assert.equal(displayGrade('E'),'E');
 assert.equal(computeGrade('active', 'active', 'active', 'active', 'active', false), 'S+');
 assert.equal(computeGrade('active', 'active', 'active', 'missing', 'active', false), 'S');
 assert.equal(computeGrade('active', 'active', 'missing', 'active', 'active', false), 'A+');

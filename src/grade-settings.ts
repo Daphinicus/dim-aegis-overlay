@@ -3,7 +3,7 @@ import { applyGradeColors, gradeGradient } from './grade-colors';
 import { safeSetInnerHTML } from './dom-utils';
 import { Hsv, hexToHsv, hsvToHex } from './color-picker';
 
-const swatches: Record<Grade, string> = { 'S+': '#ffd700', S: '#ffd700', 'A+': '#da70d6', A: '#da70d6', 'B+': '#00f2fe', B: '#00f2fe', C: '#bdc3c7', D: '#e67e22', F: '#e74c3c' };
+const swatches: Record<Grade, string> = { 'S+': '#ffd700', S: '#ffd700', 'A+': '#da70d6', A: '#da70d6', 'B+': '#00f2fe', B: '#00f2fe', C: '#bdc3c7', D: '#e67e22', E: '#7f8c8d', F: '#e74c3c' };
 const traitLabels: Record<GradeRule['traits'], string> = { both: 'Both main traits equipped', mixed: 'One equipped + other selectable', one: 'One main trait equipped', available: 'One equipped or one selectable' };
 const extraLabels: Record<GradeRule['extras'], string> = { none: 'No requirement', mag: 'Magazine equipped', barrel: 'Barrel equipped', either: 'Barrel or magazine equipped', both: 'Barrel and magazine equipped' };
 const slotLabels = ['Main trait 1', 'Main trait 2', 'Magazine', 'Barrel', 'Origin trait'];
@@ -11,7 +11,7 @@ const defaultGuide: Record<Grade, string> = {
   'S+': 'Traits 1 & 2 + Mag + Barrel + Origin', S: 'Traits 1 & 2 + Magazine matched',
   'A+': 'Traits 1 & 2 + Barrel matched', A: 'Traits 1 & 2 both matched',
   'B+': '1 Trait active + 1 selectable + Mag/Barrel', B: '1 Trait active + 1 selectable Trait',
-  C: '1 Trait matched + Magazine or Barrel', D: 'Only 1 Trait matched', F: 'Underperforming (no Traits matched)',
+  C: '1 Trait matched + Magazine or Barrel', D: 'Only 1 Trait matched', E: '1 Trait active/selectable', F: 'Underperforming (no Traits matched)',
 };
 
 export function initGradeSettings() {
@@ -46,6 +46,7 @@ export function initGradeSettings() {
         <label class="grade-check"><input type="checkbox" data-setting="separatePvp"> Use different rules for PvP</label>
         <label data-context-label>Rules to edit <select data-context><option value="pve">PvE</option><option value="pvp">PvP</option></select></label>
         <h3 data-rule-title></h3>
+        <p class="description" data-optional-grade>E is a weapon tier by default. Enable it below for perk grading.</p>
         <div class="grade-fields" data-rule-fields>
           <label>Main traits <select data-rule="traits">${options(traitLabels)}</select></label>
           <label>Barrel / magazine <select data-rule="extras">${options(extraLabels)}</select></label>
@@ -98,7 +99,7 @@ export function initGradeSettings() {
     safeSetInnerHTML(guide, profiles.map(([label, rules]) => {
       const unreachable = unreachableGrades(rules);
       const standard = JSON.stringify(rules) === JSON.stringify(defaults);
-      return `${label ? `<p class="tooltip-desc">${label}</p>` : ''}<div class="tooltip-grid">${GRADES.map(grade => {
+      return `${label ? `<p class="tooltip-desc">${label}</p>` : ''}<div class="tooltip-grid">${GRADES.filter(grade => grade !== 'E' || rules.E.enabled).map(grade => {
         const rule = grade === 'F' ? null : rules[grade];
         let description = standard ? defaultGuide[grade] : 'No enabled grade matched';
         if (!standard && rule && grade !== 'F') {
@@ -182,6 +183,7 @@ export function initGradeSettings() {
     get('[data-context-label]').hidden = !draft.separatePvp;
     get<HTMLSelectElement>('[data-context]').value = context;
     get('[data-rule-title]').textContent = `${selected} requirements · ${draft.separatePvp ? context.toUpperCase() : 'PvE + PvP'}`;
+    get('[data-optional-grade]').hidden = selected !== 'E';
     get('[data-rule-fields]').hidden = selected === 'F';
     get('[data-fallback]').hidden = selected !== 'F';
     el.querySelectorAll<HTMLInputElement | HTMLSelectElement>('[data-rule]').forEach(input => {
