@@ -28,7 +28,7 @@ function sendDiagnosticLog(msg: string) {
 }
 
 // Global cache for weapon instances to store full perk sets (e.g. from popups)
-const instanceCache: Record<string, { perkHashes: number[]; perksDataMap: Record<number, PerkInfo>; equippedMasterwork?: string }> = {};
+const instanceCache: Record<string, { perkHashes: number[]; activePerkHashes: number[]; perksDataMap: Record<number, PerkInfo>; equippedMasterwork?: string }> = {};
 
 // Manifest database state variables for fast offline lookups
 let manifestDbName: string | null = null;
@@ -721,6 +721,12 @@ const detectPlugCategory = (def: any): string => {
   return ''; // Unknown — will be skipped for Chase List, but still tracked for scoring
 };
 
+function setItemAttribute(el: HTMLElement, name: string, value: string | null) {
+  if (el.getAttribute(name) === value) return;
+  if (value === null) el.removeAttribute(name);
+  else el.setAttribute(name, value);
+}
+
 /**
  * Scans a DOM element for item properties in its React Fiber and writes them to attributes.
  */
@@ -791,12 +797,12 @@ function processElement(el: HTMLElement) {
 
     if (isArmor) {
       const newHash = String(item.hash);
-      el.setAttribute('data-aegis-item-hash', newHash);
-      el.setAttribute('data-aegis-item-name', item.name || 'Unknown Armor');
-      el.setAttribute('data-aegis-item-type', 'armor');
+      setItemAttribute(el, 'data-aegis-item-hash', newHash);
+      setItemAttribute(el, 'data-aegis-item-name', item.name || 'Unknown Armor');
+      setItemAttribute(el, 'data-aegis-item-type', 'armor');
       const instanceId = item.id;
       if (instanceId) {
-        el.setAttribute('data-aegis-instance-id', String(instanceId));
+        setItemAttribute(el, 'data-aegis-instance-id', String(instanceId));
       }
 
       // Extract armor socketed perks / intrinsic archetype
@@ -810,7 +816,7 @@ function processElement(el: HTMLElement) {
         }
       }
       if (armorPerks.length > 0) {
-        el.setAttribute('data-aegis-armor-perks', JSON.stringify(armorPerks));
+        setItemAttribute(el, 'data-aegis-armor-perks', JSON.stringify(armorPerks));
       }
 
       // Extract base stats if available
@@ -822,13 +828,13 @@ function processElement(el: HTMLElement) {
             statsMap[statName.toLowerCase().trim()] = st.base ?? st.value ?? 0;
           }
         }
-        el.setAttribute('data-aegis-armor-stats', JSON.stringify(statsMap));
+        setItemAttribute(el, 'data-aegis-armor-stats', JSON.stringify(statsMap));
       }
 
       // Clear weapon-specific attributes
-      el.removeAttribute('data-aegis-perk-hashes');
-      el.removeAttribute('data-aegis-perks-data');
-      el.removeAttribute('data-aegis-active-perk-hashes');
+      setItemAttribute(el, 'data-aegis-perk-hashes', null);
+      setItemAttribute(el, 'data-aegis-perks-data', null);
+      setItemAttribute(el, 'data-aegis-active-perk-hashes', null);
       return;
     }
 
@@ -1001,16 +1007,20 @@ function processElement(el: HTMLElement) {
     // Instance ID cache logic (handles async loading and popup-to-grid sync)
     const instanceId = item.id;
     if (instanceId) {
+      const cached = instanceCache[instanceId];
+      if (activePerkHashes.length === 0 && cached) {
+        activePerkHashes = [...cached.activePerkHashes];
+      }
       // If we scanned a complete perk list (>3 perks indicates full perks loaded)
       if (perkHashes.length > 3) {
         instanceCache[instanceId] = {
           perkHashes: [...perkHashes],
+          activePerkHashes: [...activePerkHashes],
           perksDataMap: { ...perksDataMap },
           equippedMasterwork,
         };
-      } else if (instanceCache[instanceId]) {
+      } else if (cached) {
         // If current element lacks perks but we have it in cache, populate it!
-        const cached = instanceCache[instanceId];
         for (const hash of cached.perkHashes) {
           if (!perkHashes.includes(hash)) {
             perkHashes.push(hash);
@@ -1030,12 +1040,6 @@ function processElement(el: HTMLElement) {
     const newHash = String(item.hash);
     const newPerks = perkHashes.join(',');
 
-    const existingHash = el.getAttribute('data-aegis-item-hash');
-    const existingPerks = el.getAttribute('data-aegis-perk-hashes');
-
-    // Write categorized possible perks for the Chase List BEFORE the early-return check.
-    // We always update this when we have meaningful data, regardless of whether the
-    // perkHashes have changed (e.g. popup has more categorized data than a tile).
     if (possiblePerk1s.length > 0 || possiblePerk2s.length > 0 || possibleBarrels.length > 0) {
       const possiblePerksData = {
         barrels: possibleBarrels.sort(),
@@ -1044,31 +1048,22 @@ function processElement(el: HTMLElement) {
         perk2s: possiblePerk2s.sort(),
         origins: possibleOrigins.sort(),
       };
-      el.setAttribute('data-aegis-weapon-possible-perks', JSON.stringify(possiblePerksData));
+      setItemAttribute(el, 'data-aegis-weapon-possible-perks', JSON.stringify(possiblePerksData));
     }
 
-    // Always write the MW attribute before the early-return check so it's
-    // never skipped on re-scans where only the hash/perks are unchanged.
     if (equippedMasterwork) {
-      el.setAttribute('data-aegis-masterwork', equippedMasterwork);
+      setItemAttribute(el, 'data-aegis-masterwork', equippedMasterwork);
     } else {
-      el.removeAttribute('data-aegis-masterwork');
+      setItemAttribute(el, 'data-aegis-masterwork', null);
     }
 
-    // Optimization: Avoid re-triggering content.ts if no scoring-relevant data changed
-    if (existingHash === newHash && existingPerks === newPerks) {
-      return;
-    }
-
-    // Set attributes for the isolated world content script to read
-    el.setAttribute('data-aegis-item-hash', newHash);
-    el.setAttribute('data-aegis-item-name', item.name || 'Unknown Weapon');
-    el.setAttribute('data-aegis-perk-hashes', newPerks);
-    el.setAttribute('data-aegis-perks-data', JSON.stringify(perksDataMap));
-    el.setAttribute('data-aegis-active-perk-hashes', activePerkHashes.join(','));
-    if (instanceId) {
-      el.setAttribute('data-aegis-instance-id', String(instanceId));
-    }
+    setItemAttribute(el, 'data-aegis-item-hash', newHash);
+    setItemAttribute(el, 'data-aegis-item-name', item.name || 'Unknown Weapon');
+    setItemAttribute(el, 'data-aegis-perk-hashes', newPerks);
+    setItemAttribute(el, 'data-aegis-perks-data', JSON.stringify(perksDataMap));
+    setItemAttribute(el, 'data-aegis-active-perk-hashes', activePerkHashes.join(','));
+    setItemAttribute(el, 'data-aegis-instance-id', instanceId ? String(instanceId) : null);
+    setItemAttribute(el, 'data-aegis-item-type', null);
 
   } catch (e) {
     console.debug('Aegis Overlay: Element scan failed', e);
@@ -1106,12 +1101,13 @@ setInterval(scanPage, 10000);
 // 2. Immediate scan on DOM modifications using MutationObserver.
 // Mutations are batched and processed once per animation frame to avoid
 // running selector queries + fiber walks for every single mutation record.
-const pendingNodes: HTMLElement[] = [];
+const pendingNodes = new Set<HTMLElement>();
 let scanScheduled = false;
 
 function flushPendingNodes() {
   scanScheduled = false;
-  const nodes = pendingNodes.splice(0, pendingNodes.length);
+  const nodes = Array.from(pendingNodes);
+  pendingNodes.clear();
   for (let i = 0; i < nodes.length; i++) {
     const node = nodes[i];
     if (!node.isConnected) continue;
@@ -1123,18 +1119,23 @@ function flushPendingNodes() {
   }
 }
 
+const OVERLAY_SELECTOR = '.aegis-badge, .aegis-title-badge, .aegis-popup-summary, [data-aegis-details], #aegis-tooltip';
+
 const observer = new MutationObserver((mutations) => {
-  for (let i = 0; i < mutations.length; i++) {
-    const mutation = mutations[i];
-    if (mutation.addedNodes.length > 0) {
-      mutation.addedNodes.forEach((node) => {
-        if (node instanceof HTMLElement) {
-          pendingNodes.push(node);
-        }
+  for (const mutation of mutations) {
+    const target = mutation.target instanceof Element ? mutation.target : mutation.target.parentElement;
+    if (!target || target.closest(OVERLAY_SELECTOR)) continue;
+    if (mutation.type === 'childList') {
+      const changedNodes = [...mutation.addedNodes, ...mutation.removedNodes];
+      if (changedNodes.every(node => node instanceof Element && node.matches(OVERLAY_SELECTOR))) continue;
+      mutation.addedNodes.forEach(node => {
+        if (node instanceof HTMLElement && !node.matches(OVERLAY_SELECTOR)) pendingNodes.add(node);
       });
     }
+    const item = target.closest<HTMLElement>('[data-aegis-item-hash]') || target.closest<HTMLElement>(SELECTORS);
+    if (item) pendingNodes.add(item);
   }
-  if (pendingNodes.length > 0 && !scanScheduled) {
+  if (pendingNodes.size > 0 && !scanScheduled) {
     scanScheduled = true;
     requestAnimationFrame(flushPendingNodes);
   }
@@ -1763,6 +1764,9 @@ function startObserver() {
   observer.observe(document.body, {
     childList: true,
     subtree: true,
+    characterData: true,
+    attributes: true,
+    attributeFilter: ['src', 'class', 'id'],
   });
   scanPage();
   

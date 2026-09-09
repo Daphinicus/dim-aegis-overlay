@@ -5273,7 +5273,9 @@ function injectBadge(el: HTMLElement, result: ScoringResult) {
       return;
     }
   } else {
-    badgeTarget = itemContainer.querySelector('.item-tile, [class*="StoreItem"], [class*="InventoryItem"], [class*="ItemTile"]') as HTMLElement | null;
+    badgeTarget = itemContainer.matches('.item, .item-tile')
+      ? itemContainer
+      : itemContainer.querySelector<HTMLElement>('.item, .item-tile') || itemContainer.querySelector<HTMLElement>('[class*="StoreItem"], [class*="InventoryItem"], [class*="ItemTile"]');
     if (!badgeTarget) {
       badgeTarget = itemContainer;
     }
@@ -5292,6 +5294,7 @@ function injectBadge(el: HTMLElement, result: ScoringResult) {
 
   if (existingBadges.length > 0) {
     badge = existingBadges[0] as HTMLDivElement;
+    if (badge.parentElement !== badgeTarget) badgeTarget.appendChild(badge);
     for (let i = 1; i < existingBadges.length; i++) {
       existingBadges[i].remove();
     }
@@ -5421,7 +5424,7 @@ function injectBadge(el: HTMLElement, result: ScoringResult) {
 function removeBadge(el: HTMLElement) {
   const itemContainer = (el.closest('[data-aegis-item-hash]') as HTMLElement) || el;
   itemContainer.classList.remove('aegis-gold-glow');
-  const badgeTarget = itemContainer.querySelector('.item-tile, [class*="StoreItem"], [class*="InventoryItem"], [class*="ItemTile"]');
+  const badgeTarget = itemContainer.querySelector('.item, .item-tile') || itemContainer.querySelector('[class*="StoreItem"], [class*="InventoryItem"], [class*="ItemTile"]');
   if (badgeTarget) {
     badgeTarget.classList.remove('aegis-gold-glow');
   }
@@ -6766,9 +6769,21 @@ function reprocessAllElements() {
   evaluateAegisFiltering();
 }
 
-// 1. Observe the DOM for additions or changes to 'data-aegis-item-hash' or 'data-aegis-perk-hashes'
 // Mutations are batched and processed once per animation frame instead of
 // running processElement + opacity sync for every single mutation record.
+const ITEM_ATTRIBUTES = [
+  'data-aegis-item-hash',
+  'data-aegis-item-name',
+  'data-aegis-instance-id',
+  'data-aegis-item-type',
+  'data-aegis-perk-hashes',
+  'data-aegis-perks-data',
+  'data-aegis-active-perk-hashes',
+  'data-aegis-masterwork',
+  'data-aegis-weapon-possible-perks',
+  'data-aegis-armor-perks',
+  'data-aegis-armor-stats',
+];
 const pendingProcessTargets = new Set<HTMLElement>();
 let processFlushScheduled = false;
 
@@ -6792,15 +6807,19 @@ const observer = new MutationObserver((mutations) => {
     const mutation = mutations[i];
 
     // Check if the custom data attributes were modified
-    if (
-      mutation.type === 'attributes' &&
-      (mutation.attributeName === 'data-aegis-item-hash' || mutation.attributeName === 'data-aegis-perk-hashes')
-    ) {
+    if (mutation.type === 'attributes') {
       pendingProcessTargets.add(mutation.target as HTMLElement);
     }
 
     // Check for added nodes that might contain our attributes
     if (mutation.type === 'childList') {
+      const removedBadge = Array.from(mutation.removedNodes).some(node =>
+        node instanceof Element && (node.matches('.aegis-badge') || node.querySelector('.aegis-badge'))
+      );
+      if (removedBadge && mutation.target instanceof Element) {
+        const item = mutation.target.closest<HTMLElement>('[data-aegis-item-hash]');
+        if (item && !item.querySelector('.aegis-badge')) pendingProcessTargets.add(item);
+      }
       mutation.addedNodes.forEach((node) => {
         if (node instanceof HTMLElement) {
           if (node.hasAttribute('data-aegis-item-hash')) {
@@ -6831,7 +6850,7 @@ function startObserver() {
     childList: true,
     subtree: true,
     attributes: true,
-    attributeFilter: ['data-aegis-item-hash', 'data-aegis-perk-hashes'],
+    attributeFilter: ITEM_ATTRIBUTES,
   });
 }
 startObserver();
