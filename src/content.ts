@@ -5359,6 +5359,15 @@ function injectBadge(el: HTMLElement, result: ScoringResult) {
     }
   }
 
+  if (styleKey === 'footer') {
+    for (const label of isSplit ? badge.querySelectorAll('.aegis-split-half') : [badge]) {
+      const text = document.createElement('span');
+      text.className = 'aegis-grade-text';
+      text.textContent = label.textContent;
+      label.replaceChildren(text);
+    }
+  }
+
   if (result.upgradeAvailable) {
     const upgradeArrow = document.createElement('span');
     upgradeArrow.className = 'aegis-badge-upgrade-arrow';
