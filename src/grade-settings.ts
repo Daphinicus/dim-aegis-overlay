@@ -40,15 +40,15 @@ export function initGradeSettings() {
       <div class="grade-color-sliders">${['colorHue', 'colorSaturation', 'colorBrightness'].map((label, index) => `<div class="grade-color-slider"><input type="range" data-hsv="${index}" min="0" max="${index === 0 ? 360 : 100}" step="1" data-i18n-aria-label="${label}" aria-label="${t(label)}"><div class="grade-hsv-field"><input type="number" data-hsv-value="${index}" min="0" max="${index === 0 ? 360 : 100}" step="1" required aria-label="${t(index === 0 ? 'colorFieldDegrees' : 'colorFieldPercent', { label: t(label) })}"><span aria-hidden="true">${index === 0 ? '°' : '%'}</span></div></div>`).join('')}</div>
       <div class="grade-actions grade-color-actions"><button type="button" class="btn btn-secondary" data-reset-color data-i18n="resetSelected">Reset selected</button><button type="button" class="btn btn-secondary" data-reset-colors data-i18n="resetAll">Reset all</button></div>
 </div></div></section><section id="grade-rules-modal" class="grade-settings" aria-labelledby="grade-rules-modal-title"><div class="grade-editor-card"><div class="grade-editor-header"><h2 id="grade-rules-modal-title" class="grade-editor-title" data-i18n="customizeGradingCriteria">Customize Grading Criteria</h2></div><div class="grade-editor-body"><div class="grade-profile-row">
+        <label class="grade-check" data-i18n-title="includeGrade" title="Include this grade in scoring and the overview"><input type="checkbox" data-rule="enabled"> <span data-i18n="fadeHoverEnabled">Enabled</span></label>
         <label class="grade-check"><input type="checkbox" data-setting="separatePvp"> <span data-i18n="separatePvp">Separate PvP</span></label>
-        <select data-context data-i18n-aria-label="gradeProfile" aria-label="Profile to edit"><option value="pve">PvE</option><option value="pvp">PvP</option></select>
+        <div class="segmented-control" data-context role="group" data-i18n-aria-label="gradeProfile" aria-label="Profile to edit"><button type="button" data-profile="pve" data-i18n="inlinePve" aria-pressed="true">PvE</button><button type="button" data-profile="pvp" data-i18n="inlinePvp" aria-pressed="false">PvP</button></div>
       </div>
       <div class="grade-pills" role="group" data-i18n-aria-label="gradeToEdit" aria-label="Grade to edit">${GRADES.map(g => `<button type="button" class="aegis-badge-${g[0].toLowerCase()}" data-grade="${g}" data-aegis-grade="${g}" aria-pressed="false">${g}</button>`).join('')}</div>
       <div class="grade-rule-fields" data-rule-fields>
         <label class="grade-rule-select" data-i18n-title="matchMainTraits" title="Match recommended main traits"><span data-i18n="mainTraits">Main traits</span><select data-rule="traits">${options(traitLabels)}</select></label>
         <label class="grade-rule-select" data-i18n-title="matchBarrelMag" title="Match the recommended barrel and magazine"><span data-i18n="barrelMag">Barrel / mag</span><select data-rule="extras">${options(extraLabels)}</select></label>
         <div class="grade-rule-checks">
-          <label class="grade-check" data-i18n-title="includeGrade" title="Include this grade in scoring and the overview"><input type="checkbox" data-rule="enabled"> <span data-i18n="fadeHoverEnabled">Enabled</span></label>
           <label class="grade-check" data-i18n-title="originEquipped" title="Recommended origin trait equipped"><input type="checkbox" data-rule="origin"> <span data-i18n="origin">Origin</span></label>
           <label class="grade-check" data-i18n-title="masterworkCriterion" title="Recommended masterwork matched; ignored when none is recommended"><input type="checkbox" data-rule="masterwork"> <span data-i18n="masterwork">MW</span></label>
         </div>
@@ -157,11 +157,20 @@ export function initGradeSettings() {
     get<HTMLInputElement>('[data-hex]').value = color.slice(1).toUpperCase();
     get<HTMLInputElement>('[data-hex]').setCustomValidity('');
     get('[data-context]').hidden = !draft.separatePvp;
-    get<HTMLSelectElement>('[data-context]').value = context;
-    get('[data-rule-fields]').hidden = selected === 'F';
+    el.querySelectorAll<HTMLButtonElement>('[data-profile]').forEach(button => {
+      button.classList.toggle('active', button.dataset.profile === context);
+      button.setAttribute('aria-pressed', String(button.dataset.profile === context));
+    });
+    const inactive = selected === 'F' || !profile()[selected].enabled;
+    get('[data-rule-fields]').setAttribute('aria-disabled', String(inactive));
     get('[data-fallback]').hidden = selected !== 'F';
     el.querySelectorAll<HTMLInputElement | HTMLSelectElement>('[data-rule]').forEach(input => {
-      if (selected === 'F') return;
+      input.disabled = selected === 'F' || (inactive && input.dataset.rule !== 'enabled');
+      if (selected === 'F') {
+        if (input instanceof HTMLInputElement) input.checked = input.dataset.rule === 'enabled';
+        else input.selectedIndex = -1;
+        return;
+      }
       const value = profile()[selected][input.dataset.rule as keyof GradeRule];
       if (input instanceof HTMLInputElement) input.checked = value as boolean;
       else input.value = value as string;
@@ -171,6 +180,7 @@ export function initGradeSettings() {
     el.querySelectorAll<HTMLButtonElement>('#grade-rules-modal [data-grade]').forEach(button => {
       const grade = button.dataset.grade as Grade;
       const custom = isCustom(grade);
+      button.toggleAttribute('data-grade-inactive', grade !== 'F' && !profile()[grade].enabled);
       button.toggleAttribute('data-custom-rule', custom);
       button.title = t(grade === 'F' ? 'fallbackGrade' : custom ? 'customCriteria' : 'defaultCriteria');
       button.setAttribute('aria-label', `${grade}: ${button.title}`);
@@ -188,7 +198,10 @@ export function initGradeSettings() {
     render(); saveRules();
   });
   el.querySelectorAll<HTMLButtonElement>('[data-grade]').forEach(button => button.addEventListener('click', () => { selected = button.dataset.grade as Grade; render(); }));
-  get<HTMLSelectElement>('[data-context]').addEventListener('change', event => { context = (event.target as HTMLSelectElement).value as 'pve' | 'pvp'; render(); });
+  el.querySelectorAll<HTMLButtonElement>('[data-profile]').forEach(button => button.addEventListener('click', () => {
+    context = button.dataset.profile as 'pve' | 'pvp';
+    render();
+  }));
   el.querySelectorAll<HTMLInputElement | HTMLSelectElement>('[data-rule]').forEach(input => input.addEventListener('change', () => {
     if (selected === 'F') return;
     const r = profile()[selected];

@@ -83,4 +83,12 @@
 .options-panel .grade-settings .grade-color-fields { margin: 6px 0; gap: 8px; }
 .options-panel .grade-settings .grade-color-sliders { gap: 6px; }
 .options-panel .grade-settings .grade-check { font-size: 11px; gap: 5px; }
+.options-panel .grade-settings .grade-profile-row { gap: 8px; }
+.options-panel .grade-settings .grade-profile-row label { flex: none; }
+.options-panel .grade-profile-row label:nth-child(2) { margin-left: auto; }
+.options-panel .grade-profile-row [data-context] { flex: 0 0 76px; }
+.options-panel .grade-pills [data-grade-inactive] { background: #292d37 !important; color: #858894; text-shadow: none; }
+.options-panel .grade-rule-fields[aria-disabled="true"] { opacity: .5; }
+.options-panel .grade-rule-fields[aria-disabled="true"] :disabled { opacity: 1; }
+.options-panel .grade-rule-fields[aria-disabled="true"] label { cursor: default; }
 .options-panel .grade-settings .grade-color-actions button { font-size: 11px; padding: 7px 4px; white-space: normal; }
