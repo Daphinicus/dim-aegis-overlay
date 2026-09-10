@@ -38,6 +38,8 @@ export interface ScoringResult {
   pvpGrade?: string;
 }
 
+export type BadgeColor = 'perk' | 'archetype' | 'gradient';
+
 export type AegisMode = 'pve' | 'pvp' | 'both';
 
 /**
@@ -45,6 +47,7 @@ export type AegisMode = 'pve' | 'pvp' | 'both';
  */
 export interface LocalStorageSchema {
   aegisTwoTierColors?: boolean;
+  aegisBadgeColor?: BadgeColor;
   aegisMaxTierGlow?: boolean;
   aegisGradeSettings?: GradeSettings;
   aegisGradeColors?: Pick<GradeSettings, 'version' | 'colorsEnabled' | 'colors'>;

@@ -1,5 +1,5 @@
 import { computeGrade, defaultGradeSettings, normalizeGradeSettings, evaluateCustomRoll, gradeValue as getGradeValue, Slots } from './grading';
-import { setGradeColors, setTwoTierColors, setMaxTierGlow, applyGradeColors, applyGradeGlow, displayGrade, rollGradeDisplay } from './grade-colors';
+import { setGradeColors, setBadgeColor, resolveBadgeColor, setMaxTierGlow, applyGradeColors, applyGradeGlow, displayGrade, rollGradeDisplay } from './grade-colors';
 import { scoreWeapon } from './scorer';
 import { WishlistDatabase, ScoringResult, AegisSheetDatabase, AegisSheetWeapon, TooltipPerk, AegisArmorSet, SheetPerksGroup, AegisShoppingDatabase, AegisShoppingItem, DualSheetInfo, ManifestWeapon, AegisChaseItem, WeaponEvaluationPayload } from './types';
 import { showTooltip, hideTooltip, extractRecommendedMasterwork, getRecommendedMasterworks, renderViabilityMatrix, formatFormattedNotes, renderShoppingBannerHtml } from './tooltip';
@@ -193,7 +193,7 @@ let aegisLayoutSide = 'side';
 let aegisPerkOrder: 'sheet' | 'owned' = 'sheet';
 let aegisDbMode = 'both';
 let aegisTwoTier = false;
-let aegisTwoTierColors = false;
+let aegisBadgeColor = resolveBadgeColor(undefined);
 let aegisMaxTierGlow = false;
 let aegisBadgePosition: 'bottom-left' | 'top-left' | 'top-right' | 'bottom-right' = 'bottom-left';
 let aegisBadgeStyle: 'classic' | 'pill' | 'notch' | 'footer' = 'classic';
@@ -3689,7 +3689,7 @@ function showWinnowerWelcomeModal() {
   closeBtn?.addEventListener('click', dismissModal);
 }
 
-chrome.storage.local.get(['wishlistData', 'enhancedToNormal', 'scoringSource', 'lightggData', 'aegisSheetDb', 'aegisSheetDbPvE', 'aegisSheetDbPvP', 'aegisShoppingDb', 'aegisShoppingDbPvE', 'aegisShoppingDbPvP', 'perkRegistry', 'aegisLayoutSide', 'aegisPerkOrder', 'aegisDbMode', 'aegisMode', 'aegisTwoTier', 'aegisTwoTierColors', 'aegisMaxTierGlow', 'aegisBadgePosition', 'aegisBadgeStyle', 'aegisBadgeScale', 'aegisFadeHover', 'aegisGradeDisplayMode', 'aegisHoverEnabled', 'aegisCompactPerksMatrix', 'aegisInlineHeader', 'aegisPopupSummaryMode', 'aegisAutoMaxHeight', 'aegisTooltipWidthMode', 'aegisTooltipWidth', 'aegisArmorSource', 'aegisCompletedWeapons', 'aegisChaseList', 'aegisWelcomeDismissed', 'aegisLanguage', 'aegisGradeSettings', 'aegisGradeColors'], (res) => {
+chrome.storage.local.get(['wishlistData', 'enhancedToNormal', 'scoringSource', 'lightggData', 'aegisSheetDb', 'aegisSheetDbPvE', 'aegisSheetDbPvP', 'aegisShoppingDb', 'aegisShoppingDbPvE', 'aegisShoppingDbPvP', 'perkRegistry', 'aegisLayoutSide', 'aegisPerkOrder', 'aegisDbMode', 'aegisMode', 'aegisTwoTier', 'aegisTwoTierColors', 'aegisBadgeColor', 'aegisMaxTierGlow', 'aegisBadgePosition', 'aegisBadgeStyle', 'aegisBadgeScale', 'aegisFadeHover', 'aegisGradeDisplayMode', 'aegisHoverEnabled', 'aegisCompactPerksMatrix', 'aegisInlineHeader', 'aegisPopupSummaryMode', 'aegisAutoMaxHeight', 'aegisTooltipWidthMode', 'aegisTooltipWidth', 'aegisArmorSource', 'aegisCompletedWeapons', 'aegisChaseList', 'aegisWelcomeDismissed', 'aegisLanguage', 'aegisGradeSettings', 'aegisGradeColors'], (res) => {
   initLanguage(res.aegisLanguage);
   storedGradeSettings = res.aegisGradeSettings;
   gradePalette = res.aegisGradeColors;
@@ -3706,10 +3706,10 @@ chrome.storage.local.get(['wishlistData', 'enhancedToNormal', 'scoringSource', '
   aegisDbMode = res.aegisDbMode || 'both';
   aegisMode = res.aegisMode || 'pve';
   aegisTwoTier = res.aegisTwoTier || false;
-  aegisTwoTierColors = res.aegisTwoTierColors === true;
+  aegisBadgeColor = resolveBadgeColor(res.aegisBadgeColor, res.aegisTwoTierColors);
   aegisMaxTierGlow = res.aegisMaxTierGlow === true;
   setMaxTierGlow(aegisTwoTier && aegisMaxTierGlow);
-  setTwoTierColors(aegisTwoTier && aegisTwoTierColors);
+  setBadgeColor(aegisTwoTier ? aegisBadgeColor : 'perk');
   aegisBadgePosition = res.aegisBadgePosition || 'bottom-left';
   aegisBadgeStyle = (res.aegisBadgeStyle === 'pill' || res.aegisBadgeStyle === 'notch' || res.aegisBadgeStyle === 'footer') ? res.aegisBadgeStyle : 'classic';
   aegisBadgeScale = typeof res.aegisBadgeScale === 'number' ? res.aegisBadgeScale : 100;
@@ -3757,15 +3757,15 @@ chrome.storage.local.get(['wishlistData', 'enhancedToNormal', 'scoringSource', '
 chrome.storage.onChanged.addListener((changes, namespace) => {
   if (namespace === 'local') {
     let changed = false;
-    if (changes.aegisTwoTierColors) {
-      aegisTwoTierColors = changes.aegisTwoTierColors.newValue === true;
-      setTwoTierColors(aegisTwoTier && aegisTwoTierColors);
+    if (changes.aegisBadgeColor) {
+      aegisBadgeColor = resolveBadgeColor(changes.aegisBadgeColor.newValue);
+      setBadgeColor(aegisTwoTier ? aegisBadgeColor : 'perk');
     }
     if (changes.aegisMaxTierGlow) {
       aegisMaxTierGlow = changes.aegisMaxTierGlow.newValue === true;
       setMaxTierGlow(aegisTwoTier && aegisMaxTierGlow);
     }
-    if (changes.aegisGradeColors || changes.aegisTwoTierColors || changes.aegisMaxTierGlow) {
+    if (changes.aegisGradeColors || changes.aegisBadgeColor || changes.aegisMaxTierGlow) {
       if (changes.aegisGradeColors) gradePalette = changes.aegisGradeColors.newValue;
       gradeSettings = normalizeGradeSettings(storedGradeSettings, gradePalette);
       setGradeColors(gradeSettings);
@@ -3883,7 +3883,7 @@ chrome.storage.onChanged.addListener((changes, namespace) => {
     }
     if (changes.aegisTwoTier) {
       aegisTwoTier = changes.aegisTwoTier.newValue || false;
-      setTwoTierColors(aegisTwoTier && aegisTwoTierColors);
+      setBadgeColor(aegisTwoTier ? aegisBadgeColor : 'perk');
       setMaxTierGlow(aegisTwoTier && aegisMaxTierGlow);
       changed = true;
     }
