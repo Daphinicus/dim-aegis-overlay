@@ -100,7 +100,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const previewTitle = document.createElement('h2');
   previewTitle.id = 'options-preview-title';
   previewTitle.dataset.i18n = 'compactPreview';
-  preview.append(previewTitle, portrait);
+  const previewHeading = document.createElement('div');
+  previewHeading.className = 'options-preview-heading';
+  previewHeading.append(previewTitle);
+  preview.append(previewHeading, portrait);
   const sampleImage = portrait.querySelector<HTMLImageElement>('.mock-weapon-img')!;
   sampleImage.dataset.i18nAlt = 'exampleWeapon';
   const artwork = document.createElement('div');
@@ -129,7 +132,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const previewStatus = document.createElement('p');
   previewStatus.className = 'options-preview-status';
   previewStatus.dataset.i18n = 'compactPreviewExamples';
-  preview.append(previewStatus);
+  previewHeading.append(previewStatus);
   main.append(preview);
   const labels: Record<string, string> = {
     badgeMode: 'compactFormat', badgeStyle: 'compactStyle', upgradeIndicatorStyle: 'compactUpgrade',
