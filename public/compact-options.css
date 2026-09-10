@@ -80,6 +80,8 @@
 .options-panel .grade-settings { padding-top: 12px; border-top: 1px solid #343440; margin-top: 10px; }
 .options-panel .grade-editor-title { margin: 0 0 6px; padding: 0; border: 0; font-size: 12px; text-transform: none; letter-spacing: normal; }
 .options-panel .grade-settings .grade-pills, .options-panel .grade-settings .grade-actions { margin: 6px 0; gap: 6px; }
+.options-panel .grade-settings .grade-pills { grid-template-columns: repeat(10, minmax(0, 1fr)); gap: 4px; }
+.options-panel .grade-settings .grade-pills button { padding-inline: 2px; }
 .options-panel .grade-settings .grade-color-fields { margin: 6px 0; gap: 8px; }
 .options-panel .grade-settings .grade-color-sliders { gap: 6px; }
 .options-panel .grade-settings .grade-check { font-size: 11px; gap: 5px; }
@@ -90,7 +92,8 @@
 .options-panel [data-context][aria-disabled="true"] { opacity: .5; }
 .options-panel [data-context] button:disabled { cursor: default; }
 .options-panel [data-rule-summary] { margin: 6px 0 10px; }
-.options-panel .grade-pills [data-grade-inactive] { background: #292d37 !important; color: #858894; text-shadow: none; }
+.options-panel .grade-pills [data-grade-inactive] { filter: grayscale(1); opacity: .3; }
+.options-panel .grade-pills [data-grade-inactive][aria-pressed="true"] { opacity: .5; }
 .options-panel .grade-rule-fields[aria-disabled="true"] { opacity: .5; }
 .options-panel .grade-rule-fields[aria-disabled="true"] :disabled { opacity: 1; }
 .options-panel .grade-rule-fields[aria-disabled="true"] label { cursor: default; }
