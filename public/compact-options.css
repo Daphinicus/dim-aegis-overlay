@@ -87,6 +87,9 @@
 .options-panel .grade-settings .grade-profile-row label { flex: none; }
 .options-panel .grade-profile-row label:nth-child(2) { margin-left: auto; }
 .options-panel .grade-profile-row [data-context] { flex: 0 0 76px; }
+.options-panel [data-context][aria-disabled="true"] { opacity: .5; }
+.options-panel [data-context] button:disabled { cursor: default; }
+.options-panel [data-rule-summary] { margin: 6px 0 10px; }
 .options-panel .grade-pills [data-grade-inactive] { background: #292d37 !important; color: #858894; text-shadow: none; }
 .options-panel .grade-rule-fields[aria-disabled="true"] { opacity: .5; }
 .options-panel .grade-rule-fields[aria-disabled="true"] :disabled { opacity: 1; }

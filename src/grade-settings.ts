@@ -45,6 +45,7 @@ export function initGradeSettings() {
         <div class="segmented-control" data-context role="group" data-i18n-aria-label="gradeProfile" aria-label="Profile to edit"><button type="button" data-profile="pve" data-i18n="inlinePve" aria-pressed="true">PvE</button><button type="button" data-profile="pvp" data-i18n="inlinePvp" aria-pressed="false">PvP</button></div>
       </div>
       <div class="grade-pills" role="group" data-i18n-aria-label="gradeToEdit" aria-label="Grade to edit">${GRADES.map(g => `<button type="button" class="aegis-badge-${g[0].toLowerCase()}" data-grade="${g}" data-aegis-grade="${g}" aria-pressed="false">${g}</button>`).join('')}</div>
+      <p class="description" data-rule-summary role="status"></p>
       <div class="grade-rule-fields" data-rule-fields>
         <label class="grade-rule-select" data-i18n-title="matchMainTraits" title="Match recommended main traits"><span data-i18n="mainTraits">Main traits</span><select data-rule="traits">${options(traitLabels)}</select></label>
         <label class="grade-rule-select" data-i18n-title="matchBarrelMag" title="Match the recommended barrel and magazine"><span data-i18n="barrelMag">Barrel / mag</span><select data-rule="extras">${options(extraLabels)}</select></label>
@@ -53,7 +54,6 @@ export function initGradeSettings() {
           <label class="grade-check" data-i18n-title="masterworkCriterion" title="Recommended masterwork matched; ignored when none is recommended"><input type="checkbox" data-rule="masterwork"> <span data-i18n="masterwork">MW</span></label>
         </div>
       </div>
-      <p class="description" data-fallback data-i18n="gradeFallback">F is the fallback when no grade matches.</p>
       <p class="grade-warning" data-warning role="status" data-i18n-title="higherGradesFirst" title="Higher matching grades take priority"></p>
       <div class="grade-actions grade-color-actions"><button type="button" class="btn btn-secondary" data-reset-rule data-i18n-title="resetGradeTip" title="Reset this grade in the selected profile" data-i18n="resetSelected">Reset selected</button><button type="button" class="btn btn-secondary" data-reset-rules data-i18n-title="resetRulesTip" title="Reset all criteria, including both PvE and PvP" data-i18n="resetAll">Reset all</button></div>
       <p class="description" data-status role="status"></p>
@@ -64,6 +64,17 @@ export function initGradeSettings() {
   document.getElementById('options-Scoring')!.append(root.querySelector('#grade-rules-modal')!);
   root.remove();
 
+  function ruleDescription(grade: Grade, rules: GradeSettings['pve']) {
+    const defaults = defaultRules();
+    if (JSON.stringify(rules) === JSON.stringify(defaults)) return t(defaultGuide[grade]);
+    if (grade === 'F') return t('noGradeMatched');
+    const rule = rules[grade];
+    if (JSON.stringify(rule) === JSON.stringify(defaults[grade])) return t(defaultGuide[grade]);
+    const traits = { both: t('guideBothTraits'), mixed: t('guideMixedTraits'), one: t('guideOneTrait'), available: t('guideE') };
+    const extras = { none: '', mag: t('magazine'), barrel: t('barrel'), either: t('guideEitherExtra'), both: t('guideBothExtras') };
+    return [traits[rule.traits], extras[rule.extras], rule.origin ? t('origin') : '', rule.masterwork ? t('masterwork') : ''].filter(Boolean).join(' + ');
+  }
+
   function renderGuide() {
     const guide = document.getElementById('grade-scoring-guide');
     if (!guide) return;
@@ -72,16 +83,8 @@ export function initGradeSettings() {
       : [['', saved.rulesEnabled ? saved.pve : defaults]] as const;
     safeSetInnerHTML(guide, profiles.map(([label, rules]) => {
       const unreachable = unreachableGrades(rules);
-      const standard = JSON.stringify(rules) === JSON.stringify(defaults);
       return `${label ? `<p class="tooltip-desc">${label}</p>` : ''}<div class="tooltip-grid">${GRADES.filter(grade => grade === 'F' || rules[grade].enabled).map(grade => {
-        const rule = grade === 'F' ? null : rules[grade];
-        let description = standard ? t(defaultGuide[grade]) : t('noGradeMatched');
-        if (!standard && rule && grade !== 'F') {
-          const traits = { both: t('guideBothTraits'), mixed: t('guideMixedTraits'), one: t('guideOneTrait'), available: t('guideE') };
-          const extras = { none: '', mag: t('magazine'), barrel: t('barrel'), either: t('guideEitherExtra'), both: t('guideBothExtras') };
-          description = JSON.stringify(rule) === JSON.stringify(defaults[grade]) ? t(defaultGuide[grade])
-            : [traits[rule.traits], extras[rule.extras], rule.origin ? t('origin') : '', rule.masterwork ? t('masterwork') : ''].filter(Boolean).join(' + ');
-        }
+        const description = ruleDescription(grade, rules);
         return `<span class="grade-pill grade-${grade[0].toLowerCase()}-pill" data-aegis-grade="${grade}">${grade}</span><span${unreachable.includes(grade) ? ` title="${t('unreachableGradeTip')}"` : ''}>${description}</span>`;
       }).join('')}</div>`;
     }).join('') + (!saved.rulesEnabled
@@ -156,14 +159,15 @@ export function initGradeSettings() {
     renderColor(color);
     get<HTMLInputElement>('[data-hex]').value = color.slice(1).toUpperCase();
     get<HTMLInputElement>('[data-hex]').setCustomValidity('');
-    get('[data-context]').hidden = !draft.separatePvp;
+    get('[data-context]').setAttribute('aria-disabled', String(!draft.separatePvp));
     el.querySelectorAll<HTMLButtonElement>('[data-profile]').forEach(button => {
+      button.disabled = !draft.separatePvp;
       button.classList.toggle('active', button.dataset.profile === context);
       button.setAttribute('aria-pressed', String(button.dataset.profile === context));
     });
     const inactive = selected === 'F' || !profile()[selected].enabled;
     get('[data-rule-fields]').setAttribute('aria-disabled', String(inactive));
-    get('[data-fallback]').hidden = selected !== 'F';
+    get('[data-rule-summary]').textContent = ruleDescription(selected, profile());
     el.querySelectorAll<HTMLInputElement | HTMLSelectElement>('[data-rule]').forEach(input => {
       input.disabled = selected === 'F' || (inactive && input.dataset.rule !== 'enabled');
       if (selected === 'F') {
