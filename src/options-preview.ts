@@ -19,6 +19,7 @@ let settings: PreviewSettings = {};
 let timer: ReturnType<typeof setTimeout>;
 let revision = 0;
 let tabId: number | undefined;
+const previewFonts = new Set<string>();
 
 function examples(): PreviewItem[] {
   return [['S', 'S+', 'A', 'A'], ['B', 'A', 'S', 'B+'], ['F', 'D', 'C', 'C']].map(([weapon, perk, pvpWeapon, pvpPerk], index) => {
@@ -47,6 +48,13 @@ export function renderOptionsPreview() {
     tile.classList.toggle('preview-native', !!item.appearance);
     tile.style.removeProperty('--preview-power-height');
     if (item.appearance) {
+      for (const font of item.appearance.fonts || []) {
+        const key = JSON.stringify(font);
+        if (!previewFonts.has(key)) {
+          document.fonts.add(new FontFace(font.family, font.source, { weight: font.weight, style: font.style }));
+          previewFonts.add(key);
+        }
+      }
       const native = document.createElement('div');
       native.className = 'options-preview-native';
       native.setAttribute('aria-hidden', 'true');
