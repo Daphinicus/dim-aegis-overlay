@@ -3,7 +3,7 @@ import { updateOptionsPreview, renderOptionsPreview } from './options-preview';
 import { refreshOptionHighlights, revealOption } from './options-motion';
 import { initGradeSettings } from './grade-settings';
 import { normalizeGradeSettings } from './grading';
-import { setGradeColors, setBadgeColor, resolveBadgeColor } from './grade-colors';
+import { setGradeColors, setBadgeColor, resolveBadgeColor, resolveTileGlow } from './grade-colors';
 import { initLanguage, t, localizeElements } from './i18n';
 import { LocalStorageSchema, AegisMode } from './types';
 
@@ -52,6 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
         'aegisTwoTierColors',
         'aegisBadgeColor',
         'aegisMaxTierGlow',
+        'aegisTileGlow',
         'aegisBadgePosition',
         'aegisBadgeStyle',
         'aegisUpgradeStyle',
@@ -256,8 +257,8 @@ document.addEventListener('DOMContentLoaded', () => {
           button.classList.toggle('active', active);
           button.setAttribute('aria-pressed', String(active));
         });
-        const maxTierGlow = document.getElementById('aegis-max-tier-glow') as HTMLInputElement | null;
-        if (maxTierGlow) maxTierGlow.checked = res.aegisMaxTierGlow === true;
+        const tileGlow = document.getElementById('aegis-tile-glow') as HTMLSelectElement | null;
+        if (tileGlow) tileGlow.value = resolveTileGlow(res.aegisTileGlow, res.aegisMaxTierGlow);
         const twoTierVal = res.aegisTwoTier ? 'true' : 'false';
         const twoTierSegmented = document.getElementById('aegis-two-tier-segmented');
         if (twoTierSegmented) {
@@ -777,9 +778,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  const maxTierGlow = document.getElementById('aegis-max-tier-glow') as HTMLInputElement | null;
-  maxTierGlow?.addEventListener('change', () => {
-    chrome.storage.local.set({ aegisMaxTierGlow: maxTierGlow.checked }, updateUI);
+  const tileGlow = document.getElementById('aegis-tile-glow') as HTMLSelectElement | null;
+  tileGlow?.addEventListener('change', () => {
+    chrome.storage.local.set({ aegisTileGlow: resolveTileGlow(tileGlow.value) }, updateUI);
   });
 
   // Handle Badge Style segmented control click

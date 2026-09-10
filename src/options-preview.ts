@@ -1,6 +1,7 @@
-import { applyGradeColors, applyGradeGlow, displayGrade, setMaxTierGlow } from './grade-colors';
+import { applyGradeColors, applyGradeGlow, displayGrade, setTileGlow, resolveTileGlow } from './grade-colors';
 import { t } from './i18n';
 import type { PreviewItem } from './preview-items';
+import type { TileGlow } from './types';
 
 interface PreviewSettings {
   aegisBadgeStyle?: string;
@@ -10,6 +11,7 @@ interface PreviewSettings {
   aegisTwoTier?: boolean;
   aegisGradeDisplayMode?: string;
   aegisMaxTierGlow?: boolean;
+  aegisTileGlow?: TileGlow;
 }
 
 let items: PreviewItem[] = [];
@@ -29,7 +31,7 @@ function examples(): PreviewItem[] {
 
 export function renderOptionsPreview() {
   const samples = items.length ? items : examples();
-  setMaxTierGlow(settings.aegisMaxTierGlow === true);
+  setTileGlow(settings.aegisTwoTier ? resolveTileGlow(settings.aegisTileGlow, settings.aegisMaxTierGlow) : 'archetype');
   document.querySelectorAll<HTMLElement>('.options-preview .interactive-weapon-tile').forEach((tile, index) => {
     const item = samples[index];
     tile.hidden = !item;

@@ -238,14 +238,14 @@
         </div>
         <div class="input-group input-group-compact" id="aegis-two-tier-options" hidden>
           <div class="input-group input-group-compact">
-            <label id="aegis-badge-color-label" data-i18n="badgeColor">Badge Color</label>
+            <label id="aegis-badge-color-label" data-i18n="badgeColor">Color Basis</label>
             <div class="segmented-control" id="aegis-badge-color-segmented" role="group" aria-labelledby="aegis-badge-color-label">
               <button type="button" data-value="perk" class="active" aria-pressed="true" data-i18n="badgeColorPerk">Perk (Classic)</button>
               <button type="button" data-value="archetype" aria-pressed="false" data-i18n="badgeColorArchetype">Archetype</button>
               <button type="button" data-value="gradient" aria-pressed="false" data-i18n="badgeColorGradient">Gradient (Both)</button>
             </div>
           </div>
-          <label><input type="checkbox" id="aegis-max-tier-glow"> <span data-i18n="badgeMaxTierGlow">Glow only for SS+ rolls</span></label>
+          <div class="input-group"><label for="aegis-tile-glow" data-i18n="tileGlow">Tile Glow</label><select id="aegis-tile-glow"><option value="archetype" data-i18n="tileGlowArchetype">S-tier archetypes (default)</option><option value="perk" data-i18n="tileGlowPerk">S+ perks (god rolls)</option><option value="max" data-i18n="tileGlowMax">SS+ only</option></select></div>
         </div>
         <div class="input-group">
           <label data-i18n="perkEvaluation">Perk Evaluation Basis</label>

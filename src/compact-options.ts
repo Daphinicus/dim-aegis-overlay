@@ -144,7 +144,7 @@ document.addEventListener('DOMContentLoaded', () => {
     tooltipWidthSlider: 'inlineWidth', fadeOnHover: 'inlinePeek', displayLanguage: 'inlineLanguage',
     engineAegis: 'inlineAegis', engineLightgg: 'inlineLightgg', sourceSpreadsheet: 'inlineSheet',
     sourceWishlist: 'inlineWishlist', modePve: 'inlinePve', modePvp: 'inlinePvp', modeBoth: 'sourceBoth',
-    badgeStandard: 'inlineStandard', badgeTwoTier: 'inlineTwoTier', badgeColorPerk: 'inlinePerk',
+    badgeColorPerk: 'inlinePerk',
     badgeColorGradient: 'sourceBoth', styleClassic: 'inlineBubble', stylePill: 'inlinePill',
     styleNotch: 'inlineNotch', styleFooter: 'inlineBottom',
     evalEquipped: 'inlineEquipped', evalDual: 'inlineDual', evalPotential: 'inlinePotential',

@@ -1,12 +1,12 @@
 import { Grade, GradeSettings, defaultGradeSettings, gradeValue } from './grading';
-import type { BadgeColor } from './types';
+import type { BadgeColor, TileGlow } from './types';
 import { gradeGradientEnd } from './grade-gradient';
 
 export const defaultGradeColors: Record<Grade, string> = { 'S+': '#ffd700', S: '#ffd700', 'A+': '#da70d6', A: '#da70d6', 'B+': '#00f2fe', B: '#00f2fe', C: '#bdc3c7', D: '#e67e22', E: '#7f8c8d', F: '#e74c3c' };
 
 let settings = defaultGradeSettings();
 let badgeColor: BadgeColor = 'perk';
-let maxTierGlow = false;
+let tileGlow: TileGlow = 'archetype';
 const originals = new WeakMap<HTMLElement, [string, string, string][]>();
 const colorProperties = ['background', 'color', 'text-shadow'];
 const badgeSelector = '.aegis-badge, .aegis-split-half, .aegis-title-badge, .aegis-popup-grade-badge, .aegis-tooltip-grade, .aegis-shopping-item-badge, [data-aegis-grade]';
@@ -20,7 +20,10 @@ export function setBadgeColor(value: BadgeColor) { badgeColor = value; }
 function colorGrade(text: string): string {
   return badgeColor === 'archetype' ? twoTierGrades(text)?.[0] || displayGrade(text) : displayGrade(text);
 }
-export function setMaxTierGlow(enabled: boolean) { maxTierGlow = enabled; }
+export function resolveTileGlow(value: unknown, legacy?: boolean): TileGlow {
+  return value === 'archetype' || value === 'perk' || value === 'max' ? value : legacy === true ? 'max' : 'archetype';
+}
+export function setTileGlow(value: TileGlow) { tileGlow = value; }
 
 export function displayGrade(text: string): string {
   const clean = text.replace(/[★✦▲]/g, '').trim().toUpperCase();
@@ -90,10 +93,16 @@ export function applyGradeColors(root: HTMLElement, palette = settings) {
 }
 
 export function hasMaxTierGrade(text: string): boolean {
-  return text.split('|').some(part => {
+  return text.split(/[|/]/).some(part => {
     const pair = twoTierGrades(part);
     return !!pair && (pair[0] === 'S' || pair[0] === 'S+') && pair[1] === 'S+';
   });
+}
+
+export function shouldGlow(text: string, mode: TileGlow): boolean {
+  if (mode === 'max') return hasMaxTierGrade(text);
+  if (mode === 'perk') return displayGrade(text) === 'S+';
+  return text.split(/[|/]/).some(part => part.replace(/[★✦▲]/g, '').trim().startsWith('S'));
 }
 
 const glowCache = new Map<string, string>();
@@ -120,7 +129,7 @@ function gradeGlowImage(text: string): string {
 }
 
 export function applyGradeGlow(target: HTMLElement, grade: string) {
-  target.classList.toggle('aegis-gold-glow', maxTierGlow ? hasMaxTierGrade(grade) : grade.replace(/[★✦▲]/g, '').trim().startsWith('S'));
+  target.classList.toggle('aegis-gold-glow', shouldGlow(grade, tileGlow));
   const color = settings.colorsEnabled && settings.colors[colorGrade(grade) as Grade];
   if (color) target.style.setProperty('--aegis-glow-color', color);
   else target.style.removeProperty('--aegis-glow-color');

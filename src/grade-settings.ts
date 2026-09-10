@@ -35,7 +35,7 @@ export function initGradeSettings() {
       <div class="grade-pills" role="group" data-i18n-aria-label="gradeToEdit" aria-label="Grade to edit">${GRADES.map(g => `<button type="button" class="aegis-badge-${g[0].toLowerCase()}" data-grade="${g}" data-aegis-grade="${g}" aria-pressed="false">${g}</button>`).join('')}</div>
       <div class="grade-color-fields">
         <div class="grade-color-preview" data-color role="img" data-i18n-aria-label="gradeColorSample" aria-label="Selected grade color"></div>
-        <input type="text" data-hex maxlength="7" spellcheck="false" data-i18n-aria-label="gradeHexColor" aria-label="Selected grade hex color">
+        <div class="grade-hex-field"><span aria-hidden="true">#</span><input type="text" data-hex maxlength="7" spellcheck="false" data-i18n-aria-label="gradeHexColor" aria-label="Selected grade hex color"></div>
       </div>
       <div class="grade-color-sliders">${['colorHue', 'colorSaturation', 'colorBrightness'].map((label, index) => `<div class="grade-color-slider"><input type="range" data-hsv="${index}" min="0" max="${index === 0 ? 360 : 100}" step="1" data-i18n-aria-label="${label}" aria-label="${t(label)}"><div class="grade-hsv-field"><input type="number" data-hsv-value="${index}" min="0" max="${index === 0 ? 360 : 100}" step="1" required aria-label="${t(index === 0 ? 'colorFieldDegrees' : 'colorFieldPercent', { label: t(label) })}"><span aria-hidden="true">${index === 0 ? '°' : '%'}</span></div></div>`).join('')}</div>
       <div class="grade-actions grade-color-actions"><button type="button" class="btn btn-secondary" data-reset-color data-i18n="resetSelected">Reset selected</button><button type="button" class="btn btn-secondary" data-reset-colors data-i18n="resetAll">Reset all</button></div>

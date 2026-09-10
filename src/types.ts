@@ -39,6 +39,7 @@ export interface ScoringResult {
 }
 
 export type BadgeColor = 'perk' | 'archetype' | 'gradient';
+export type TileGlow = 'archetype' | 'perk' | 'max';
 
 export type AegisMode = 'pve' | 'pvp' | 'both';
 
@@ -49,6 +50,7 @@ export interface LocalStorageSchema {
   aegisTwoTierColors?: boolean;
   aegisBadgeColor?: BadgeColor;
   aegisMaxTierGlow?: boolean;
+  aegisTileGlow?: TileGlow;
   aegisGradeSettings?: GradeSettings;
   aegisGradeColors?: Pick<GradeSettings, 'version' | 'colorsEnabled' | 'colors'>;
   wishlistUrl?: string;

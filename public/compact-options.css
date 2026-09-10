@@ -36,11 +36,15 @@
 .options-panel .input-group:has(> .segmented-control),
 .options-panel .input-group:has(> .interactive-portrait-container),
 .options-panel .input-group:has(> .popup-dropdown-wrapper),
+.options-panel .input-group:has(> select),
 .options-panel .inline-range { display: grid; grid-template-columns: 84px minmax(0, 1fr); align-items: center; column-gap: 8px; }
 .options-panel .input-group:has(> .segmented-control) > label,
 .options-panel .input-group:has(> .interactive-portrait-container) > label,
 .options-panel .input-group:has(> .popup-dropdown-wrapper) > label,
+.options-panel .input-group:has(> select) > label,
 .options-panel .inline-range > label { margin: 0; }
+.options-panel .input-group:has(> #aegis-two-tier-segmented) { grid-template-columns: 60px minmax(0, 1fr); }
+.options-panel #aegis-tile-glow { width: 100%; min-width: 0; height: 27px; padding: 3px 5px; background: #18181f; border: 1px solid #303039; border-radius: 5px; color: #a9a9b6; font: 10.5px system-ui; color-scheme: dark; }
 .options-panel .inline-range { grid-template-columns: 84px minmax(0, 1fr) 40px; }
 .options-panel .inline-range > span { text-align: right; }
 .options-panel .interactive-portrait-container { min-width: 0; gap: 8px; box-shadow: none; }
@@ -86,6 +90,10 @@
 .options-panel .grade-settings .grade-color-sliders { gap: 6px; }
 .options-panel .grade-settings .grade-color-slider { grid-template-columns: minmax(0, 1fr) 52px; }
 .options-panel .grade-settings .grade-hsv-field { padding-inline: 5px; }
+.options-panel .grade-hex-field { display: flex; align-items: center; gap: 3px; padding: 0 7px; border: 1px solid #555c68; border-radius: 5px; background: #20232b; }
+.options-panel .grade-hex-field > span { color: #858894; pointer-events: none; user-select: none; }
+.options-panel .grade-hex-field:focus-within { border-color: #ffd700; outline: 1px solid #ffd700; }
+.options-panel .grade-settings .grade-hex-field input { padding: 7px 0; border: 0; border-radius: 0; outline: none; background: transparent; text-align: right; }
 .options-panel .grade-settings .grade-check { font-size: 11px; gap: 5px; }
 .options-panel .grade-rules-header { display: flex; align-items: center; gap: 8px; }
 .options-panel .grade-rules-header .grade-editor-title { flex: 1; min-width: 0; margin: 0; }
