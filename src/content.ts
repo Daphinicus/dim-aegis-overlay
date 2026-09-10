@@ -7030,6 +7030,16 @@ function startDimmingObserver() {
     attributeFilter: ['class', 'style'],
     subtree: true,
   });
+  const onFadeFinished = (event: TransitionEvent) => {
+    if (event.propertyName !== 'opacity' && event.propertyName !== 'filter') return;
+    const target = event.target;
+    if (!(target instanceof HTMLElement) || target.closest('.aegis-badge')) return;
+    if (target.closest('[data-aegis-item-hash]') || target.querySelector('.aegis-badge')) {
+      scheduleOpacityUpdate();
+    }
+  };
+  document.body.addEventListener('transitionend', onFadeFinished);
+  document.body.addEventListener('transitioncancel', onFadeFinished);
 }
 startDimmingObserver();
 
