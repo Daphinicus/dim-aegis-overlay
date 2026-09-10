@@ -4,6 +4,8 @@ Branch: `feat/compact-options`, based on customization commit `5b1415f`.
 
 The popup remains 320 CSS pixels wide. Four tabs group badges, scoring, item details, and data maintenance. Existing controls and setting values are preserved; shorter headings follow the existing translation tables in all six supported languages.
 
+Setting labels and segmented choices share a row. Short option names keep every choice visible, with the original descriptions retained as localized tooltips and accessible names. Upgrade styles use the actual badge icons; corner positions use a spatial arrow grid. Numeric size controls keep their slider and current value inline.
+
 The header and tab bar stay visible. Each panel scrolls within the remaining viewport and remembers its position while switching tabs. The comparison's custom scrollbar follows the active panel; the current-menu preview retains its original whole-page scrolling.
 
 This is a review prototype, not an installed playtest or submitted PR. The initial tab is Badges. Keyboard arrows, Home, and End navigate tabs. Color and grading editors remain accessible through the existing header and scoring guide.

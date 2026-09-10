@@ -489,16 +489,20 @@ document.addEventListener('DOMContentLoaded', () => {
         const armorSourceVal = res.aegisArmorSource || 'lowco';
         const armorSourceSegmented = document.getElementById('aegis-armor-source-segmented');
         if (armorSourceSegmented) {
-          const armorAegisBtn = armorSourceSegmented.querySelector('button[data-value="aegis"]');
+          const armorAegisBtn = armorSourceSegmented.querySelector<HTMLButtonElement>('button[data-value="aegis"]');
           if (armorAegisBtn) {
             if (aegisModeVal === 'pvp') {
-              armorAegisBtn.textContent = t('armorFinnald');
+              armorAegisBtn.textContent = t('inlineFinnald');
+              armorAegisBtn.title = t('armorFinnald');
             } else if (aegisModeVal === 'both') {
-              armorAegisBtn.textContent = t('armorDual');
+              armorAegisBtn.textContent = t('sourceBoth');
+              armorAegisBtn.title = t('armorDual');
             } else {
-              armorAegisBtn.textContent = t('armorAegis');
+              armorAegisBtn.textContent = t('inlineAegis');
+              armorAegisBtn.title = t('armorAegis');
             }
           }
+          armorAegisBtn?.setAttribute('aria-label', armorAegisBtn.title);
           armorSourceSegmented.querySelectorAll('button').forEach(btn => {
             if (btn.getAttribute('data-value') === armorSourceVal) {
               btn.classList.add('active');

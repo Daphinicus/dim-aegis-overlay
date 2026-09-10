@@ -30,11 +30,22 @@
 .options-panel #aegis-two-tier-options { margin-left: 8px !important; padding-left: 10px; border-left: 2px solid #5b4422; }
 .options-panel #aegis-two-tier-options > .input-group { margin-bottom: 8px; }
 .options-panel #aegis-two-tier-options > label { margin-bottom: 0; }
-.options-preview-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; padding-top: 10px; }
-.options-preview-row > .input-group { min-width: 0; margin: 0; }
-.options-preview-row .interactive-portrait-container { flex-direction: column; align-items: flex-start; gap: 8px; box-shadow: none; }
-.options-preview-row .portrait-pos-label-row { width: 100%; }
-.options-preview-row .segmented-control-mini button { font-size: 10px; }
+.options-panel .input-group:has(> .segmented-control),
+.options-panel .input-group:has(> .interactive-portrait-container),
+.options-panel .input-group:has(> .popup-dropdown-wrapper),
+.options-panel .inline-range { display: grid; grid-template-columns: 84px minmax(0, 1fr); align-items: center; column-gap: 8px; }
+.options-panel .input-group:has(> .segmented-control) > label,
+.options-panel .input-group:has(> .interactive-portrait-container) > label,
+.options-panel .input-group:has(> .popup-dropdown-wrapper) > label,
+.options-panel .inline-range > label { margin: 0; }
+.options-panel .inline-range { grid-template-columns: 84px minmax(0, 1fr) 40px; }
+.options-panel .inline-range > span { text-align: right; }
+.options-panel .interactive-portrait-container { min-width: 0; gap: 8px; box-shadow: none; }
+.options-panel .interactive-weapon-tile { flex-shrink: 0; }
+.options-panel .segmented-control-mini button { font-size: 15px; }
+.upgrade-option-preview { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; vertical-align: middle; pointer-events: none; }
+.upgrade-option-preview .aegis-badge-upgrade-arrow { position: static !important; width: 16px !important; height: 16px !important; flex: 0 0 16px !important; margin: 0 !important; pointer-events: none; }
+.upgrade-option-preview .aegis-badge-upgrade-arrow.aegis-upgrade-circle { width: 16px !important; height: 16px !important; flex-basis: 16px !important; font-size: 8px !important; }
 .options-panel .segmented-control { position: relative; }
 .options-panel .segmented-control button { position: relative; z-index: 1; border: 1px solid transparent; }
 .options-panel .has-option-selection button.active { background: transparent; border-color: transparent; }

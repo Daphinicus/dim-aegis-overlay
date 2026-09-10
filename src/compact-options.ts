@@ -73,20 +73,67 @@ document.addEventListener('DOMContentLoaded', () => {
     if (card !== original) data.append(card);
   }
   data.append(document.querySelector('.popup-footer')!);
-  const scale = document.getElementById('aegis-badge-scale-slider')!.closest('.input-group')!;
-  const position = document.getElementById('interactive-weapon-tile')!.closest('.input-group')!;
-  const preview = document.createElement('div');
-  preview.className = 'options-preview-row';
-  scale.before(preview);
-  preview.append(position, scale);
+  for (const id of ['aegis-badge-scale-slider', 'aegis-tooltip-width-slider']) {
+    const slider = document.getElementById(id)!;
+    const group = slider.closest('.input-group')!;
+    const heading = group.querySelector('div')!;
+    const label = heading.querySelector('label')!;
+    label.id ||= `${id}-label`;
+    slider.setAttribute('aria-labelledby', label.id);
+    group.append(label, slider, heading.querySelector('span')!);
+    heading.remove();
+    group.classList.add('inline-range');
+  }
   original.remove();
   const labels: Record<string, string> = {
     badgeMode: 'compactFormat', badgeStyle: 'compactStyle', upgradeIndicatorStyle: 'compactUpgrade',
     badgePosition: 'compactPosition', activeRankingSource: 'compactSource', spreadsheetMode: 'compactActivity',
-    perkEvaluation: 'compactEvaluate', armorSource: 'compactArmor', badgeTextScale: 'compactTextSize'
+    perkEvaluation: 'compactEvaluate', armorSource: 'compactArmor', badgeTextScale: 'compactTextSize',
+    scoringEngine: 'inlineEngine', perksLayout: 'inlineLayout', recPerkOrder: 'inlinePerkOrder',
+    hoverCard: 'inlineHover', compactPerksMatrix: 'inlineMatrix', popupSummaryTitle: 'inlineSummary',
+    inlineHeaderTitle: 'inlineHeader', autoMaxHeightTitle: 'inlineHeight', tooltipWidthMode: 'inlineWidthMode',
+    tooltipWidthSlider: 'inlineWidth', fadeOnHover: 'inlinePeek', displayLanguage: 'inlineLanguage',
+    engineAegis: 'inlineAegis', engineLightgg: 'inlineLightgg', sourceSpreadsheet: 'inlineSheet',
+    sourceWishlist: 'inlineWishlist', modePve: 'inlinePve', modePvp: 'inlinePvp', modeBoth: 'sourceBoth',
+    badgeStandard: 'inlineStandard', badgeTwoTier: 'inlineTwoTier', badgeColorPerk: 'inlinePerk',
+    badgeColorGradient: 'sourceBoth', styleClassic: 'inlineBubble', stylePill: 'inlinePill',
+    styleNotch: 'inlineNotch', styleFooter: 'inlineBottom',
+    evalEquipped: 'inlineEquipped', evalDual: 'inlineDual', evalPotential: 'inlinePotential',
+    armorLowco: 'inlineLowco', armorAegis: 'inlineAegis', layoutSide: 'inlineSide', layoutInline: 'inlineInline',
+    orderSheetRank: 'inlineRank', orderOwnedFirst: 'inlineOwned', hoverEnabled: 'inlineOn', hoverDisabled: 'inlineOff',
+    matrix2Col: 'inlineColumns', matrixStacked: 'inlineStacked', summaryFull: 'inlineFull', summaryBadge: 'inlineBadge',
+    inlineHeaderEnabled: 'inlineInline', inlineHeaderClassic: 'inlineStacked', autoMaxHeightEnabled: 'inlineFit',
+    widthModeAuto: 'inlineAuto', widthModeFixed: 'inlineFixed', fadeHoverEnabled: 'inlineOn', fadeHoverDisabled: 'inlineOff'
   };
   for (const [oldKey, key] of Object.entries(labels)) {
-    main.querySelectorAll<HTMLElement>(`[data-i18n="${oldKey}"]`).forEach(el => { el.dataset.i18n = key; });
+    main.querySelectorAll<HTMLElement>(`[data-i18n="${oldKey}"]`).forEach(el => {
+      el.dataset.i18n = key;
+      el.dataset.i18nTitle = oldKey;
+      if (el.matches('button')) el.dataset.i18nAriaLabel = oldKey;
+    });
+  }
+  for (const button of main.querySelectorAll<HTMLButtonElement>('#aegis-upgrade-style-segmented button')) {
+    const key = button.dataset.i18n!;
+    button.dataset.i18nTitle = key;
+    button.dataset.i18nAriaLabel = key;
+    delete button.dataset.i18n;
+    const preview = document.createElement('span');
+    preview.className = 'upgrade-option-preview aegis-style-footer';
+    preview.setAttribute('aria-hidden', 'true');
+    const icon = document.createElement('span');
+    icon.className = `aegis-badge-upgrade-arrow aegis-upgrade-${button.dataset.value}`;
+    icon.textContent = '▲';
+    preview.append(icon);
+    button.replaceChildren(preview);
+  }
+  const corners = document.getElementById('aegis-badge-position-segmented')!;
+  for (const [position, arrow] of Object.entries({ 'top-left': '↖', 'top-right': '↗', 'bottom-left': '↙', 'bottom-right': '↘' })) {
+    const button = corners.querySelector<HTMLButtonElement>(`button[data-value="${position}"]`)!;
+    button.dataset.i18nTitle = button.dataset.i18n;
+    button.dataset.i18nAriaLabel = button.dataset.i18n;
+    delete button.dataset.i18n;
+    button.textContent = arrow;
+    corners.append(button);
   }
   document.body.classList.add('compact-options');
   activate(0);
