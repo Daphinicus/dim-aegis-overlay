@@ -22,7 +22,7 @@
 .options-panel > .input-group:last-child { border-bottom: 0; }
 .options-panel .input-group label { color: #c4c4cf; font-size: 11px; line-height: 15px; font-weight: 600; margin-bottom: 4px; }
 .options-panel .segmented-control { background: #18181f; border-color: #303039; }
-.options-panel .segmented-control button { flex-basis: 0; min-width: 0; font-size: 10.5px; line-height: 14px; font-weight: 500; min-height: 25px; padding: 3px 2px; color: #a9a9b6; }
+.options-panel .segmented-control button { flex-basis: 0; min-width: 0; font-size: 10px; line-height: 14px; font-weight: 500; min-height: 25px; padding: 3px 2px; color: #a9a9b6; }
 .options-panel .segmented-control button.active { background: #332918; color: #ffc04a; border-color: #705023; font-weight: 600; }
 .options-panel .settings-card, .options-panel .status-card, .options-panel .info-card { padding: 10px; margin-top: 10px; box-shadow: none; }
 .options-panel .settings-card h2 { font-size: 12px; }
@@ -47,7 +47,7 @@
 .options-panel .input-group:has(> .popup-dropdown-wrapper) > label,
 .options-panel .input-group:has(> select) > label,
 .options-panel .inline-range > label { margin: 0; }
-.options-panel #aegis-tile-glow { width: 100%; min-width: 0; height: 27px; padding: 3px 5px; background: #18181f; border: 1px solid #303039; border-radius: 5px; color: #a9a9b6; font: 10.5px system-ui; color-scheme: dark; }
+.options-panel #aegis-tile-glow { width: 100%; min-width: 0; height: 27px; padding: 3px 5px; background: #18181f; border: 1px solid #303039; border-radius: 5px; color: #a9a9b6; font: 10px system-ui; color-scheme: dark; }
 .options-panel .inline-range { grid-template-columns: 76px minmax(0, 1fr) 40px; }
 .options-panel .inline-range > span { text-align: right; }
 .options-panel .interactive-portrait-container { min-width: 0; gap: 8px; box-shadow: none; }

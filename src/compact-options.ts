@@ -143,17 +143,13 @@ document.addEventListener('DOMContentLoaded', () => {
     hoverCard: 'inlineHover', compactPerksMatrix: 'inlineMatrix', popupSummaryTitle: 'inlineSummary',
     inlineHeaderTitle: 'inlineHeader', autoMaxHeightTitle: 'inlineHeight', tooltipWidthMode: 'inlineWidthMode',
     tooltipWidthSlider: 'inlineWidth', fadeOnHover: 'inlinePeek', displayLanguage: 'inlineLanguage',
-    engineAegis: 'inlineAegis', engineLightgg: 'inlineLightgg', sourceSpreadsheet: 'inlineSheet',
-    sourceWishlist: 'inlineWishlist', modePve: 'inlinePve', modePvp: 'inlinePvp', modeBoth: 'sourceBoth',
-    badgeColorPerk: 'inlinePerk',
-    badgeColorGradient: 'sourceBoth', styleClassic: 'inlineBubble', stylePill: 'inlinePill',
+    engineAegis: 'inlineAegis', engineLightgg: 'inlineLightgg',
+    modePve: 'inlinePve', modePvp: 'inlinePvp', modeBoth: 'sourceBoth',
+    badgeColorPerk: 'inlinePerk', badgeColorGradient: 'inlineGradient',
     styleNotch: 'inlineNotch', styleFooter: 'inlineBottom',
     evalEquipped: 'inlineEquipped', evalDual: 'inlineDual', evalPotential: 'inlinePotential',
     armorLowco: 'inlineLowco', armorAegis: 'inlineAegis', layoutSide: 'inlineSide', layoutInline: 'inlineInline',
-    orderSheetRank: 'inlineRank', orderOwnedFirst: 'inlineOwned', hoverEnabled: 'inlineOn', hoverDisabled: 'inlineOff',
-    matrix2Col: 'inlineColumns', matrixStacked: 'inlineStacked', summaryFull: 'inlineFull', summaryBadge: 'inlineBadge',
-    inlineHeaderEnabled: 'inlineInline', inlineHeaderClassic: 'inlineStacked', autoMaxHeightEnabled: 'inlineFit',
-    widthModeAuto: 'inlineAuto', widthModeFixed: 'inlineFixed', fadeHoverEnabled: 'inlineOn', fadeHoverDisabled: 'inlineOff'
+    orderSheetRank: 'inlineRank'
   };
   for (const [oldKey, key] of Object.entries(labels)) {
     main.querySelectorAll<HTMLElement>(`[data-i18n="${oldKey}"]`).forEach(el => {
