@@ -4,6 +4,8 @@ Branch: `feat/compact-options`, based on customization commit `5b1415f`.
 
 The popup remains 320 CSS pixels wide. Four tabs group badges, scoring, item details, and data maintenance. Existing controls and setting values are preserved; shorter headings follow the existing translation tables in all six supported languages.
 
+The header and tab bar stay visible. Each panel scrolls within the remaining viewport and remembers its position while switching tabs. The comparison's custom scrollbar follows the active panel; the current-menu preview retains its original whole-page scrolling.
+
 This is a review prototype, not an installed playtest or submitted PR. The initial tab is Badges. Keyboard arrows, Home, and End navigate tabs. Color and grading editors remain accessible through the existing header and scoring guide.
 
 Option highlights slide over 150 ms. Dependent badge/scoring rows expand and collapse over 200 ms, with immediate setting changes and inert collapsed controls. Tabs crossfade over 140 ms with a 5 px directional shift; the outgoing panel immediately becomes inert and leaves the accessibility tree. The tab bar stays fixed and panel height changes immediately. Initial rendering and reselecting the active tab do not animate. System reduced-motion preferences disable these transitions. No animation dependency is added.

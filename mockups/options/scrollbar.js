@@ -1,8 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
   const style = document.createElement('style');
   style.textContent = `
-    html { scrollbar-width: none; }
-    html::-webkit-scrollbar { display: none; }
+    html, .options-panel { scrollbar-width: none; }
+    html::-webkit-scrollbar, .options-panel::-webkit-scrollbar { display: none; }
     html#preview-page, html#preview-page body, html#preview-page body * { cursor: auto !important; }
     html#preview-page body :is(button, a, select, input[type="checkbox"], input[type="range"], input[readonly], .corner-target),
     html#preview-page body :is(button, a, .corner-target) * { cursor: pointer !important; }
@@ -28,34 +28,57 @@ document.addEventListener('DOMContentLoaded', () => {
   thumb.className = 'preview-scrollbar-thumb';
   track.append(thumb);
   document.body.append(track);
-  const scroller = document.scrollingElement;
+  let scroller = document.scrollingElement;
   let pending = false;
   let travel = 0;
   let limit = 0;
+  let viewportHeight = innerHeight;
+  let trackTop = 3;
+  const observed = new WeakSet();
+  const resizeObserver = new ResizeObserver(schedule);
+  function observe(element) {
+    if (!observed.has(element)) { observed.add(element); resizeObserver.observe(element); }
+  }
   function update() {
     pending = false;
-    limit = Math.max(0, scroller.scrollHeight - innerHeight);
+    scroller = document.querySelector('.options-panel:not([hidden]):not(.option-tab-exiting)') || document.scrollingElement;
+    const isDocument = scroller === document.scrollingElement;
+    viewportHeight = isDocument ? innerHeight : scroller.clientHeight;
+    trackTop = isDocument ? 3 : scroller.getBoundingClientRect().top + 3;
+    if (!isDocument) {
+      observe(scroller);
+      for (const child of scroller.children) observe(child);
+    }
+    track.setAttribute('aria-controls', scroller.id);
+    const trackHeight = Math.max(0, viewportHeight - 6);
+    track.style.top = trackTop + 'px';
+    track.style.bottom = 'auto';
+    track.style.height = trackHeight + 'px';
+    limit = Math.max(0, scroller.scrollHeight - viewportHeight);
     track.hidden = limit <= 1;
     track.setAttribute('aria-label', names[store.aegisLanguage] || names.en);
     track.setAttribute('aria-valuemax', String(limit));
     track.setAttribute('aria-valuenow', String(Math.round(scroller.scrollTop)));
-    const height = Math.max(28, (innerHeight - 6) * innerHeight / scroller.scrollHeight);
-    travel = Math.max(0, innerHeight - 6 - height);
+    const height = Math.min(trackHeight, Math.max(28, trackHeight * viewportHeight / scroller.scrollHeight));
+    travel = Math.max(0, trackHeight - height);
     thumb.style.height = height + 'px';
     thumb.style.transform = `translateY(${limit ? scroller.scrollTop / limit * travel : 0}px)`;
   }
   function schedule() {
     if (!pending) { pending = true; requestAnimationFrame(update); }
   }
-  addEventListener('scroll', schedule, {passive:true});
+  addEventListener('scroll', schedule, {passive:true, capture:true});
   addEventListener('resize', schedule);
-  new ResizeObserver(schedule).observe(document.body);
+  observe(document.body);
+  new MutationObserver(records => {
+    if (records.some(record => record.target.matches('.options-panel, .options-tabs button'))) schedule();
+  }).observe(document.body, {subtree:true, attributes:true, attributeFilter:['hidden','class','aria-selected']});
   let drag;
   track.addEventListener('pointerdown', event => {
     if (event.button !== 0 || !travel) return;
     event.preventDefault();
     if (event.target !== thumb) {
-      scroller.scrollTop = Math.max(0, Math.min(1, (event.clientY - 3 - thumb.offsetHeight / 2) / travel)) * limit;
+      scroller.scrollTop = Math.max(0, Math.min(1, (event.clientY - trackTop - thumb.offsetHeight / 2) / travel)) * limit;
     }
     drag = {y:event.clientY, scroll:scroller.scrollTop};
     track.setPointerCapture(event.pointerId);
@@ -66,7 +89,7 @@ document.addEventListener('DOMContentLoaded', () => {
   track.addEventListener('lostpointercapture', () => { drag = undefined; });
   track.addEventListener('pointerup', event => { track.releasePointerCapture(event.pointerId); });
   track.addEventListener('keydown', event => {
-    const delta = {ArrowDown:40, ArrowUp:-40, PageDown:innerHeight * .9, PageUp:-innerHeight * .9}[event.key];
+    const delta = {ArrowDown:40, ArrowUp:-40, PageDown:viewportHeight * .9, PageUp:-viewportHeight * .9}[event.key];
     if (delta !== undefined) scroller.scrollTop += delta;
     else if (event.key === 'Home') scroller.scrollTop = 0;
     else if (event.key === 'End') scroller.scrollTop = limit;

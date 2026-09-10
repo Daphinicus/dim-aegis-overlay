@@ -9,16 +9,20 @@ document.addEventListener('DOMContentLoaded', () => {
   nav.setAttribute('role', 'tablist');
   nav.dataset.i18nAriaLabel = 'compactSections';
   const panels = new Map<string, HTMLElement>();
+  const scrollPositions = new Map<HTMLElement, number>();
   const tabs: HTMLButtonElement[] = [];
   let activeIndex = -1;
   function activate(index: number) {
     if (index === activeIndex) return;
     const previous = activeIndex < 0 ? undefined : panels.get(tabs[activeIndex].dataset.panel!);
+    if (previous) scrollPositions.set(previous, previous.scrollTop);
     tabs.forEach((tab, i) => {
       tab.setAttribute('aria-selected', String(i === index));
       tab.tabIndex = i === index ? 0 : -1;
     });
-    showOptionTab(previous, panels.get(tabs[index].dataset.panel!)!, Math.sign(index - activeIndex));
+    const next = panels.get(tabs[index].dataset.panel!)!;
+    showOptionTab(previous, next, Math.sign(index - activeIndex));
+    next.scrollTop = scrollPositions.get(next) ?? 0;
     activeIndex = index;
     refreshOptionHighlights(false);
   }
