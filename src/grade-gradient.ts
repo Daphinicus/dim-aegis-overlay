@@ -43,17 +43,18 @@ const references = [
   ['#ffff00', '#ffa800'], ['#00ff00', '#00b86b'], ['#0000ff', '#2420b8'], ['#386bff', '#0054d6'],
 ].map(([base, end]) => {
   const position = toLab(base), source = toLch(position), target = toLch(toLab(end));
-  return { position, lightness: target[0] / source[0], chroma: target[1] / source[1],
+  return { position, radiusSquared: Math.min(.12, source[1] * 2) ** 2,
+    lightness: target[0] / source[0], chroma: target[1] / source[1],
     shift: target[1] < 1e-6 ? 0 : ((target[2] - source[2] + 540) % 360) - 180 };
 });
 
 export function gradeGradientEnd(color: string): string {
   const position = toLab(color), [L, C, h] = toLch(position);
   let total = 1, lightness = .83, chroma = 1, shift = 0;
-  // Nearby references dominate smoothly, including at the original palette colors.
+  // Near-gray references have a smaller reach so their strong chroma ratios do not saturate pastels.
   for (const reference of references) {
     const distance = position.reduce((sum, value, i) => sum + (value - reference.position[i]) ** 2, 0);
-    const weight = (.12 ** 2 / Math.max(distance, 1e-12)) ** 1.5;
+    const weight = (reference.radiusSquared / Math.max(distance, 1e-12)) ** 1.5;
     total += weight;
     lightness += weight * reference.lightness;
     chroma += weight * reference.chroma;
