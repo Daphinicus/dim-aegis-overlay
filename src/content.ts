@@ -197,6 +197,31 @@ const AMMO_TYPE_MAP: Record<string, string> = {
   'Other': 'Other'
 };
 
+// Diagnostic logging framework
+const MAX_DIAGNOSTIC_LOGS = 500;
+const diagnosticLogs: string[] = [];
+
+function addDiagnosticLog(msg: string) {
+  const time = new Date().toTimeString().split(' ')[0];
+  const formatted = `[${time}] ${msg}`;
+  diagnosticLogs.push(formatted);
+  if (diagnosticLogs.length > MAX_DIAGNOSTIC_LOGS) {
+    diagnosticLogs.shift();
+  }
+  const content = document.querySelector('.aegis-diagnostic-logs-content');
+  if (content) {
+    content.textContent += `${formatted}\n`;
+    content.scrollTop = content.scrollHeight;
+  }
+}
+
+// Receive logs from main world context
+document.addEventListener('aegis-diagnostic-log', (e: any) => {
+  if (e.detail) {
+    addDiagnosticLog(e.detail);
+  }
+});
+
 let wishlistDb: WishlistDatabase = {};
 let enhancedToNormalMap: Record<number, number> = {};
 let scoringSource = 'aegis';
@@ -6921,8 +6946,6 @@ function updateBadgesOpacity() {
   });
 }
 
-const diagnosticLogs: string[] = [];
-
 // Run initial scan once script loads
 reprocessAllElements();
 if (!IS_WINNOWER_HOST) {
@@ -6985,24 +7008,6 @@ function startDimmingObserver() {
 }
 startDimmingObserver();
 
-// Diagnostic logging framework
-function addDiagnosticLog(msg: string) {
-  const time = new Date().toTimeString().split(' ')[0];
-  const formatted = `[${time}] ${msg}`;
-  diagnosticLogs.push(formatted);
-  const content = document.querySelector('.aegis-diagnostic-logs-content');
-  if (content) {
-    content.textContent += `${formatted}\n`;
-    content.scrollTop = content.scrollHeight;
-  }
-}
-
-// Receive logs from main world context
-document.addEventListener('aegis-diagnostic-log', (e: any) => {
-  if (e.detail) {
-    addDiagnosticLog(e.detail);
-  }
-});
 
 // Setup initial log entry
 addDiagnosticLog('Aegis isolated-world script initialized.');
