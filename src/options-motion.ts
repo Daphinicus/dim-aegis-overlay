@@ -1,6 +1,7 @@
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
 const highlights = new Map<HTMLElement, { marker: HTMLElement; geometry: string; visible: boolean }>();
 const disclosures = new Map<HTMLElement, { shown: boolean; animation?: Animation }>();
+let finishTabTransition: (() => void) | undefined;
 let resizeFrame = 0;
 const resizeObserver = new ResizeObserver(() => {
   if (!resizeFrame) resizeFrame = requestAnimationFrame(() => {
@@ -8,6 +9,43 @@ const resizeObserver = new ResizeObserver(() => {
     refreshOptionHighlights(false);
   });
 });
+
+export function showOptionTab(previous: HTMLElement | undefined, next: HTMLElement, direction: number) {
+  finishTabTransition?.();
+  next.hidden = false;
+  next.inert = false;
+  next.removeAttribute('aria-hidden');
+  if (!previous) return;
+  previous.inert = true;
+  previous.setAttribute('aria-hidden', 'true');
+  if (reducedMotion.matches) {
+    previous.hidden = true;
+    return;
+  }
+  previous.classList.add('option-tab-exiting');
+  previous.style.top = `${next.offsetTop}px`;
+  previous.style.maxHeight = `${next.offsetHeight}px`;
+  const timing = { duration: 140, easing: 'cubic-bezier(.2, .8, .2, 1)' };
+  const entering = next.animate([
+    { opacity: 0, transform: `translateX(${direction * 5}px)` },
+    { opacity: 1, transform: 'translateX(0)' }
+  ], timing);
+  const exiting = previous.animate([
+    { opacity: 1, transform: 'translateX(0)' },
+    { opacity: 0, transform: `translateX(${-direction * 5}px)` }
+  ], timing);
+  finishTabTransition = () => {
+    entering.onfinish = null;
+    entering.cancel();
+    exiting.cancel();
+    previous.hidden = true;
+    previous.classList.remove('option-tab-exiting');
+    previous.style.removeProperty('top');
+    previous.style.removeProperty('max-height');
+    finishTabTransition = undefined;
+  };
+  entering.onfinish = finishTabTransition;
+}
 
 export function refreshOptionHighlights(animate = true) {
   if (!highlights.size && !animate) return;
@@ -92,6 +130,7 @@ export function revealOption(element: HTMLElement, shown: boolean) {
 
 reducedMotion.addEventListener('change', () => {
   if (!reducedMotion.matches) return;
+  finishTabTransition?.();
   for (const { marker } of highlights.values()) marker.getAnimations().forEach(animation => animation.finish());
   for (const { animation } of disclosures.values()) animation?.finish();
 });

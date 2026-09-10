@@ -1,5 +1,5 @@
 import { localizeElements } from './i18n';
-import { refreshOptionHighlights } from './options-motion';
+import { refreshOptionHighlights, showOptionTab } from './options-motion';
 
 document.addEventListener('DOMContentLoaded', () => {
   const main = document.querySelector<HTMLElement>('.popup-main')!;
@@ -10,18 +10,23 @@ document.addEventListener('DOMContentLoaded', () => {
   nav.dataset.i18nAriaLabel = 'compactSections';
   const panels = new Map<string, HTMLElement>();
   const tabs: HTMLButtonElement[] = [];
+  let activeIndex = -1;
   function activate(index: number) {
+    if (index === activeIndex) return;
+    const previous = activeIndex < 0 ? undefined : panels.get(tabs[activeIndex].dataset.panel!);
     tabs.forEach((tab, i) => {
       tab.setAttribute('aria-selected', String(i === index));
       tab.tabIndex = i === index ? 0 : -1;
-      panels.get(tab.dataset.panel!)!.hidden = i !== index;
     });
+    showOptionTab(previous, panels.get(tabs[index].dataset.panel!)!, Math.sign(index - activeIndex));
+    activeIndex = index;
     refreshOptionHighlights(false);
   }
   for (const name of ['Badges', 'Scoring', 'Details', 'Data']) {
     const panel = document.createElement('section');
     panel.id = `options-${name}`;
     panel.className = 'options-panel';
+    panel.hidden = true;
     panel.setAttribute('role', 'tabpanel');
     panel.setAttribute('aria-labelledby', `tab-${name}`);
     const tab = document.createElement('button');
