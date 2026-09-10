@@ -167,7 +167,7 @@ export function initGradeSettings() {
     const color = draft.colors[selected] || swatches[selected];
     hsv = hexToHsv(color, hsv);
     renderColor(color);
-    get<HTMLInputElement>('[data-hex]').value = color.toUpperCase();
+    get<HTMLInputElement>('[data-hex]').value = color.slice(1).toUpperCase();
     get<HTMLInputElement>('[data-hex]').setCustomValidity('');
     get('[data-context]').hidden = !draft.separatePvp;
     get<HTMLSelectElement>('[data-context]').value = context;
@@ -218,15 +218,17 @@ export function initGradeSettings() {
     hsv[Number(input.dataset.hsv ?? input.dataset.hsvValue)] = input.valueAsNumber;
     const color = hsvToHex(hsv);
     draft.colors[selected] = color;
-    get<HTMLInputElement>('[data-hex]').value = color.toUpperCase();
+    get<HTMLInputElement>('[data-hex]').value = color.slice(1).toUpperCase();
     get<HTMLInputElement>('[data-hex]').setCustomValidity('');
     renderColor(color); applyGradeColors(el, draft); saveColors();
   }));
   get<HTMLInputElement>('[data-hex]').addEventListener('input', event => {
     const input = event.target as HTMLInputElement;
-    const valid = /^#[0-9a-f]{6}$/i.test(input.value);
-    input.setCustomValidity(valid ? '' : 'Enter a six-digit hex color, such as #FFD700.');
-    if (valid) { draft.colors[selected] = input.value.toLowerCase(); hsv = hexToHsv(input.value, hsv); renderColor(input.value); applyGradeColors(el, draft); saveColors(); }
+    input.value = input.value.replace(/#/g, '');
+    const valid = /^[0-9a-f]{6}$/i.test(input.value);
+    const color = `#${input.value.toLowerCase()}`;
+    input.setCustomValidity(valid ? '' : 'Enter a six-digit hex color, such as FFD700.');
+    if (valid) { draft.colors[selected] = color; hsv = hexToHsv(color, hsv); renderColor(color); applyGradeColors(el, draft); saveColors(); }
     else get('[data-color-status]').textContent = 'Enter a six-digit hex color. DIM keeps the last valid color.';
   });
   get('[data-reset-color]').addEventListener('click', () => { delete draft.colors[selected]; render(); saveColors(); });
