@@ -22,7 +22,7 @@
 .options-panel > .input-group:last-child { border-bottom: 0; }
 .options-panel .input-group label { color: #c4c4cf; font-size: 11px; line-height: 15px; font-weight: 600; margin-bottom: 4px; }
 .options-panel .segmented-control { background: #18181f; border-color: #303039; }
-.options-panel .segmented-control button { flex-basis: 0; min-width: 0; font-size: 10.5px; line-height: 14px; font-weight: 500; min-height: 29px; padding: 4px 2px; color: #a9a9b6; }
+.options-panel .segmented-control button { flex-basis: 0; min-width: 0; font-size: 10.5px; line-height: 14px; font-weight: 500; min-height: 25px; padding: 3px 2px; color: #a9a9b6; }
 .options-panel .segmented-control button.active { background: #332918; color: #ffc04a; border-color: #705023; font-weight: 600; }
 .options-panel .settings-card, .options-panel .status-card, .options-panel .info-card { padding: 10px; margin-top: 10px; box-shadow: none; }
 .options-panel .settings-card h2 { font-size: 12px; }
@@ -46,7 +46,7 @@
 .options-panel .interactive-portrait-container { min-width: 0; gap: 8px; box-shadow: none; }
 .options-panel .interactive-weapon-tile { flex-shrink: 0; }
 .options-panel .segmented-control-mini button { font-size: 15px; }
-.upgrade-option-preview { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; vertical-align: middle; pointer-events: none; }
+.upgrade-option-preview { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 16px; vertical-align: middle; pointer-events: none; }
 .upgrade-option-none { position: relative; display: block; box-sizing: border-box; width: 14px; height: 14px; border: 1.5px solid currentColor; border-radius: 50%; opacity: .65; }
 .upgrade-option-none::after { content: ''; position: absolute; top: 50%; left: -1px; right: -1px; height: 1.5px; background: currentColor; transform: translateY(-50%) rotate(-60deg); }
 .upgrade-option-preview .aegis-badge-upgrade-arrow { position: static !important; width: 16px !important; height: 16px !important; flex: 0 0 16px !important; margin: 0 !important; pointer-events: none; }
@@ -82,8 +82,10 @@
 .options-panel .grade-settings .grade-pills, .options-panel .grade-settings .grade-actions { margin: 6px 0; gap: 6px; }
 .options-panel .grade-settings .grade-pills { grid-template-columns: repeat(10, minmax(0, 1fr)); gap: 4px; }
 .options-panel .grade-settings .grade-pills button { padding-inline: 2px; }
-.options-panel .grade-settings .grade-color-fields { margin: 6px 0; gap: 8px; }
+.options-panel .grade-settings .grade-color-fields { grid-template-columns: minmax(0, 1fr) 84px; margin: 6px 0; gap: 8px; }
 .options-panel .grade-settings .grade-color-sliders { gap: 6px; }
+.options-panel .grade-settings .grade-color-slider { grid-template-columns: minmax(0, 1fr) 52px; }
+.options-panel .grade-settings .grade-hsv-field { padding-inline: 5px; }
 .options-panel .grade-settings .grade-check { font-size: 11px; gap: 5px; }
 .options-panel .grade-rules-header { display: flex; align-items: center; gap: 8px; }
 .options-panel .grade-rules-header .grade-editor-title { flex: 1; min-width: 0; margin: 0; }

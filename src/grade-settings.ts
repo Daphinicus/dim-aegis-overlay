@@ -30,7 +30,7 @@ export function initGradeSettings() {
   const get = <T extends HTMLElement>(selector: string) => el.querySelector<T>(selector)!;
   const options = (labels: Record<string, string>) => Object.entries(labels).map(([value, label]) => `<option value="${value}" data-i18n="${label}">${t(label)}</option>`).join('');
   safeSetInnerHTML(root, `
-<section id="grade-colors-modal" class="grade-settings" aria-labelledby="grade-colors-modal-title"><div class="grade-editor-card"><div class="grade-editor-header"><h2 id="grade-colors-modal-title" class="grade-editor-title" data-i18n="customizeGradeColors">Customize Grade Colors</h2></div><div class="grade-editor-body">
+<section id="grade-colors-modal" class="grade-settings" aria-labelledby="grade-colors-modal-title"><div class="grade-editor-card"><div class="grade-editor-header"><h2 id="grade-colors-modal-title" class="grade-editor-title" data-i18n="customizeGradeColors">Customize Colors</h2></div><div class="grade-editor-body">
       <p class="description" data-color-status role="status"></p>
       <div class="grade-pills" role="group" data-i18n-aria-label="gradeToEdit" aria-label="Grade to edit">${GRADES.map(g => `<button type="button" class="aegis-badge-${g[0].toLowerCase()}" data-grade="${g}" data-aegis-grade="${g}" aria-pressed="false">${g}</button>`).join('')}</div>
       <div class="grade-color-fields">
