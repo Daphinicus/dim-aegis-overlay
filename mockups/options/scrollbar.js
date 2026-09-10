@@ -3,6 +3,11 @@ document.addEventListener('DOMContentLoaded', () => {
   style.textContent = `
     html { scrollbar-width: none; }
     html::-webkit-scrollbar { display: none; }
+    html#preview-page, html#preview-page body, html#preview-page body * { cursor: auto !important; }
+    html#preview-page body :is(button, a, select, input[type="checkbox"], input[type="range"], input[readonly], .corner-target),
+    html#preview-page body :is(button, a, .corner-target) * { cursor: pointer !important; }
+    html#preview-page body :is(input:not([readonly]):not([type="checkbox"]):not([type="range"]), textarea) { cursor: text !important; }
+    html#preview-page body .preview-scrollbar, html#preview-page body .preview-scrollbar * { cursor: ns-resize !important; }
     .preview-scrollbar { position: fixed; inset: 3px 1px 3px auto; width: 8px; z-index: 2147483647; touch-action: none; }
     .preview-scrollbar[hidden] { display: none; }
     .preview-scrollbar-thumb { position: absolute; top: 0; right: 1px; width: 3px; border-radius: 8px; background: #727282; opacity: .65; }
