@@ -44,21 +44,36 @@ export function renderOptionsPreview() {
     const badge = tile.querySelector<HTMLElement>('.aegis-badge')!;
     const style = settings.aegisBadgeStyle || 'classic';
     const position = ({ 'top-left': 'tl', 'top-right': 'tr', 'bottom-left': 'bl', 'bottom-right': 'br' } as Record<string, string>)[settings.aegisBadgePosition || 'bottom-left'];
-    badge.className = `aegis-badge aegis-badge-wide aegis-badge-${displayGrade(item.grade)[0]?.toLowerCase() || 'none'} aegis-style-${style} aegis-pos-${position}`;
+    badge.className = `aegis-badge aegis-badge-${displayGrade(item.grade)[0]?.toLowerCase() || 'none'} aegis-style-${style} aegis-pos-${position}`;
     badge.replaceChildren();
     const parts = item.grade.split('|').map(part => part.trim());
-    if (parts.length > 1) badge.classList.add('aegis-badge-split');
-    if (parts.length === 1 && /[➔→]/.test(item.grade)) badge.classList.add('aegis-badge-dual');
+    const split = parts.length > 1;
+    const dual = !split && /[➔→]/.test(item.grade);
+    const twoTier = !split && (item.grade.length > 2 || (item.grade.length === 2 && !/[+-]$/.test(item.grade)));
+    if (!split && (twoTier || dual || item.isOmniRoll || item.isPerfect5of5)) badge.classList.add('aegis-badge-wide');
+    const inner = split ? document.createElement('div') : badge;
+    if (split) {
+      badge.classList.add('aegis-badge-split');
+      inner.className = 'aegis-split-inner';
+      badge.append(inner);
+    } else if (dual) badge.classList.add('aegis-badge-dual');
+    if (!split && item.isOmniRoll) badge.classList.add('aegis-badge-omni');
+    else if (!split && item.isPerfect5of5 && !dual) badge.classList.add('aegis-badge-perfect');
     parts.forEach((part, index) => {
-      const label = parts.length > 1 ? document.createElement('span') : badge;
+      const label = split ? document.createElement('span') : badge;
       if (label !== badge) {
         label.className = `aegis-split-half aegis-split-${index ? 'right' : 'left'} aegis-badge-${displayGrade(part)[0]?.toLowerCase() || 'none'}`;
-        badge.append(label);
+        if (/[➔→]/.test(part)) label.classList.add('aegis-split-transition');
+        inner.append(label);
       }
-      const text = document.createElement('span');
-      if (style === 'footer' || style === 'notch') text.className = 'aegis-grade-text';
-      text.textContent = part;
-      label.append(text);
+      const prefix = !split && style === 'classic' ? item.isOmniRoll ? '✦ ' : item.isPerfect5of5 && !dual ? '★ ' : '' : '';
+      label.textContent = prefix + part;
+      if (style === 'footer' || style === 'notch') {
+        const text = document.createElement('span');
+        text.className = 'aegis-grade-text';
+        text.textContent = label.textContent;
+        label.replaceChildren(text);
+      }
     });
     if (item.upgradeAvailable && settings.aegisUpgradeStyle !== 'none') {
       const icon = document.createElement('span');

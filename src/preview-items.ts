@@ -8,6 +8,8 @@ export interface PreviewItem {
   power: string;
   grade: string;
   upgradeAvailable: boolean;
+  isPerfect5of5?: boolean;
+  isOmniRoll?: boolean;
 }
 
 export function selectPreviewItems(items: PreviewItem[], ids: string[] = []): PreviewItem[] {

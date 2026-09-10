@@ -7102,6 +7102,8 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
       const result = weaponDataMap.get(element)?.result;
       sample.grade = result?.grade || '';
       sample.upgradeAvailable = !!result?.upgradeAvailable;
+      sample.isPerfect5of5 = !!result?.isPerfect5of5;
+      sample.isOmniRoll = !!result?.isOmniRoll;
     }
     sendResponse(samples.filter(sample => sample.grade));
     return;

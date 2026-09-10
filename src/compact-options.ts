@@ -110,7 +110,8 @@ document.addEventListener('DOMContentLoaded', () => {
   power.className = 'options-preview-power';
   power.textContent = '550';
   power.setAttribute('aria-hidden', 'true');
-  artwork.append(sampleImage, power);
+  artwork.append(sampleImage);
+  artwork.after(power);
   const tile = portrait.querySelector<HTMLElement>('#interactive-weapon-tile')!;
   for (let index = 1; index < 3; index++) {
     const copy = tile.cloneNode(true) as HTMLElement;
@@ -168,7 +169,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const icon = document.createElement('span');
     const none = button.dataset.value === 'none';
     icon.className = none ? 'upgrade-option-none' : `aegis-badge-upgrade-arrow aegis-upgrade-${button.dataset.value}`;
-    icon.textContent = none ? '⊘' : '▲';
+    icon.textContent = none ? '' : '▲';
     preview.append(icon);
     button.replaceChildren(preview);
   }
