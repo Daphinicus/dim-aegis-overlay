@@ -17,7 +17,7 @@ for (const [base, end] of [['#ffd700','#ff8c00'],['#da70d6','#8a2be2'],['#00f2fe
   assert.equal(gradeGradient(base), `linear-gradient(135deg, ${base}, ${end})`);
 }
 assert.equal(gradeGradient('#000000'), 'linear-gradient(135deg, #000000, #000000)');
-assert.equal(gradeGradient('#386BFF'), 'linear-gradient(135deg, #386bff, #2e58d1)');
+assert.equal(gradeGradient('#386BFF'), 'linear-gradient(135deg, #386bff, #0054d6)');
 assert.equal(gradeGradient('#386bff'), gradeGradient('#386BFF'));
 assert.equal(gradeGradient('#7f8c8d'), 'linear-gradient(135deg, #7f8c8d, #5a5a5a)');
 assert.match(gradeGradient('#ffffff'), /^linear-gradient\(135deg, #ffffff, #[0-9a-f]{6}\)$/);
@@ -27,10 +27,15 @@ for (let value=0;value<=0xffffff;value+=4093) {
   const color='#'+value.toString(16).padStart(6,'0');
   const end=gradeGradient(color).match(/#[0-9a-f]{6}/g)[1];
   assert.ok(brightness(end)<=brightness(color)+.0001, 'Gradient endpoint must be darker: '+color);
-  if (!Object.values(defaultGradeColors).includes(color)) {
-    const channels = hex => hex.slice(1).match(/../g).map(channel => parseInt(channel,16));
-    channels(color).forEach((channel, index) => assert.ok(Math.abs(channels(end)[index] - channel * .82) <= .5, 'Custom shading must preserve RGB proportions: '+color));
-  }
+}
+for (const [color, end] of JSON.parse(fs.readFileSync(path.join(__dirname, 'fixtures/grade-gradients.json'), 'utf8'))) {
+  assert.equal(gradeGradient(color), `linear-gradient(135deg, ${color}, ${end})`, 'Approved gradient: '+color);
+}
+for (let value=0; value<256; value++) {
+  const color='#'+value.toString(16).padStart(2,'0').repeat(3);
+  const end=gradeGradient(color).match(/#[0-9a-f]{6}/g)[1];
+  assert.equal(end.slice(1,3), end.slice(3,5), 'Neutral gray red/green: '+color);
+  assert.equal(end.slice(3,5), end.slice(5,7), 'Neutral gray green/blue: '+color);
 }
 const { hexToHsv, hsvToHex } = load('color-picker');
 const { normalizeMasterwork, masterworkMatches } = load('masterwork');
