@@ -1,4 +1,5 @@
 import { Grade, GradeSettings, defaultGradeSettings, gradeValue } from './grading';
+import { gradeGradientEnd } from './grade-gradient';
 
 export const defaultGradeColors: Record<Grade, string> = { 'S+': '#ffd700', S: '#ffd700', 'A+': '#da70d6', A: '#da70d6', 'B+': '#00f2fe', B: '#00f2fe', C: '#bdc3c7', D: '#e67e22', E: '#7f8c8d', F: '#e74c3c' };
 
@@ -27,19 +28,13 @@ export function rollGradeDisplay(text: string): string {
   return text.split(/[➔→]/).map(displayGrade).join('➔');
 }
 
-const defaultGradientEnds: Record<string, string> = {
-  '#ffd700': '#ff8c00', '#da70d6': '#8a2be2', '#00f2fe': '#4facfe', '#bdc3c7': '#2c3e50',
-  '#e67e22': '#d35400', '#7f8c8d': '#5a5a5a', '#e74c3c': '#c0392b',
-};
 const gradientCache = new Map<string, string>();
 
 export function gradeGradient(color: string): string {
   color = color.toLowerCase();
   const cached = gradientCache.get(color);
   if (cached) return cached;
-  const darker = defaultGradientEnds[color] || '#' + color.slice(1).match(/../g)!
-    .map(channel => Math.round(parseInt(channel, 16) * .82).toString(16).padStart(2, '0')).join('');
-  const gradient = `linear-gradient(135deg, ${color}, ${darker})`;
+  const gradient = `linear-gradient(135deg, ${color}, ${gradeGradientEnd(color)})`;
   if (gradientCache.size >= 128) gradientCache.clear();
   gradientCache.set(color, gradient);
   return gradient;
