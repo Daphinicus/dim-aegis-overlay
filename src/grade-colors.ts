@@ -88,9 +88,38 @@ export function hasMaxTierGrade(text: string): boolean {
   });
 }
 
+const glowCache = new Map<string, string>();
+
+function gradeGlowImage(text: string): string {
+  const color = (grade: Grade) => settings.colorsEnabled && settings.colors[grade] || defaultGradeColors[grade];
+  const segments = text.split('|').map(part => {
+    const pair = twoTierColors ? twoTierGrades(part) : null;
+    const base = color(displayGrade(part) as Grade) || defaultGradeColors.S;
+    const left = pair ? color(pair[0]) : base;
+    const right = pair ? color(pair[1]) : base;
+    return { left, right, dual: left !== right };
+  });
+  const key = JSON.stringify(segments);
+  const cached = glowCache.get(key);
+  if (cached) return cached;
+  const definitions = segments.map((segment, i) => `<linearGradient id="g${i}" x2="100%" y2="${segment.dual ? 0 : 100}%"><stop stop-color="${segment.left}"/><stop offset="1" stop-color="${segment.dual ? segment.right : gradeGradientEnd(segment.left)}"/></linearGradient>`).join('');
+  const rectangles = segments.map((segment, i) => `<svg x="${i * 100 / segments.length}%" width="${100 / segments.length}%" height="100%"><rect width="100%" height="100%" fill="url(#g${i})"/>${segment.dual ? '<rect width="100%" height="100%" fill="url(#shade)"/>' : ''}</svg>`).join('');
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><defs>${definitions}<linearGradient id="shade" x2="0%" y2="100%"><stop stop-color="black" stop-opacity="0"/><stop offset="1" stop-color="black" stop-opacity=".18"/></linearGradient></defs>${rectangles}</svg>`;
+  const image = `url("data:image/svg+xml,${encodeURIComponent(svg)}")`;
+  if (glowCache.size >= 128) glowCache.clear();
+  glowCache.set(key, image);
+  return image;
+}
+
 export function applyGradeGlow(target: HTMLElement, grade: string) {
   target.classList.toggle('aegis-gold-glow', maxTierGlow ? hasMaxTierGrade(grade) : grade.replace(/[★✦▲]/g, '').trim().startsWith('S'));
   const color = settings.colorsEnabled && settings.colors[displayGrade(grade) as Grade];
   if (color) target.style.setProperty('--aegis-glow-color', color);
   else target.style.removeProperty('--aegis-glow-color');
+  const parent = target.parentElement;
+  if (target.matches('.item') && parent?.matches('.item-drag-container')) {
+    parent.toggleAttribute('data-aegis-gradient-glow', target.classList.contains('aegis-gold-glow'));
+    if (target.classList.contains('aegis-gold-glow')) parent.style.setProperty('--aegis-glow-image', gradeGlowImage(grade));
+    else parent.style.removeProperty('--aegis-glow-image');
+  }
 }
