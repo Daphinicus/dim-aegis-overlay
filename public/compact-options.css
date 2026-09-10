@@ -92,9 +92,9 @@
 .options-panel .grade-profile-row [data-context] { width: 76px; }
 .options-panel [data-context][aria-disabled="true"] { opacity: .5; }
 .options-panel [data-context] button:disabled { cursor: default; }
-.options-panel .grade-summary-row { display: flex; align-items: center; gap: 10px; margin: 6px 0 10px; }
-.options-panel .grade-summary-row .grade-check { flex-shrink: 0; white-space: nowrap; }
-.options-panel [data-rule-summary] { min-width: 0; margin: 0; }
+.options-panel .grade-summary-row { display: flex; align-items: flex-start; gap: 10px; margin: 10px 0; }
+.options-panel .grade-summary-row .grade-check { flex-shrink: 0; min-height: 0; line-height: 16px; white-space: nowrap; color: #c4c4cf; }
+.options-panel .grade-settings [data-rule-summary] { min-width: 0; margin: 0; font-style: italic; line-height: 16px; color: #9295a2; }
 .options-panel .grade-pills [data-grade-inactive] { filter: grayscale(1); opacity: .3; }
 .options-panel .grade-pills [data-grade-inactive][aria-pressed="true"] { opacity: .5; }
 .options-panel .grade-rule-fields[aria-disabled="true"] { opacity: .5; }
