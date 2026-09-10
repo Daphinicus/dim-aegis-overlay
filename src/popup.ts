@@ -59,6 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
         'aegisTwoTier',
         'aegisBadgePosition',
         'aegisBadgeStyle',
+        'aegisUpgradeStyle',
         'aegisBadgeScale',
         'aegisFadeHover',
         'aegisGradeDisplayMode',
@@ -287,6 +288,19 @@ document.addEventListener('DOMContentLoaded', () => {
           });
         }
 
+        // Set Aegis Upgrade Style segmented control
+        const upgradeStyleVal = (res.aegisUpgradeStyle === 'triangle' || res.aegisUpgradeStyle === 'chevron') ? res.aegisUpgradeStyle : 'circle';
+        const upgradeStyleSegmented = document.getElementById('aegis-upgrade-style-segmented');
+        if (upgradeStyleSegmented) {
+          upgradeStyleSegmented.querySelectorAll('button').forEach(btn => {
+            if (btn.getAttribute('data-value') === upgradeStyleVal) {
+              btn.classList.add('active');
+            } else {
+              btn.classList.remove('active');
+            }
+          });
+        }
+
         // Set Aegis Badge Scale Slider
         const badgeScaleVal = typeof res.aegisBadgeScale === 'number' ? res.aegisBadgeScale : 100;
         const scaleSlider = document.getElementById('aegis-badge-scale-slider') as HTMLInputElement;
@@ -320,7 +334,7 @@ document.addEventListener('DOMContentLoaded', () => {
             mockBadge.classList.remove('aegis-badge-split');
             mockBadge.textContent = isTwoTier ? 'SS+' : 'S+';
           }
-          if (badgeStyleVal === 'footer') {
+          if (badgeStyleVal === 'footer' || badgeStyleVal === 'notch') {
             const labels = aegisModeVal === 'both' ? mockBadge.querySelectorAll('.aegis-split-half') : [mockBadge];
             for (const label of labels) {
               const text = document.createElement('span');
@@ -329,6 +343,12 @@ document.addEventListener('DOMContentLoaded', () => {
               label.replaceChildren(text);
             }
           }
+
+          // Append preview upgrade arrow
+          const upgradeArrow = document.createElement('span');
+          upgradeArrow.className = `aegis-badge-upgrade-arrow aegis-upgrade-${upgradeStyleVal}`;
+          upgradeArrow.textContent = '▲';
+          mockBadge.appendChild(upgradeArrow);
         }
 
         const cornerTargets = document.querySelectorAll('.interactive-weapon-tile .corner-target');
@@ -809,6 +829,23 @@ document.addEventListener('DOMContentLoaded', () => {
         if (val) {
           chrome.storage.local.set({ aegisBadgeStyle: val }, () => {
             console.log(`[DIM Aegis Overlay] Aegis Badge Style changed to: ${val}`);
+            updateUI();
+          });
+        }
+      }
+    });
+  }
+
+  // Handle Upgrade Style segmented control click
+  const upgradeStyleSegmented = document.getElementById('aegis-upgrade-style-segmented');
+  if (upgradeStyleSegmented) {
+    upgradeStyleSegmented.addEventListener('click', (e) => {
+      const target = e.target as HTMLButtonElement;
+      if (target && target.tagName === 'BUTTON') {
+        const val = target.getAttribute('data-value');
+        if (val) {
+          chrome.storage.local.set({ aegisUpgradeStyle: val }, () => {
+            console.log(`[DIM Aegis Overlay] Aegis Upgrade Style changed to: ${val}`);
             updateUI();
           });
         }
