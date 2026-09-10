@@ -38,7 +38,7 @@ for (let value=0; value<256; value++) {
   assert.equal(end.slice(3,5), end.slice(5,7), 'Neutral gray green/blue: '+color);
 }
 const { hexToHsv, hsvToHex } = load('color-picker');
-for (const [color, expected] of [['#e6b1bd','#b88495'],['#b1c4e6','#8594b9'],['#b1e6c4','#7cb69e'],['#e6dcb1','#bcaa84'],['#d7b1e6','#a583bc']]) {
+for (const [color, expected] of [['#e6b1bd','#6d4d57'],['#b1c4e6','#3e4659'],['#b1e6c4','#5f8d7a'],['#e6dcb1','#928465'],['#d7b1e6','#6d557d']]) {
   assert.equal(gradeGradient(color), `linear-gradient(135deg, ${color}, ${expected})`);
   assert.ok(hexToHsv(expected)[1] < 40, 'Pastels must not become saturated: '+color);
 }
@@ -48,6 +48,12 @@ for (let hue=0; hue<360; hue+=5) for (const saturation of [15,20,23,25,30]) for 
   assert.ok(hexToHsv(end)[1]<55, 'Low-saturation colors must stay below full saturation: '+color);
 }
 const { normalizeMasterwork, masterworkMatches } = load('masterwork');
+for (let hue=0; hue<360; hue+=5) {
+  const color=hsvToHex([hue,23,90]);
+  const end=gradeGradient(color).match(/#[0-9a-f]{6}/g)[1];
+  assert.ok(brightness(end)<brightness(color)*.5, 'Pastels need visible depth across all hues: '+color);
+  assert.ok(hexToHsv(end)[1]<40, 'Stronger pastel depth must not introduce vivid saturation: '+color);
+}
 assert.equal(normalizeMasterwork('Tier 1Reload Speed Masterwork'), 'reload');
 assert.equal(normalizeMasterwork('Projectile Speed'), 'velocity');
 assert.equal(masterworkMatches(['Range', 'Handling'], 'Tier 10 Handling'), true);
