@@ -19,6 +19,20 @@ export const LANGUAGE_NAMES: Record<SupportedLanguage, string> = {
 
 const translations: Record<SupportedLanguage, Record<string, string>> = {
   en: {
+    compactSections: "Settings sections",
+    compactBadges: "Badges",
+    compactScoring: "Scoring",
+    compactDetails: "Details",
+    compactData: "Data",
+    compactFormat: "Grade format",
+    compactStyle: "Badge style",
+    compactUpgrade: "Upgrade icon",
+    compactPosition: "Badge position",
+    compactSource: "Ranking source",
+    compactActivity: "Activity",
+    compactEvaluate: "Evaluate perks",
+    compactArmor: "Armor rankings",
+    compactTextSize: "Text size",
     // Tooltips
     matchPercentage: 'Match Percentage',
     matchedPerks: 'Matched Perks',
@@ -352,6 +366,20 @@ const translations: Record<SupportedLanguage, Record<string, string>> = {
   },
 
   es: {
+    compactSections: "Secciones de ajustes",
+    compactBadges: "Insignias",
+    compactScoring: "Puntuación",
+    compactDetails: "Detalles",
+    compactData: "Datos",
+    compactFormat: "Formato de nota",
+    compactStyle: "Estilo de insignia",
+    compactUpgrade: "Icono de mejora",
+    compactPosition: "Posición",
+    compactSource: "Fuente de clasificación",
+    compactActivity: "Actividad",
+    compactEvaluate: "Evaluar ventajas",
+    compactArmor: "Clasificación de armadura",
+    compactTextSize: "Tamaño del texto",
     // Tooltips
     matchPercentage: 'Porcentaje de Coincidencia',
     matchedPerks: 'Ventajas Coincidentes',
@@ -686,6 +714,20 @@ const translations: Record<SupportedLanguage, Record<string, string>> = {
   },
 
   ko: {
+    compactSections: "설정 섹션",
+    compactBadges: "배지",
+    compactScoring: "평가",
+    compactDetails: "상세",
+    compactData: "데이터",
+    compactFormat: "등급 형식",
+    compactStyle: "배지 스타일",
+    compactUpgrade: "업그레이드 아이콘",
+    compactPosition: "배지 위치",
+    compactSource: "평가 출처",
+    compactActivity: "활동",
+    compactEvaluate: "특성 평가",
+    compactArmor: "방어구 평가",
+    compactTextSize: "글자 크기",
     // Tooltips
     matchPercentage: '일치율',
     matchedPerks: '일치한 특성',
@@ -1020,6 +1062,20 @@ const translations: Record<SupportedLanguage, Record<string, string>> = {
   },
 
   ja: {
+    compactSections: "設定カテゴリ",
+    compactBadges: "バッジ",
+    compactScoring: "評価",
+    compactDetails: "詳細",
+    compactData: "データ",
+    compactFormat: "評価形式",
+    compactStyle: "バッジスタイル",
+    compactUpgrade: "強化アイコン",
+    compactPosition: "バッジ位置",
+    compactSource: "評価ソース",
+    compactActivity: "アクティビティ",
+    compactEvaluate: "パーク評価",
+    compactArmor: "アーマー評価",
+    compactTextSize: "文字サイズ",
     // Tooltips
     matchPercentage: '一致率',
     matchedPerks: '一致したパーク',
@@ -1354,6 +1410,20 @@ const translations: Record<SupportedLanguage, Record<string, string>> = {
   },
 
   'zh-CHS': {
+    compactSections: "设置分类",
+    compactBadges: "徽章",
+    compactScoring: "评分",
+    compactDetails: "详情",
+    compactData: "数据",
+    compactFormat: "评级格式",
+    compactStyle: "徽章样式",
+    compactUpgrade: "升级图标",
+    compactPosition: "徽章位置",
+    compactSource: "评级来源",
+    compactActivity: "活动",
+    compactEvaluate: "评估特性",
+    compactArmor: "护甲评级",
+    compactTextSize: "文字大小",
     // Tooltips
     matchPercentage: '匹配度',
     matchedPerks: '已匹配词条',
@@ -1688,6 +1758,20 @@ const translations: Record<SupportedLanguage, Record<string, string>> = {
   },
 
   'zh-CHT': {
+    compactSections: "設定分類",
+    compactBadges: "徽章",
+    compactScoring: "評分",
+    compactDetails: "詳情",
+    compactData: "資料",
+    compactFormat: "評級格式",
+    compactStyle: "徽章樣式",
+    compactUpgrade: "升級圖示",
+    compactPosition: "徽章位置",
+    compactSource: "評級來源",
+    compactActivity: "活動",
+    compactEvaluate: "評估特性",
+    compactArmor: "護甲評級",
+    compactTextSize: "文字大小",
     // Tooltips
     matchPercentage: '配對率',
     matchedPerks: '已配對詞條',

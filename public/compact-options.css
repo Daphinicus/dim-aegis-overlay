@@ -1,0 +1,33 @@
+.compact-options .popup-container { padding: 12px; }
+.compact-options .popup-header { flex-wrap: wrap; gap: 10px; margin-bottom: 10px; padding-bottom: 10px; }
+.compact-options .logo-wrapper { flex: 1 0 100%; }
+.compact-options .header-actions { width: 100%; justify-content: space-between; }
+.compact-options .popup-header h1 { font-size: 15px; }
+.compact-options .popup-main { gap: 10px; }
+.options-tabs { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 3px; padding: 3px; background: #18181f; border: 1px solid #303039; border-radius: 7px; }
+.options-tabs button { border: 0; border-radius: 4px; background: transparent; color: #aaaab5; font: 600 12px/1.3 system-ui; padding: 8px 2px; cursor: pointer; }
+.options-tabs button[aria-selected="true"] { background: #3c3019; color: #ffc04a; box-shadow: inset 0 0 0 1px #705023; }
+.options-tabs button:hover { color: white; }
+.compact-options button:focus-visible { outline: 2px solid #ffb300; outline-offset: 2px; }
+.options-panel[hidden] { display: none !important; }
+.options-panel > .input-group { margin: 0 !important; padding: 7px 0; border-bottom: 1px solid #24242d; }
+.options-panel > .input-group:first-child { padding-top: 2px; }
+.options-panel > .input-group:last-child { border-bottom: 0; }
+.options-panel .input-group label { color: #c4c4cf; font-size: 11px; line-height: 15px; font-weight: 600; margin-bottom: 4px; }
+.options-panel .segmented-control { background: #18181f; border-color: #303039; }
+.options-panel .segmented-control button { flex-basis: 0; min-width: 0; font-size: 10.5px; line-height: 14px; font-weight: 500; min-height: 29px; padding: 4px 2px; color: #a9a9b6; }
+.options-panel .segmented-control button.active { background: #332918; color: #ffc04a; border-color: #705023; font-weight: 600; }
+.options-panel .settings-card, .options-panel .status-card, .options-panel .info-card { padding: 10px; margin-top: 10px; box-shadow: none; }
+.options-panel .settings-card h2 { font-size: 12px; }
+.options-panel .description { font-size: 11px; line-height: 1.45; }
+.options-panel .interactive-portrait-container { display: flex; flex-direction: row; justify-content: flex-start; align-items: center; gap: 14px; padding: 4px 0; margin: 0; background: none; border: 0; }
+.options-panel .portrait-pos-label-row { flex: 1; margin: 0; }
+.options-panel .segmented-control-mini { display: grid; grid-template-columns: 1fr 1fr; width: 100%; }
+.options-panel #aegis-two-tier-options { margin-left: 8px !important; padding-left: 10px; border-left: 2px solid #5b4422; }
+.options-panel #aegis-two-tier-options > .input-group { margin-bottom: 8px; }
+.options-panel #aegis-two-tier-options > label { margin-bottom: 0; }
+.options-preview-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; padding-top: 10px; }
+.options-preview-row > .input-group { min-width: 0; margin: 0; }
+.options-preview-row .interactive-portrait-container { flex-direction: column; align-items: flex-start; gap: 8px; box-shadow: none; }
+.options-preview-row .portrait-pos-label-row { width: 100%; }
+.options-preview-row .segmented-control-mini button { font-size: 10px; }

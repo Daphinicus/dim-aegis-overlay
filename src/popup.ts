@@ -1,3 +1,4 @@
+import './compact-options';
 import { initGradeSettings } from './grade-settings';
 import { normalizeGradeSettings } from './grading';
 import { setGradeColors, applyGradeColors, setBadgeColor, resolveBadgeColor } from './grade-colors';
