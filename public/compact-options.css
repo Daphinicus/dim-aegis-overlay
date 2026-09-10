@@ -85,13 +85,16 @@
 .options-panel .grade-settings .grade-color-fields { margin: 6px 0; gap: 8px; }
 .options-panel .grade-settings .grade-color-sliders { gap: 6px; }
 .options-panel .grade-settings .grade-check { font-size: 11px; gap: 5px; }
-.options-panel .grade-settings .grade-profile-row { gap: 8px; }
+.options-panel .grade-rules-header { display: flex; align-items: center; gap: 8px; }
+.options-panel .grade-rules-header .grade-editor-title { flex: 1; min-width: 0; margin: 0; }
+.options-panel .grade-settings .grade-profile-row { flex-shrink: 0; gap: 6px; }
 .options-panel .grade-settings .grade-profile-row label { flex: none; }
-.options-panel .grade-profile-row label:nth-child(2) { margin-left: auto; }
-.options-panel .grade-profile-row [data-context] { flex: 0 0 76px; }
+.options-panel .grade-profile-row [data-context] { width: 76px; }
 .options-panel [data-context][aria-disabled="true"] { opacity: .5; }
 .options-panel [data-context] button:disabled { cursor: default; }
-.options-panel [data-rule-summary] { margin: 6px 0 10px; }
+.options-panel .grade-summary-row { display: flex; align-items: center; gap: 10px; margin: 6px 0 10px; }
+.options-panel .grade-summary-row .grade-check { flex-shrink: 0; white-space: nowrap; }
+.options-panel [data-rule-summary] { min-width: 0; margin: 0; }
 .options-panel .grade-pills [data-grade-inactive] { filter: grayscale(1); opacity: .3; }
 .options-panel .grade-pills [data-grade-inactive][aria-pressed="true"] { opacity: .5; }
 .options-panel .grade-rule-fields[aria-disabled="true"] { opacity: .5; }
