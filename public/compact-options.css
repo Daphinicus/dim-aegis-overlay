@@ -52,3 +52,22 @@
 .option-selection { position: absolute; top: 0; left: 0; pointer-events: none; box-sizing: border-box; border: 1px solid #705023; border-radius: 4px; background: #332918; }
 .options-panel .option-revealing { box-sizing: border-box; overflow: hidden; }
 .options-panel [hidden] { display: none !important; }
+.options-preview { flex-shrink: 0; padding: 8px 12px 12px; border-top: 1px solid #343440; background: var(--options-surface); }
+.options-preview[hidden] { display: none; }
+.options-preview h2 { margin: 0 0 6px; color: #c4c4cf; font-size: 11px; font-weight: 600; }
+.options-preview .input-group { margin: 0; }
+.options-preview .interactive-portrait-container { flex-direction: row; justify-content: center; gap: 16px; padding: 0; margin: 0; background: none; border: 0; box-shadow: none; }
+.options-preview .interactive-weapon-tile { flex-shrink: 0; border: 1px solid #666; box-shadow: none; }
+.options-preview-art { position: relative; height: 84px; overflow: hidden; }
+.options-preview .mock-weapon-img { clip-path: inset(1px 1px 20%); }
+.options-preview-power { position: absolute; bottom: 0; left: 0; right: 0; height: 20%; padding-right: 2px; background: #080a0e; color: white; font: 14px/1.2 system-ui; text-align: right; }
+.options-preview .portrait-pos-label-row { margin: 0; width: 72px; }
+.options-preview .segmented-control-mini { display: grid; grid-template-columns: 1fr 1fr; }
+.options-preview .segmented-control-mini button { font-size: 15px; padding: 3px; }
+.options-panel .grade-settings { padding-top: 12px; border-top: 1px solid #343440; margin-top: 10px; }
+.options-panel .grade-editor-title { margin: 0 0 6px; padding: 0; border: 0; font-size: 12px; text-transform: none; letter-spacing: normal; }
+.options-panel .grade-settings .grade-pills, .options-panel .grade-settings .grade-actions { margin: 6px 0; gap: 6px; }
+.options-panel .grade-settings .grade-color-fields { margin: 6px 0; gap: 8px; }
+.options-panel .grade-settings .grade-color-sliders { gap: 6px; }
+.options-panel .grade-settings .grade-check { font-size: 11px; gap: 5px; }
+.options-panel .grade-settings .grade-color-actions button { font-size: 11px; padding: 7px 4px; white-space: normal; }

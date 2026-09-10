@@ -16,8 +16,7 @@ const defaultGuide: Record<Grade, string> = {
 export function initGradeSettings() {
   const root = document.getElementById('aegis-grade-settings');
   if (!root) return;
-  document.querySelector('.popup-header')?.append(root);
-  const el = root;
+  const el = document.querySelector<HTMLElement>('.popup-main')!;
   let language = getCurrentLanguage();
   let rulesError: string | undefined;
   let colorsError: string | undefined;
@@ -30,8 +29,8 @@ export function initGradeSettings() {
   let hsv: Hsv = [0, 100, 100];
   const get = <T extends HTMLElement>(selector: string) => el.querySelector<T>(selector)!;
   const options = (labels: Record<string, string>) => Object.entries(labels).map(([value, label]) => `<option value="${value}" data-i18n="${label}">${t(label)}</option>`).join('');
-  safeSetInnerHTML(el, `
-<dialog id="grade-colors-modal" class="grade-modal" aria-labelledby="grade-colors-modal-title"><div class="grade-editor-card"><div class="grade-editor-header"><h2 id="grade-colors-modal-title" class="grade-editor-title" data-i18n="customizeGradeColors">Customize Grade Colors</h2><button type="button" class="changelog-close-x" data-close data-i18n-aria-label="closeGradeColors" aria-label="Close Grade colors">&times;</button></div><div class="grade-editor-body">
+  safeSetInnerHTML(root, `
+<section id="grade-colors-modal" class="grade-settings" aria-labelledby="grade-colors-modal-title"><div class="grade-editor-card"><div class="grade-editor-header"><h2 id="grade-colors-modal-title" class="grade-editor-title" data-i18n="customizeGradeColors">Customize Grade Colors</h2></div><div class="grade-editor-body">
       <p class="description" data-color-status role="status"></p>
       <div class="grade-pills" role="group" data-i18n-aria-label="gradeToEdit" aria-label="Grade to edit">${GRADES.map(g => `<button type="button" class="aegis-badge-${g[0].toLowerCase()}" data-grade="${g}" data-aegis-grade="${g}" aria-pressed="false">${g}</button>`).join('')}</div>
       <div class="grade-color-fields">
@@ -40,7 +39,7 @@ export function initGradeSettings() {
       </div>
       <div class="grade-color-sliders">${['colorHue', 'colorSaturation', 'colorBrightness'].map((label, index) => `<div class="grade-color-slider"><input type="range" data-hsv="${index}" min="0" max="${index === 0 ? 360 : 100}" step="1" data-i18n-aria-label="${label}" aria-label="${t(label)}"><div class="grade-hsv-field"><input type="number" data-hsv-value="${index}" min="0" max="${index === 0 ? 360 : 100}" step="1" required aria-label="${t(index === 0 ? 'colorFieldDegrees' : 'colorFieldPercent', { label: t(label) })}"><span aria-hidden="true">${index === 0 ? '°' : '%'}</span></div></div>`).join('')}</div>
       <div class="grade-actions grade-color-actions"><button type="button" class="btn btn-secondary" data-reset-color data-i18n="resetSelected">Reset selected</button><button type="button" class="btn btn-secondary" data-reset-colors data-i18n="resetAll">Reset all</button></div>
-</div></div></dialog><dialog id="grade-rules-modal" class="grade-modal" aria-labelledby="grade-rules-modal-title"><div class="grade-editor-card"><div class="grade-editor-header"><h2 id="grade-rules-modal-title" class="grade-editor-title" data-i18n="customizeGradingCriteria">Customize Grading Criteria</h2><button type="button" class="changelog-close-x" data-close data-i18n-aria-label="closeGradeRules" aria-label="Close Grading criteria">&times;</button></div><div class="grade-editor-body"><div class="grade-profile-row">
+</div></div></section><section id="grade-rules-modal" class="grade-settings" aria-labelledby="grade-rules-modal-title"><div class="grade-editor-card"><div class="grade-editor-header"><h2 id="grade-rules-modal-title" class="grade-editor-title" data-i18n="customizeGradingCriteria">Customize Grading Criteria</h2></div><div class="grade-editor-body"><div class="grade-profile-row">
         <label class="grade-check"><input type="checkbox" data-setting="separatePvp"> <span data-i18n="separatePvp">Separate PvP</span></label>
         <select data-context data-i18n-aria-label="gradeProfile" aria-label="Profile to edit"><option value="pve">PvE</option><option value="pvp">PvP</option></select>
       </div>
@@ -58,31 +57,12 @@ export function initGradeSettings() {
       <p class="grade-warning" data-warning role="status" data-i18n-title="higherGradesFirst" title="Higher matching grades take priority"></p>
       <div class="grade-actions grade-color-actions"><button type="button" class="btn btn-secondary" data-reset-rule data-i18n-title="resetGradeTip" title="Reset this grade in the selected profile" data-i18n="resetSelected">Reset selected</button><button type="button" class="btn btn-secondary" data-reset-rules data-i18n-title="resetRulesTip" title="Reset all criteria, including both PvE and PvP" data-i18n="resetAll">Reset all</button></div>
       <p class="description" data-status role="status"></p>
-</div></div></dialog>
+</div></div></section>
   `);
 
-  for (const [buttonId, dialogId] of [['open-grade-colors-btn', 'grade-colors-modal'], ['open-grade-rules-btn', 'grade-rules-modal']]) {
-    const dialog = get<HTMLDialogElement>(`#${dialogId}`);
-    const button = document.getElementById(buttonId);
-    button?.setAttribute('aria-expanded', 'false');
-    button?.addEventListener('click', () => {
-      if (dialog.open) { dialog.close(); return; }
-      el.querySelectorAll<HTMLDialogElement>('dialog[open]').forEach(other => other.close());
-      dialog.show();
-      button.setAttribute('aria-expanded', 'true');
-    });
-    const close = () => { dialog.close(); button?.focus({ preventScroll: true }); };
-    dialog.querySelector('[data-close]')!.addEventListener('click', close);
-    dialog.addEventListener('close', () => button?.setAttribute('aria-expanded', String(dialog.open)));
-    dialog.addEventListener('keydown', event => {
-      if (event.key === 'Escape') { event.preventDefault(); close(); }
-    });
-  }
-  document.addEventListener('pointerdown', event => {
-    const target = event.target;
-    if (!(target instanceof Element) || el.contains(target) || target.closest('#open-grade-colors-btn, #open-grade-rules-btn')) return;
-    el.querySelectorAll<HTMLDialogElement>('dialog[open]').forEach(dialog => dialog.close());
-  });
+  document.getElementById('options-Badges')!.append(root.querySelector('#grade-colors-modal')!);
+  document.getElementById('options-Scoring')!.append(root.querySelector('#grade-rules-modal')!);
+  root.remove();
 
   function renderGuide() {
     const guide = document.getElementById('grade-scoring-guide');

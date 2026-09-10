@@ -12,6 +12,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const scrollPositions = new Map<HTMLElement, number>();
   const tabs: HTMLButtonElement[] = [];
   let activeIndex = -1;
+  const preview = document.createElement('section');
+  preview.className = 'options-preview';
+  preview.setAttribute('aria-labelledby', 'options-preview-title');
   function activate(index: number) {
     if (index === activeIndex) return;
     const previous = activeIndex < 0 ? undefined : panels.get(tabs[activeIndex].dataset.panel!);
@@ -21,6 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
       tab.tabIndex = i === index ? 0 : -1;
     });
     const next = panels.get(tabs[index].dataset.panel!)!;
+    preview.hidden = index > 1;
     showOptionTab(previous, next, Math.sign(index - activeIndex));
     next.scrollTop = scrollPositions.get(next) ?? 0;
     activeIndex = index;
@@ -85,6 +89,23 @@ document.addEventListener('DOMContentLoaded', () => {
     group.classList.add('inline-range');
   }
   original.remove();
+  const portrait = document.getElementById('interactive-weapon-tile')!.closest('.input-group')!;
+  const previewTitle = document.createElement('h2');
+  previewTitle.id = 'options-preview-title';
+  previewTitle.dataset.i18n = 'compactPreview';
+  portrait.querySelector(':scope > label')!.remove();
+  preview.append(previewTitle, portrait);
+  const sampleImage = portrait.querySelector<HTMLImageElement>('.mock-weapon-img')!;
+  sampleImage.dataset.i18nAlt = 'exampleWeapon';
+  const artwork = document.createElement('div');
+  artwork.className = 'options-preview-art';
+  sampleImage.before(artwork);
+  const power = document.createElement('span');
+  power.className = 'options-preview-power';
+  power.textContent = '550';
+  power.setAttribute('aria-hidden', 'true');
+  artwork.append(sampleImage, power);
+  main.append(preview);
   const labels: Record<string, string> = {
     badgeMode: 'compactFormat', badgeStyle: 'compactStyle', upgradeIndicatorStyle: 'compactUpgrade',
     badgePosition: 'compactPosition', activeRankingSource: 'compactSource', spreadsheetMode: 'compactActivity',
