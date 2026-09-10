@@ -158,6 +158,24 @@ document.addEventListener('DOMContentLoaded', () => {
       if (el.matches('button')) el.dataset.i18nAriaLabel = oldKey;
     });
   }
+  const twoLineOptions: Record<string, [string, string]> = {
+    engineAegis: ['inlineAegis', 'optionDimWishlist'],
+    engineLightgg: ['inlineLightgg', 'optionRollAppraiser'],
+    evalEquipped: ['inlineEquipped', 'optionActivePerks'],
+    evalDual: ['optionDual', ''],
+    evalPotential: ['inlinePotential', 'optionBestAvailable']
+  };
+  for (const [key, [heading, detail]] of Object.entries(twoLineOptions)) {
+    const button = main.querySelector<HTMLButtonElement>(`button[data-i18n-title="${key}"]`)!;
+    button.parentElement!.classList.add('segmented-control-two-line');
+    delete button.dataset.i18n;
+    const title = document.createElement('span');
+    title.dataset.i18n = heading;
+    const description = document.createElement('small');
+    if (detail) description.dataset.i18n = detail;
+    else description.textContent = 'F → S+';
+    button.replaceChildren(title, description);
+  }
   for (const button of main.querySelectorAll<HTMLButtonElement>('#aegis-upgrade-style-segmented button')) {
     const key = button.dataset.i18n!;
     button.dataset.i18nTitle = key;

@@ -20,6 +20,11 @@ export const LANGUAGE_NAMES: Record<SupportedLanguage, string> = {
 const translations: Record<SupportedLanguage, Record<string, string>> = {
   en: {
     inlineEngine: "Engine",
+    optionDimWishlist: "DIM Wishlist",
+    optionRollAppraiser: "Roll Appraiser",
+    optionActivePerks: "Active Perks",
+    optionDual: "Dual",
+    optionBestAvailable: "Best Available",
     inlineLayout: "Perk Layout",
     inlinePerkOrder: "Perk Order",
     inlineHover: "Hover Card",
@@ -419,6 +424,11 @@ const translations: Record<SupportedLanguage, Record<string, string>> = {
 
   es: {
     inlineEngine: "Motor",
+    optionDimWishlist: "Lista DIM",
+    optionRollAppraiser: "Evaluador de rolls",
+    optionActivePerks: "En uso",
+    optionDual: "Dual",
+    optionBestAvailable: "Mejor posible",
     inlineLayout: "Diseño",
     inlinePerkOrder: "Orden",
     inlineHover: "Al pasar",
@@ -819,6 +829,11 @@ const translations: Record<SupportedLanguage, Record<string, string>> = {
 
   ko: {
     inlineEngine: "평가 엔진",
+    optionDimWishlist: "DIM 위시리스트",
+    optionRollAppraiser: "무기 평가",
+    optionActivePerks: "활성 특성",
+    optionDual: "이중",
+    optionBestAvailable: "최대 잠재력",
     inlineLayout: "특성 배치",
     inlinePerkOrder: "특성 순서",
     inlineHover: "호버 카드",
@@ -1219,6 +1234,11 @@ const translations: Record<SupportedLanguage, Record<string, string>> = {
 
   ja: {
     inlineEngine: "評価元",
+    optionDimWishlist: "DIMウィッシュリスト",
+    optionRollAppraiser: "ロール評価",
+    optionActivePerks: "有効なパーク",
+    optionDual: "両方",
+    optionBestAvailable: "最良の構成",
     inlineLayout: "パーク配置",
     inlinePerkOrder: "パーク順",
     inlineHover: "ホバーカード",
@@ -1619,6 +1639,11 @@ const translations: Record<SupportedLanguage, Record<string, string>> = {
 
   'zh-CHS': {
     inlineEngine: "评分引擎",
+    optionDimWishlist: "DIM 心愿单",
+    optionRollAppraiser: "配置评估",
+    optionActivePerks: "已装备特性",
+    optionDual: "双重",
+    optionBestAvailable: "最佳可用",
     inlineLayout: "特性布局",
     inlinePerkOrder: "特性顺序",
     inlineHover: "悬停卡片",
@@ -2019,6 +2044,11 @@ const translations: Record<SupportedLanguage, Record<string, string>> = {
 
   'zh-CHT': {
     inlineEngine: "評分引擎",
+    optionDimWishlist: "DIM 心願單",
+    optionRollAppraiser: "配置評估",
+    optionActivePerks: "已裝備特性",
+    optionDual: "雙重",
+    optionBestAvailable: "最佳可用",
     inlineLayout: "特性配置",
     inlinePerkOrder: "特性順序",
     inlineHover: "懸停卡片",
