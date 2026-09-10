@@ -100,7 +100,7 @@ export function initGradeSettings() {
         }
         return `<span class="grade-pill grade-${grade[0].toLowerCase()}-pill" data-aegis-grade="${grade}">${grade}</span><span${unreachable.includes(grade) ? ' title="Unreachable: higher grades always match first"' : ''}>${description}</span>`;
       }).join('')}</div>`;
-    }).join('') + (profiles.every(([, rules]) => (['S+', 'S', 'A+', 'A'] as const).every(grade => !rules[grade].enabled || rules[grade].traits === 'both'))
+    }).join('') + (!saved.rulesEnabled
       ? '<span class="tooltip-note">*Main Traits 1 & 2 must match to score A or higher.</span>' : ''));
     applyGuideColors();
   }

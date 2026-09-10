@@ -913,11 +913,11 @@
   margin-bottom: 12px;
 }
 
-#aegis-two-tier-options {
+#aegis-two-tier-options > label {
   padding-inline-start: 14px;
 }
 
-#aegis-two-tier-options label {
+#aegis-two-tier-options > label {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -927,7 +927,7 @@
   cursor: pointer;
 }
 
-#aegis-two-tier-options label:hover,
+#aegis-two-tier-options > label:hover,
 #aegis-grade-settings .grade-check:hover {
   color: #e0e0e8;
 }

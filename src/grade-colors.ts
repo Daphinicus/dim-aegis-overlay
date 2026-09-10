@@ -1,17 +1,25 @@
 import { Grade, GradeSettings, defaultGradeSettings, gradeValue } from './grading';
+import type { BadgeColor } from './types';
 import { gradeGradientEnd } from './grade-gradient';
 
 export const defaultGradeColors: Record<Grade, string> = { 'S+': '#ffd700', S: '#ffd700', 'A+': '#da70d6', A: '#da70d6', 'B+': '#00f2fe', B: '#00f2fe', C: '#bdc3c7', D: '#e67e22', E: '#7f8c8d', F: '#e74c3c' };
 
 let settings = defaultGradeSettings();
-let twoTierColors = false;
+let badgeColor: BadgeColor = 'perk';
 let maxTierGlow = false;
 const originals = new WeakMap<HTMLElement, [string, string, string][]>();
 const colorProperties = ['background', 'color', 'text-shadow'];
 const badgeSelector = '.aegis-badge, .aegis-split-half, .aegis-title-badge, .aegis-popup-grade-badge, .aegis-tooltip-grade, .aegis-shopping-item-badge, [data-aegis-grade]';
 
 export function setGradeColors(value: GradeSettings) { settings = value; }
-export function setTwoTierColors(enabled: boolean) { twoTierColors = enabled; }
+export function resolveBadgeColor(value: unknown, legacy?: boolean): BadgeColor {
+  return value === 'perk' || value === 'archetype' || value === 'gradient' ? value : legacy === true ? 'gradient' : 'perk';
+}
+export function setBadgeColor(value: BadgeColor) { badgeColor = value; }
+
+function colorGrade(text: string): string {
+  return badgeColor === 'archetype' ? twoTierGrades(text)?.[0] || displayGrade(text) : displayGrade(text);
+}
 export function setMaxTierGlow(enabled: boolean) { maxTierGlow = enabled; }
 
 export function displayGrade(text: string): string {
@@ -55,7 +63,7 @@ export function twoTierGradient(text: string, palette = settings): string | null
   const color = (grade: Grade) => (palette.colorsEnabled && palette.colors[grade] || defaultGradeColors[grade]).toLowerCase();
   const weaponColor = color(pair[0]), perkColor = color(pair[1]);
   if (weaponColor === perkColor) return gradeGradient(perkColor);
-  return `linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.18)), linear-gradient(90deg, ${weaponColor}, ${perkColor})`;
+  return `linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.18)), linear-gradient(90deg, ${weaponColor} 25%, ${perkColor} 75%)`;
 }
 
 export function applyGradeColors(root: HTMLElement, palette = settings) {
@@ -70,9 +78,9 @@ export function applyGradeColors(root: HTMLElement, palette = settings) {
     }
     if (badge.querySelector('.aegis-split-half')) continue;
     const text = badge.dataset.aegisGrade || badge.textContent || '';
-    const gradient = twoTierColors ? twoTierGradient(text, palette) : null;
-    const grade = badge.dataset.aegisGrade || displayGrade(text);
-    const color = palette.colorsEnabled && palette.colors[grade as Grade];
+    const gradient = badgeColor === 'gradient' ? twoTierGradient(text, palette) : null;
+    const grade = colorGrade(text);
+    const color = palette.colorsEnabled && palette.colors[grade as Grade] || defaultGradeColors[grade as Grade];
     if (!gradient && !color) continue;
     originals.set(badge, colorProperties.map(property => [property, badge.style.getPropertyValue(property), badge.style.getPropertyPriority(property)]));
     badge.style.setProperty('background', gradient || gradeGradient(color as string), 'important');
@@ -93,8 +101,8 @@ const glowCache = new Map<string, string>();
 function gradeGlowImage(text: string): string {
   const color = (grade: Grade) => settings.colorsEnabled && settings.colors[grade] || defaultGradeColors[grade];
   const segments = text.split('|').map(part => {
-    const pair = twoTierColors ? twoTierGrades(part) : null;
-    const base = color(displayGrade(part) as Grade) || defaultGradeColors.S;
+    const pair = badgeColor === 'gradient' ? twoTierGrades(part) : null;
+    const base = color(colorGrade(part) as Grade) || defaultGradeColors.S;
     const left = pair ? color(pair[0]) : base;
     const right = pair ? color(pair[1]) : base;
     return { left, right, dual: left !== right };
@@ -102,7 +110,7 @@ function gradeGlowImage(text: string): string {
   const key = JSON.stringify(segments);
   const cached = glowCache.get(key);
   if (cached) return cached;
-  const definitions = segments.map((segment, i) => `<linearGradient id="g${i}" x2="100%" y2="${segment.dual ? 0 : 100}%"><stop stop-color="${segment.left}"/><stop offset="1" stop-color="${segment.dual ? segment.right : gradeGradientEnd(segment.left)}"/></linearGradient>`).join('');
+  const definitions = segments.map((segment, i) => `<linearGradient id="g${i}" x2="100%" y2="${segment.dual ? 0 : 100}%"><stop offset="${segment.dual ? .25 : 0}" stop-color="${segment.left}"/><stop offset="${segment.dual ? .75 : 1}" stop-color="${segment.dual ? segment.right : gradeGradientEnd(segment.left)}"/></linearGradient>`).join('');
   const rectangles = segments.map((segment, i) => `<svg x="${i * 100 / segments.length}%" width="${100 / segments.length}%" height="100%"><rect width="100%" height="100%" fill="url(#g${i})"/>${segment.dual ? '<rect width="100%" height="100%" fill="url(#shade)"/>' : ''}</svg>`).join('');
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><defs>${definitions}<linearGradient id="shade" x2="0%" y2="100%"><stop stop-color="black" stop-opacity="0"/><stop offset="1" stop-color="black" stop-opacity=".18"/></linearGradient></defs>${rectangles}</svg>`;
   const image = `url("data:image/svg+xml,${encodeURIComponent(svg)}")`;
@@ -113,7 +121,7 @@ function gradeGlowImage(text: string): string {
 
 export function applyGradeGlow(target: HTMLElement, grade: string) {
   target.classList.toggle('aegis-gold-glow', maxTierGlow ? hasMaxTierGrade(grade) : grade.replace(/[★✦▲]/g, '').trim().startsWith('S'));
-  const color = settings.colorsEnabled && settings.colors[displayGrade(grade) as Grade];
+  const color = settings.colorsEnabled && settings.colors[colorGrade(grade) as Grade];
   if (color) target.style.setProperty('--aegis-glow-color', color);
   else target.style.removeProperty('--aegis-glow-color');
   const parent = target.parentElement;

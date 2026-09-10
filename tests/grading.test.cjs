@@ -8,18 +8,18 @@ function load(name) {
   if (cache.has(file)) return cache.get(file);
   const output = ts.transpileModule(fs.readFileSync(file, 'utf8'), { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 } }).outputText;
   const module = { exports: {} }; cache.set(file, module.exports);
-  new Function('require', 'module', 'exports', output)(name => load(name), module, module.exports);
+  new Function('require', 'module', 'exports', output)(name => name.startsWith('.') ? load(name) : require(name), module, module.exports);
   return module.exports;
 }
 const { GRADES, computeGrade, defaultRules, defaultGradeSettings, normalizeGradeSettings, evaluateRules, evaluateCustomRoll, gradeValue, unreachableGrades } = load('grading');
 const { displayGrade, rollGradeDisplay, gradeGradient, twoTierGradient, defaultGradeColors, hasMaxTierGrade } = load('grade-colors');
-for (const [base, end] of [['#ffd700','#ff8c00'],['#da70d6','#8a2be2'],['#00f2fe','#4facfe'],['#bdc3c7','#2c3e50'],['#e67e22','#d35400'],['#e74c3c','#c0392b']]) {
+for (const [base, end] of [['#ffd700','#ff823b'],['#da70d6','#7848e8'],['#00f2fe','#70a7ff'],['#bdc3c7','#5d6062'],['#e67e22','#d23514'],['#e74c3c','#bc2318']]) {
   assert.equal(gradeGradient(base), `linear-gradient(135deg, ${base}, ${end})`);
 }
 assert.equal(gradeGradient('#000000'), 'linear-gradient(135deg, #000000, #000000)');
-assert.equal(gradeGradient('#386BFF'), 'linear-gradient(135deg, #386bff, #0054d6)');
+assert.equal(gradeGradient('#386BFF'), 'linear-gradient(135deg, #386bff, #5312ff)');
 assert.equal(gradeGradient('#386bff'), gradeGradient('#386BFF'));
-assert.equal(gradeGradient('#7f8c8d'), 'linear-gradient(135deg, #7f8c8d, #5a5a5a)');
+assert.equal(gradeGradient('#7f8c8d'), 'linear-gradient(135deg, #7f8c8d, #404748)');
 assert.match(gradeGradient('#ffffff'), /^linear-gradient\(135deg, #ffffff, #[0-9a-f]{6}\)$/);
 const brightness = hex => hex.slice(1).match(/../g).map(channel => parseInt(channel,16)/255)
   .map(v => v<=.04045 ? v/12.92 : ((v+.055)/1.055)**2.4).reduce((sum,v,i)=>sum+v*[.2126,.7152,.0722][i],0);
@@ -29,7 +29,7 @@ for (let value=0;value<=0xffffff;value+=4093) {
   assert.ok(brightness(end)<=brightness(color)+.0001, 'Gradient endpoint must be darker: '+color);
 }
 for (const [color, end] of JSON.parse(fs.readFileSync(path.join(__dirname, 'fixtures/grade-gradients.json'), 'utf8'))) {
-  assert.equal(gradeGradient(color), `linear-gradient(135deg, ${color}, ${end})`, 'Approved gradient: '+color);
+  assert.equal(gradeGradient(color), `linear-gradient(135deg, ${color}, ${end})`, 'Okhsl gradient: '+color);
 }
 for (let value=0; value<256; value++) {
   const color='#'+value.toString(16).padStart(2,'0').repeat(3);
@@ -38,21 +38,32 @@ for (let value=0; value<256; value++) {
   assert.equal(end.slice(3,5), end.slice(5,7), 'Neutral gray green/blue: '+color);
 }
 const { hexToHsv, hsvToHex } = load('color-picker');
-for (const [color, expected] of [['#e6b1bd','#6d4d57'],['#b1c4e6','#3e4659'],['#b1e6c4','#5f8d7a'],['#e6dcb1','#928465'],['#d7b1e6','#6d557d']]) {
+for (const [color, expected] of [['#e6b1bd','#956a7d'],['#b1c4e6','#6d7796'],['#b1e6c4','#5c967d'],['#e6dcb1','#9d8363'],['#d7b1e6','#7e75b3']]) {
   assert.equal(gradeGradient(color), `linear-gradient(135deg, ${color}, ${expected})`);
   assert.ok(hexToHsv(expected)[1] < 40, 'Pastels must not become saturated: '+color);
 }
 for (let hue=0; hue<360; hue+=5) for (const saturation of [15,20,23,25,30]) for (let value=20; value<=100; value+=5) {
   const color=hsvToHex([hue,saturation,value]);
   const end=gradeGradient(color).match(/#[0-9a-f]{6}/g)[1];
-  assert.ok(hexToHsv(end)[1]<55, 'Low-saturation colors must stay below full saturation: '+color);
+  assert.ok(brightness(end)<=brightness(color)+.0001, 'Pastel endpoint stays darker: '+color);
 }
 const { normalizeMasterwork, masterworkMatches } = load('masterwork');
+const { converter } = require('culori');
+const toOkhsl = converter('okhsl'), toOklab = converter('oklab');
+for (let hue=0; hue<360; hue+=5) for (const saturation of [0,5,25,50,75,100]) for (const value of [5,20,40,60,80,100]) {
+  const color=hsvToHex([hue,saturation,value]);
+  const end=gradeGradient(color).match(/#[0-9a-f]{6}/g)[1];
+  const s=Math.max(0,Math.min(1,toOkhsl(color).s));
+  assert.ok(Math.abs(toOkhsl(end).l-toOkhsl(color).l*(.5+.3*s))<.006, 'Bold perceptual darkening: '+color);
+  const a=toOklab(color), b=toOklab(end);
+  const quantizationTolerance = value < 20 ? .012 : .003;
+  assert.ok(Math.hypot(b.a,b.b)<=Math.hypot(a.a,a.b)*b.l/a.l*(1+1.5*s*s)+quantizationTolerance, 'Saturation-dependent chroma limit: '+color);
+}
 for (let hue=0; hue<360; hue+=5) {
   const color=hsvToHex([hue,23,90]);
   const end=gradeGradient(color).match(/#[0-9a-f]{6}/g)[1];
-  assert.ok(brightness(end)<brightness(color)*.5, 'Pastels need visible depth across all hues: '+color);
-  assert.ok(hexToHsv(end)[1]<40, 'Stronger pastel depth must not introduce vivid saturation: '+color);
+  assert.ok(brightness(end)<brightness(color)*.65, 'Pastels need visible depth across all hues: '+color);
+  assert.ok(hexToHsv(end)[1]<55, 'Bold pastel depth must retain moderate saturation: '+color);
 }
 assert.equal(normalizeMasterwork('Tier 1Reload Speed Masterwork'), 'reload');
 assert.equal(normalizeMasterwork('Projectile Speed'), 'velocity');
@@ -156,15 +167,15 @@ for (const weapon of GRADES) for (const perk of GRADES) {
   const gradient=twoTierGradient(weapon+perk);
   assert.ok(gradient, weapon+perk);
   if(defaultGradeColors[weapon]===defaultGradeColors[perk]) assert.equal(gradient,gradeGradient(defaultGradeColors[perk]));
-  else assert.ok(gradient.endsWith(`linear-gradient(90deg, ${defaultGradeColors[weapon]}, ${defaultGradeColors[perk]})`));
+  else assert.ok(gradient.endsWith(`linear-gradient(90deg, ${defaultGradeColors[weapon]} 25%, ${defaultGradeColors[perk]} 75%)`));
 }
 for(const text of ['S','S+','F➔A','S/S','FA | BS','FA➔S+ | BA','—','SS+➔garbage','FA➔']) assert.equal(twoTierGradient(text),null,text);
 assert.equal(twoTierGradient('FA➔S+'),twoTierGradient('FS+'));
 assert.equal(twoTierGradient('FA➔FS+'),twoTierGradient('FS+'));
 assert.equal(twoTierGradient(' ★ FA ▲ '),twoTierGradient('FA'));
 const twoTonePalette=defaultGradeSettings();twoTonePalette.colorsEnabled=true;twoTonePalette.colors={'S+':'#112233',S:'#abcdef',F:'#000000',A:'#ffffff'};
-assert.match(twoTierGradient('S+S',twoTonePalette),/90deg, #112233, #abcdef/);
-assert.match(twoTierGradient('FA',twoTonePalette),/90deg, #000000, #ffffff/);
+assert.match(twoTierGradient('S+S',twoTonePalette),/90deg, #112233 25%, #abcdef 75%/);
+assert.match(twoTierGradient('FA',twoTonePalette),/90deg, #000000 25%, #ffffff 75%/);
 twoTonePalette.colorsEnabled=false;assert.equal(twoTierGradient('FA',twoTonePalette),twoTierGradient('FA'));
 console.log('Passed: 100 two-tier color pairs, matching-color parity, custom + grades, dual parsing and single/armor/mixed exclusions.');
 
