@@ -1,8 +1,9 @@
 import './compact-options';
+import { updateOptionsPreview, renderOptionsPreview } from './options-preview';
 import { refreshOptionHighlights, revealOption } from './options-motion';
 import { initGradeSettings } from './grade-settings';
 import { normalizeGradeSettings } from './grading';
-import { setGradeColors, applyGradeColors, setBadgeColor, resolveBadgeColor } from './grade-colors';
+import { setGradeColors, setBadgeColor, resolveBadgeColor } from './grade-colors';
 import { initLanguage, t, localizeElements } from './i18n';
 import { LocalStorageSchema, AegisMode } from './types';
 
@@ -320,55 +321,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         document.documentElement.style.setProperty('--aegis-badge-scale', (badgeScaleVal / 100).toString());
 
-        // Update Live Interactive Weapon Tile Preview
-        const mockBadge = document.getElementById('mock-aegis-badge');
-        if (mockBadge) {
-          // Remove old position and style classes
-          mockBadge.classList.remove('aegis-pos-bl', 'aegis-pos-tl', 'aegis-pos-tr', 'aegis-pos-br');
-          mockBadge.classList.remove('aegis-style-classic', 'aegis-style-pill', 'aegis-style-notch', 'aegis-style-footer');
+        updateOptionsPreview(res);
 
-          const posKey = badgePosVal.replace('bottom-left', 'bl').replace('top-left', 'tl').replace('top-right', 'tr').replace('bottom-right', 'br');
-          mockBadge.classList.add(`aegis-pos-${posKey}`);
-          mockBadge.classList.add(`aegis-style-${badgeStyleVal}`);
-
-          const isTwoTier = res.aegisTwoTier === true;
-          if (aegisModeVal === 'both') {
-            mockBadge.classList.add('aegis-badge-split', 'aegis-badge-wide');
-            const pveStr = isTwoTier ? (badgeColor !== 'perk' ? 'BS+' : 'SS+') : 'S+';
-            const pvpStr = isTwoTier ? (badgeColor !== 'perk' ? 'FA' : 'AA') : 'A';
-            mockBadge.innerHTML = `<span class="aegis-split-half aegis-split-left aegis-badge-s">${pveStr}</span><span class="aegis-split-half aegis-split-right aegis-badge-a">${pvpStr}</span>`;
-          } else {
-            mockBadge.classList.remove('aegis-badge-split');
-            mockBadge.textContent = isTwoTier ? (badgeColor !== 'perk' ? 'FA' : 'SS+') : 'S+';
-          }
-          if (badgeStyleVal === 'footer' || badgeStyleVal === 'notch') {
-            const labels = aegisModeVal === 'both' ? mockBadge.querySelectorAll('.aegis-split-half') : [mockBadge];
-            for (const label of labels) {
-              const text = document.createElement('span');
-              text.className = 'aegis-grade-text';
-              text.textContent = label.textContent;
-              label.replaceChildren(text);
-            }
-          }
-
-          // Append preview upgrade arrow
-          if (upgradeStyleVal !== 'none') {
-            const upgradeArrow = document.createElement('span');
-            upgradeArrow.className = `aegis-badge-upgrade-arrow aegis-upgrade-${upgradeStyleVal}`;
-            upgradeArrow.textContent = '▲';
-            mockBadge.appendChild(upgradeArrow);
-          }
-          applyGradeColors(mockBadge);
-        }
-
-        const cornerTargets = document.querySelectorAll('.interactive-weapon-tile .corner-target');
-        cornerTargets.forEach(target => {
-          if (target.getAttribute('data-pos') === badgePosVal) {
-            target.classList.add('active-corner');
-          } else {
-            target.classList.remove('active-corner');
-          }
-        });
+        revealOption(document.getElementById('aegis-badge-position-group')!, badgeStyleVal !== 'notch' && badgeStyleVal !== 'footer');
 
         // Set Aegis Fade on Hover segmented control
         const fadeHoverVal = res.aegisFadeHover === true ? 'true' : 'false';
@@ -816,24 +771,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Handle Interactive Mockup Portrait Corner Hotspots click
-  const interactiveTile = document.getElementById('interactive-weapon-tile');
-  if (interactiveTile) {
-    interactiveTile.addEventListener('click', (e) => {
-      const target = e.target as HTMLElement;
-      const hotspot = target.closest('.corner-target') as HTMLElement;
-      if (hotspot) {
-        const pos = hotspot.getAttribute('data-pos');
-        if (pos) {
-          chrome.storage.local.set({ aegisBadgePosition: pos }, () => {
-            console.log(`[DIM Aegis Overlay] Interactive tile position set to: ${pos}`);
-            updateUI();
-          });
-        }
-      }
-    });
-  }
-
   document.querySelectorAll<HTMLButtonElement>('#aegis-badge-color-segmented button').forEach(button => {
     button.addEventListener('click', () => {
       chrome.storage.local.set({ aegisBadgeColor: resolveBadgeColor(button.dataset.value) }, updateUI);
@@ -1245,8 +1182,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (namespace === 'local') {
       if (_changes.aegisGradeColors && Object.keys(_changes).length === 1) {
         setGradeColors(normalizeGradeSettings(_changes.aegisGradeColors.newValue));
-        const mockBadge = document.getElementById('mock-aegis-badge');
-        if (mockBadge) applyGradeColors(mockBadge);
+        renderOptionsPreview();
         return;
       }
       updateUI();

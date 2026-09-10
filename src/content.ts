@@ -9,6 +9,7 @@ import { updateLocalizedRegistries, getLocalizedPerkName, getLocalizedWeaponName
 import { applyEvaluationLocale, EvaluationLocaleBundle, getOriginalEvaluationText, getLocalizedSource, getLocalizedSourceText } from './evaluation-i18n';
 import { renderLocalizedName, refreshLocalizedNames } from './localized-display';
 import { safeSetInnerHTML } from './dom-utils';
+import { PreviewItem, selectPreviewItems } from './preview-items';
 
 /** Strongly typed, GC-safe storage for weapon/armor evaluation data attached to DOM tiles */
 export const weaponDataMap = new WeakMap<HTMLElement, WeaponEvaluationPayload>();
@@ -7075,7 +7076,36 @@ function showAegisToast(msg: string) {
 }
 
 // Handle incoming messages from the background script
-chrome.runtime.onMessage.addListener((message) => {
+chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
+  if (message.action === 'getOptionsPreviewItems') {
+    const elements = new Map<string, HTMLElement>();
+    const candidates: PreviewItem[] = [];
+    for (const element of document.querySelectorAll<HTMLElement>('[data-aegis-item-hash]')) {
+      const data = weaponDataMap.get(element);
+      if (!data?.result.grade || data.sheetArmor || element.dataset.aegisItemType === 'armor') continue;
+      const image = element.querySelector<HTMLImageElement>('img.item-img, img.item-icon, img[src*="/destiny2_content/icons/"]');
+      const itemImage = element.querySelector<HTMLElement>('.item-img');
+      const foreground = itemImage?.querySelector<HTMLElement>(':scope > [style*="background-image"]:not([class]), :scope > [style*="background-image"][class=""], :scope > [class*="hasAltIcon"]');
+      const background = foreground?.style.backgroundImage || itemImage?.style.backgroundImage || '';
+      const icon = image?.src || background.match(/url\(["']?([^"')]+)["']?\)/)?.[1];
+      if (!icon) continue;
+      const id = element.dataset.aegisInstanceId || element.dataset.aegisItemId || element.dataset.aegisItemHash!;
+      const power = element.querySelector('[class*="badgeContent"], [class*="power"], [class*="Power"]')?.textContent?.trim() || '';
+      elements.set(id, element);
+      candidates.push({ id, name: data.name, icon: new URL(icon, location.origin).href, power: /^\d{1,4}$/.test(power) ? power : '',
+        grade: data.result.grade, upgradeAvailable: !!data.result.upgradeAvailable });
+    }
+    const samples = selectPreviewItems(candidates, Array.isArray(message.ids) ? message.ids.slice(0, 3) : []);
+    for (const sample of samples) {
+      const element = elements.get(sample.id)!;
+      processElement(element);
+      const result = weaponDataMap.get(element)?.result;
+      sample.grade = result?.grade || '';
+      sample.upgradeAvailable = !!result?.upgradeAvailable;
+    }
+    sendResponse(samples.filter(sample => sample.grade));
+    return;
+  }
   if (message.action === 'showToast') {
     showAegisToast(message.message);
   }

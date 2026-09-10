@@ -90,10 +90,16 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   original.remove();
   const portrait = document.getElementById('interactive-weapon-tile')!.closest('.input-group')!;
+  const positionGroup = document.createElement('div');
+  positionGroup.className = 'input-group';
+  positionGroup.id = 'aegis-badge-position-group';
+  positionGroup.append(portrait.querySelector(':scope > label')!, document.getElementById('aegis-badge-position-segmented')!);
+  document.getElementById('aegis-badge-style-segmented')!.closest('.input-group')!.after(positionGroup);
+  portrait.querySelector('.portrait-pos-label-row')!.remove();
+  portrait.querySelectorAll('.corner-target').forEach(target => target.remove());
   const previewTitle = document.createElement('h2');
   previewTitle.id = 'options-preview-title';
   previewTitle.dataset.i18n = 'compactPreview';
-  portrait.querySelector(':scope > label')!.remove();
   preview.append(previewTitle, portrait);
   const sampleImage = portrait.querySelector<HTMLImageElement>('.mock-weapon-img')!;
   sampleImage.dataset.i18nAlt = 'exampleWeapon';
@@ -105,6 +111,24 @@ document.addEventListener('DOMContentLoaded', () => {
   power.textContent = '550';
   power.setAttribute('aria-hidden', 'true');
   artwork.append(sampleImage, power);
+  const tile = portrait.querySelector<HTMLElement>('#interactive-weapon-tile')!;
+  for (let index = 1; index < 3; index++) {
+    const copy = tile.cloneNode(true) as HTMLElement;
+    copy.id = `preview-weapon-${index}`;
+    copy.querySelector('.aegis-badge')!.removeAttribute('id');
+    tile.parentElement!.append(copy);
+  }
+  for (const sample of portrait.querySelectorAll('.interactive-weapon-tile')) {
+    const frame = document.createElement('div');
+    frame.className = 'options-preview-item item-drag-container';
+    sample.before(frame);
+    sample.classList.add('item');
+    frame.append(sample);
+  }
+  const previewStatus = document.createElement('p');
+  previewStatus.className = 'options-preview-status';
+  previewStatus.dataset.i18n = 'compactPreviewExamples';
+  preview.append(previewStatus);
   main.append(preview);
   const labels: Record<string, string> = {
     badgeMode: 'compactFormat', badgeStyle: 'compactStyle', upgradeIndicatorStyle: 'compactUpgrade',
