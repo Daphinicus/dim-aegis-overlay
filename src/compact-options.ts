@@ -85,6 +85,8 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   move('Badges', ['aegis-two-tier-segmented', 'aegis-two-tier-options', 'aegis-badge-style-segmented', 'aegis-upgrade-style-group', 'aegis-badge-scale-slider', 'interactive-weapon-tile', 'aegis-fade-hover-segmented']);
   move('Scoring', ['scoring-source-segmented', 'aegis-db-segmented', 'aegis-mode-segmented', 'aegis-grade-display-segmented', 'aegis-armor-source-segmented']);
+  const rankingSource = document.getElementById('aegis-db-segmented')!;
+  rankingSource.append(rankingSource.querySelector('[data-value="both"]')!);
   move('Details', ['aegis-layout-segmented', 'aegis-perk-order-segmented', 'aegis-hover-enabled-segmented', 'aegis-matrix-segmented', 'aegis-popup-summary-segmented', 'aegis-inline-header-segmented', 'aegis-auto-max-height-segmented', 'aegis-tooltip-width-mode-segmented', 'aegis-tooltip-width-slider-group']);
   move('Data', ['aegis-language-dropdown']);
   const data = panels.get('Data')!;
