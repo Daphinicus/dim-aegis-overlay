@@ -21,6 +21,8 @@ const translations: Record<SupportedLanguage, Record<string, string>> = {
   en: {
     inlineEngine: "Engine",
     optionDimWishlist: "DIM Wishlist",
+    optionPveBreakdown: "PvE Breakdown",
+    optionTierRatings: "Tier Ratings",
     optionRollAppraiser: "Roll Appraiser",
     optionActivePerks: "Active Perks",
     optionDual: "Dual",
@@ -425,6 +427,8 @@ const translations: Record<SupportedLanguage, Record<string, string>> = {
   es: {
     inlineEngine: "Motor",
     optionDimWishlist: "Lista DIM",
+    optionPveBreakdown: "Análisis PvE",
+    optionTierRatings: "Grados de tabla",
     optionRollAppraiser: "Evaluador de rolls",
     optionActivePerks: "En uso",
     optionDual: "Dual",
@@ -830,6 +834,8 @@ const translations: Record<SupportedLanguage, Record<string, string>> = {
   ko: {
     inlineEngine: "평가 엔진",
     optionDimWishlist: "DIM 위시리스트",
+    optionPveBreakdown: "PvE 분석",
+    optionTierRatings: "등급 평가",
     optionRollAppraiser: "무기 평가",
     optionActivePerks: "활성 특성",
     optionDual: "이중",
@@ -1235,6 +1241,8 @@ const translations: Record<SupportedLanguage, Record<string, string>> = {
   ja: {
     inlineEngine: "評価元",
     optionDimWishlist: "DIMウィッシュリスト",
+    optionPveBreakdown: "PvE分析",
+    optionTierRatings: "ティア評価",
     optionRollAppraiser: "ロール評価",
     optionActivePerks: "有効なパーク",
     optionDual: "両方",
@@ -1640,6 +1648,8 @@ const translations: Record<SupportedLanguage, Record<string, string>> = {
   'zh-CHS': {
     inlineEngine: "评分引擎",
     optionDimWishlist: "DIM 心愿单",
+    optionPveBreakdown: "PvE 分析",
+    optionTierRatings: "等级评分",
     optionRollAppraiser: "配置评估",
     optionActivePerks: "已装备特性",
     optionDual: "双重",
@@ -2045,6 +2055,8 @@ const translations: Record<SupportedLanguage, Record<string, string>> = {
   'zh-CHT': {
     inlineEngine: "評分引擎",
     optionDimWishlist: "DIM 心願單",
+    optionPveBreakdown: "PvE 分析",
+    optionTierRatings: "等級評分",
     optionRollAppraiser: "配置評估",
     optionActivePerks: "已裝備特性",
     optionDual: "雙重",

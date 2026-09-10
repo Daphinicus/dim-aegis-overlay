@@ -1,4 +1,4 @@
-import './compact-options';
+import { refreshOptionDescriptions } from './compact-options';
 import { updateOptionsPreview, renderOptionsPreview } from './options-preview';
 import { refreshOptionHighlights, revealOption } from './options-motion';
 import { initGradeSettings } from './grade-settings';
@@ -449,14 +449,15 @@ document.addEventListener('DOMContentLoaded', () => {
         if (armorSourceSegmented) {
           const armorAegisBtn = armorSourceSegmented.querySelector<HTMLButtonElement>('button[data-value="aegis"]');
           if (armorAegisBtn) {
+            const heading = armorAegisBtn.querySelector('span')!;
             if (aegisModeVal === 'pvp') {
-              armorAegisBtn.textContent = t('inlineFinnald');
+              heading.textContent = t('inlineFinnald');
               armorAegisBtn.title = t('armorFinnald');
             } else if (aegisModeVal === 'both') {
-              armorAegisBtn.textContent = t('sourceBoth');
+              heading.textContent = t('sourceBoth');
               armorAegisBtn.title = t('armorDual');
             } else {
-              armorAegisBtn.textContent = t('inlineAegis');
+              heading.textContent = t('inlineAegis');
               armorAegisBtn.title = t('armorAegis');
             }
           }
@@ -493,6 +494,7 @@ document.addEventListener('DOMContentLoaded', () => {
           syncStatus.classList.add('status-success');
           setLoadingState(false);
         }
+        refreshOptionDescriptions();
         refreshOptionHighlights();
       }
     );

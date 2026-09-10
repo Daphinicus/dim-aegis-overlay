@@ -22,11 +22,11 @@
 .options-panel > .input-group:last-child { border-bottom: 0; }
 .options-panel .input-group label { color: #c4c4cf; font-size: 11px; line-height: 15px; font-weight: 600; margin-bottom: 4px; }
 .options-panel .segmented-control { background: #18181f; border-color: #303039; }
-.options-panel .segmented-control button { flex-basis: 0; min-width: 0; font-size: 10px; line-height: 14px; font-weight: 500; min-height: 25px; padding: 3px 2px; color: #a9a9b6; }
+.options-panel .segmented-control button { flex-basis: 0; min-width: 0; font-size: 10px; line-height: 14px; font-weight: 600; min-height: 25px; padding: 3px 2px; color: #a9a9b6; }
 .options-panel .segmented-control button.active { background: #332918; color: #ffc04a; border-color: #705023; font-weight: 600; }
 .options-panel .segmented-control-two-line button { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; min-height: 36px; }
-.options-panel .segmented-control-two-line button > * { pointer-events: none; }
-.options-panel .segmented-control-two-line small { font-size: 9px; line-height: 11px; font-weight: 400; color: #868694; }
+.options-panel .segmented-control button > :is(span, small) { pointer-events: none; }
+.options-panel .segmented-control-two-line small { font-size: 9px; line-height: 11px; font-weight: 400; font-style: italic; color: #868694; }
 .options-panel .segmented-control-two-line button.active small { color: #c4a46e; }
 .options-panel .settings-card, .options-panel .status-card, .options-panel .info-card { padding: 10px; margin-top: 10px; box-shadow: none; }
 .options-panel .settings-card h2 { font-size: 12px; }
@@ -34,7 +34,7 @@
 .options-panel .interactive-portrait-container { display: flex; flex-direction: row; justify-content: flex-start; align-items: center; gap: 14px; padding: 4px 0; margin: 0; background: none; border: 0; }
 .options-panel .portrait-pos-label-row { flex: 1; margin: 0; }
 .options-panel .segmented-control-mini { display: flex; width: 100%; }
-.options-panel > .input-group:has(+ .option-dependent:not([hidden])) { padding-bottom: 3px; }
+.options-panel > .input-group:has(+ .option-dependent) { padding-bottom: 3px; }
 .options-panel > .option-dependent { padding-block: 3px; }
 .options-panel .option-dependent > label,
 .options-panel .option-dependent > .input-group > label { padding-inline-start: 8px; }

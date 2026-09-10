@@ -1,5 +1,21 @@
-import { localizeElements } from './i18n';
+import { localizeElements, t } from './i18n';
 import { refreshOptionHighlights, showOptionTab } from './options-motion';
+
+export function refreshOptionDescriptions() {
+  document.querySelectorAll<HTMLButtonElement>('[data-option-description]').forEach(button => {
+    const text = t(button.dataset.optionDescription!);
+    const parts = text.match(/^(.+?)\s*[(（](.+)[)）]$/);
+    button.querySelector('span')!.textContent = parts ? parts[1] : text;
+    const detail = button.querySelector('small')!;
+    detail.textContent = parts?.[2] || '';
+    detail.hidden = !parts;
+    button.title = text;
+    button.setAttribute('aria-label', text);
+  });
+  document.querySelectorAll<HTMLElement>('.segmented-control:has([data-option-description])').forEach(control => {
+    control.classList.toggle('segmented-control-two-line', !!control.querySelector('small:not([hidden])'));
+  });
+}
 
 document.addEventListener('DOMContentLoaded', () => {
   const main = document.querySelector<HTMLElement>('.popup-main')!;
@@ -146,7 +162,6 @@ document.addEventListener('DOMContentLoaded', () => {
     engineAegis: 'inlineAegis', engineLightgg: 'inlineLightgg',
     modePve: 'inlinePve', modePvp: 'inlinePvp', modeBoth: 'sourceBoth',
     badgeColorPerk: 'inlinePerk', badgeColorGradient: 'inlineGradient',
-    styleNotch: 'inlineNotch', styleFooter: 'inlineBottom',
     evalEquipped: 'inlineEquipped', evalDual: 'inlineDual', evalPotential: 'inlinePotential',
     armorLowco: 'inlineLowco', armorAegis: 'inlineAegis', layoutSide: 'inlineSide', layoutInline: 'inlineInline',
     orderSheetRank: 'inlineRank'
@@ -163,7 +178,9 @@ document.addEventListener('DOMContentLoaded', () => {
     engineLightgg: ['inlineLightgg', 'optionRollAppraiser'],
     evalEquipped: ['inlineEquipped', 'optionActivePerks'],
     evalDual: ['optionDual', ''],
-    evalPotential: ['inlinePotential', 'optionBestAvailable']
+    evalPotential: ['inlinePotential', 'optionBestAvailable'],
+    armorLowco: ['inlineLowco', 'optionPveBreakdown'],
+    armorAegis: ['inlineAegis', 'optionTierRatings']
   };
   for (const [key, [heading, detail]] of Object.entries(twoLineOptions)) {
     const button = main.querySelector<HTMLButtonElement>(`button[data-i18n-title="${key}"]`)!;
@@ -175,6 +192,13 @@ document.addEventListener('DOMContentLoaded', () => {
     if (detail) description.dataset.i18n = detail;
     else description.textContent = 'F → S+';
     button.replaceChildren(title, description);
+  }
+  for (const key of ['badgeStandard', 'badgeTwoTier', 'badgeColorPerk', 'badgeColorGradient', 'modePve', 'modePvp', 'modeBoth', 'sourceBoth', 'sourceSpreadsheet', 'sourceWishlist', 'layoutSide', 'layoutInline', 'orderSheetRank', 'widthModeAuto', 'widthModeFixed']) {
+    const button = main.querySelector<HTMLButtonElement>(`button[data-i18n="${key}"], button[data-i18n-title="${key}"]`)!;
+    button.parentElement!.classList.add('segmented-control-two-line');
+    button.dataset.optionDescription = key;
+    delete button.dataset.i18n;
+    button.replaceChildren(document.createElement('span'), document.createElement('small'));
   }
   for (const button of main.querySelectorAll<HTMLButtonElement>('#aegis-upgrade-style-segmented button')) {
     const key = button.dataset.i18n!;
