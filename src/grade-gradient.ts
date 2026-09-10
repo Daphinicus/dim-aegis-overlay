@@ -51,6 +51,7 @@ const references = [
 export function gradeGradientEnd(color: string): string {
   const position = toLab(color), [L, C, h] = toLch(position);
   let total = 1, lightness = .83, chroma = 1, shift = 0;
+  let depthTotal = 1, depth = .83;
   // Near-gray references have a smaller reach so their strong chroma ratios do not saturate pastels.
   for (const reference of references) {
     const distance = position.reduce((sum, value, i) => sum + (value - reference.position[i]) ** 2, 0);
@@ -59,7 +60,12 @@ export function gradeGradientEnd(color: string): string {
     lightness += weight * reference.lightness;
     chroma += weight * reference.chroma;
     shift += weight * reference.shift;
+    const depthWeight = (.12 ** 2 / Math.max(distance, 1e-12)) ** 1.5;
+    depthTotal += depthWeight;
+    depth += depthWeight * reference.lightness;
   }
   const neutralFade = Math.min(1, C / .005);
-  return fitGamut([L * lightness / total, C * (1 + (chroma / total - 1) * neutralFade), h + shift / total * neutralFade]);
+  const depthRatio = depth / depthTotal;
+  // Share the stronger darkening broadly, scaling chroma with it to keep pastels subdued.
+  return fitGamut([L * depthRatio, C * (1 + (chroma / total - 1) * neutralFade) * depthRatio / (lightness / total), h + shift / total * neutralFade]);
 }
