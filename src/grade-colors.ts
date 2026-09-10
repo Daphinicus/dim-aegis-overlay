@@ -1,5 +1,4 @@
 import { Grade, GradeSettings, defaultGradeSettings, gradeValue } from './grading';
-import { hexToHsv, hsvToHex } from './color-picker';
 
 export const defaultGradeColors: Record<Grade, string> = { 'S+': '#ffd700', S: '#ffd700', 'A+': '#da70d6', A: '#da70d6', 'B+': '#00f2fe', B: '#00f2fe', C: '#bdc3c7', D: '#e67e22', E: '#7f8c8d', F: '#e74c3c' };
 
@@ -28,53 +27,23 @@ export function rollGradeDisplay(text: string): string {
   return text.split(/[➔→]/).map(displayGrade).join('➔');
 }
 
-function linearRgb(color: string) {
-  return color.slice(1).match(/../g)!.map(channel => parseInt(channel, 16) / 255).map(value => value <= .04045 ? value / 12.92 : ((value + .055) / 1.055) ** 2.4);
-}
-
-function luminance(color: string) {
-  const [r, g, b] = linearRgb(color);
-  return r * .2126 + g * .7152 + b * .0722;
-}
-
+const defaultGradientEnds: Record<string, string> = {
+  '#ffd700': '#ff8c00', '#da70d6': '#8a2be2', '#00f2fe': '#4facfe', '#bdc3c7': '#2c3e50',
+  '#e67e22': '#d35400', '#7f8c8d': '#5a5a5a', '#e74c3c': '#c0392b',
+};
 const gradientCache = new Map<string, string>();
 
 export function gradeGradient(color: string): string {
+  color = color.toLowerCase();
   const cached = gradientCache.get(color);
   if (cached) return cached;
-  const [h, s, v] = hexToHsv(color);
-  // Blend the original palette's hue, saturation and lightness changes by proximity to its base colors.
-  const samples = gradientSamples.map(({ base, end, lightRatio }) => {
-    const angle = (h - base[0]) * Math.PI / 180;
-    const distance = s * s + base[1] * base[1] - 2 * s * base[1] * Math.cos(angle);
-    return { base, end, lightRatio, weight: 1 / Math.max(distance, .000001) ** 2 };
-  });
-  const total = samples.reduce((sum, sample) => sum + sample.weight, 0);
-  let hue = h, saturation = s, value = 0, lightRatio = 0;
-  for (const sample of samples) {
-    const { base, end, weight } = sample;
-    const share = weight / total;
-    hue += (((end[0] - base[0] + 540) % 360) - 180) * share;
-    saturation += (end[1] - base[1]) * Math.min(1, s / base[1]) * share;
-    value += v * end[2] / base[2] * share;
-    lightRatio += sample.lightRatio * share;
-  }
-  const shade = hsvToHex([(hue + 360) % 360, Math.max(0, Math.min(100, saturation)), Math.min(100, value)]);
-  const scale = luminance(shade) ? luminance(color) * lightRatio / luminance(shade) : 0;
-  const darker = '#' + linearRgb(shade).map(channel => {
-    const value = Math.min(1, channel * scale);
-    return Math.round(255 * (value <= .0031308 ? value * 12.92 : 1.055 * value ** (1 / 2.4) - .055)).toString(16).padStart(2, '0');
-  }).join('');
+  const darker = defaultGradientEnds[color] || '#' + color.slice(1).match(/../g)!
+    .map(channel => Math.round(parseInt(channel, 16) * .82).toString(16).padStart(2, '0')).join('');
   const gradient = `linear-gradient(135deg, ${color}, ${darker})`;
   if (gradientCache.size >= 128) gradientCache.clear();
   gradientCache.set(color, gradient);
   return gradient;
 }
-
-const gradientSamples = [
-  ['#ffd700', '#ff8c00'], ['#da70d6', '#8a2be2'], ['#00f2fe', '#4facfe'],
-  ['#bdc3c7', '#2c3e50'], ['#e67e22', '#d35400'], ['#7f8c8d', '#5a5a5a'], ['#e74c3c', '#c0392b'],
-].map(([base, end]) => ({ base: hexToHsv(base), end: hexToHsv(end), lightRatio: luminance(end) / luminance(base) }));
 
 export function twoTierGrades(text: string): [Grade, Grade] | null {
   if (/[|/]/.test(text)) return null;
