@@ -558,7 +558,7 @@ export function showTooltip(
   let sheetBodyHtml = '';
   let recMod: string | undefined = undefined;
 
-  if (result.customGrading) tagsHtml += '<span class="aegis-tooltip-tag">Custom perk grading</span>';
+  if (result.customGrading) tagsHtml += `<span class="aegis-tooltip-tag">${t('customPerkGrading')}</span>`;
 
   if (aegisMode === 'both' && options?.dualInfo) {
     const { 

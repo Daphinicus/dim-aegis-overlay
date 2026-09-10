@@ -1,36 +1,19 @@
 import { initGradeSettings } from './grade-settings';
 import { normalizeGradeSettings } from './grading';
 import { setGradeColors, applyGradeColors, setBadgeColor, resolveBadgeColor } from './grade-colors';
-import { initLanguage, t } from './i18n';
+import { initLanguage, t, localizeElements } from './i18n';
 import { LocalStorageSchema, AegisMode } from './types';
 
 function localizePopup(storedLang?: string) {
   initLanguage(storedLang);
-  document.querySelectorAll('[data-i18n]').forEach((el) => {
-    const key = el.getAttribute('data-i18n');
-    if (key) {
-      el.textContent = t(key);
-    }
-  });
-  document.querySelectorAll('[data-i18n-placeholder]').forEach((el) => {
-    const key = el.getAttribute('data-i18n-placeholder');
-    if (key && (el instanceof HTMLInputElement || el instanceof HTMLTextAreaElement)) {
-      el.placeholder = t(key);
-    }
-  });
-  document.querySelectorAll('[data-i18n-title]').forEach((el) => {
-    const key = el.getAttribute('data-i18n-title');
-    if (key && el instanceof HTMLElement) {
-      el.title = t(key);
-    }
-  });
+  localizeElements();
 }
 
 const DEFAULT_URL =
   'https://raw.githubusercontent.com/charlesxcaliber/DIMAegisWeaponWishlist/main/MrCharlesWishlist_MRB_PPC2.txt';
 
 document.addEventListener('DOMContentLoaded', () => {
-  initGradeSettings();
+  const refreshGradeLanguage = initGradeSettings();
   const urlInput = document.getElementById('wishlist-url') as HTMLInputElement;
   const syncBtn = document.getElementById('sync-button') as HTMLButtonElement;
   const syncStatus = document.getElementById('sync-status') as HTMLSpanElement;
@@ -87,6 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
       ],
       (res: any) => {
         localizePopup(res.aegisLanguage);
+        refreshGradeLanguage?.();
         setGradeColors(normalizeGradeSettings(res.aegisGradeSettings, res.aegisGradeColors));
         const badgeColor = resolveBadgeColor(res.aegisBadgeColor, res.aegisTwoTierColors);
         setBadgeColor(res.aegisTwoTier === true ? badgeColor : 'perk');
