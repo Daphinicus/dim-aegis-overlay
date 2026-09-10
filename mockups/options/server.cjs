@@ -15,6 +15,7 @@ http.createServer((req,res)=>{
  const url=new URL(req.url,'http://localhost');
  if(url.pathname==='/'){res.setHeader('Content-Type','text/html; charset=utf-8');return res.end(index)}
  if(url.pathname.endsWith('/preview-shim.js')){res.setHeader('Content-Type','text/javascript');return res.end(shim)}
+ if(url.pathname.endsWith('/preview-scrollbar.js')){res.setHeader('Content-Type','text/javascript');return res.end(fs.readFileSync(path.join(__dirname,'scrollbar.js')))}
  const [variant,...parts]=url.pathname.slice(1).split('/');
  const root=roots[variant];
  if(!root){res.writeHead(404);return res.end()}
@@ -23,6 +24,6 @@ http.createServer((req,res)=>{
  const ext=path.extname(file);
  res.setHeader('Content-Type',({'.html':'text/html; charset=utf-8','.js':'text/javascript','.css':'text/css','.png':'image/png','.svg':'image/svg+xml'})[ext]||'application/octet-stream');
  let body=fs.readFileSync(file);
- if(ext==='.html')body=body.toString().replace('<head>','<head><script src="preview-shim.js"></script>');
+ if(ext==='.html')body=body.toString().replace('<head>','<head><script src="preview-shim.js"></script><script src="preview-scrollbar.js"></script>');
  res.end(body);
 }).listen(4319,'127.0.0.1',()=>console.log('Preview: http://127.0.0.1:4319'));
