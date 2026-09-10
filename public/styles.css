@@ -222,8 +222,7 @@
 #aegis-grade-settings .description { color: #aeb0ba; }
 #aegis-grade-settings [data-color-status]:empty, #aegis-grade-settings [data-status]:empty, #aegis-grade-settings [data-warning]:empty { display: none; }
 #aegis-grade-settings label { display: flex; flex-direction: column; gap: 5px; min-width: 0; font-size: 12px; }
-#aegis-grade-settings .grade-check { flex-direction: row; align-items: center; min-height: 32px; }
-#aegis-grade-settings input[type="checkbox"] { width: auto; accent-color: #ffd700; }
+#aegis-grade-settings .grade-check { flex-direction: row; align-items: center; gap: 8px; min-height: 32px; color: #a9a9b5; cursor: pointer; }
 #aegis-grade-settings .grade-color-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin: 12px 0; }
 #aegis-grade-settings .grade-profile-row { display: flex; align-items: center; gap: 12px; }
 #aegis-grade-settings .grade-profile-row label { flex: 1; white-space: nowrap; }
@@ -928,11 +927,13 @@
   cursor: pointer;
 }
 
-#aegis-two-tier-options label:hover {
+#aegis-two-tier-options label:hover,
+#aegis-grade-settings .grade-check:hover {
   color: #e0e0e8;
 }
 
-#aegis-two-tier-options input {
+#aegis-two-tier-options input,
+#aegis-grade-settings input[type="checkbox"] {
   color-scheme: dark;
   accent-color: #ffd700;
   width: 14px;
@@ -942,7 +943,8 @@
   cursor: pointer;
 }
 
-#aegis-two-tier-options input:focus-visible {
+#aegis-two-tier-options input:focus-visible,
+#aegis-grade-settings input[type="checkbox"]:focus-visible {
   outline: 2px solid #ffd700;
   outline-offset: 3px;
 }
