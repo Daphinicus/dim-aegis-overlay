@@ -1,4 +1,5 @@
 import './compact-options';
+import { refreshOptionHighlights, revealOption } from './options-motion';
 import { initGradeSettings } from './grade-settings';
 import { normalizeGradeSettings } from './grading';
 import { setGradeColors, applyGradeColors, setBadgeColor, resolveBadgeColor } from './grade-colors';
@@ -179,9 +180,9 @@ document.addEventListener('DOMContentLoaded', () => {
           const dbToggleGroup = document.getElementById('aegis-db-toggle-group');
           if (dbToggleGroup) {
             if (sourceVal === 'lightgg') {
-              dbToggleGroup.style.display = 'none';
+              revealOption(dbToggleGroup, false);
             } else {
-              dbToggleGroup.style.display = 'block';
+              revealOption(dbToggleGroup, true);
             }
           }
         }
@@ -200,9 +201,9 @@ document.addEventListener('DOMContentLoaded', () => {
           const aegisModeGroup = document.getElementById('aegis-mode-toggle-group');
           if (aegisModeGroup) {
             if (dbModeVal === 'wishlist' || sourceVal === 'lightgg') {
-              aegisModeGroup.style.display = 'none';
+              revealOption(aegisModeGroup, false);
             } else {
-              aegisModeGroup.style.display = 'block';
+              revealOption(aegisModeGroup, true);
             }
           }
         }
@@ -248,7 +249,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Set Aegis Two-Tier segmented control
         const twoTierColorsGroup = document.getElementById('aegis-two-tier-options');
-        if (twoTierColorsGroup) twoTierColorsGroup.hidden = res.aegisTwoTier !== true;
+        if (twoTierColorsGroup) revealOption(twoTierColorsGroup, res.aegisTwoTier === true);
         document.querySelectorAll<HTMLButtonElement>('#aegis-badge-color-segmented button').forEach(button => {
           const active = button.dataset.value === badgeColor;
           button.classList.toggle('active', active);
@@ -372,7 +373,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const fadeHoverSegmented = document.getElementById('aegis-fade-hover-segmented');
         if (fadeHoverSegmented) {
           const fadeHoverGroup = fadeHoverSegmented.closest<HTMLElement>('.input-group');
-          if (fadeHoverGroup) fadeHoverGroup.hidden = badgeStyleVal === 'footer';
+          if (fadeHoverGroup) revealOption(fadeHoverGroup, badgeStyleVal !== 'footer');
           fadeHoverSegmented.querySelectorAll('button').forEach(btn => {
             if (btn.getAttribute('data-value') === fadeHoverVal) {
               btn.classList.add('active');
@@ -530,6 +531,7 @@ document.addEventListener('DOMContentLoaded', () => {
           syncStatus.classList.add('status-success');
           setLoadingState(false);
         }
+        refreshOptionHighlights();
       }
     );
   }

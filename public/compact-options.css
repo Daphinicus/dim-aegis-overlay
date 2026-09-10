@@ -32,3 +32,9 @@
 .options-preview-row .interactive-portrait-container { flex-direction: column; align-items: flex-start; gap: 8px; box-shadow: none; }
 .options-preview-row .portrait-pos-label-row { width: 100%; }
 .options-preview-row .segmented-control-mini button { font-size: 10px; }
+.options-panel .segmented-control { position: relative; }
+.options-panel .segmented-control button { position: relative; z-index: 1; border: 1px solid transparent; }
+.options-panel .has-option-selection button.active { background: transparent; border-color: transparent; }
+.option-selection { position: absolute; top: 0; left: 0; pointer-events: none; box-sizing: border-box; border: 1px solid #705023; border-radius: 4px; background: #332918; }
+.options-panel .option-revealing { box-sizing: border-box; overflow: hidden; }
+.options-panel [hidden] { display: none !important; }

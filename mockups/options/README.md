@@ -6,6 +6,8 @@ The popup remains 320 CSS pixels wide. Four tabs group badges, scoring, item det
 
 This is a review prototype, not an installed playtest or submitted PR. The initial tab is Badges. Keyboard arrows, Home, and End navigate tabs. Color and grading editors remain accessible through the existing header and scoring guide.
 
+Option highlights slide over 150 ms. Dependent badge/scoring rows expand and collapse over 200 ms, with immediate setting changes and inert collapsed controls. Initial rendering and tab navigation do not animate. System reduced-motion preferences disable these transitions. No animation dependency is added.
+
 Build with the existing TypeScript/build commands, then run `node mockups/options/server.cjs` from this checkout. Open `http://127.0.0.1:4319` for the comparison. The current-menu comparison reads the sibling `aegis-custom-grades/dist` directory. The preview uses in-memory sample settings: refreshing discards edits, and sync calls do not reach extension services.
 
-Verification: TypeScript and extension build; four tabs at 320 px across six languages; color and criteria dialogs. Full installed-extension regression testing is deferred until the layout is accepted.
+Verification: TypeScript and extension build; four tabs at 320 px across six languages; color and criteria dialogs; rapid animation reversals, intermediate reveal heights, collapsed focus handling, reduced motion, idle cleanup, and highlight alignment. Full installed-extension regression testing is deferred until the layout is accepted.

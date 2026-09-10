@@ -1,4 +1,5 @@
 import { localizeElements } from './i18n';
+import { refreshOptionHighlights } from './options-motion';
 
 document.addEventListener('DOMContentLoaded', () => {
   const main = document.querySelector<HTMLElement>('.popup-main')!;
@@ -15,6 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
       tab.tabIndex = i === index ? 0 : -1;
       panels.get(tab.dataset.panel!)!.hidden = i !== index;
     });
+    refreshOptionHighlights(false);
   }
   for (const name of ['Badges', 'Scoring', 'Details', 'Data']) {
     const panel = document.createElement('section');
