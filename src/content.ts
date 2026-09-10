@@ -186,6 +186,31 @@ const AMMO_TYPE_MAP: Record<string, string> = {
   'Other': 'Other'
 };
 
+// Diagnostic logging framework
+const MAX_DIAGNOSTIC_LOGS = 500;
+const diagnosticLogs: string[] = [];
+
+function addDiagnosticLog(msg: string) {
+  const time = new Date().toTimeString().split(' ')[0];
+  const formatted = `[${time}] ${msg}`;
+  diagnosticLogs.push(formatted);
+  if (diagnosticLogs.length > MAX_DIAGNOSTIC_LOGS) {
+    diagnosticLogs.shift();
+  }
+  const content = document.querySelector('.aegis-diagnostic-logs-content');
+  if (content) {
+    content.textContent += `${formatted}\n`;
+    content.scrollTop = content.scrollHeight;
+  }
+}
+
+// Receive logs from main world context
+document.addEventListener('aegis-diagnostic-log', (e: any) => {
+  if (e.detail) {
+    addDiagnosticLog(e.detail);
+  }
+});
+
 let wishlistDb: WishlistDatabase = {};
 let enhancedToNormalMap: Record<number, number> = {};
 let scoringSource = 'aegis';
@@ -197,6 +222,7 @@ let aegisBadgeColor = resolveBadgeColor(undefined);
 let aegisMaxTierGlow = false;
 let aegisBadgePosition: 'bottom-left' | 'top-left' | 'top-right' | 'bottom-right' = 'bottom-left';
 let aegisBadgeStyle: 'classic' | 'pill' | 'notch' | 'footer' = 'classic';
+let aegisUpgradeStyle: 'circle' | 'triangle' | 'chevron' = 'circle';
 let aegisBadgeScale = 100;
 let aegisFadeHover = false;
 let aegisGradeDisplayMode: 'equipped' | 'dual' | 'potential' = 'equipped';
@@ -3712,6 +3738,7 @@ chrome.storage.local.get(['wishlistData', 'enhancedToNormal', 'scoringSource', '
   setBadgeColor(aegisTwoTier ? aegisBadgeColor : 'perk');
   aegisBadgePosition = res.aegisBadgePosition || 'bottom-left';
   aegisBadgeStyle = (res.aegisBadgeStyle === 'pill' || res.aegisBadgeStyle === 'notch' || res.aegisBadgeStyle === 'footer') ? res.aegisBadgeStyle : 'classic';
+  aegisUpgradeStyle = (res.aegisUpgradeStyle === 'triangle' || res.aegisUpgradeStyle === 'chevron') ? res.aegisUpgradeStyle : 'circle';
   aegisBadgeScale = typeof res.aegisBadgeScale === 'number' ? res.aegisBadgeScale : 100;
   document.documentElement.style.setProperty('--aegis-badge-scale', (aegisBadgeScale / 100).toString());
   aegisFadeHover = res.aegisFadeHover === true;
@@ -3894,6 +3921,11 @@ chrome.storage.onChanged.addListener((changes, namespace) => {
     if (changes.aegisBadgeStyle) {
       const val = changes.aegisBadgeStyle.newValue;
       aegisBadgeStyle = (val === 'pill' || val === 'notch' || val === 'footer') ? val : 'classic';
+      changed = true;
+    }
+    if (changes.aegisUpgradeStyle) {
+      const val = changes.aegisUpgradeStyle.newValue;
+      aegisUpgradeStyle = (val === 'triangle' || val === 'chevron') ? val : 'circle';
       changed = true;
     }
     if (changes.aegisBadgeScale) {
@@ -5376,7 +5408,7 @@ function injectBadge(el: HTMLElement, result: ScoringResult) {
     }
   }
 
-  if (styleKey === 'footer') {
+  if (styleKey === 'footer' || styleKey === 'notch') {
     for (const label of isSplit ? badge.querySelectorAll('.aegis-split-half') : [badge]) {
       const text = document.createElement('span');
       text.className = 'aegis-grade-text';
@@ -5387,7 +5419,7 @@ function injectBadge(el: HTMLElement, result: ScoringResult) {
 
   if (result.upgradeAvailable) {
     const upgradeArrow = document.createElement('span');
-    upgradeArrow.className = 'aegis-badge-upgrade-arrow';
+    upgradeArrow.className = `aegis-badge-upgrade-arrow aegis-upgrade-${aegisUpgradeStyle}`;
     upgradeArrow.textContent = '▲';
     badge.appendChild(upgradeArrow);
   }
@@ -6936,8 +6968,6 @@ function updateBadgesOpacity() {
   });
 }
 
-const diagnosticLogs: string[] = [];
-
 // Run initial scan once script loads
 reprocessAllElements();
 if (!IS_WINNOWER_HOST) {
@@ -7010,24 +7040,6 @@ function startDimmingObserver() {
 }
 startDimmingObserver();
 
-// Diagnostic logging framework
-function addDiagnosticLog(msg: string) {
-  const time = new Date().toTimeString().split(' ')[0];
-  const formatted = `[${time}] ${msg}`;
-  diagnosticLogs.push(formatted);
-  const content = document.querySelector('.aegis-diagnostic-logs-content');
-  if (content) {
-    content.textContent += `${formatted}\n`;
-    content.scrollTop = content.scrollHeight;
-  }
-}
-
-// Receive logs from main world context
-document.addEventListener('aegis-diagnostic-log', (e: any) => {
-  if (e.detail) {
-    addDiagnosticLog(e.detail);
-  }
-});
 
 // Setup initial log entry
 addDiagnosticLog('Aegis isolated-world script initialized.');
