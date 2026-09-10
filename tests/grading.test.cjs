@@ -38,6 +38,15 @@ for (let value=0; value<256; value++) {
   assert.equal(end.slice(3,5), end.slice(5,7), 'Neutral gray green/blue: '+color);
 }
 const { hexToHsv, hsvToHex } = load('color-picker');
+for (const [color, expected] of [['#e6b1bd','#b88495'],['#b1c4e6','#8594b9'],['#b1e6c4','#7cb69e'],['#e6dcb1','#bcaa84'],['#d7b1e6','#a583bc']]) {
+  assert.equal(gradeGradient(color), `linear-gradient(135deg, ${color}, ${expected})`);
+  assert.ok(hexToHsv(expected)[1] < 40, 'Pastels must not become saturated: '+color);
+}
+for (let hue=0; hue<360; hue+=5) for (const saturation of [15,20,23,25,30]) for (let value=20; value<=100; value+=5) {
+  const color=hsvToHex([hue,saturation,value]);
+  const end=gradeGradient(color).match(/#[0-9a-f]{6}/g)[1];
+  assert.ok(hexToHsv(end)[1]<55, 'Low-saturation colors must stay below full saturation: '+color);
+}
 const { normalizeMasterwork, masterworkMatches } = load('masterwork');
 assert.equal(normalizeMasterwork('Tier 1Reload Speed Masterwork'), 'reload');
 assert.equal(normalizeMasterwork('Projectile Speed'), 'velocity');
