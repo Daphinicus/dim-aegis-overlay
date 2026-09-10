@@ -57,12 +57,12 @@
 .option-selection { position: absolute; top: 0; left: 0; pointer-events: none; box-sizing: border-box; border: 1px solid #705023; border-radius: 4px; background: #332918; }
 .options-panel .option-revealing { box-sizing: border-box; overflow: hidden; }
 .options-panel [hidden] { display: none !important; }
-.options-preview { position: relative; z-index: 3; flex-shrink: 0; padding: 10px 12px 12px; border-top: 1px solid #343440; background: #1e222a; box-shadow: 0 -6px 14px rgba(0, 0, 0, .35); --item-size: 72px; --preview-power-height: calc(.2 * var(--item-size) + 4px); }
+.options-preview { position: relative; z-index: 3; flex-shrink: 0; padding: 10px 12px 6px; border-top: 1px solid #343440; background: #1e222a; box-shadow: 0 -6px 14px rgba(0, 0, 0, .35); --item-size: 72px; --preview-power-height: calc(.2 * var(--item-size) + 4px); }
 .options-preview[hidden] { display: none; }
 .options-preview-heading { display: flex; align-items: center; gap: 8px; height: 26px; margin-bottom: 6px; }
 .options-preview h2 { flex-shrink: 0; margin: 0; color: #c4c4cf; font-size: 11px; font-weight: 600; }
 .options-preview .input-group { margin: 0; }
-.options-preview .interactive-portrait-container { flex-direction: row; align-items: flex-start; justify-content: center; gap: 16px; height: 128px; padding: 0; margin: 0; background: none; border: 0; box-shadow: none; }
+.options-preview .interactive-portrait-container { flex-direction: row; align-items: flex-start; justify-content: center; gap: 16px; height: 116px; padding: 0; margin: 0; background: none; border: 0; box-shadow: none; }
 .options-preview .interactive-weapon-tile { flex-shrink: 0; width: var(--item-size); height: calc(var(--item-size) + var(--preview-power-height) - 1px); contain: layout paint style size; box-sizing: border-box; border: 0; border-radius: 0; overflow: visible; box-shadow: none; cursor: default; }
 .options-preview-item { position: relative; flex: 0 0 72px; }
 .options-preview-item:has(> [hidden]) { display: none; }
