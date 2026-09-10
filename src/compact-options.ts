@@ -95,6 +95,7 @@ document.addEventListener('DOMContentLoaded', () => {
   positionGroup.id = 'aegis-badge-position-group';
   positionGroup.append(portrait.querySelector(':scope > label')!, document.getElementById('aegis-badge-position-segmented')!);
   document.getElementById('aegis-badge-style-segmented')!.closest('.input-group')!.after(positionGroup);
+  positionGroup.after(document.getElementById('aegis-fade-hover-segmented')!.closest('.input-group')!);
   portrait.querySelector('.portrait-pos-label-row')!.remove();
   portrait.querySelectorAll('.corner-target').forEach(target => target.remove());
   const previewTitle = document.createElement('h2');
