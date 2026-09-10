@@ -5425,7 +5425,7 @@ function injectBadge(el: HTMLElement, result: ScoringResult) {
   }
 
   applyGradeColors(badge);
-  badge.title = result.customGrading ? 'Custom perk grading' : '';
+  badge.title = result.customGrading ? t('customPerkGrading') : '';
 
   // Winnower: click the badge to pin its tooltip (hover-only tooltips can't
   // be moused into for reading long notes or the perk checklist).
