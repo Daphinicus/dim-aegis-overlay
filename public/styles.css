@@ -5413,3 +5413,46 @@ body.aegis-scrolling div[id^="item-"][data-aegis-item-hash]:hover {
   flex: 1 1 540px !important;
   max-width: 680px !important;
 }
+
+.item-drag-container[data-aegis-gradient-glow]:has(> .item.aegis-gold-glow) {
+  contain: layout style;
+}
+
+.item-drag-container[data-aegis-gradient-glow] > .item.aegis-gold-glow {
+  border: 0 !important;
+  box-shadow: none !important;
+  animation: none !important;
+}
+
+.item-drag-container[data-aegis-gradient-glow] > .item.aegis-gold-glow::after {
+  content: none;
+}
+
+.item-drag-container[data-aegis-gradient-glow] > .item.aegis-gold-glow > .aegis-badge {
+  box-shadow: none !important;
+}
+
+.item-drag-container[data-aegis-gradient-glow]:has(> .item.aegis-gold-glow)::before,
+.item-drag-container[data-aegis-gradient-glow]:has(> .item.aegis-gold-glow)::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  z-index: 120;
+  pointer-events: none;
+  border: 1px solid transparent;
+  border-image: var(--aegis-glow-image) 1;
+  opacity: .8;
+}
+
+.item-drag-container[data-aegis-gradient-glow]:has(> .item.aegis-gold-glow)::after {
+  inset: -2px;
+  border-width: 2px;
+  filter: blur(3px);
+  opacity: .5;
+  z-index: 119;
+}
+
+.item-drag-container[data-aegis-gradient-glow]:has(> .item > .aegis-badge[data-aegis-dimmed="1"])::before,
+.item-drag-container[data-aegis-gradient-glow]:has(> .item > .aegis-badge[data-aegis-dimmed="1"])::after {
+  opacity: .15;
+}
