@@ -83,6 +83,8 @@
 .options-preview .preview-inventory-item .mock-weapon-img { height: 100% !important; clip-path: none; }
 .options-preview .preview-inventory-item .options-preview-art { background: #15131b; }
 .options-preview-art { position: relative; flex: none; height: var(--item-size); overflow: hidden; border: 1px solid #000; box-sizing: border-box; }
+.preview-native > :is(.options-preview-art, .options-preview-power) { display: none; }
+.options-preview-native { position: relative; flex: none; width: var(--item-size); pointer-events: none; }
 .options-preview .interactive-weapon-tile:not(.preview-inventory-item) .mock-weapon-img { height: 125% !important; clip-path: inset(1px 1px 20%); }
 .options-preview-power { display: flex; flex: none; align-items: center; justify-content: flex-end; position: relative; box-sizing: border-box; margin-top: -1px; height: var(--preview-power-height); padding: 0 2px; background: #000; color: #efefef; font: calc(.2 * var(--item-size))/1 system-ui; white-space: nowrap; }
 .options-preview .portrait-pos-label-row { margin: 0; width: 72px; }

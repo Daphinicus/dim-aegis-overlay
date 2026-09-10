@@ -10,6 +10,7 @@ import { applyEvaluationLocale, EvaluationLocaleBundle, getOriginalEvaluationTex
 import { renderLocalizedName, refreshLocalizedNames } from './localized-display';
 import { safeSetInnerHTML } from './dom-utils';
 import { PreviewItem, selectPreviewItems } from './preview-items';
+import { capturePreviewAppearance } from './preview-appearance';
 
 /** Strongly typed, GC-safe storage for weapon/armor evaluation data attached to DOM tiles */
 export const weaponDataMap = new WeakMap<HTMLElement, WeaponEvaluationPayload>();
@@ -7083,7 +7084,7 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
     for (const element of document.querySelectorAll<HTMLElement>('[data-aegis-item-hash]')) {
       const data = weaponDataMap.get(element);
       if (!data?.result.grade || data.sheetArmor || element.dataset.aegisItemType === 'armor') continue;
-      const image = element.querySelector<HTMLImageElement>('img.item-img, img.item-icon, img[src*="/destiny2_content/icons/"]');
+      const image = element.querySelector<HTMLImageElement>('img.item-img, img.item-icon');
       const itemImage = element.querySelector<HTMLElement>('.item-img');
       const foreground = itemImage?.querySelector<HTMLElement>(':scope > [style*="background-image"]:not([class]), :scope > [style*="background-image"][class=""], :scope > [class*="hasAltIcon"]');
       const background = foreground?.style.backgroundImage || itemImage?.style.backgroundImage || '';
@@ -7104,6 +7105,7 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
       sample.upgradeAvailable = !!result?.upgradeAvailable;
       sample.isPerfect5of5 = !!result?.isPerfect5of5;
       sample.isOmniRoll = !!result?.isOmniRoll;
+      sample.appearance = capturePreviewAppearance(element);
     }
     sendResponse(samples.filter(sample => sample.grade));
     return;

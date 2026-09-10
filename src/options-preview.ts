@@ -43,6 +43,22 @@ export function renderOptionsPreview() {
     image.src = item.icon;
     image.alt = item.name;
     tile.querySelector('.options-preview-power')!.textContent = item.power;
+    tile.querySelector('.options-preview-native')?.remove();
+    tile.classList.toggle('preview-native', !!item.appearance);
+    tile.style.removeProperty('--preview-power-height');
+    if (item.appearance) {
+      const native = document.createElement('div');
+      native.className = 'options-preview-native';
+      native.setAttribute('aria-hidden', 'true');
+      native.innerHTML = item.appearance.html;
+      const size = parseFloat(getComputedStyle(tile).getPropertyValue('--item-size'));
+      const scale = size / item.appearance.width;
+      (native.firstElementChild as HTMLElement).style.transform = `scale(${scale})`;
+      (native.firstElementChild as HTMLElement).style.transformOrigin = 'top left';
+      native.style.height = `${item.appearance.height * scale}px`;
+      tile.style.setProperty('--preview-power-height', `${item.appearance.height * scale - size + 1}px`);
+      tile.prepend(native);
+    }
     const badge = tile.querySelector<HTMLElement>('.aegis-badge')!;
     const style = settings.aegisBadgeStyle || 'classic';
     const position = ({ 'top-left': 'tl', 'top-right': 'tr', 'bottom-left': 'bl', 'bottom-right': 'br' } as Record<string, string>)[settings.aegisBadgePosition || 'bottom-left'];
