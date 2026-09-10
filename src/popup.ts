@@ -296,7 +296,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // Set Aegis Upgrade Style segmented control
-        const upgradeStyleVal = (res.aegisUpgradeStyle === 'triangle' || res.aegisUpgradeStyle === 'chevron') ? res.aegisUpgradeStyle : 'circle';
+        const upgradeStyleVal = (res.aegisUpgradeStyle === 'triangle' || res.aegisUpgradeStyle === 'chevron' || res.aegisUpgradeStyle === 'none') ? res.aegisUpgradeStyle : 'circle';
         const upgradeStyleSegmented = document.getElementById('aegis-upgrade-style-segmented');
         if (upgradeStyleSegmented) {
           upgradeStyleSegmented.querySelectorAll('button').forEach(btn => {
@@ -352,10 +352,12 @@ document.addEventListener('DOMContentLoaded', () => {
           }
 
           // Append preview upgrade arrow
-          const upgradeArrow = document.createElement('span');
-          upgradeArrow.className = `aegis-badge-upgrade-arrow aegis-upgrade-${upgradeStyleVal}`;
-          upgradeArrow.textContent = '▲';
-          mockBadge.appendChild(upgradeArrow);
+          if (upgradeStyleVal !== 'none') {
+            const upgradeArrow = document.createElement('span');
+            upgradeArrow.className = `aegis-badge-upgrade-arrow aegis-upgrade-${upgradeStyleVal}`;
+            upgradeArrow.textContent = '▲';
+            mockBadge.appendChild(upgradeArrow);
+          }
           applyGradeColors(mockBadge);
         }
 

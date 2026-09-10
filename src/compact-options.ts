@@ -142,8 +142,9 @@ document.addEventListener('DOMContentLoaded', () => {
     preview.className = 'upgrade-option-preview aegis-style-footer';
     preview.setAttribute('aria-hidden', 'true');
     const icon = document.createElement('span');
-    icon.className = `aegis-badge-upgrade-arrow aegis-upgrade-${button.dataset.value}`;
-    icon.textContent = '▲';
+    const none = button.dataset.value === 'none';
+    icon.className = none ? 'upgrade-option-none' : `aegis-badge-upgrade-arrow aegis-upgrade-${button.dataset.value}`;
+    icon.textContent = none ? '⊘' : '▲';
     preview.append(icon);
     button.replaceChildren(preview);
   }

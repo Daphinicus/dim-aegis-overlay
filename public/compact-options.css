@@ -44,6 +44,7 @@
 .options-panel .interactive-weapon-tile { flex-shrink: 0; }
 .options-panel .segmented-control-mini button { font-size: 15px; }
 .upgrade-option-preview { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; vertical-align: middle; pointer-events: none; }
+.upgrade-option-none { font: 20px/1 system-ui; }
 .upgrade-option-preview .aegis-badge-upgrade-arrow { position: static !important; width: 16px !important; height: 16px !important; flex: 0 0 16px !important; margin: 0 !important; pointer-events: none; }
 .upgrade-option-preview .aegis-badge-upgrade-arrow.aegis-upgrade-circle { width: 16px !important; height: 16px !important; flex-basis: 16px !important; font-size: 8px !important; }
 .options-panel .segmented-control { position: relative; }

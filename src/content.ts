@@ -222,7 +222,7 @@ let aegisBadgeColor = resolveBadgeColor(undefined);
 let aegisMaxTierGlow = false;
 let aegisBadgePosition: 'bottom-left' | 'top-left' | 'top-right' | 'bottom-right' = 'bottom-left';
 let aegisBadgeStyle: 'classic' | 'pill' | 'notch' | 'footer' = 'classic';
-let aegisUpgradeStyle: 'circle' | 'triangle' | 'chevron' = 'circle';
+let aegisUpgradeStyle: 'circle' | 'triangle' | 'chevron' | 'none' = 'circle';
 let aegisBadgeScale = 100;
 let aegisFadeHover = false;
 let aegisGradeDisplayMode: 'equipped' | 'dual' | 'potential' = 'equipped';
@@ -3715,7 +3715,7 @@ function showWinnowerWelcomeModal() {
   closeBtn?.addEventListener('click', dismissModal);
 }
 
-chrome.storage.local.get(['wishlistData', 'enhancedToNormal', 'scoringSource', 'lightggData', 'aegisSheetDb', 'aegisSheetDbPvE', 'aegisSheetDbPvP', 'aegisShoppingDb', 'aegisShoppingDbPvE', 'aegisShoppingDbPvP', 'perkRegistry', 'aegisLayoutSide', 'aegisPerkOrder', 'aegisDbMode', 'aegisMode', 'aegisTwoTier', 'aegisTwoTierColors', 'aegisBadgeColor', 'aegisMaxTierGlow', 'aegisBadgePosition', 'aegisBadgeStyle', 'aegisBadgeScale', 'aegisFadeHover', 'aegisGradeDisplayMode', 'aegisHoverEnabled', 'aegisCompactPerksMatrix', 'aegisInlineHeader', 'aegisPopupSummaryMode', 'aegisAutoMaxHeight', 'aegisTooltipWidthMode', 'aegisTooltipWidth', 'aegisArmorSource', 'aegisCompletedWeapons', 'aegisChaseList', 'aegisWelcomeDismissed', 'aegisLanguage', 'aegisGradeSettings', 'aegisGradeColors'], (res) => {
+chrome.storage.local.get(['wishlistData', 'enhancedToNormal', 'scoringSource', 'lightggData', 'aegisSheetDb', 'aegisSheetDbPvE', 'aegisSheetDbPvP', 'aegisShoppingDb', 'aegisShoppingDbPvE', 'aegisShoppingDbPvP', 'perkRegistry', 'aegisLayoutSide', 'aegisPerkOrder', 'aegisDbMode', 'aegisMode', 'aegisTwoTier', 'aegisTwoTierColors', 'aegisBadgeColor', 'aegisMaxTierGlow', 'aegisBadgePosition', 'aegisBadgeStyle', 'aegisUpgradeStyle', 'aegisBadgeScale', 'aegisFadeHover', 'aegisGradeDisplayMode', 'aegisHoverEnabled', 'aegisCompactPerksMatrix', 'aegisInlineHeader', 'aegisPopupSummaryMode', 'aegisAutoMaxHeight', 'aegisTooltipWidthMode', 'aegisTooltipWidth', 'aegisArmorSource', 'aegisCompletedWeapons', 'aegisChaseList', 'aegisWelcomeDismissed', 'aegisLanguage', 'aegisGradeSettings', 'aegisGradeColors'], (res) => {
   initLanguage(res.aegisLanguage);
   storedGradeSettings = res.aegisGradeSettings;
   gradePalette = res.aegisGradeColors;
@@ -3738,7 +3738,7 @@ chrome.storage.local.get(['wishlistData', 'enhancedToNormal', 'scoringSource', '
   setBadgeColor(aegisTwoTier ? aegisBadgeColor : 'perk');
   aegisBadgePosition = res.aegisBadgePosition || 'bottom-left';
   aegisBadgeStyle = (res.aegisBadgeStyle === 'pill' || res.aegisBadgeStyle === 'notch' || res.aegisBadgeStyle === 'footer') ? res.aegisBadgeStyle : 'classic';
-  aegisUpgradeStyle = (res.aegisUpgradeStyle === 'triangle' || res.aegisUpgradeStyle === 'chevron') ? res.aegisUpgradeStyle : 'circle';
+  aegisUpgradeStyle = (res.aegisUpgradeStyle === 'triangle' || res.aegisUpgradeStyle === 'chevron' || res.aegisUpgradeStyle === 'none') ? res.aegisUpgradeStyle : 'circle';
   aegisBadgeScale = typeof res.aegisBadgeScale === 'number' ? res.aegisBadgeScale : 100;
   document.documentElement.style.setProperty('--aegis-badge-scale', (aegisBadgeScale / 100).toString());
   aegisFadeHover = res.aegisFadeHover === true;
@@ -3925,7 +3925,7 @@ chrome.storage.onChanged.addListener((changes, namespace) => {
     }
     if (changes.aegisUpgradeStyle) {
       const val = changes.aegisUpgradeStyle.newValue;
-      aegisUpgradeStyle = (val === 'triangle' || val === 'chevron') ? val : 'circle';
+      aegisUpgradeStyle = (val === 'triangle' || val === 'chevron' || val === 'none') ? val : 'circle';
       changed = true;
     }
     if (changes.aegisBadgeScale) {
@@ -5417,7 +5417,7 @@ function injectBadge(el: HTMLElement, result: ScoringResult) {
     }
   }
 
-  if (result.upgradeAvailable) {
+  if (result.upgradeAvailable && aegisUpgradeStyle !== 'none') {
     const upgradeArrow = document.createElement('span');
     upgradeArrow.className = `aegis-badge-upgrade-arrow aegis-upgrade-${aegisUpgradeStyle}`;
     upgradeArrow.textContent = '▲';
