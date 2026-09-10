@@ -89,6 +89,7 @@ export function refreshOptionHighlights(animate = true) {
 }
 
 export function revealOption(element: HTMLElement, shown: boolean) {
+  element.classList.add('option-dependent');
   const previous = disclosures.get(element);
   if (previous?.shown === shown) return;
   const visiblePanel = !!element.closest('.options-panel')?.getClientRects().length;

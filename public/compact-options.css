@@ -30,9 +30,9 @@
 .options-panel .interactive-portrait-container { display: flex; flex-direction: row; justify-content: flex-start; align-items: center; gap: 14px; padding: 4px 0; margin: 0; background: none; border: 0; }
 .options-panel .portrait-pos-label-row { flex: 1; margin: 0; }
 .options-panel .segmented-control-mini { display: flex; width: 100%; }
-.options-panel #aegis-two-tier-options { margin-left: 8px !important; padding-left: 10px; border-left: 2px solid #5b4422; }
-.options-panel #aegis-two-tier-options > .input-group { margin-bottom: 8px; }
-.options-panel #aegis-two-tier-options > label { margin-bottom: 0; }
+.options-panel .option-dependent { background: #1c1c27; box-shadow: -12px 0 #1c1c27, 12px 0 #1c1c27; }
+.options-panel #aegis-two-tier-options { padding: 0; }
+.options-panel #aegis-two-tier-options > .input-group { margin: 0; padding: 7px 0; }
 .options-panel .input-group:has(> .segmented-control),
 .options-panel .input-group:has(> .interactive-portrait-container),
 .options-panel .input-group:has(> .popup-dropdown-wrapper),
