@@ -1,4 +1,5 @@
 import type { GradeSettings } from './grading';
+import type { BadgeVisibilitySettings } from './badge-presentation';
 
 /**
  * Represents a single parsed wishlist entry.
@@ -51,6 +52,8 @@ export interface LocalStorageSchema {
   aegisBadgeColor?: BadgeColor;
   aegisMaxTierGlow?: boolean;
   aegisTileGlow?: TileGlow;
+  aegisBadgeSize?: number;
+  aegisBadgeVisibility?: BadgeVisibilitySettings;
   aegisGradeSettings?: GradeSettings;
   aegisGradeColors?: Pick<GradeSettings, 'version' | 'colorsEnabled' | 'colors'>;
   wishlistUrl?: string;
@@ -68,7 +71,6 @@ export interface LocalStorageSchema {
   aegisShoppingDbPvP?: AegisShoppingDatabase;
   aegisMode?: AegisMode;
   aegisCompactPerksMatrix?: boolean;
-  aegisInlineHeader?: boolean;
   aegisPopupSummaryMode?: 'full' | 'badge' | 'hidden';
   aegisAutoMaxHeight?: boolean;
   aegisTooltipWidthMode?: 'auto' | 'fixed';

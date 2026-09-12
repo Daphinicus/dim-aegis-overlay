@@ -1,16 +1,17 @@
 import { localizeElements, t } from './i18n';
 import { refreshOptionHighlights, showOptionTab } from './options-motion';
+import { renderOptionsPreview } from './options-preview';
 
 export function refreshOptionDescriptions() {
   document.querySelectorAll<HTMLButtonElement>('[data-option-description]').forEach(button => {
     const text = t(button.dataset.optionDescription!);
-    const parts = text.match(/^(.+?)\s*[(（](.+)[)）]$/);
+    const parts = text.match(/^(.+?)\n(.+)$/) || text.match(/^(.+?)\s*[(（](.+)[)）]$/);
     button.querySelector('span')!.textContent = parts ? parts[1] : text;
     const detail = button.querySelector('small')!;
     detail.textContent = parts?.[2] || '';
     detail.hidden = !parts;
-    button.title = text;
-    button.setAttribute('aria-label', text);
+    button.title = text.replace('\n', ' ');
+    button.setAttribute('aria-label', button.title);
   });
   document.querySelectorAll<HTMLElement>('.segmented-control:has([data-option-description])').forEach(control => {
     control.classList.toggle('segmented-control-two-line', !!control.querySelector('small:not([hidden])'));
@@ -44,6 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
     showOptionTab(previous, next, Math.sign(index - activeIndex));
     next.scrollTop = scrollPositions.get(next) ?? 0;
     activeIndex = index;
+    if (index < 2) renderOptionsPreview();
     refreshOptionHighlights(false);
   }
   for (const name of ['Badges', 'Scoring', 'Details', 'Data']) {
@@ -83,11 +85,31 @@ document.addEventListener('DOMContentLoaded', () => {
       panels.get(panel)!.append(control.closest('.input-group') ?? control);
     }
   }
-  move('Badges', ['aegis-two-tier-segmented', 'aegis-two-tier-options', 'aegis-badge-style-segmented', 'aegis-upgrade-style-group', 'aegis-badge-scale-slider', 'interactive-weapon-tile', 'aegis-fade-hover-segmented']);
+  move('Badges', ['aegis-two-tier-segmented', 'aegis-two-tier-options', 'aegis-badge-style-segmented', 'aegis-upgrade-style-group', 'aegis-badge-scale-slider', 'aegis-badge-size-slider', 'aegis-visibility-options', 'interactive-weapon-tile', 'aegis-fade-hover-segmented']);
   move('Scoring', ['scoring-source-segmented', 'aegis-db-segmented', 'aegis-mode-segmented', 'aegis-grade-display-segmented', 'aegis-armor-source-segmented']);
   const rankingSource = document.getElementById('aegis-db-segmented')!;
   rankingSource.append(rankingSource.querySelector('[data-value="both"]')!);
-  move('Details', ['aegis-layout-segmented', 'aegis-perk-order-segmented', 'aegis-hover-enabled-segmented', 'aegis-matrix-segmented', 'aegis-popup-summary-segmented', 'aegis-inline-header-segmented', 'aegis-auto-max-height-segmented', 'aegis-tooltip-width-mode-segmented', 'aegis-tooltip-width-slider-group']);
+  const analysisSections: [string, string[]][] = [
+    ['analysisPerkCard', ['aegis-perk-order-segmented', 'aegis-matrix-segmented', 'aegis-auto-max-height-segmented', 'aegis-tooltip-width-mode-segmented', 'aegis-tooltip-width-slider-group']],
+    ['analysisDetailsPopup', ['aegis-layout-segmented', 'aegis-popup-summary-segmented']],
+    ['inlineHover', ['aegis-hover-enabled-segmented']]
+  ];
+  for (const [key, ids] of analysisSections) {
+    const section = document.createElement('section');
+    section.className = 'options-section';
+    if (key !== 'inlineHover') {
+      const heading = document.createElement('h2');
+      heading.id = `${key}-title`;
+      heading.dataset.i18n = key;
+      section.setAttribute('aria-labelledby', heading.id);
+      section.append(heading);
+    }
+    for (const id of ids) {
+      const control = document.getElementById(id)!;
+      section.append(control.closest('.input-group') ?? control);
+    }
+    panels.get('Details')!.append(section);
+  }
   move('Data', ['aegis-language-dropdown']);
   const data = panels.get('Data')!;
   data.append(main.querySelector('.top-actions-row')!);
@@ -95,7 +117,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (card !== original) data.append(card);
   }
   data.append(document.querySelector('.popup-footer')!);
-  for (const id of ['aegis-badge-scale-slider', 'aegis-tooltip-width-slider']) {
+  for (const id of ['aegis-badge-scale-slider', 'aegis-badge-size-slider', 'aegis-tooltip-width-slider']) {
     const slider = document.getElementById(id)!;
     const group = slider.closest('.input-group')!;
     const heading = group.querySelector('div')!;
@@ -159,7 +181,7 @@ document.addEventListener('DOMContentLoaded', () => {
     perkEvaluation: 'compactEvaluate', armorSource: 'compactArmor', badgeTextScale: 'compactTextSize',
     scoringEngine: 'inlineEngine', perksLayout: 'inlineLayout', recPerkOrder: 'inlinePerkOrder',
     hoverCard: 'inlineHover', compactPerksMatrix: 'inlineMatrix', popupSummaryTitle: 'inlineSummary',
-    inlineHeaderTitle: 'inlineHeader', autoMaxHeightTitle: 'inlineHeight', tooltipWidthMode: 'inlineWidthMode',
+    autoMaxHeightTitle: 'inlineHeight', tooltipWidthMode: 'inlineWidthMode',
     tooltipWidthSlider: 'inlineWidth', fadeOnHover: 'inlinePeek', displayLanguage: 'inlineLanguage',
     engineAegis: 'inlineAegis', engineLightgg: 'inlineLightgg',
     modePve: 'inlinePve', modePvp: 'inlinePvp', modeBoth: 'sourceBoth',

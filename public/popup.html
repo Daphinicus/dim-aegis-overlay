@@ -307,13 +307,6 @@
           </div>
         </div>
         <div class="input-group">
-          <label data-i18n="inlineHeaderTitle">Inline Tooltip Header</label>
-          <div class="segmented-control" id="aegis-inline-header-segmented">
-            <button type="button" data-value="true" class="active" data-i18n="inlineHeaderEnabled">Compact Inline</button>
-            <button type="button" data-value="false" data-i18n="inlineHeaderClassic">Classic Stacked</button>
-          </div>
-        </div>
-        <div class="input-group">
           <label data-i18n="autoMaxHeightTitle">Screen-Aware Auto Height</label>
           <div class="segmented-control" id="aegis-auto-max-height-segmented">
             <button type="button" data-value="true" class="active" data-i18n="autoMaxHeightEnabled">Auto Fit & Scroll</button>
@@ -359,6 +352,40 @@
           </div>
           <input type="range" id="aegis-badge-scale-slider" min="70" max="130" step="5" value="100" style="width: 100%; accent-color: #ffd700; cursor: pointer; height: 6px;" />
         </div>
+        <div class="input-group">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+            <label data-i18n="badgeSize">Badge Size</label>
+            <span id="badge-size-value">100%</span>
+          </div>
+          <input type="range" id="aegis-badge-size-slider" min="70" max="150" step="5" value="100" />
+        </div>
+        <section id="aegis-visibility-options" aria-labelledby="badge-visibility-title">
+          <h2 id="badge-visibility-title" data-i18n="badgeVisibility">Visibility</h2>
+          <div class="input-group">
+            <label id="badge-armor-label" data-i18n="badgeArmor">Armor</label>
+            <div class="segmented-control" data-badge-category="armor" role="group" aria-labelledby="badge-armor-label">
+              <button type="button" data-value="grade" data-i18n="badgeWithGrade">Grade</button>
+              <button type="button" data-value="color" data-i18n="badgeColorOnly">Color Only</button>
+              <button type="button" data-value="off" data-i18n="badgeOff">Off</button>
+            </div>
+          </div>
+          <div class="input-group">
+            <label id="badge-exotic-label" data-i18n="badgeExoticWeapons">Exotic Weapons</label>
+            <div class="segmented-control" data-badge-category="exotic" role="group" aria-labelledby="badge-exotic-label">
+              <button type="button" data-value="grade" data-i18n="badgeWithGrade">Grade</button>
+              <button type="button" data-value="color" data-i18n="badgeColorOnly">Color Only</button>
+              <button type="button" data-value="off" data-i18n="badgeOff">Off</button>
+            </div>
+          </div>
+          <div class="input-group">
+            <label id="badge-weapon-label" data-i18n="badgeOtherWeapons">Other Weapons</label>
+            <div class="segmented-control" data-badge-category="weapon" role="group" aria-labelledby="badge-weapon-label">
+              <button type="button" data-value="grade" data-i18n="badgeWithGrade">Grade</button>
+              <button type="button" data-value="color" data-i18n="badgeColorOnly">Color Only</button>
+              <button type="button" data-value="off" data-i18n="badgeOff">Off</button>
+            </div>
+          </div>
+        </section>
         <div class="input-group">
           <label data-i18n="badgePosition">Badge Position (Click a corner on the weapon tile)</label>
           <div class="interactive-portrait-container">

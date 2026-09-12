@@ -2,8 +2,10 @@ import { applyGradeColors, applyGradeGlow, displayGrade, setTileGlow, resolveTil
 import { t } from './i18n';
 import type { PreviewItem } from './preview-items';
 import type { TileGlow } from './types';
+import { applyBadgePresentation, normalizeBadgeVisibility, type BadgeVisibilitySettings } from './badge-presentation';
 
 interface PreviewSettings {
+  aegisBadgeVisibility?: BadgeVisibilitySettings;
   aegisBadgeStyle?: string;
   aegisBadgePosition?: string;
   aegisUpgradeStyle?: string;
@@ -32,6 +34,7 @@ function examples(): PreviewItem[] {
 
 export function renderOptionsPreview() {
   const samples = items.length ? items : examples();
+  let previewHeight = 116;
   setTileGlow(settings.aegisTwoTier ? resolveTileGlow(settings.aegisTileGlow, settings.aegisMaxTierGlow) : 'archetype');
   document.querySelectorAll<HTMLElement>('.options-preview .interactive-weapon-tile').forEach((tile, index) => {
     const item = samples[index];
@@ -94,12 +97,10 @@ export function renderOptionsPreview() {
       }
       const prefix = !split && style === 'classic' ? item.isOmniRoll ? '✦ ' : item.isPerfect5of5 && !dual ? '★ ' : '' : '';
       label.textContent = prefix + part;
-      if (style === 'footer' || style === 'notch') {
-        const text = document.createElement('span');
-        text.className = 'aegis-grade-text';
-        text.textContent = label.textContent;
-        label.replaceChildren(text);
-      }
+      const text = document.createElement('span');
+      text.className = 'aegis-grade-text';
+      text.textContent = label.textContent;
+      label.replaceChildren(text);
     });
     if (item.upgradeAvailable && settings.aegisUpgradeStyle !== 'none') {
       const icon = document.createElement('span');
@@ -108,8 +109,19 @@ export function renderOptionsPreview() {
       badge.append(icon);
     }
     applyGradeColors(badge);
-    applyGradeGlow(tile, item.grade);
+    const visibility = normalizeBadgeVisibility(settings.aegisBadgeVisibility)[item.category || 'weapon'];
+    applyBadgePresentation(badge, visibility);
+    badge.classList.toggle('aegis-badge-hidden', visibility === 'off');
+    if (visibility === 'off') badge.classList.remove('aegis-style-footer');
+    applyGradeGlow(tile, visibility === 'off' ? '' : item.grade);
+    // Reserve the Strip's layout height even when another style is selected.
+    const classes = badge.className;
+    badge.classList.remove('aegis-style-classic', 'aegis-style-pill', 'aegis-style-notch', 'aegis-badge-hidden');
+    badge.classList.add('aegis-style-footer');
+    previewHeight = Math.max(previewHeight, Math.ceil(tile.getBoundingClientRect().height) + 4);
+    badge.className = classes;
   });
+  document.querySelector<HTMLElement>('.options-preview .interactive-portrait-container')!.style.height = `${previewHeight}px`;
   const status = document.querySelector<HTMLElement>('.options-preview-status')!;
   status.dataset.i18n = items.length ? 'compactPreviewInventory' : 'compactPreviewExamples';
   status.textContent = t(status.dataset.i18n);

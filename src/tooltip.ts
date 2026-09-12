@@ -5,6 +5,7 @@ import { getLocalizedPerkName, getPerkIcon } from './hash-translator';
 import { renderLocalizedName, renderLocalizedWeaponReference } from './localized-display';
 import { safeSetInnerHTML } from './dom-utils';
 import { masterworkMatches } from './masterwork';
+import { measurePerkCardWidth } from './card-width';
 
 
 
@@ -19,7 +20,8 @@ let tooltipEl: HTMLDivElement | null = null;
  * Ensures the global hover tooltip element exists in the DOM.
  */
 export function initTooltip(): HTMLDivElement {
-  if (!tooltipEl) {
+  if (!tooltipEl?.isConnected) {
+    document.getElementById('aegis-hover-tooltip')?.remove();
     tooltipEl = document.createElement('div');
     tooltipEl.id = 'aegis-hover-tooltip';
     tooltipEl.className = 'aegis-tooltip hidden';
@@ -100,6 +102,11 @@ function positionTooltip(target: HTMLElement, tooltip: HTMLElement) {
   tooltip.classList.remove('hidden');
   tooltip.style.visibility = 'hidden';
   tooltip.style.display = 'block';
+
+  if (tooltip.classList.contains('aegis-auto-width')) {
+    const dual = !!tooltip.querySelector('.aegis-tooltip-dual-grid');
+    tooltip.style.width = `${measurePerkCardWidth(tooltip, dual ? 500 : 280)}px`;
+  }
 
   const targetRect = target.getBoundingClientRect();
   const tooltipWidth = tooltip.offsetWidth || 320;
@@ -184,7 +191,6 @@ function renderSheetWeaponSection(
   bestAlternative: string | undefined,
   equippedMasterwork: string | undefined,
   isCompactMatrix: boolean,
-  isInlineHeader: boolean,
   aegisPerkOrder: 'sheet' | 'owned'
 ): { metaHtml: string; bodyHtml: string; recMod?: string } {
   // Extract recommended Masterworks & Mod
@@ -207,25 +213,14 @@ function renderSheetWeaponSection(
     categoryMetaText = `<span class="aegis-tooltip-alt-text">${t('alternate', { name: renderLocalizedWeaponReference(bestAlternative) })}</span>`;
   }
 
-  if (isInlineHeader) {
-    sheetMetaHtml = `
-      <div class="aegis-tooltip-sheet-meta inline-meta">
-        <span class="aegis-tooltip-sheet-badge ${tierClass}">${t('weaponTier', { tier: sheetWeapon.tier })}</span>
-        ${rankText ? `<span class="aegis-meta-dot">•</span><span class="aegis-tooltip-sheet-rank">${rankText}</span>` : ''}
-        ${categoryMetaText ? `<span class="aegis-meta-dot">•</span>${categoryMetaText}` : ''}
-        ${sheetWeapon.source ? `<span class="aegis-meta-dot">•</span><span class="aegis-tooltip-source-inline">${t('source')}: <strong style="color: #ffd700;">${getLocalizedSource(sheetWeapon)}</strong></span>` : ''}
-      </div>
-    `;
-  } else {
-    sheetMetaHtml = `
-      <div class="aegis-tooltip-sheet-meta">
-        <span class="aegis-tooltip-sheet-badge ${tierClass}">${t('weaponTier', { tier: sheetWeapon.tier })}</span>
-        ${rankText ? `<span class="aegis-tooltip-sheet-rank">${rankText}</span>` : ''}
-        ${categoryMetaText}
-      </div>
-      ${sheetWeapon.source ? `<div class="aegis-tooltip-weapon-source" style="font-size: 11px; margin-top: 4px; color: #ffd700;"><span style="color: #aaa; font-weight: 500;">${t('source')}:</span> ${getLocalizedSource(sheetWeapon)}</div>` : ''}
-    `;
-  }
+  sheetMetaHtml = `
+    <div class="aegis-tooltip-sheet-meta inline-meta">
+      <span class="aegis-tooltip-sheet-badge ${tierClass}">${t('weaponTier', { tier: sheetWeapon.tier })}</span>
+      ${rankText ? `<span class="aegis-meta-dot">•</span><span class="aegis-tooltip-sheet-rank">${rankText}</span>` : ''}
+      ${categoryMetaText ? `<span class="aegis-meta-dot">•</span>${categoryMetaText}` : ''}
+      ${sheetWeapon.source ? `<span class="aegis-meta-dot">•</span><span class="aegis-tooltip-source-inline">${t('source')}: <strong style="color: #ffd700;">${getLocalizedSource(sheetWeapon)}</strong></span>` : ''}
+    </div>
+  `;
 
   // Helper to render a category's perk chips
   const renderCategoryRow = (item: { label: string; type: string; rawVal?: string }) => {
@@ -445,7 +440,6 @@ export function showTooltip(
   shoppingAlt?: { primaryName: string; role: string; priority: string; priorityNum: number } | null,
   options?: {
     compactPerksMatrix?: boolean;
-    inlineHeader?: boolean;
     autoMaxHeight?: boolean;
     tooltipWidthMode?: 'auto' | 'fixed';
     tooltipWidth?: number;
@@ -454,7 +448,6 @@ export function showTooltip(
 ) {
   const tooltip = initTooltip();
   const isLightGGMode = !!isLightGG;
-  const isInlineHeader = options?.inlineHeader !== false;
   const isCompactMatrix = options?.compactPerksMatrix === true;
   const isAutoMaxHeight = options?.autoMaxHeight !== false;
 
@@ -465,14 +458,15 @@ export function showTooltip(
   }
 
   const widthMode = options?.tooltipWidthMode || 'fixed';
+  tooltip.classList.toggle('aegis-auto-width', widthMode === 'auto');
   const customWidth = typeof options?.tooltipWidth === 'number' 
     ? (aegisMode === 'both' ? Math.max(options.tooltipWidth, 540) : options.tooltipWidth)
     : (aegisMode === 'both' ? 560 : 280);
 
   if (widthMode === 'auto') {
-    tooltip.style.width = 'max-content';
-    tooltip.style.minWidth = aegisMode === 'both' ? '500px' : '280px';
-    tooltip.style.maxWidth = 'min(640px, calc(100vw - 28px))';
+    tooltip.style.width = '280px';
+    tooltip.style.minWidth = '0';
+    tooltip.style.maxWidth = 'calc(100vw - 28px)';
   } else {
     tooltip.style.width = `${customWidth}px`;
     tooltip.style.minWidth = 'unset';
@@ -585,7 +579,7 @@ export function showTooltip(
     let pvpColHtml = '';
 
     if (sheetWeaponPvE) {
-      const pveSection = renderSheetWeaponSection(sheetWeaponPvE, sheetPerksPvE || undefined, 'pve', isBestInClassPvE, bestAlternativePvE, equippedMasterwork || undefined, isCompactMatrix, isInlineHeader, aegisPerkOrder || 'sheet');
+      const pveSection = renderSheetWeaponSection(sheetWeaponPvE, sheetPerksPvE || undefined, 'pve', isBestInClassPvE, bestAlternativePvE, equippedMasterwork || undefined, isCompactMatrix, aegisPerkOrder || 'sheet');
       
       let pvePerfectBanner = '';
       if (pveResult?.isOmniRoll) {
@@ -606,19 +600,11 @@ export function showTooltip(
 
       let pveUpgradeBanner = '';
       if (pveResult?.upgradeAdvice) {
-        if (isInlineHeader) {
-          pveUpgradeBanner = `
-            <div class="aegis-tooltip-upgrade-pill" style="margin: 4px 0 6px 0;">
-              <span class="aegis-upgrade-pill-text">${pveResult.upgradeAdvice}</span>
-            </div>
-          `;
-        } else {
-          pveUpgradeBanner = `
-            <div class="aegis-tooltip-upgrade-banner" style="margin: 4px 0 6px 0;">
-              ${pveResult.upgradeAdvice}
-            </div>
-          `;
-        }
+        pveUpgradeBanner = `
+          <div class="aegis-tooltip-upgrade-pill" style="margin: 4px 0 6px 0;">
+            <span class="aegis-upgrade-pill-text">${pveResult.upgradeAdvice}</span>
+          </div>
+        `;
       }
 
       pveColHtml = `
@@ -637,7 +623,7 @@ export function showTooltip(
     }
 
     if (sheetWeaponPvP) {
-      const pvpSection = renderSheetWeaponSection(sheetWeaponPvP, sheetPerksPvP || undefined, 'pvp', isBestInClassPvP, bestAlternativePvP, equippedMasterwork || undefined, isCompactMatrix, isInlineHeader, aegisPerkOrder || 'sheet');
+      const pvpSection = renderSheetWeaponSection(sheetWeaponPvP, sheetPerksPvP || undefined, 'pvp', isBestInClassPvP, bestAlternativePvP, equippedMasterwork || undefined, isCompactMatrix, aegisPerkOrder || 'sheet');
       
       let pvpPerfectBanner = '';
       if (pvpResult?.isOmniRoll) {
@@ -658,19 +644,11 @@ export function showTooltip(
 
       let pvpUpgradeBanner = '';
       if (pvpResult?.upgradeAdvice) {
-        if (isInlineHeader) {
-          pvpUpgradeBanner = `
-            <div class="aegis-tooltip-upgrade-pill" style="margin: 4px 0 6px 0;">
-              <span class="aegis-upgrade-pill-text">${pvpResult.upgradeAdvice}</span>
-            </div>
-          `;
-        } else {
-          pvpUpgradeBanner = `
-            <div class="aegis-tooltip-upgrade-banner" style="margin: 4px 0 6px 0;">
-              ${pvpResult.upgradeAdvice}
-            </div>
-          `;
-        }
+        pvpUpgradeBanner = `
+          <div class="aegis-tooltip-upgrade-pill" style="margin: 4px 0 6px 0;">
+            <span class="aegis-upgrade-pill-text">${pvpResult.upgradeAdvice}</span>
+          </div>
+        `;
       }
 
       pvpColHtml = `
@@ -695,7 +673,7 @@ export function showTooltip(
       </div>
     `;
   } else if (sheetWeapon) {
-    const singleSection = renderSheetWeaponSection(sheetWeapon, sheetPerks || undefined, (aegisMode === 'pvp' ? 'pvp' : 'pve'), isBestInClass, bestAlternative, equippedMasterwork || undefined, isCompactMatrix, isInlineHeader, aegisPerkOrder || 'sheet');
+    const singleSection = renderSheetWeaponSection(sheetWeapon, sheetPerks || undefined, (aegisMode === 'pvp' ? 'pvp' : 'pve'), isBestInClass, bestAlternative, equippedMasterwork || undefined, isCompactMatrix, aegisPerkOrder || 'sheet');
     sheetMetaHtml = singleSection.metaHtml;
     sheetBodyHtml = singleSection.bodyHtml;
     recMod = singleSection.recMod;
@@ -830,19 +808,11 @@ export function showTooltip(
 
   let upgradeBannerHtml = '';
   if (aegisMode !== 'both' && result.upgradeAdvice) {
-    if (isInlineHeader) {
-      upgradeBannerHtml = `
-        <div class="aegis-tooltip-upgrade-pill">
-          <span class="aegis-upgrade-pill-text">${result.upgradeAdvice}</span>
-        </div>
-      `;
-    } else {
-      upgradeBannerHtml = `
-        <div class="aegis-tooltip-upgrade-banner">
-          ${result.upgradeAdvice}
-        </div>
-      `;
-    }
+    upgradeBannerHtml = `
+      <div class="aegis-tooltip-upgrade-pill">
+        <span class="aegis-upgrade-pill-text">${result.upgradeAdvice}</span>
+      </div>
+    `;
   }
 
   html += `

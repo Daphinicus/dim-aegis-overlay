@@ -10,11 +10,15 @@ import { applyEvaluationLocale, EvaluationLocaleBundle, getOriginalEvaluationTex
 import { renderLocalizedName, refreshLocalizedNames } from './localized-display';
 import { safeSetInnerHTML } from './dom-utils';
 import { PreviewItem, selectPreviewItems } from './preview-items';
+import { applyBadgePresentation, badgeCategory, normalizeBadgeSize, normalizeBadgeVisibility } from './badge-presentation';
 import { capturePreviewAppearance } from './preview-appearance';
+import { measurePerkCardWidth } from './card-width';
 
 /** Strongly typed, GC-safe storage for weapon/armor evaluation data attached to DOM tiles */
 export const weaponDataMap = new WeakMap<HTMLElement, WeaponEvaluationPayload>();
 const winnowerPinBoundBadges = new WeakSet<HTMLElement>();
+const hoverBoundItems = new WeakSet<HTMLElement>();
+const boundPopupTitles = new WeakSet<HTMLElement>();
 
 // Winnower (winnower.garden) cooperates with this extension. It writes the
 // data-aegis-* attributes itself (no main-world script there) and provides an
@@ -226,6 +230,7 @@ let aegisBadgePosition: 'bottom-left' | 'top-left' | 'top-right' | 'bottom-right
 let aegisBadgeStyle: 'classic' | 'pill' | 'notch' | 'footer' = 'classic';
 let aegisUpgradeStyle: 'circle' | 'triangle' | 'chevron' | 'none' = 'circle';
 let aegisBadgeScale = 100;
+let aegisBadgeVisibility = normalizeBadgeVisibility(null);
 let aegisFadeHover = false;
 let aegisGradeDisplayMode: 'equipped' | 'dual' | 'potential' = 'equipped';
 let aegisHoverEnabled = true;
@@ -237,7 +242,6 @@ let gradePalette: unknown;
 let paletteFrame = 0;
 const customGradeCache = new Map<string, ReturnType<typeof evaluateCustomRoll>>();
 let aegisCompactPerksMatrix = false;
-let aegisInlineHeader = true;
 let aegisPopupSummaryMode: 'full' | 'badge' | 'hidden' = 'full';
 let aegisAutoMaxHeight = true;
 let aegisTooltipWidthMode: 'auto' | 'fixed' = 'fixed';
@@ -245,9 +249,9 @@ let aegisTooltipWidth = 280;
 
 function applyTooltipWidthStyles() {
   if (aegisTooltipWidthMode === 'auto') {
-    document.documentElement.style.setProperty('--aegis-tooltip-width', 'max-content');
-    document.documentElement.style.setProperty('--aegis-tooltip-min-width', '280px');
-    document.documentElement.style.setProperty('--aegis-tooltip-max-width', 'min(390px, calc(100vw - 28px))');
+    document.documentElement.style.setProperty('--aegis-tooltip-width', '280px');
+    document.documentElement.style.setProperty('--aegis-tooltip-min-width', '0px');
+    document.documentElement.style.setProperty('--aegis-tooltip-max-width', 'calc(100vw - 28px)');
     document.documentElement.style.setProperty('--aegis-side-panel-width', '320px');
   } else {
     const w = typeof aegisTooltipWidth === 'number' ? aegisTooltipWidth : 280;
@@ -673,7 +677,6 @@ function setupRegistryObserver() {
               data.shoppingAlt,
               {
                 compactPerksMatrix: aegisCompactPerksMatrix,
-                inlineHeader: aegisInlineHeader,
                 autoMaxHeight: aegisAutoMaxHeight,
                 tooltipWidthMode: aegisTooltipWidthMode,
                 tooltipWidth: aegisTooltipWidth,
@@ -1222,7 +1225,7 @@ function scoreSheetWeapon(
   let custom: ReturnType<typeof evaluateCustomRoll> | null = null;
   if (gradeSettings.rulesEnabled && scoringSource !== 'lightgg') {
     const rules = context === 'pvp' && gradeSettings.separatePvp ? gradeSettings.pvp : gradeSettings.pve;
-    const masterworkMatched = !Object.values(rules).some(rule => rule.enabled && rule.masterwork) || masterworkMatches(getRecommendedMasterworks(sheetWeapon), equippedMasterwork);
+    const masterworkMatched = !Object.values(rules).some(rule => rule.enabled && rule.masterwork) || masterworkMatches(getRecommendedMasterworks(sheetWeapon), equippedMasterwork, getLocalizedStatName);
     const key = `${context}:${statuses.join(',')}:${masterworkMatched}`;
     custom = customGradeCache.get(key) || evaluateCustomRoll(statuses, rules, masterworkMatched);
     customGradeCache.set(key, custom);
@@ -2307,7 +2310,6 @@ function renderResults() {
                 undefined,
                 {
                   compactPerksMatrix: aegisCompactPerksMatrix,
-                  inlineHeader: aegisInlineHeader,
                   autoMaxHeight: aegisAutoMaxHeight,
                   tooltipWidthMode: aegisTooltipWidthMode,
                   tooltipWidth: aegisTooltipWidth
@@ -3001,8 +3003,12 @@ function updateExplorerTitles() {
   }
 }
 
+let explorerUi: { fab: HTMLElement; panel: HTMLElement; close: (event: MouseEvent) => void } | null = null;
+
 function initAegisExplorer() {
-  if (!document.body || document.querySelector('.aegis-fab')) return;
+  if (!document.body || (explorerUi?.fab.isConnected && explorerUi.panel.isConnected)) return;
+  if (explorerUi) document.removeEventListener('click', explorerUi.close);
+  document.querySelectorAll('.aegis-fab, .aegis-explorer-panel').forEach(element => element.remove());
 
   const author = aegisMode === 'pvp' ? 'Finnald' : (aegisMode === 'both' ? 'Aegis & Finnald' : 'Aegis');
   const fab = document.createElement('div');
@@ -3221,13 +3227,15 @@ function initAegisExplorer() {
   });
 
   // Global click listener to dismiss open combobox menus
-  document.addEventListener('click', (e) => {
+  const closeComboboxes = (e: MouseEvent) => {
     const target = e.target as HTMLElement;
     if (!target.closest('.aegis-combobox-wrapper')) {
       document.querySelectorAll('.aegis-combobox-menu').forEach(m => m.classList.add('hidden'));
       document.querySelectorAll('.aegis-combobox-wrapper').forEach(w => w.classList.remove('active'));
     }
-  });
+  };
+  document.addEventListener('click', closeComboboxes);
+  explorerUi = { fab, panel, close: closeComboboxes };
 
   // Tab switching setup
   const tabs = panel.querySelectorAll('.aegis-explorer-tab');
@@ -3376,8 +3384,78 @@ function initAegisExplorer() {
   }
 }
 
+const boundWelcomeModals = new WeakSet<HTMLElement>();
+
+function bindWelcomeModal(backdrop: HTMLElement) {
+  if (boundWelcomeModals.has(backdrop)) return;
+  boundWelcomeModals.add(backdrop);
+  const slides = backdrop.querySelectorAll('.aegis-welcome-slide');
+  const dots = backdrop.querySelectorAll('.aegis-welcome-dot');
+  const nextBtn = backdrop.querySelector('.aegis-welcome-next-btn') as HTMLButtonElement;
+  const backBtn = backdrop.querySelector('.aegis-welcome-back-btn') as HTMLButtonElement;
+  const closeBtn = backdrop.querySelector('.aegis-welcome-close');
+  const totalSlides = slides.length;
+  let currentSlide = Math.max(0, [...slides].findIndex(slide => slide.classList.contains('active')));
+  const dontShowCheckbox = backdrop.querySelector('#aegis-welcome-dont-show') as HTMLInputElement;
+
+  function updateSlide(index: number) {
+    currentSlide = index;
+    slides.forEach(s => s.classList.remove('active'));
+    dots.forEach(d => d.classList.remove('active'));
+
+    slides[currentSlide].classList.add('active');
+    dots[currentSlide]?.classList.add('active');
+
+    if (backBtn) backBtn.style.display = currentSlide === 0 ? 'none' : 'block';
+
+    if (currentSlide === totalSlides - 1) {
+      nextBtn.textContent = 'Get Started';
+    } else {
+      nextBtn.textContent = 'Next';
+    }
+  }
+
+  nextBtn.addEventListener('click', () => {
+    if (currentSlide < totalSlides - 1) {
+      updateSlide(currentSlide + 1);
+    } else {
+      dismissModal();
+    }
+  });
+
+  backBtn?.addEventListener('click', () => {
+    if (currentSlide > 0) {
+      updateSlide(currentSlide - 1);
+    }
+  });
+
+  dots.forEach(dot => {
+    dot.addEventListener('click', () => {
+      const index = parseInt(dot.getAttribute('data-index') || '0', 10);
+      updateSlide(index);
+    });
+  });
+
+  function dismissModal() {
+    backdrop.remove();
+    if (dontShowCheckbox.checked) {
+      try {
+        void chrome.storage.local.set({ aegisWelcomeDismissed: true }).catch(console.error);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  }
+
+  closeBtn?.addEventListener('click', dismissModal);
+}
+
 function showWelcomeModal() {
-  if (document.querySelector('.aegis-welcome-backdrop')) return;
+  const existing = document.querySelector<HTMLElement>('.aegis-welcome-backdrop');
+  if (existing) {
+    bindWelcomeModal(existing);
+    return;
+  }
 
   const backdrop = document.createElement('div');
   backdrop.className = 'aegis-welcome-backdrop';
@@ -3592,61 +3670,7 @@ function showWelcomeModal() {
 
   document.body.appendChild(backdrop);
 
-  let currentSlide = 0;
-  const totalSlides = 6;
-  const slides = backdrop.querySelectorAll('.aegis-welcome-slide');
-  const dots = backdrop.querySelectorAll('.aegis-welcome-dot');
-  const nextBtn = backdrop.querySelector('.aegis-welcome-next-btn') as HTMLButtonElement;
-  const backBtn = backdrop.querySelector('.aegis-welcome-back-btn') as HTMLButtonElement;
-  const closeBtn = backdrop.querySelector('.aegis-welcome-close');
-  const dontShowCheckbox = backdrop.querySelector('#aegis-welcome-dont-show') as HTMLInputElement;
-
-  function updateSlide(index: number) {
-    currentSlide = index;
-    slides.forEach(s => s.classList.remove('active'));
-    dots.forEach(d => d.classList.remove('active'));
-    
-    slides[currentSlide].classList.add('active');
-    dots[currentSlide].classList.add('active');
-
-    backBtn.style.display = currentSlide === 0 ? 'none' : 'block';
-
-    if (currentSlide === totalSlides - 1) {
-      nextBtn.textContent = 'Get Started';
-    } else {
-      nextBtn.textContent = 'Next';
-    }
-  }
-
-  nextBtn.addEventListener('click', () => {
-    if (currentSlide < totalSlides - 1) {
-      updateSlide(currentSlide + 1);
-    } else {
-      dismissModal();
-    }
-  });
-
-  backBtn.addEventListener('click', () => {
-    if (currentSlide > 0) {
-      updateSlide(currentSlide - 1);
-    }
-  });
-
-  dots.forEach(dot => {
-    dot.addEventListener('click', () => {
-      const index = parseInt(dot.getAttribute('data-index') || '0', 10);
-      updateSlide(index);
-    });
-  });
-
-  function dismissModal() {
-    if (dontShowCheckbox.checked) {
-      chrome.storage.local.set({ aegisWelcomeDismissed: true });
-    }
-    backdrop.remove();
-  }
-
-  closeBtn?.addEventListener('click', dismissModal);
+  bindWelcomeModal(backdrop);
 }
 
 /**
@@ -3654,7 +3678,11 @@ function showWelcomeModal() {
  * Winnower. Image-free, so winnower.garden needs no web_accessible_resources.
  */
 function showWinnowerWelcomeModal() {
-  if (document.querySelector('.aegis-welcome-backdrop')) return;
+  const existing = document.querySelector<HTMLElement>('.aegis-welcome-backdrop');
+  if (existing) {
+    bindWelcomeModal(existing);
+    return;
+  }
 
   const backdrop = document.createElement('div');
   backdrop.className = 'aegis-welcome-backdrop';
@@ -3702,22 +3730,10 @@ function showWinnowerWelcomeModal() {
 
   document.body.appendChild(backdrop);
 
-  const nextBtn = backdrop.querySelector('.aegis-welcome-next-btn') as HTMLButtonElement;
-  const closeBtn = backdrop.querySelector('.aegis-welcome-close');
-  const dontShowCheckbox = backdrop.querySelector('#aegis-welcome-dont-show') as HTMLInputElement;
-
-  function dismissModal() {
-    if (dontShowCheckbox.checked) {
-      chrome.storage.local.set({ aegisWelcomeDismissed: true });
-    }
-    backdrop.remove();
-  }
-
-  nextBtn.addEventListener('click', dismissModal);
-  closeBtn?.addEventListener('click', dismissModal);
+  bindWelcomeModal(backdrop);
 }
 
-chrome.storage.local.get(['wishlistData', 'enhancedToNormal', 'scoringSource', 'lightggData', 'aegisSheetDb', 'aegisSheetDbPvE', 'aegisSheetDbPvP', 'aegisShoppingDb', 'aegisShoppingDbPvE', 'aegisShoppingDbPvP', 'perkRegistry', 'aegisLayoutSide', 'aegisPerkOrder', 'aegisDbMode', 'aegisMode', 'aegisTwoTier', 'aegisTwoTierColors', 'aegisBadgeColor', 'aegisMaxTierGlow', 'aegisTileGlow', 'aegisBadgePosition', 'aegisBadgeStyle', 'aegisUpgradeStyle', 'aegisBadgeScale', 'aegisFadeHover', 'aegisGradeDisplayMode', 'aegisHoverEnabled', 'aegisCompactPerksMatrix', 'aegisInlineHeader', 'aegisPopupSummaryMode', 'aegisAutoMaxHeight', 'aegisTooltipWidthMode', 'aegisTooltipWidth', 'aegisArmorSource', 'aegisCompletedWeapons', 'aegisChaseList', 'aegisWelcomeDismissed', 'aegisLanguage', 'aegisGradeSettings', 'aegisGradeColors'], (res) => {
+chrome.storage.local.get(['wishlistData', 'enhancedToNormal', 'scoringSource', 'lightggData', 'aegisSheetDb', 'aegisSheetDbPvE', 'aegisSheetDbPvP', 'aegisShoppingDb', 'aegisShoppingDbPvE', 'aegisShoppingDbPvP', 'perkRegistry', 'aegisLayoutSide', 'aegisPerkOrder', 'aegisDbMode', 'aegisMode', 'aegisTwoTier', 'aegisTwoTierColors', 'aegisBadgeColor', 'aegisMaxTierGlow', 'aegisTileGlow', 'aegisBadgePosition', 'aegisBadgeStyle', 'aegisUpgradeStyle', 'aegisBadgeScale', 'aegisBadgeSize', 'aegisBadgeVisibility', 'aegisFadeHover', 'aegisGradeDisplayMode', 'aegisHoverEnabled', 'aegisCompactPerksMatrix', 'aegisPopupSummaryMode', 'aegisAutoMaxHeight', 'aegisTooltipWidthMode', 'aegisTooltipWidth', 'aegisArmorSource', 'aegisCompletedWeapons', 'aegisChaseList', 'aegisWelcomeDismissed', 'aegisLanguage', 'aegisGradeSettings', 'aegisGradeColors'], (res) => {
   initLanguage(res.aegisLanguage);
   storedGradeSettings = res.aegisGradeSettings;
   gradePalette = res.aegisGradeColors;
@@ -3742,12 +3758,13 @@ chrome.storage.local.get(['wishlistData', 'enhancedToNormal', 'scoringSource', '
   aegisBadgeStyle = (res.aegisBadgeStyle === 'pill' || res.aegisBadgeStyle === 'notch' || res.aegisBadgeStyle === 'footer') ? res.aegisBadgeStyle : 'classic';
   aegisUpgradeStyle = (res.aegisUpgradeStyle === 'triangle' || res.aegisUpgradeStyle === 'chevron' || res.aegisUpgradeStyle === 'none') ? res.aegisUpgradeStyle : 'circle';
   aegisBadgeScale = typeof res.aegisBadgeScale === 'number' ? res.aegisBadgeScale : 100;
+  aegisBadgeVisibility = normalizeBadgeVisibility(res.aegisBadgeVisibility);
+  document.documentElement.style.setProperty('--aegis-badge-size', String(normalizeBadgeSize(res.aegisBadgeSize) / 100));
   document.documentElement.style.setProperty('--aegis-badge-scale', (aegisBadgeScale / 100).toString());
   aegisFadeHover = res.aegisFadeHover === true;
   aegisGradeDisplayMode = res.aegisGradeDisplayMode || 'equipped';
   aegisHoverEnabled = res.aegisHoverEnabled !== false;
   aegisCompactPerksMatrix = res.aegisCompactPerksMatrix === true;
-  aegisInlineHeader = res.aegisInlineHeader !== false;
   aegisPopupSummaryMode = res.aegisPopupSummaryMode || 'full';
   aegisAutoMaxHeight = res.aegisAutoMaxHeight !== false;
   aegisTooltipWidthMode = res.aegisTooltipWidthMode || 'fixed';
@@ -3773,7 +3790,9 @@ chrome.storage.local.get(['wishlistData', 'enhancedToNormal', 'scoringSource', '
     initAegisExplorer(); // DIM-only: Winnower has its own weapon browser
   }
 
-  if (!res.aegisWelcomeDismissed) {
+  if (res.aegisWelcomeDismissed) {
+    document.querySelector('.aegis-welcome-backdrop')?.remove();
+  } else {
     if (IS_WINNOWER_HOST) {
       showWinnowerWelcomeModal();
     } else {
@@ -3935,6 +3954,13 @@ chrome.storage.onChanged.addListener((changes, namespace) => {
       document.documentElement.style.setProperty('--aegis-badge-scale', (aegisBadgeScale / 100).toString());
       changed = true;
     }
+    if (changes.aegisBadgeSize) {
+      document.documentElement.style.setProperty('--aegis-badge-size', String(normalizeBadgeSize(changes.aegisBadgeSize.newValue) / 100));
+    }
+    if (changes.aegisBadgeVisibility) {
+      aegisBadgeVisibility = normalizeBadgeVisibility(changes.aegisBadgeVisibility.newValue);
+      changed = true;
+    }
     if (changes.aegisFadeHover) {
       aegisFadeHover = changes.aegisFadeHover.newValue === true;
       changed = true;
@@ -3945,9 +3971,6 @@ chrome.storage.onChanged.addListener((changes, namespace) => {
     }
     if (changes.aegisCompactPerksMatrix) {
       aegisCompactPerksMatrix = changes.aegisCompactPerksMatrix.newValue === true;
-    }
-    if (changes.aegisInlineHeader) {
-      aegisInlineHeader = changes.aegisInlineHeader.newValue !== false;
     }
     if (changes.aegisPopupSummaryMode) {
       aegisPopupSummaryMode = changes.aegisPopupSummaryMode.newValue || 'full';
@@ -4085,7 +4108,6 @@ function showTooltipForElement(dataEl: HTMLElement, anchor: HTMLElement): boolea
     data.shoppingAlt,
     {
       compactPerksMatrix: aegisCompactPerksMatrix,
-      inlineHeader: aegisInlineHeader,
       autoMaxHeight: aegisAutoMaxHeight,
       tooltipWidthMode: aegisTooltipWidthMode,
       tooltipWidth: aegisTooltipWidth,
@@ -4565,8 +4587,8 @@ function injectPopupSummary(
     || popupContainer.parentElement?.querySelector('h1, h2, [class*="title" i], [class*="header" i], [class*="name" i]')
     || popupContainer.firstElementChild) as HTMLElement | null;
 
-  if (titleEl && !titleEl.hasAttribute('data-aegis-title-listener')) {
-    titleEl.setAttribute('data-aegis-title-listener', 'true');
+  if (titleEl && !boundPopupTitles.has(titleEl)) {
+    boundPopupTitles.add(titleEl);
     titleEl.addEventListener('click', () => {
       hideTooltip();
       document.querySelectorAll('.aegis-side-panel').forEach((el) => el.remove());
@@ -4710,6 +4732,9 @@ function injectPopupSummary(
 
         const attachArmorCard = () => {
           if (!popupContainer.isConnected) return;
+          detailsCard.classList.toggle('aegis-auto-width', aegisTooltipWidthMode === 'auto');
+          detailsCard.style.removeProperty('width');
+          detailsCard.style.removeProperty('min-width');
           const isSheet = popupContainer.matches('[class*="Sheet"], [class*="sheet"]');
           const rect = popupContainer.getBoundingClientRect();
           const spaceLeft = rect.left;
@@ -5001,11 +5026,16 @@ function injectPopupSummary(
 
       const attachDetailsCard = () => {
         if (!popupContainer.isConnected) return;
+        detailsCard.style.removeProperty('width');
+        detailsCard.style.removeProperty('min-width');
         const rect = popupContainer.getBoundingClientRect();
         const spaceLeft = rect.left;
         const spaceRight = window.innerWidth - rect.right;
 
-        const panelWidth = hasDualData ? 560 : ((aegisTooltipWidthMode === 'fixed' && aegisTooltipWidth) ? aegisTooltipWidth : 320);
+        detailsCard.classList.toggle('aegis-auto-width', aegisTooltipWidthMode === 'auto');
+        const panelWidth = aegisTooltipWidthMode === 'auto'
+          ? measurePerkCardWidth(detailsCard, hasDualData ? 500 : 280)
+          : (hasDualData ? 560 : aegisTooltipWidth);
         const panelMargin = panelWidth + 12;
         const requiredSpace = panelWidth + 10;
         const availableHeight = Math.max(200, window.innerHeight - rect.top - 16);
@@ -5277,6 +5307,11 @@ function injectBadge(el: HTMLElement, result: ScoringResult) {
   // Deduplicate: Find root item container to ensure EXACTLY 1 badge per item tile in DIM Stable and Beta
   const itemContainer = (el.closest('[data-aegis-item-hash]') as HTMLElement) || el;
   let badgeTarget: HTMLElement | null;
+  const visibility = aegisBadgeVisibility[badgeCategory(itemContainer)];
+  if (visibility === 'off') {
+    removeBadge(el);
+    return;
+  }
 
   if (IS_WINNOWER_HOST) {
     // Without a slot there is no badge, and never the absolute-overlay
@@ -5410,13 +5445,11 @@ function injectBadge(el: HTMLElement, result: ScoringResult) {
     }
   }
 
-  if (styleKey === 'footer' || styleKey === 'notch') {
-    for (const label of isSplit ? badge.querySelectorAll('.aegis-split-half') : [badge]) {
-      const text = document.createElement('span');
-      text.className = 'aegis-grade-text';
-      text.textContent = label.textContent;
-      label.replaceChildren(text);
-    }
+  for (const label of isSplit ? badge.querySelectorAll('.aegis-split-half') : [badge]) {
+    const text = document.createElement('span');
+    text.className = 'aegis-grade-text';
+    text.textContent = label.textContent;
+    label.replaceChildren(text);
   }
 
   if (result.upgradeAvailable && aegisUpgradeStyle !== 'none') {
@@ -5427,6 +5460,7 @@ function injectBadge(el: HTMLElement, result: ScoringResult) {
   }
 
   applyGradeColors(badge);
+  applyBadgePresentation(badge, visibility);
   badge.title = result.customGrading ? t('customPerkGrading') : '';
 
   // Winnower: click the badge to pin its tooltip (hover-only tooltips can't
@@ -5470,6 +5504,7 @@ function processElement(el: HTMLElement) {
     if (el.hasAttribute('data-aegis-listeners')) {
       el.removeEventListener('mouseenter', handleMouseEnter);
       el.removeEventListener('mouseleave', handleMouseLeave);
+      hoverBoundItems.delete(el);
       el.removeAttribute('data-aegis-listeners');
     }
     return;
@@ -5605,12 +5640,13 @@ function processElement(el: HTMLElement) {
         }
 
         const hoverTarget = IS_WINNOWER_HOST ? (winnowerNameCell(el) ?? el) : el;
-        if (!isPopup && !hoverTarget.hasAttribute('data-aegis-listeners')) {
+        if (!isPopup && !hoverBoundItems.has(hoverTarget)) {
           hoverTarget.addEventListener('mouseenter', handleMouseEnter);
           hoverTarget.addEventListener('mouseleave', handleMouseLeave);
           if (IS_WINNOWER_HOST) {
             hoverTarget.addEventListener('click', handleCellPinClick, true);
           }
+          hoverBoundItems.add(hoverTarget);
           hoverTarget.setAttribute('data-aegis-listeners', 'true');
         }
       } else {
@@ -5625,6 +5661,7 @@ function processElement(el: HTMLElement) {
         if (el.hasAttribute('data-aegis-listeners')) {
           el.removeEventListener('mouseenter', handleMouseEnter);
           el.removeEventListener('mouseleave', handleMouseLeave);
+          hoverBoundItems.delete(el);
           el.removeAttribute('data-aegis-listeners');
         }
       }
@@ -6140,17 +6177,19 @@ function processElement(el: HTMLElement) {
       // Hover binds to the name cell on Winnower because a full-width row
       // anchor defeats side placement and fires on every row during vertical travel.
       const hoverTarget = IS_WINNOWER_HOST ? (winnowerNameCell(el) ?? el) : el;
-      if (!isPopup && isItemTile && !hoverTarget.hasAttribute('data-aegis-listeners')) {
+      if (!isPopup && isItemTile && !hoverBoundItems.has(hoverTarget)) {
         hoverTarget.addEventListener('mouseenter', handleMouseEnter);
         hoverTarget.addEventListener('mouseleave', handleMouseLeave);
         if (IS_WINNOWER_HOST) {
           hoverTarget.addEventListener('click', handleCellPinClick, true);
         }
+        hoverBoundItems.add(hoverTarget);
         hoverTarget.setAttribute('data-aegis-listeners', 'true');
       } else if (!isItemTile && hoverTarget.hasAttribute('data-aegis-listeners')) {
         hoverTarget.removeEventListener('mouseenter', handleMouseEnter);
         hoverTarget.removeEventListener('mouseleave', handleMouseLeave);
         hoverTarget.removeEventListener('click', handleCellPinClick, true);
+        hoverBoundItems.delete(hoverTarget);
         hoverTarget.removeAttribute('data-aegis-listeners');
       }
     } else {
@@ -6164,6 +6203,7 @@ function processElement(el: HTMLElement) {
       if (el.hasAttribute('data-aegis-listeners')) {
         el.removeEventListener('mouseenter', handleMouseEnter);
         el.removeEventListener('mouseleave', handleMouseLeave);
+        hoverBoundItems.delete(el);
         el.removeAttribute('data-aegis-listeners');
       }
     }
@@ -6209,6 +6249,15 @@ function compareGrades(itemGrade: string, queryStr: string): boolean {
   return normalizedGrade === qLow || rollGradePart === qLow || (isTwoTier && archTierPart === qLow) || normalizedGrade.startsWith(qLow);
 }
 
+let searchWidget: {
+  input: HTMLInputElement;
+  container: HTMLElement;
+  button: HTMLButtonElement;
+  menu: HTMLElement;
+  close: (event: MouseEvent) => void;
+} | null = null;
+const observedSearchInputs = new WeakSet<HTMLInputElement>();
+
 function setupSearchWidget() {
   // Winnower's own filter input matches this selector; injecting the widget
   // there would rewrite Winnower's controlled input.
@@ -6219,7 +6268,17 @@ function setupSearchWidget() {
   const searchWrapper = searchInput.parentElement;
   if (!searchWrapper) return;
 
-  if (searchWrapper.querySelector('.aegis-search-widget') || document.querySelector('.aegis-search-widget')) return;
+  if (searchWidget?.input === searchInput && searchWidget.container.parentElement === searchWrapper &&
+      searchWidget.container.querySelector('.aegis-search-widget-btn') === searchWidget.button &&
+      searchWidget.container.querySelector('.aegis-search-widget-menu') === searchWidget.menu) return;
+
+  // Markup can survive an extension reload without its original event handlers.
+  if (searchWidget) {
+    document.removeEventListener('click', searchWidget.close);
+    searchWidget.container.remove();
+    searchWidget = null;
+  }
+  document.querySelectorAll('.aegis-search-widget').forEach(widget => widget.remove());
 
   // Closure state variables for modular filter building
   let activeTarget = 'perk'; // 'perk', 'weapon', 'armor2p', 'armor4p'
@@ -6419,11 +6478,13 @@ function setupSearchWidget() {
   });
 
   // Close dropdown on click outside
-  document.addEventListener('click', (e) => {
+  const close = (e: MouseEvent) => {
     if (!widgetContainer.contains(e.target as Node)) {
       menu.classList.add('hidden');
     }
-  });
+  };
+  document.addEventListener('click', close);
+  searchWidget = { input: searchInput, container: widgetContainer, button, menu, close };
 }
 
 let activeAegisFilter: string | null = null;
@@ -6689,8 +6750,8 @@ function setupSearchFilterObserver() {
 
   setupSearchWidget();
 
-  if (searchInput.hasAttribute('data-aegis-search-observer')) return;
-  searchInput.setAttribute('data-aegis-search-observer', 'true');
+  if (observedSearchInputs.has(searchInput)) return;
+  observedSearchInputs.add(searchInput);
 
   searchInput.addEventListener('input', () => {
     let val = searchInput.value;
@@ -6780,6 +6841,7 @@ function reprocessAllElements() {
 // Mutations are batched and processed once per animation frame instead of
 // running processElement + opacity sync for every single mutation record.
 const ITEM_ATTRIBUTES = [
+  'data-aegis-item-exotic',
   'data-aegis-item-hash',
   'data-aegis-item-name',
   'data-aegis-instance-id',
@@ -6826,7 +6888,7 @@ const observer = new MutationObserver((mutations) => {
       );
       if (removedBadge && mutation.target instanceof Element) {
         const item = mutation.target.closest<HTMLElement>('[data-aegis-item-hash]');
-        if (item && !item.querySelector('.aegis-badge')) pendingProcessTargets.add(item);
+        if (item && aegisBadgeVisibility[badgeCategory(item)] !== 'off' && !item.querySelector('.aegis-badge')) pendingProcessTargets.add(item);
       }
       mutation.addedNodes.forEach((node) => {
         if (node instanceof HTMLElement) {
@@ -7083,7 +7145,7 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
     const candidates: PreviewItem[] = [];
     for (const element of document.querySelectorAll<HTMLElement>('[data-aegis-item-hash]')) {
       const data = weaponDataMap.get(element);
-      if (!data?.result.grade || data.sheetArmor || element.dataset.aegisItemType === 'armor') continue;
+      if (!data?.result.grade) continue;
       const image = element.querySelector<HTMLImageElement>('img.item-img, img.item-icon');
       const itemImage = element.querySelector<HTMLElement>('.item-img');
       const foreground = itemImage?.querySelector<HTMLElement>(':scope > [style*="background-image"]:not([class]), :scope > [style*="background-image"][class=""], :scope > [class*="hasAltIcon"]');
@@ -7094,7 +7156,7 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
       const power = element.querySelector('[class*="badgeContent"], [class*="power"], [class*="Power"]')?.textContent?.trim() || '';
       elements.set(id, element);
       candidates.push({ id, name: data.name, icon: new URL(icon, location.origin).href, power: /^\d{1,4}$/.test(power) ? power : '',
-        grade: data.result.grade, upgradeAvailable: !!data.result.upgradeAvailable });
+        grade: data.result.grade, upgradeAvailable: !!data.result.upgradeAvailable, category: badgeCategory(element) });
     }
     const samples = selectPreviewItems(candidates, Array.isArray(message.ids) ? message.ids.slice(0, 3) : []);
     for (const sample of samples) {

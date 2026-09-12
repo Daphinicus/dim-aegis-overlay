@@ -17,9 +17,16 @@
 .options-panel[hidden] { display: none !important; }
 .options-panel { flex: 1; min-height: 0; overflow-x: hidden; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: #727282 transparent; background: var(--options-surface); padding: 10px 12px 12px; }
 .options-panel.option-tab-exiting { position: absolute; left: 0; right: 0; z-index: 2; box-sizing: border-box; overflow: hidden; pointer-events: none; }
-.options-panel > .input-group { margin: 0 !important; padding: 7px 0; }
+.options-panel > .input-group, .options-section > .input-group { margin: 0 !important; padding: 7px 0; }
+.options-section + .options-section { border-top: 1px solid #343440; margin-top: 8px; padding-top: 10px; }
+.options-section > h2 { font-size: 12px; font-weight: 700; color: #fff; margin: 0 0 6px; }
 .options-panel > .input-group:first-child { padding-top: 2px; }
 .options-panel > .input-group:last-child { border-bottom: 0; }
+#aegis-visibility-options { border-top: 1px solid #343440; margin-top: 8px; padding-top: 10px; }
+#badge-visibility-title { font-size: 12px; font-weight: 700; color: #fff; margin: 0 0 6px; }
+#aegis-visibility-options .input-group { display: grid; grid-template-columns: 85px minmax(0, 1fr); align-items: center; gap: 8px; margin: 0; padding: 5px 0; }
+#aegis-visibility-options label { margin: 0; }
+#aegis-badge-size-slider { min-width: 0; width: 100%; accent-color: #ffd700; cursor: pointer; height: 6px; }
 .options-panel .input-group label { color: #c4c4cf; font-size: 11px; line-height: 15px; font-weight: 600; margin-bottom: 4px; }
 .options-panel .segmented-control { background: #18181f; border-color: #303039; }
 .options-panel .segmented-control button { flex-basis: 0; min-width: 0; font-size: 10px; line-height: 14px; font-weight: 600; min-height: 25px; padding: 3px 2px; color: #a9a9b6; }
@@ -34,8 +41,8 @@
 .options-panel .interactive-portrait-container { display: flex; flex-direction: row; justify-content: flex-start; align-items: center; gap: 14px; padding: 4px 0; margin: 0; background: none; border: 0; }
 .options-panel .portrait-pos-label-row { flex: 1; margin: 0; }
 .options-panel .segmented-control-mini { display: flex; width: 100%; }
-.options-panel > .input-group:has(+ .option-dependent) { padding-bottom: 3px; }
-.options-panel > .option-dependent { padding-block: 3px; }
+.options-panel > .input-group:has(+ .option-dependent), .options-section > .input-group:has(+ .option-dependent) { padding-bottom: 3px; }
+.options-panel > .option-dependent, .options-section > .option-dependent { padding-block: 3px; }
 .options-panel .option-dependent > label,
 .options-panel .option-dependent > .input-group > label { padding-inline-start: 8px; }
 .options-panel #aegis-mode-toggle-group > label { padding-inline-start: 16px; }
@@ -53,7 +60,9 @@
 .options-panel .inline-range > label { margin: 0; }
 .options-panel #aegis-tile-glow { width: 100%; min-width: 0; height: 27px; padding: 3px 5px; background: #18181f; border: 1px solid #303039; border-radius: 5px; color: #a9a9b6; font: 10px system-ui; color-scheme: dark; }
 .options-panel .inline-range { grid-template-columns: 76px minmax(0, 1fr) 40px; }
-.options-panel .inline-range > span { text-align: right; }
+#aegis-tooltip-width-slider { grid-column: 2; }
+#aegis-tooltip-width-slider-group > label { display: none; }
+.options-panel .inline-range > span { text-align: right; font-size: 11px; font-weight: 700; color: #ffd700; }
 .options-panel .interactive-portrait-container { min-width: 0; gap: 8px; box-shadow: none; }
 .options-panel .interactive-weapon-tile { flex-shrink: 0; }
 .options-panel .segmented-control-mini button { font-size: 15px; }
@@ -119,4 +128,5 @@
 .options-panel .grade-rule-fields[aria-disabled="true"] { opacity: .5; }
 .options-panel .grade-rule-fields[aria-disabled="true"] :disabled { opacity: 1; }
 .options-panel .grade-rule-fields[aria-disabled="true"] label { cursor: default; }
+.options-panel .grade-rule-checks { display: grid; grid-template-columns: 76px minmax(0, 1fr); }
 .options-panel .grade-settings .grade-color-actions button { font-size: 11px; padding: 7px 4px; white-space: normal; }

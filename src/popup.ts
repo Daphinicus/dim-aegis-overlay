@@ -6,6 +6,7 @@ import { normalizeGradeSettings } from './grading';
 import { setGradeColors, setBadgeColor, resolveBadgeColor, resolveTileGlow } from './grade-colors';
 import { initLanguage, t, localizeElements } from './i18n';
 import { LocalStorageSchema, AegisMode } from './types';
+import { normalizeBadgeSize, normalizeBadgeVisibility, type BadgeCategory, type BadgeVisibility } from './badge-presentation';
 
 function localizePopup(storedLang?: string) {
   initLanguage(storedLang);
@@ -57,11 +58,12 @@ document.addEventListener('DOMContentLoaded', () => {
         'aegisBadgeStyle',
         'aegisUpgradeStyle',
         'aegisBadgeScale',
+        'aegisBadgeSize',
+        'aegisBadgeVisibility',
         'aegisFadeHover',
         'aegisGradeDisplayMode',
         'aegisHoverEnabled',
         'aegisCompactPerksMatrix',
-        'aegisInlineHeader',
         'aegisPopupSummaryMode',
         'aegisAutoMaxHeight',
         'aegisTooltipWidthMode',
@@ -321,6 +323,18 @@ document.addEventListener('DOMContentLoaded', () => {
           scaleValueText.textContent = `${badgeScaleVal}%`;
         }
         document.documentElement.style.setProperty('--aegis-badge-scale', (badgeScaleVal / 100).toString());
+        const badgeSize = normalizeBadgeSize(res.aegisBadgeSize);
+        (document.getElementById('aegis-badge-size-slider') as HTMLInputElement).value = String(badgeSize);
+        document.getElementById('badge-size-value')!.textContent = `${badgeSize}%`;
+        document.documentElement.style.setProperty('--aegis-badge-size', String(badgeSize / 100));
+        const visibility = normalizeBadgeVisibility(res.aegisBadgeVisibility);
+        document.querySelectorAll<HTMLElement>('[data-badge-category]').forEach(group => {
+          group.querySelectorAll<HTMLButtonElement>('button').forEach(button => {
+            const active = visibility[group.dataset.badgeCategory as BadgeCategory] === button.dataset.value;
+            button.classList.toggle('active', active);
+            button.setAttribute('aria-pressed', String(active));
+          });
+        });
 
         updateOptionsPreview(res);
 
@@ -393,19 +407,6 @@ document.addEventListener('DOMContentLoaded', () => {
           });
         }
 
-        // Set Aegis Inline Header segmented control
-        const inlineHeaderVal = res.aegisInlineHeader !== false ? 'true' : 'false';
-        const inlineHeaderSegmented = document.getElementById('aegis-inline-header-segmented');
-        if (inlineHeaderSegmented) {
-          inlineHeaderSegmented.querySelectorAll('button').forEach(btn => {
-            if (btn.getAttribute('data-value') === inlineHeaderVal) {
-              btn.classList.add('active');
-            } else {
-              btn.classList.remove('active');
-            }
-          });
-        }
-
         // Set Aegis Auto Max-Height segmented control
         const autoMaxHeightVal = res.aegisAutoMaxHeight !== false ? 'true' : 'false';
         const autoMaxHeightSegmented = document.getElementById('aegis-auto-max-height-segmented');
@@ -421,6 +422,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Set Aegis Tooltip Width Mode segmented control
         const tooltipWidthModeVal = res.aegisTooltipWidthMode || 'fixed';
+        revealOption(document.getElementById('aegis-tooltip-width-slider-group')!, tooltipWidthModeVal === 'fixed');
         const tooltipWidthModeSegmented = document.getElementById('aegis-tooltip-width-mode-segmented');
         if (tooltipWidthModeSegmented) {
           tooltipWidthModeSegmented.querySelectorAll('button').forEach(btn => {
@@ -673,22 +675,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Handle Inline Header segmented control click
-  const inlineHeaderSegmented = document.getElementById('aegis-inline-header-segmented');
-  if (inlineHeaderSegmented) {
-    inlineHeaderSegmented.addEventListener('click', (e) => {
-      const target = e.target as HTMLButtonElement;
-      if (target && target.tagName === 'BUTTON') {
-        const val = target.getAttribute('data-value');
-        if (val) {
-          chrome.storage.local.set({ aegisInlineHeader: val === 'true' }, () => {
-            updateUI();
-          });
-        }
-      }
-    });
-  }
-
   // Handle Auto Max-Height segmented control click
   const autoMaxHeightSegmented = document.getElementById('aegis-auto-max-height-segmented');
   if (autoMaxHeightSegmented) {
@@ -818,6 +804,24 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   }
+
+  document.querySelectorAll<HTMLElement>('[data-badge-category]').forEach(group => {
+    group.addEventListener('click', async event => {
+      const button = (event.target as HTMLElement).closest<HTMLButtonElement>('button[data-value]');
+      if (!button) return;
+      const stored = await chrome.storage.local.get(['aegisBadgeVisibility']);
+      const visibility = normalizeBadgeVisibility(stored.aegisBadgeVisibility);
+      visibility[group.dataset.badgeCategory as BadgeCategory] = button.dataset.value as BadgeVisibility;
+      await chrome.storage.local.set({ aegisBadgeVisibility: visibility });
+    });
+  });
+  const sizeSlider = document.getElementById('aegis-badge-size-slider') as HTMLInputElement;
+  sizeSlider.addEventListener('input', () => {
+    const value = normalizeBadgeSize(Number(sizeSlider.value));
+    document.getElementById('badge-size-value')!.textContent = `${value}%`;
+    document.documentElement.style.setProperty('--aegis-badge-size', String(value / 100));
+    chrome.storage.local.set({ aegisBadgeSize: value });
+  });
 
   // Handle Badge Scale Slider
   const scaleSlider = document.getElementById('aegis-badge-scale-slider') as HTMLInputElement;

@@ -47,7 +47,7 @@ for (let hue=0; hue<360; hue+=5) for (const saturation of [15,20,23,25,30]) for 
   const end=gradeGradient(color).match(/#[0-9a-f]{6}/g)[1];
   assert.ok(brightness(end)<=brightness(color)+.0001, 'Pastel endpoint stays darker: '+color);
 }
-const { normalizeMasterwork, masterworkMatches } = load('masterwork');
+const { normalizeMasterwork, masterworkMatches, masterworkStatName } = load('masterwork');
 const { converter } = require('culori');
 const toOkhsl = converter('okhsl'), toOklab = converter('oklab');
 for (let hue=0; hue<360; hue+=5) for (const saturation of [0,5,25,50,75,100]) for (const value of [5,20,40,60,80,100]) {
@@ -73,6 +73,23 @@ assert.equal(masterworkMatches(['Range'], ''), false);
 assert.equal(masterworkMatches(['Range'], 'Rangefinder'), false);
 assert.equal(masterworkMatches([], ''), true);
 const mwRules = defaultRules();mwRules['S+'].masterwork = true;
+const { updateLocalizedRegistries, getLocalizedStatName } = load('hash-translator');
+for (const name of ['Reload Speed', 'Velocidad de recarga', 'リロード速度', '재장전 속도', '换弹速度', '換彈速度']) {
+  updateLocalizedRegistries({}, {}, { 4188031367: name });
+  const stats = [{ hash: 1240592695, name: 'Secondary bonus', isPrimary: false }, { hash: 4188031367, name, isPrimary: true }];
+  const canonical = masterworkStatName(stats);
+  assert.equal(canonical, 'reload');
+  for (const equipped of [canonical, name]) {
+    const matched = masterworkMatches(['Reload Speed'], equipped, getLocalizedStatName);
+    assert.equal(matched, true, name);
+    assert.equal(evaluateRules(['active', 'active', 'active', 'active', 'active'], mwRules, matched), 'S+');
+  }
+  assert.equal(masterworkMatches(['Range'], name, getLocalizedStatName), false);
+}
+assert.equal(masterworkStatName(undefined), '');
+assert.equal(masterworkStatName([{ hash: 0, isPrimary: true }]), '');
+assert.equal(masterworkStatName([{ hash: 1240592695, isPrimary: false }]), '');
+assert.equal(masterworkStatName([{ hash: 1240592695, isPrimary: true }, { hash: 4188031367, isPrimary: true }]), '');
 const fullRoll = Array(5).fill('active');
 assert.equal(evaluateRules(fullRoll, mwRules, true), 'S+');
 assert.equal(evaluateRules(fullRoll, mwRules, false), 'S');

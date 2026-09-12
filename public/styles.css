@@ -10,6 +10,7 @@
 }
 
 .aegis-badge {
+  zoom: var(--aegis-badge-size, 1);
   position: absolute !important;
   bottom: 2px !important;
   left: 2px !important;
@@ -32,6 +33,10 @@
   white-space: nowrap !important;
   overflow: visible !important;
   transition: transform 0.18s ease, opacity 0.18s ease !important;
+}
+
+.aegis-badge.aegis-badge-hidden {
+  display: none !important;
 }
 
 /* Ensure badge is dimmed if the parent store item is filtered or has low opacity */
@@ -2056,19 +2061,6 @@ body.aegis-scrolling div[id^="item-"][data-aegis-item-hash]:hover {
 }
 
 /* Upgrade Available Banners */
-.aegis-tooltip-upgrade-banner {
-  background: rgba(255, 215, 0, 0.08) !important;
-  border: 1px dashed rgba(255, 215, 0, 0.4) !important;
-  border-radius: 6px !important;
-  padding: 8px 10px !important;
-  margin-bottom: 12px !important;
-  font-size: 11px !important;
-  font-weight: 600 !important;
-  color: #ffd700 !important;
-  line-height: 1.4 !important;
-  box-shadow: 0 0 8px rgba(255, 215, 0, 0.1) !important;
-}
-
 .aegis-tooltip-upgrade-pill {
   background: rgba(255, 215, 0, 0.08) !important;
   border: 1px dashed rgba(255, 215, 0, 0.4) !important;
@@ -2274,6 +2266,76 @@ body.aegis-scrolling div[id^="item-"][data-aegis-item-hash]:hover {
   overflow: hidden !important;
   text-overflow: ellipsis !important;
   white-space: nowrap !important;
+}
+
+.aegis-auto-width {
+  container-type: inline-size;
+}
+
+.aegis-auto-width :is(.aegis-details-value, .aegis-dual-col, .aegis-popup-dual-col, .aegis-perk-name-text) {
+  min-width: 0 !important;
+  overflow-wrap: anywhere !important;
+}
+
+.aegis-auto-width :is(.aegis-tooltip-dual-grid, .aegis-popup-dual-grid, .aegis-tooltip-perks-grid) {
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+}
+
+@container (max-width: 450px) {
+  .aegis-auto-width :is(.aegis-tooltip-dual-grid, .aegis-popup-dual-grid) {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+}
+
+.aegis-auto-width .aegis-chip-name {
+  white-space: normal !important;
+  overflow: visible !important;
+  overflow-wrap: anywhere !important;
+  min-width: 0 !important;
+  line-height: 1.2 !important;
+}
+
+.aegis-auto-width :is(.aegis-tooltip-notes-text, .aegis-popup-notes-text) {
+  overflow-wrap: anywhere;
+}
+
+.aegis-width-measure {
+  position: fixed !important;
+  left: -10000px !important;
+  top: 0 !important;
+  visibility: hidden !important;
+  display: block !important;
+  width: max-content !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  max-height: none !important;
+  overflow: visible !important;
+  animation: none !important;
+  pointer-events: none !important;
+}
+
+.aegis-width-measure :is(.aegis-perks-matrix-2col, .aegis-tooltip-perks-grid) {
+  width: max-content !important;
+  grid-template-columns: repeat(2, 1fr) !important;
+}
+
+.aegis-width-measure .aegis-perks-matrix-col {
+  width: auto !important;
+}
+
+.aegis-width-measure .aegis-details-chips-container {
+  width: max-content !important;
+  flex: 0 0 auto !important;
+}
+
+.aegis-width-measure :is(.aegis-perk-chip, .aegis-chip-name, .aegis-perk-name-text) {
+  max-width: none !important;
+  white-space: nowrap !important;
+}
+
+.aegis-width-measure .aegis-details-value-text {
+  display: flex;
+  flex-direction: column;
 }
 
 .aegis-perk-chip:hover {
@@ -5562,6 +5624,47 @@ body.aegis-scrolling div[id^="item-"][data-aegis-item-hash]:hover {
   height: 10px !important;
   flex: 0 0 10px !important;
   box-sizing: border-box !important;
+}
+
+.aegis-badge.aegis-color-only .aegis-grade-text,
+.aegis-badge.aegis-color-only .aegis-badge-upgrade-arrow {
+  display: none !important;
+}
+
+.aegis-badge.aegis-color-only:is(.aegis-style-classic, .aegis-style-pill, .aegis-style-notch, .aegis-style-footer) {
+  min-width: 0 !important;
+  min-height: 0 !important;
+  padding: 0 !important;
+  gap: 0 !important;
+  box-sizing: border-box !important;
+}
+
+.aegis-badge.aegis-color-only:is(.aegis-style-classic, .aegis-style-pill) {
+  width: 8px !important;
+  max-width: 8px !important;
+  height: 8px !important;
+  border-radius: 50% !important;
+}
+
+.aegis-badge.aegis-color-only.aegis-style-pill {
+  border-radius: 2px !important;
+}
+
+.aegis-badge.aegis-color-only:is(.aegis-style-notch, .aegis-style-footer) {
+  width: 100% !important;
+  max-width: 100% !important;
+  height: 3px !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+}
+
+.aegis-badge.aegis-color-only .aegis-split-inner,
+.aegis-badge.aegis-color-only .aegis-split-half {
+  flex: 1 1 0 !important;
+  min-width: 0 !important;
+  height: 100% !important;
+  padding: 0 !important;
+  border: 0 !important;
 }
 
 .interactive-weapon-tile:has(> .aegis-style-footer) {

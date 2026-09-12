@@ -1,6 +1,7 @@
 import { displayGrade } from './grade-colors';
 import { gradeValue } from './grading';
 import type { PreviewAppearance } from './preview-appearance';
+import type { BadgeCategory } from './badge-presentation';
 
 export interface PreviewItem {
   id: string;
@@ -12,6 +13,7 @@ export interface PreviewItem {
   isPerfect5of5?: boolean;
   isOmniRoll?: boolean;
   appearance?: PreviewAppearance;
+  category?: BadgeCategory;
 }
 
 export function selectPreviewItems(items: PreviewItem[], ids: string[] = []): PreviewItem[] {

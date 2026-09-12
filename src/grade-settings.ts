@@ -26,6 +26,8 @@ export function initGradeSettings() {
   let context: 'pve' | 'pvp' = 'pve';
   let ruleWrites = 0;
   let colorWrites = 0;
+  let scoringSource = 'aegis';
+  let databaseMode = 'both';
   let hsv: Hsv = [0, 100, 100];
   const get = <T extends HTMLElement>(selector: string) => el.querySelector<T>(selector)!;
   const options = (labels: Record<string, string>) => Object.entries(labels).map(([value, label]) => `<option value="${value}" data-i18n="${label}">${t(label)}</option>`).join('');
@@ -50,7 +52,7 @@ export function initGradeSettings() {
         <label class="grade-rule-select" data-i18n-title="matchBarrelMag" title="Match the recommended barrel and magazine"><span data-i18n="barrelMag">Barrel / mag</span><select data-rule="extras">${options(extraLabels)}</select></label>
         <div class="grade-rule-checks">
           <label class="grade-check" data-i18n-title="originEquipped" title="Recommended origin trait equipped"><input type="checkbox" data-rule="origin"> <span data-i18n="origin">Origin</span></label>
-          <label class="grade-check" data-i18n-title="masterworkCriterion" title="Recommended masterwork matched; ignored when none is recommended"><input type="checkbox" data-rule="masterwork"> <span data-i18n="masterwork">MW</span></label>
+          <label class="grade-check" data-i18n-title="masterworkCriterion" title="Recommended masterwork matched; ignored when none is recommended"><input type="checkbox" data-rule="masterwork"> <span data-i18n="masterworkLabel">Masterwork</span></label>
         </div>
       </div>
       <p class="grade-warning" data-warning role="status" data-i18n-title="higherGradesFirst" title="Higher matching grades take priority"></p>
@@ -77,16 +79,23 @@ export function initGradeSettings() {
   function renderGuide() {
     const guide = document.getElementById('grade-scoring-guide');
     if (!guide) return;
+    if (scoringSource === 'lightgg') {
+      safeSetInnerHTML(guide, `<p class="tooltip-desc">${t('gradeGuideLightgg')}</p>`);
+      applyGuideColors();
+      return;
+    }
     const defaults = defaultRules();
-    const profiles = saved.rulesEnabled && saved.separatePvp ? [['PvE', saved.pve], ['PvP', saved.pvp]] as const
-      : [['', saved.rulesEnabled ? saved.pve : defaults]] as const;
-    safeSetInnerHTML(guide, profiles.map(([label, rules]) => {
+    const custom = rulesAvailable() && saved.rulesEnabled;
+    const profiles = custom && saved.separatePvp ? [['PvE', saved.pve], ['PvP', saved.pvp]] as const
+      : [['', custom ? saved.pve : defaults]] as const;
+    const sourceNote = databaseMode === 'wishlist' ? 'gradeGuideWishlist' : custom && databaseMode === 'both' ? 'gradeGuideSheetOnly' : '';
+    safeSetInnerHTML(guide, (sourceNote ? `<p class="tooltip-desc">${sourceNote === 'gradeGuideSheetOnly' ? `<em>${t(sourceNote)}</em>` : t(sourceNote)}</p>` : '') + profiles.map(([label, rules]) => {
       const unreachable = unreachableGrades(rules);
       return `${label ? `<p class="tooltip-desc">${label}</p>` : ''}<div class="tooltip-grid">${GRADES.filter(grade => grade === 'F' || rules[grade].enabled).map(grade => {
         const description = ruleDescription(grade, rules);
         return `<span class="grade-pill grade-${grade[0].toLowerCase()}-pill" data-aegis-grade="${grade}">${grade}</span><span${unreachable.includes(grade) ? ` title="${t('unreachableGradeTip')}"` : ''}>${description}</span>`;
       }).join('')}</div>`;
-    }).join('') + (!saved.rulesEnabled
+    }).join('') + (!custom
       ? `<span class="tooltip-note">${t('defaultTraitsNote')}</span>` : ''));
     applyGuideColors();
   }
@@ -97,9 +106,9 @@ export function initGradeSettings() {
   }
 
   function profile() { return draft[context === 'pvp' && draft.separatePvp ? 'pvp' : 'pve']; }
+  function rulesAvailable() { return scoringSource !== 'lightgg' && databaseMode !== 'wishlist'; }
   function editableSettings(settings: GradeSettings) {
-    return { ...structuredClone(settings), colors: settings.colorsEnabled ? { ...settings.colors } : {},
-      ...(!settings.rulesEnabled ? { separatePvp: false, pve: defaultRules(), pvp: defaultRules() } : {}) };
+    return { ...structuredClone(settings), colors: settings.colorsEnabled ? { ...settings.colors } : {} };
   }
   function saveRules() {
     ruleWrites++;
@@ -150,6 +159,7 @@ export function initGradeSettings() {
     get('[data-hsv="2"]').style.background = `linear-gradient(to right, #000000, ${hsvToHex([hsv[0], hsv[1], 100])})`;
   }
   function render() {
+    get('#grade-rules-modal').hidden = !rulesAvailable();
     draft.rulesEnabled = draft.separatePvp || JSON.stringify(draft.pve) !== JSON.stringify(defaultRules());
     get<HTMLInputElement>('[data-setting="separatePvp"]').checked = draft.separatePvp;
     el.querySelectorAll<HTMLButtonElement>('[data-grade]').forEach(button => { button.setAttribute('aria-pressed', String(button.dataset.grade === selected)); });
@@ -246,9 +256,19 @@ export function initGradeSettings() {
     render(); saveRules();
   });
   localizeElements(el);
-  chrome.storage.local.get(['aegisGradeSettings', 'aegisGradeColors'], res => { saved = normalizeGradeSettings(res.aegisGradeSettings, res.aegisGradeColors); draft = editableSettings(saved); render(); renderGuide(); });
+  chrome.storage.local.get(['aegisGradeSettings', 'aegisGradeColors', 'scoringSource', 'aegisDbMode'], res => {
+    scoringSource = res.scoringSource || 'aegis';
+    databaseMode = res.aegisDbMode || 'both';
+    saved = normalizeGradeSettings(res.aegisGradeSettings, res.aegisGradeColors);
+    draft = editableSettings(saved); render(); renderGuide();
+  });
   chrome.storage.onChanged.addListener((changes, area) => {
     if (area !== 'local') return;
+    if (changes.scoringSource || changes.aegisDbMode) {
+      if (changes.scoringSource) scoringSource = changes.scoringSource.newValue || 'aegis';
+      if (changes.aegisDbMode) databaseMode = changes.aegisDbMode.newValue || 'both';
+      render(); renderGuide();
+    }
     if (changes.aegisGradeSettings) {
       saved = { ...normalizeGradeSettings(changes.aegisGradeSettings.newValue), colors: saved.colors, colorsEnabled: saved.colorsEnabled };
       renderGuide();
