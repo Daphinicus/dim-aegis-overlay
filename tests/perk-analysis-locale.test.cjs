@@ -30,7 +30,10 @@ function load(name, imports = {}, globals = {}) {
   let language = 'ko', listener, node;
   const pending = [];
   const chrome = { runtime: { sendMessage: (message, callback) => pending.push({ message, callback }) },
-    storage: { local: { get: (_keys, callback) => callback({ aegisPerkRatings: cache, aegisLanguage: 'ko' }) },
+    storage: { local: { get: (keys, callback) => {
+      assert.ok(keys.includes('aegisMode'), 'Read activity mode at startup');
+      callback({ aegisPerkRatings: cache, aegisLanguage: 'ko', aegisMode: 'pvp' });
+    } },
       onChanged: { addListener: callback => { listener = callback; } } } };
   const document = { getElementById: () => node, createElement: () => ({}),
     documentElement: { append: value => { node = value; } }, dispatchEvent: () => {} };
@@ -46,16 +49,30 @@ function load(name, imports = {}, globals = {}) {
   pending.shift().callback({ success: true, bundle: korean }); await settle();
   assert.equal(published().byHash[1].analysis, translated);
   assert.equal(published().byHash[2].analysis, translated, 'Enhanced variants share translations');
+  assert.equal(published().enabled, false, 'PvP startup hides PvE ratings');
+  listener({ aegisMode: { newValue: 'pve' } }, 'local');
+  assert.equal(published().enabled, true, 'PvE restores ratings');
+  listener({ aegisMode: { newValue: 'both' } }, 'local');
+  assert.equal(published().enabled, true, 'Both retains PvE ratings');
   assert.equal(rating.analysis, source, 'The source cache is never mutated');
   listener({ aegisLanguage: { newValue: 'en' } }, 'local'); await settle();
   assert.equal(published().byHash[1].analysis, source, 'English restores original text');
   listener({ aegisLanguage: { newValue: 'ko' } }, 'local');
   const stale = pending.shift();
   listener({ aegisLanguage: { newValue: 'ja' } }, 'local');
+  listener({ aegisMode: { newValue: 'pvp' } }, 'local');
+  assert.equal(published().enabled, false, 'Mode changes apply while translation is pending');
   pending.shift().callback({ success: false }); await settle();
   stale.callback({ success: true, bundle: korean }); await settle();
   assert.equal(published().byHash[1].analysis, source, 'Stale Korean response cannot replace Japanese fallback');
+  assert.equal(published().enabled, false, 'Translation completion cannot restore ratings in PvP');
+  listener({ aegisPerkAnalysisEnabled: { newValue: true } }, 'local');
+  assert.equal(published().enabled, false, 'Enabling the preference cannot show PvE grades in PvP');
   listener({ aegisPerkAnalysisEnabled: { newValue: false } }, 'local');
   assert.equal(published().enabled, false, 'Disabling takes effect without waiting for a locale fetch');
-  console.log('PASS: perk and origin translations, source fallback, immutable cache, enhanced variants, language switching, stale responses, and immediate disabling.');
+  listener({ aegisMode: { newValue: 'pve' } }, 'local');
+  assert.equal(published().enabled, false, 'Mode changes preserve the disabled preference');
+  listener({ aegisPerkAnalysisEnabled: { newValue: true } }, 'local');
+  assert.equal(published().enabled, true, 'The enabled preference works again in PvE');
+  console.log('PASS: perk and origin translations, immutable cache, language switching, stale responses, PvP suppression, mode transitions, and preference preservation.');
 })().catch(error => { console.error(error); process.exitCode = 1; });

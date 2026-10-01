@@ -1,5 +1,5 @@
 // DIM tiles retain size containment. Reserve the natural badge height explicitly
-// so larger dual grades can wrap without covering the native item label.
+// so dual grades and roll stars can wrap without covering the native item label.
 const targets = new WeakMap<Element, HTMLElement>();
 const observer = new ResizeObserver(entries => {
   for (const entry of entries) {
@@ -26,7 +26,7 @@ export function releaseFooterSize(badge: HTMLElement) {
 
 export function updateFooterSize(badge: HTMLElement, dual: boolean) {
   const tile = badge.parentElement;
-  if (!dual || !tile?.matches('.item') || !badge.matches('.aegis-style-footer.aegis-badge-split:not(.aegis-color-only)')) {
+  if ((!dual && !badge.classList.contains('aegis-has-roll-star')) || !tile?.matches('.item') || !badge.matches('.aegis-style-footer.aegis-badge-split:not(.aegis-color-only)')) {
     releaseFooterSize(badge);
     return;
   }

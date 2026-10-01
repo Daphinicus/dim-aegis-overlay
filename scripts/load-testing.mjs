@@ -32,7 +32,7 @@ export async function connect(port, timeout = 3000) {
     command(method, params = {}) {
       return new Promise((resolve, reject) => {
         const id = ++sequence;
-        const timer = setTimeout(() => { pending.delete(id); reject(new Error(`${method} timed out.`)); }, 30000);
+        const timer = setTimeout(() => { pending.delete(id); reject(new Error(`${method} timed out.`)); }, method === 'session.new' ? 120000 : 30000);
         pending.set(id, { resolve, reject, timer });
         socket.send(JSON.stringify({ id, method, params }));
       });
@@ -63,10 +63,10 @@ export async function loadTesting(config, selection) {
   const extensions = getTestingExtensions(config, selection);
   const profile = fs.realpathSync(config.launcher.profileDirectory);
   const client = await connect(config.launcher.port);
-  let sessionCreated = false;
+  let sessionAttempted = false;
   try {
-    const session = await client.command('session.new', { capabilities: { alwaysMatch: { acceptInsecureCerts: false } } });
-    sessionCreated = true;
+    sessionAttempted = true;
+    const session = await client.command('session.new', { capabilities: { alwaysMatch: { acceptInsecureCerts: false, webSocketUrl: true } } });
     const actualProfile = session.capabilities['moz:profile'];
     if (!actualProfile || fs.realpathSync(actualProfile).toLowerCase() !== profile.toLowerCase()) {
       throw new Error('The debugging connection belongs to a different Zen profile; nothing was installed.');
@@ -132,7 +132,10 @@ export async function loadTesting(config, selection) {
     return { loadedAt: new Date().toISOString(), ...extensions[0], extensions, refreshedTabs, openedDim, activation, warnings: [...new Set(warnings)] };
   } finally {
     // End only our automation session, leaving the browser and temporary addon running.
-    if (sessionCreated) await client.command('session.end').catch(() => {});
+    // Session creation can succeed before browser startup finishes. Clean up
+    // our connection even if its reply times out; an unbound connection cannot
+    // end a session owned by another connection.
+    if (sessionAttempted) await client.command('session.end').catch(() => {});
     client.close();
   }
 }

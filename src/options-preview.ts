@@ -1,12 +1,16 @@
+import { renderStatGradeInBar, removeStatGrade } from './stat-grade';
 import { applyGradeColors, applyGradeGlow, setTileGlow, resolveTileGlow } from './grade-colors';
 import type { TileGlow } from './types';
-import { applyBadgePresentation, normalizeBadgeVisibility, type BadgeVisibilitySettings } from './badge-presentation';
+import { applyBadgePresentation, normalizeBadgeVisibility, rollBadgeSymbol, type BadgeVisibilitySettings } from './badge-presentation';
 
 interface PreviewSettings {
   aegisBadgeVisibility?: BadgeVisibilitySettings;
   aegisBadgeStyle?: string;
+  aegisStatGradeBasis?: string;
   aegisBadgePosition?: string;
   aegisUpgradeStyle?: string;
+  aegisShowPerfectStar?: boolean;
+  aegisShowOmniStar?: boolean;
   aegisMode?: string;
   aegisTwoTier?: boolean;
   aegisGradeDisplayMode?: string;
@@ -26,6 +30,20 @@ export function renderOptionsPreview() {
   if (!badge) return;
 
   const style = settings.aegisBadgeStyle || 'classic';
+  const statPreview = tile.querySelector<HTMLElement>('.aegis-stat-preview');
+  tile.classList.toggle('aegis-tile-stat', style === 'stat');
+  if (style === 'stat') {
+    badge.className = 'aegis-badge aegis-badge-hidden';
+    tile.classList.remove('aegis-tile-footer');
+    const basis = settings.aegisStatGradeBasis === 'weapon' ? 'weapon' : 'perk';
+    const grade = basis === 'weapon' ? 'B+' : 'S+';
+    const visibility = normalizeBadgeVisibility(settings.aegisBadgeVisibility).weapon;
+    if (statPreview && visibility !== 'off') renderStatGradeInBar(statPreview, { grade: 'S+', weaponGrade: 'B+' }, basis);
+    else removeStatGrade(tile);
+    applyGradeGlow(tile, visibility === 'off' ? '' : grade);
+    return;
+  }
+  removeStatGrade(tile);
   tile.classList.toggle('aegis-tile-footer', style === 'footer');
   const posVal = settings.aegisBadgePosition || 'bottom-left';
   const posKey = posVal.replace('bottom-left', 'bl').replace('top-left', 'tl').replace('top-right', 'tr').replace('bottom-right', 'br');
@@ -38,7 +56,9 @@ export function renderOptionsPreview() {
 
   const label = document.createElement('span');
   label.className = 'aegis-grade-text';
-  label.textContent = (style === 'classic' && !settings.aegisTwoTier ? '★ ' : '') + gradeStr;
+  const symbol = rollBadgeSymbol({ isPerfect5of5: true, isOmniRoll: true }, settings.aegisShowPerfectStar, settings.aegisShowOmniStar);
+  badge.classList.toggle('aegis-has-roll-star', !!symbol);
+  label.textContent = symbol ? `${symbol} ${gradeStr}` : gradeStr;
   badge.append(label);
 
   if (settings.aegisUpgradeStyle && settings.aegisUpgradeStyle !== 'none') {

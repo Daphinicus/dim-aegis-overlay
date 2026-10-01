@@ -1,5 +1,5 @@
 import type { GradeSettings } from './grading';
-import type { BadgeVisibilitySettings } from './badge-presentation';
+import type { BadgeRollQuality, BadgeVisibilitySettings } from './badge-presentation';
 
 /**
  * Represents a single parsed wishlist entry.
@@ -20,7 +20,9 @@ export type WishlistDatabase = Record<number, WishlistRoll[]>;
 /**
  * Result of scoring a weapon roll against a wishlist entry.
  */
-export interface ScoringResult {
+export interface ScoringResult extends BadgeRollQuality {
+  /** Active spreadsheet weapon tier, independent of the two-tier display setting. */
+  weaponGrade?: string;
   customGrading?: boolean;
   grade: string | null;
   matchPercentage: number;
@@ -32,11 +34,11 @@ export interface ScoringResult {
   potentialGrade?: string;
   wishlistNotes?: string;
   upgradeAvailable?: boolean;
-  isPerfect5of5?: boolean;
-  isOmniRoll?: boolean;
   matchedSlotsCount?: number;
   pveGrade?: string;
   pvpGrade?: string;
+  pveRollQuality?: BadgeRollQuality;
+  pvpRollQuality?: BadgeRollQuality;
 }
 
 export type BadgeColor = 'perk' | 'archetype' | 'gradient';
@@ -54,6 +56,8 @@ export interface LocalStorageSchema {
   aegisTileGlow?: TileGlow;
   aegisBadgeSize?: number;
   aegisBadgeVisibility?: BadgeVisibilitySettings;
+  aegisShowPerfectStar?: boolean;
+  aegisShowOmniStar?: boolean;
   aegisGradeSettings?: GradeSettings;
   aegisGradeColors?: Pick<GradeSettings, 'version' | 'colorsEnabled' | 'colors'>;
   wishlistUrl?: string;

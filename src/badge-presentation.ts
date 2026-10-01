@@ -2,6 +2,17 @@ export type BadgeCategory = 'armor' | 'exotic' | 'weapon';
 export type BadgeVisibility = 'grade' | 'color' | 'off';
 export type BadgeVisibilitySettings = Record<BadgeCategory, BadgeVisibility>;
 
+export interface BadgeRollQuality {
+  isPerfect5of5?: boolean;
+  isOmniRoll?: boolean;
+}
+
+export function rollBadgeSymbol(roll: BadgeRollQuality | undefined, showPerfect = true, showOmni = true): string {
+  if (showOmni && roll?.isOmniRoll) return '✦';
+  if (showPerfect && roll?.isPerfect5of5) return '★';
+  return '';
+}
+
 export function normalizeBadgeVisibility(value: unknown): BadgeVisibilitySettings {
   const input = value as Partial<BadgeVisibilitySettings> | null;
   const mode = (category: BadgeCategory): BadgeVisibility =>

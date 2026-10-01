@@ -11,7 +11,7 @@ const translations = Object.fromEntries(tables.properties.map(table => {
   assert.equal(new Set(entries.map(([key]) => key)).size, entries.length, 'Duplicate keys: ' + table.name.text);
   return [table.name.text, Object.fromEntries(entries)];
 }));
-const keys = new Set(['badgeColor', 'badgeColorPerk', 'badgeColorArchetype', 'badgeColorGradient', 'badgeMaxTierGlow', 'customPerkGrading', 'analysisPerkAnalysis', 'showPerkAnalysis', 'showCompareRecommendations', 'showOverviewRecommendations']);
+const keys = new Set(['styleStat', 'statGradeActivity', 'statGradeBasis', 'statGradePerk', 'statGradeWeapon', 'statGradeDesc', 'badgeColor', 'badgeColorPerk', 'badgeColorArchetype', 'badgeColorGradient', 'badgeMaxTierGlow', 'customPerkGrading', 'analysisPerkAnalysis', 'showPerkAnalysis', 'showCompareRecommendations', 'showOverviewRecommendations']);
 const settings = ts.createSourceFile('grade-settings.ts', src('grade-settings.ts'), ts.ScriptTarget.Latest, true);
 function visit(node) {
   if (ts.isStringLiteral(node) && node.text in translations.en) keys.add(node.text);

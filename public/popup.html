@@ -361,7 +361,32 @@
             <button type="button" data-value="pill" data-i18n="stylePill">Slim Pill</button>
             <button type="button" data-value="notch" data-i18n="styleNotch">Top Notch</button>
             <button type="button" data-value="footer" data-i18n="styleFooter">Bottom Strip</button>
+            <button type="button" data-value="stat" data-i18n="styleStat">Letter</button>
           </div>
+        </div>
+        <div class="input-group" id="aegis-stat-grade-options" hidden>
+          <label id="aegis-stat-grade-mode-label" data-i18n="statGradeActivity">Activity</label>
+          <div class="segmented-control" id="aegis-stat-grade-mode" role="group" aria-labelledby="aegis-stat-grade-mode-label">
+            <button type="button" data-value="pve">PvE</button>
+            <button type="button" data-value="pvp">PvP</button>
+          </div>
+          <label id="aegis-stat-grade-basis-label" data-i18n="statGradeBasis">Grade</label>
+          <div class="segmented-control" id="aegis-stat-grade-basis" role="group" aria-labelledby="aegis-stat-grade-basis-label">
+            <button type="button" data-value="perk" data-i18n="statGradePerk">Perk</button>
+            <button type="button" data-value="weapon" data-i18n="statGradeWeapon">Weapon</button>
+          </div>
+          <p class="description" data-i18n-html="statGradeDesc">Simplified, single-grade view. Replaces the Wishlist <svg class="aegis-wishlist-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 10h4v11H2zm6 11V10l5-8c2 0 3 2 2 5l-1 3h6c2 0 3 2 2 4l-2 6-2 1z"/></svg> icon.</p>
+        </div>
+        <div class="input-group" id="aegis-roll-stars-group">
+          <label class="checkbox-label" for="aegis-show-perfect-star">
+            <input type="checkbox" id="aegis-show-perfect-star" checked>
+            <span data-i18n="showPerfectStar">5/5 roll star (★)</span>
+          </label>
+          <label class="checkbox-label" for="aegis-show-omni-star">
+            <input type="checkbox" id="aegis-show-omni-star" checked>
+            <span data-i18n="showOmniStar">Omni roll star (✦)</span>
+          </label>
+          <p class="description" data-i18n="rollStarsDesc">Show stars on all badge styles. When both apply, the omni star takes priority.</p>
         </div>
         <div class="input-group" id="aegis-upgrade-style-group">
           <label data-i18n="upgradeIndicatorStyle">Upgrade Indicator Style</label>
@@ -425,6 +450,13 @@
               <div class="corner-target target-bl" data-pos="bottom-left" title="Bottom-Left"></div>
               <div class="corner-target target-br" data-pos="bottom-right" title="Bottom-Right"></div>
 
+              <!-- Fixed mock data: this row never reads DIM classes, assets, or account data. -->
+              <div class="aegis-stat-preview">
+                <svg class="aegis-wishlist-icon fa-thumbs-up" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 10h4v11H2zm6 11V10l5-8c2 0 3 2 2 5l-1 3h6c2 0 3 2 2 4l-2 6-2 1z"/></svg>
+                <svg class="aegis-preview-ammo" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 2 16 22H8L0 8zm16 20L8 2h8l8 14z"/></svg>
+                <svg class="aegis-preview-damage" viewBox="0 0 24 24" aria-hidden="true"><path d="m8 1 5 11-5 11-7-11zm9 0 6 11-6 11V1z"/></svg>
+                <span>550</span>
+              </div>
               <!-- Live Preview Badge -->
               <div class="aegis-badge aegis-badge-s aegis-badge-wide aegis-pos-bl aegis-style-classic" id="mock-aegis-badge">★ S+</div>
             </div>

@@ -2,7 +2,7 @@
 const fs = require('node:fs');
 const { runFixture } = require('./browser-helpers.cjs');
 const ts = require('typescript');
-const source = ['activity-mode', 'masterwork', 'compare-selectors', 'compare-bubbles', 'compare-perks'].map(name => fs.readFileSync('src/'+name+'.ts','utf8').replace(/^import .*;\r?\n/gm,'').replace(/export /g,'')).join('\n');
+const source = ['activity-mode', 'masterwork', 'compare-selectors', 'compare-bubbles', 'popup-inline-details', 'compare-perks'].map(name => fs.readFileSync('src/'+name+'.ts','utf8').replace(/^import .*;\r?\n/gm,'').replace(/export /g,'')).join('\n');
 const script = ts.transpileModule(`const getRecommendedMasterworks=sheet=>sheet.mw?sheet.mw.split('/'):[], getLocalizedStatName=stat=>stat; const t=key=>key, getLocalizedPerkName=(_hash,name)=>name, getPerkIcon=()=>undefined, getPerkHashFromEnglish=()=>null;\n` + source + `
 const results=[];
 function check(value,label){if(!value)throw new Error(label);results.push(label);}
@@ -300,6 +300,34 @@ async function run(){
   overviewMode='pve';data.sheetWeapon={mw:'Range'};data.sheetPerks={all:[]};overview.refresh();await frame();
   check(!!popup.querySelector('.aegis-masterwork-chip')&&!popup.querySelector('[data-aegis-compare-state],[data-aegis-perk-layout]'),flavor+' masterwork-only recommendations preserve native perks');
   overviewEnabled=false;overview.refresh();await frame();
+  const inlineCard=document.createElement('div');
+  inlineCard.className='aegis-popup-details-card';inlineCard.dataset.aegisDetails='true';
+  inlineCard.textContent='Analysis';
+  placeInlinePopupDetails(popup,inlineCard);
+  check(popup.querySelector('.overview-native-grid').nextElementSibling===inlineCard,flavor+' inline analysis starts below native perks');
+  data.sheetWeapon=ratedSheet;data.sheetPerks=ratedPerks;
+  for(const list of [true,false,true]) {
+    overviewEnabled=true;
+    const oldSection=popup.querySelector('.overview-native-grid');
+    const replacement=oldSection.cloneNode(true);
+    replacement.querySelector('#native-layout span').className=list?'fas fa-th app-icon':'fas fa-list app-icon';
+    oldSection.replaceWith(replacement);
+    overview.refresh();await frame();
+    const footer=popup.querySelector('.aegis-overview-footer');
+    check(footer?.nextElementSibling===inlineCard&&replacement.nextElementSibling===footer,flavor+' inline analysis follows current '+(list?'list':'grid')+' and recommendation footer');
+    const decoy=document.createElement('button');decoy.title='Aegis recommended perks';
+    popup.querySelector('.aegis-overview-panel').append(decoy);
+    placeInlinePopupDetails(popup,inlineCard);
+    check(footer.nextElementSibling===inlineCard,flavor+' Aegis perks title cannot become inline insertion anchor');
+    const ordering=[...popupBody.children];placeInlinePopupDetails(popup,inlineCard);
+    check(ordering.every((node,i)=>popupBody.children[i]===node),flavor+' repeated inline attachment preserves order');
+    overviewEnabled=false;overview.refresh();await frame();
+    check(replacement.nextElementSibling===inlineCard,flavor+' disabling recommendations leaves analysis below perks');
+  }
+  popup.querySelector('.overview-native-grid').remove();
+  placeInlinePopupDetails(popup,inlineCard);
+  check(popupBody.lastElementChild===inlineCard&&popup.contains(inlineCard),flavor+' missing sockets retain analysis inside content body');
+  inlineCard.remove();
  }
  document.getElementById('fixture').innerHTML='<div style="grid-template-rows:20px"><div role="rowheader">Organizer</div><div role="cell"><div><div class="item"></div></div></div></div><div role="dialog"><div style="grid-template-rows:20px"><div role="rowheader">Other dialog</div></div></div>';
  check(!document.querySelector(COMPARE_BUCKET_SELECTOR),'Unrelated grids are excluded');

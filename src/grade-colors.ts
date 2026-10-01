@@ -1,6 +1,7 @@
 import { Grade, GradeSettings, defaultGradeSettings, gradeValue } from './grading';
 import type { BadgeColor, TileGlow } from './types';
 import { gradeGradientEnd } from './grade-gradient';
+import { inventoryBadgeTextShadow } from './inventory-badge-scale';
 
 export const defaultGradeColors: Record<Grade, string> = { 'S+': '#ffd700', S: '#ffd700', 'A+': '#da70d6', A: '#da70d6', 'B+': '#00f2fe', B: '#00f2fe', C: '#bdc3c7', D: '#e67e22', E: '#7f8c8d', F: '#e74c3c' };
 
@@ -8,9 +9,9 @@ let settings = defaultGradeSettings();
 let badgeColor: BadgeColor = 'perk';
 let tileGlow: TileGlow = 'archetype';
 const originals = new WeakMap<HTMLElement, [string, string, string][]>();
-const appliedColors = new WeakMap<HTMLElement, { background: string; style: string }>();
+const appliedColors = new WeakMap<HTMLElement, { background: string; style: string; shadow: string }>();
 const colorProperties = ['background', 'color', 'text-shadow'];
-const badgeSelector = '.aegis-badge, .aegis-split-half, .aegis-title-badge, .aegis-popup-grade-badge, .aegis-tooltip-grade, .aegis-shopping-item-badge, [data-aegis-grade]';
+const badgeSelector = '.aegis-stat-grade, .aegis-badge, .aegis-split-half, .aegis-title-badge, .aegis-popup-grade-badge, .aegis-tooltip-grade, .aegis-shopping-item-badge, [data-aegis-grade]';
 
 export function setGradeColors(value: GradeSettings) { settings = value; }
 export function resolveBadgeColor(value: unknown, legacy?: boolean): BadgeColor {
@@ -21,6 +22,15 @@ export function setBadgeColor(value: BadgeColor) { badgeColor = value; }
 function colorGrade(text: string): string {
   return badgeColor === 'archetype' ? twoTierGrades(text)?.[0] || displayGrade(text) : displayGrade(text);
 }
+/** Colors for an inventory presentation owned by another extension. */
+export function inventoryGradeAppearance(text: string) {
+  const grade = colorGrade(text) as Grade;
+  return {
+    color: settings.colorsEnabled && settings.colors[grade] || defaultGradeColors[grade] || '#eeeeee',
+    gradient: badgeColor === 'gradient' ? twoTierGradient(text) : null,
+  };
+}
+
 export function resolveTileGlow(value: unknown, legacy?: boolean): TileGlow {
   return value === 'off' || value === 'archetype' || value === 'perk' || value === 'max' ? value : legacy === true ? 'max' : 'archetype';
 }
@@ -74,12 +84,23 @@ export function applyGradeColors(root: HTMLElement, palette = settings) {
   const badges = [...(root.matches(badgeSelector) ? [root] : []), ...root.querySelectorAll<HTMLElement>(badgeSelector)];
   for (const badge of badges) {
     const text = badge.dataset.aegisGrade || badge.textContent || '';
+    if (badge.classList.contains('aegis-stat-grade')) {
+      const color = palette.colorsEnabled && (palette.colors[text as Grade] || palette.colors[text.charAt(0) as Grade])
+        || defaultGradeColors[text as Grade] || defaultGradeColors[text.charAt(0) as Grade];
+      const applied = appliedColors.get(badge);
+      if (color && (applied?.background !== color || applied.style !== badge.style.cssText)) {
+        badge.style.setProperty('color', color);
+        appliedColors.set(badge, { background: color, style: badge.style.cssText, shadow: '' });
+      }
+      continue;
+    }
     const gradient = badgeColor === 'gradient' ? twoTierGradient(text, palette) : null;
     const grade = colorGrade(text);
     const color = palette.colorsEnabled && palette.colors[grade as Grade] || defaultGradeColors[grade as Grade];
     const background = badge.querySelector('.aegis-split-half') ? '' : gradient || (color ? gradeGradient(color) : '');
+    const shadow = inventoryBadgeTextShadow(badge);
     const applied = appliedColors.get(badge);
-    if (background && applied?.background === background && applied.style === badge.style.cssText) continue;
+    if (background && applied?.background === background && applied.shadow === shadow && applied.style === badge.style.cssText) continue;
     appliedColors.delete(badge);
     if (originals.has(badge)) {
       for (const [property, value, priority] of originals.get(badge)!) {
@@ -92,8 +113,22 @@ export function applyGradeColors(root: HTMLElement, palette = settings) {
     originals.set(badge, colorProperties.map(property => [property, badge.style.getPropertyValue(property), badge.style.getPropertyPriority(property)]));
     badge.style.setProperty('background', background, 'important');
     badge.style.setProperty('color', '#ffffff', 'important');
-    badge.style.setProperty('text-shadow', '0 1px 2px rgba(0, 0, 0, 0.8)', 'important');
-    appliedColors.set(badge, { background, style: badge.style.cssText });
+    badge.style.setProperty('text-shadow', shadow, 'important');
+    appliedColors.set(badge, { background, style: badge.style.cssText, shadow });
+  }
+}
+
+/** A size-setting change updates shadows without recoloring or rescoring tiles. */
+export function refreshInventoryBadgeShadows() {
+  for (const badge of document.querySelectorAll<HTMLElement>('.item > .aegis-badge, .item > .aegis-badge .aegis-split-half')) {
+    const applied = appliedColors.get(badge);
+    if (!applied) continue;
+    const shadow = inventoryBadgeTextShadow(badge);
+    if (applied.shadow === shadow) continue;
+    const unchanged = applied.style === badge.style.cssText;
+    badge.style.setProperty('text-shadow', shadow, 'important');
+    if (unchanged) { applied.shadow = shadow; applied.style = badge.style.cssText; }
+    else appliedColors.delete(badge);
   }
 }
 

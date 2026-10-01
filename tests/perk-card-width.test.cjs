@@ -5,7 +5,7 @@ const popup = fs.readFileSync('src/popup.ts', 'utf8');
 const content = fs.readFileSync('src/content.ts', 'utf8');
 const compile = source => ts.transpileModule(source, { compilerOptions: { target: ts.ScriptTarget.ES2022 } }).outputText;
 const handler = popup.slice(popup.indexOf('  // Handle Aegis Mode (PvE vs PvP vs Both)'), popup.indexOf('  // Handle Layout segmented'));
-const start = content.indexOf('    if (changes.aegisMode || changes.scoringSource)');
+const start = content.indexOf('    if (changes.aegisMode || changes.scoringSource ||');
 assert.ok(start > 0);
 const modeUpdate = content.slice(start, content.indexOf('    if (changes.aegisTwoTier)', start));
 
@@ -26,6 +26,7 @@ for (const width of ['auto', 'fixed']) {
     const active = new Function('changes', 'saved', compile(`
       let aegisMode = 'pve', savedAegisMode = 'pve', scoringSource = 'aegis', aegisTooltipWidthMode = saved.aegisTooltipWidthMode, changed = false;
       ${fs.readFileSync('src/activity-mode.ts', 'utf8').replace(/^import.*$/m, '').replace('export function', 'function')}
+      let aegisBadgeStyle = 'classic', aegisStatGradeMode = 'pve', modeChanged;
       let aegisShoppingDb, aegisShoppingDbPvP, aegisShoppingDbPvE, aegisSheetDb, aegisSheetDbPvP, aegisSheetDbPvE;
       const applyTooltipWidthStyles = () => {}, updateExplorerTitles = () => {};
       ${modeUpdate}

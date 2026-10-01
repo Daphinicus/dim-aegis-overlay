@@ -1,3 +1,4 @@
+import { isTileTooltipSuppressed } from './popup-interaction';
 import { ScoringResult, AegisSheetWeapon, TooltipPerk, AegisArmorSet, SheetPerksGroup, AegisShoppingItem, DualSheetInfo } from './types';
 import { t, getLocalizedElement, getLocalizedRole } from './i18n';
 import { getOriginalEvaluationText, getLocalizedSource } from './evaluation-i18n';
@@ -444,9 +445,14 @@ export function showTooltip(
     tooltipWidthMode?: 'auto' | 'fixed';
     tooltipWidth?: number;
     dualInfo?: DualSheetInfo;
+    contentHost?: HTMLElement;
   }
 ) {
-  const tooltip = initTooltip();
+  if (isTileTooltipSuppressed()) {
+    hideTooltip();
+    return;
+  }
+  const tooltip = options?.contentHost || initTooltip();
   const isLightGGMode = !!isLightGG;
   const isCompactMatrix = options?.compactPerksMatrix === true;
   const isAutoMaxHeight = options?.autoMaxHeight !== false;
@@ -460,7 +466,7 @@ export function showTooltip(
   const widthMode = options?.tooltipWidthMode || 'fixed';
   tooltip.classList.toggle('aegis-auto-width', widthMode === 'auto');
   const customWidth = typeof options?.tooltipWidth === 'number' 
-    ? (aegisMode === 'both' ? Math.max(options.tooltipWidth, 540) : options.tooltipWidth)
+    ? (aegisMode === 'both' && !options.contentHost ? Math.max(options.tooltipWidth, 540) : options.tooltipWidth)
     : (aegisMode === 'both' ? 560 : 280);
 
   if (widthMode === 'auto') {
@@ -488,7 +494,7 @@ export function showTooltip(
         ${shoppingBannerHtml}
         <div class="aegis-tooltip-title-row" style="display: flex; align-items: center; justify-content: space-between; gap: 8px;">
           <div style="display: flex; align-items: center; gap: 6px;">
-            <span class="aegis-tooltip-weapon-name" style="color: #88c0d0;">${renderLocalizedName('weapon', weaponName)}</span>
+            ${options?.contentHost ? '' : `<span class="aegis-tooltip-weapon-name" style="color: #88c0d0;">${renderLocalizedName('weapon', weaponName)}</span>`}
           </div>
           <span class="aegis-tooltip-grade aegis-grade-s" style="font-size: 13px;">${result.grade}</span>
         </div>
@@ -517,6 +523,10 @@ export function showTooltip(
     `;
 
     safeSetInnerHTML(tooltip, html);
+    if (options?.contentHost) {
+      tooltip.dataset.width = String(widthMode === 'auto' ? measurePerkCardWidth(tooltip, 280) : customWidth);
+      return;
+    }
     positionTooltip(target, tooltip);
     tooltip.classList.remove('hidden');
     return;
@@ -689,7 +699,8 @@ export function showTooltip(
   let elementBadgeHtml = '';
   let stunBadgeHtml = '';
 
-  if (sheetWeapon) {
+  // A composing host owns core stats in both single and dual recommendation modes.
+  if (sheetWeapon && !options?.contentHost) {
     const energy = getWeaponEnergy(sheetWeapon);
     if (energy) {
       const lowerEnergy = energy.toLowerCase();
@@ -756,7 +767,7 @@ export function showTooltip(
       ${shoppingBannerHtml}
       <div class="aegis-tooltip-title-row" style="display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap;">
         <div style="display: flex; align-items: center; gap: 5px; flex-wrap: wrap;">
-          <span class="aegis-tooltip-weapon-name">${renderLocalizedName('weapon', weaponName)}</span>
+          ${options?.contentHost ? '' : `<span class="aegis-tooltip-weapon-name">${renderLocalizedName('weapon', weaponName)}</span>`}
           ${elementBadgeHtml}
           ${stunBadgeHtml}
         </div>
@@ -941,6 +952,10 @@ export function showTooltip(
   safeSetInnerHTML(tooltip, html);
 
   // Position and display
+  if (options?.contentHost) {
+    tooltip.dataset.width = String(widthMode === 'auto' ? measurePerkCardWidth(tooltip, aegisMode === 'both' ? 500 : 280) : customWidth);
+    return;
+  }
   positionTooltip(target, tooltip);
   tooltip.classList.remove('hidden');
 }

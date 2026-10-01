@@ -27,6 +27,8 @@
 #aegis-visibility-options .input-group { display: grid; grid-template-columns: 82px minmax(0, 1fr); align-items: center; gap: 8px; margin: 0; padding: 5px 0; }
 #aegis-visibility-options label { margin: 0; white-space: nowrap; }
 #aegis-badge-size-slider { min-width: 0; width: 100%; accent-color: #ffd700; cursor: pointer; height: 6px; }
+#aegis-roll-stars-group { display: flex; flex-direction: column; gap: 6px; }
+#aegis-roll-stars-group .description { margin: 0; }
 .options-panel .input-group label { color: #c4c4cf; font-size: 11px; line-height: 15px; font-weight: 600; margin: 0; white-space: nowrap; }
 .options-panel .segmented-control { background: #18181f; border-color: #303039; }
 .options-panel .segmented-control button { flex-basis: 0; min-width: 0; font-size: 10px; line-height: 14px; font-weight: 600; min-height: 25px; padding: 3px 2px; color: #a9a9b6; }
@@ -556,3 +558,12 @@
   color: #88c0d0;
   margin: 6px 0 0;
 }
+
+/* Keep both Letter choices in the menu's label/control grid, with full-width help. */
+#aegis-stat-grade-options {
+  display: grid;
+  grid-template-columns: 82px minmax(0, 1fr);
+  align-items: center;
+  gap: 8px;
+}
+#aegis-stat-grade-options > .description { grid-column: 1 / -1; margin: 0; }

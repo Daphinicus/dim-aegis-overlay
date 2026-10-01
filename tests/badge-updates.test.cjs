@@ -19,12 +19,15 @@ const rootStyles = new Map();
 const items = Array.from({length: 120}, (_, id) => ({id, isConnected:true,
   getBoundingClientRect: () => ({top:0,bottom:60,left:0,right:60,width:60,height:60})}));
 const ctx = vm.createContext({
+  nativeSearchEvaluator: { invalidate() {} },
+  managedPreview: { refresh() {} },
+  IS_WINNOWER_HOST: false, setStatGradeLayout: active => assert.equal(active, false),
   console, setTimeout: fn => {timers.set(++next,fn); return next;},
   clearTimeout: id => timers.delete(id),
   requestAnimationFrame: fn => {timers.set(++next,fn); return next;},
   performance:{now:()=>now}, innerWidth:800, innerHeight:600,
   chrome:{storage:{onChanged:{addListener:fn=>{onChanged=fn;}}}},
-  document:{querySelectorAll:()=>items,querySelector:()=>null,
+  document:{addEventListener(){},querySelectorAll:()=>items,querySelector:()=>null,
     documentElement:{style:{setProperty:(key,value)=>rootStyles.set(key,value)}}},
   reprocessAllElements:()=>rescores++, scheduleOpacityUpdate:()=>{},
   aegisBadgeStyle:'classic', aegisBadgePosition:'bottom-left', aegisFadeHover:false,
@@ -51,6 +54,17 @@ onChanged({aegisBadgeStyle:{newValue:'notch'}},'local');
 drain();
 assert.equal(renders.length-previous,120);
 assert.ok(renders.slice(previous).every(([,style])=>style==='notch'),'Old choices never replay');
+renders.length=0;
+onChanged({aegisShowPerfectStar:{newValue:false},aegisShowOmniStar:{newValue:false}},'local');
+drain();
+assert.equal(rescores,0,'Roll star toggles reuse cached evaluations');
+assert.equal(renders.length,120,'Roll star toggles refresh existing badges');
+assert.equal(ctx.aegisShowPerfectStar,false);
+assert.equal(ctx.aegisShowOmniStar,false);
+onChanged({aegisShowPerfectStar:{newValue:undefined},aegisShowOmniStar:{newValue:undefined}},'local');
+drain();
+assert.equal(ctx.aegisShowPerfectStar,true,'Removing a setting restores the enabled default');
+assert.equal(ctx.aegisShowOmniStar,true);
 onChanged({aegisGradeDisplayMode:{newValue:'potential'}},'local');
 assert.equal(rescores,1,'Changes affecting the grade retain the full scoring path');
 for (const mode of ['equipped','dual','potential']) {

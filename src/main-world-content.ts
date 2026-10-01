@@ -1,3 +1,7 @@
+import { initDimSearch } from './dim-search-adapter';
+import { initInlineSearchEditor } from './inline-search-editor';
+import { interceptDimPopupModules } from './native-popup-positioning';
+import { readDimMasterwork, readDimPerks } from './dim-item-input';
 import { createItemQueue } from './item-queue';
 import { outermostElements } from './dom-utils';
 /**
@@ -24,6 +28,11 @@ import { initPerkRatingTooltips } from './perk-rating-tooltips';
 
 initCompareNativeTooltips();
 initPerkRatingTooltips();
+interceptDimPopupModules(window as unknown as Record<string, any>, popup => {
+  processElement(popup);
+  annotateOverviewPerks(popup);
+  popup.dispatchEvent(new Event('aegis-popup-prepare', { bubbles: true }));
+});
 
 interface PerkInfo {
   name: string;
@@ -878,9 +887,7 @@ function processElement(el: HTMLElement) {
       return;
     }
 
-    let perkHashes: number[] = [];
-    let activePerkHashes: number[] = []; // Only currently plugged perks
-    let perksDataMap: Record<number, PerkInfo> = {};
+    let { perkHashes, activeHashes: activePerkHashes, perksMap: perksDataMap } = readDimPerks(item);
 
     // Equipped Masterwork stat name (e.g. "Range", "Handling")
     let equippedMasterwork: string = '';
@@ -918,12 +925,6 @@ function processElement(el: HTMLElement) {
         if (socket.plugged && socket.plugged.plugDef) {
           const def = socket.plugged.plugDef;
           if (def.hash) {
-            perkHashes.push(def.hash);
-            activePerkHashes.push(def.hash);
-            perksDataMap[def.hash] = {
-              name: def.displayProperties?.name || 'Unknown Perk',
-              icon: def.displayProperties?.icon || '',
-            };
             const plugName = def.displayProperties?.name || '';
             if (plugName && slotCategory && slotCategory !== 'skip' && slotCategory !== 'intrinsic') {
               slotNames.push(plugName);
@@ -936,13 +937,6 @@ function processElement(el: HTMLElement) {
           for (const opt of socket.plugOptions) {
             if (opt.plugDef && opt.plugDef.hash) {
               const def = opt.plugDef;
-              if (!perkHashes.includes(def.hash)) {
-                perkHashes.push(def.hash);
-              }
-              perksDataMap[def.hash] = {
-                name: def.displayProperties?.name || 'Unknown Perk',
-                icon: def.displayProperties?.icon || '',
-              };
               const plugName = def.displayProperties?.name || '';
               if (plugName && slotCategory && slotCategory !== 'skip' && slotCategory !== 'intrinsic') {
                 if (!slotNames.includes(plugName)) slotNames.push(plugName);
@@ -968,74 +962,7 @@ function processElement(el: HTMLElement) {
       }
     }
 
-    // Prefer the primary stat hash; DIM's display names depend on its language.
-    if (item.masterworkInfo) {
-      const mwStatName =
-        masterworkStatName(item.masterworkInfo.stats) ||
-        item.masterworkInfo.statName ||
-        item.masterworkInfo.stat?.displayProperties?.name ||
-        item.masterworkInfo.name ||
-        item.masterworkInfo.typeName ||
-        '';
-      if (mwStatName) {
-        // Strip "masterwork(ed)" as a whole word only (word boundary prevents mid-word cuts)
-        equippedMasterwork = mwStatName
-          .replace(/\bmasterwork(?:ed|s)?\b\s*:?\s*/gi, '')
-          .replace(/:\s*/g, '')
-          .trim();
-      }
-    }
-
-    // === Strategy 2: Socket scan — look for weapon_masterwork* category ===
-    if (!equippedMasterwork && item.sockets && item.sockets.allSockets) {
-      for (const socket of item.sockets.allSockets) {
-        if (!socket || !socket.plugged?.plugDef) continue;
-        const def = socket.plugged.plugDef;
-        const catId = (def.plug?.plugCategoryIdentifier || '').toLowerCase();
-        const typeName = (def.itemTypeDisplayName || '').toLowerCase();
-        // Match weapon masterwork or generic masterwork sockets
-        if (catId.startsWith('weapon_masterwork') ||
-            catId.includes('masterwork') ||
-            typeName.includes('masterwork')) {
-          const mwName = (def.displayProperties?.name || '').trim();
-          if (mwName) {
-            equippedMasterwork = mwName
-              .replace(/\bmasterwork(?:ed|s)?\b\s*:?\s*/gi, '')
-              .replace(/:\s*/g, '')
-              .trim();
-          }
-          if (equippedMasterwork) break;
-        }
-      }
-    }
-
-    // === Normalize full D2 stat names to match sheet abbreviations ===
-    // DIM uses "Reload Speed" but sheets typically say "Reload"; "Blast Radius" → stays, etc.
-
-    // First: strip any "Tier N" prefix (present when statName is null for partial MW)
-    // e.g. "tier 1stability" → "stability", "Tier 10Reload Speed" → "Reload Speed"
-    equippedMasterwork = equippedMasterwork
-      .replace(/\btier\s*\d+\s*/gi, '')
-      .trim();
-
-    const mwNormMap: Record<string, string> = {
-      'reload speed': 'Reload',
-      'reload': 'Reload',
-      'charge time': 'Charge Time',
-      'draw time': 'Draw Time',
-      'blast radius': 'Blast Radius',
-      'projectile speed': 'Velocity',
-      'swing speed': 'Swing Speed',
-      'range': 'Range',
-      'handling': 'Handling',
-      'stability': 'Stability',
-      'velocity': 'Velocity',
-      'impact': 'Impact',
-    };
-    const mwLower = equippedMasterwork.toLowerCase();
-    if (mwNormMap[mwLower]) {
-      equippedMasterwork = mwNormMap[mwLower];
-    }
+    equippedMasterwork = readDimMasterwork(item);
 
     // Instance ID cache logic (handles async loading and popup-to-grid sync)
     const instanceId = item.id;
@@ -1182,7 +1109,7 @@ function flushPendingNodes() {
   }
 }
 
-const OVERLAY_SELECTOR = '.aegis-badge, .aegis-title-badge, .aegis-popup-summary, .aegis-compare-panel, .aegis-perk-label, .aegis-perk-name-sizer, [data-aegis-compare-generated], [data-aegis-details], #aegis-tooltip';
+const OVERLAY_SELECTOR = '.aegis-badge, .aegis-stat-grade, .dimsum-tile-decoration, .aegis-title-badge, .aegis-popup-summary, .aegis-compare-panel, .aegis-perk-label, .aegis-perk-name-sizer, .aegis-inline-search, [data-aegis-compare-generated], [data-aegis-details], #aegis-tooltip';
 
 const observer = new MutationObserver((mutations) => {
   for (const mutation of mutations) {
@@ -1839,3 +1766,6 @@ function startObserver() {
   initManifestDatabase();
 }
 startObserver();
+
+initDimSearch();
+initInlineSearchEditor();

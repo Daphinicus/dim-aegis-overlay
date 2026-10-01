@@ -27,6 +27,7 @@ const context = vm.createContext({
   },
 });
 const code = `let activeDetailsTimeout = null, repositionDetails = null;
+  const popupDetailsLayouts = new WeakMap();
   const boundPopupTitles = new WeakSet();
   ${functions}
   ${resizeBinding.getText(file)}
@@ -34,7 +35,7 @@ const code = `let activeDetailsTimeout = null, repositionDetails = null;
 vm.runInContext(ts.transpileModule(code, { compilerOptions: { target: ts.ScriptTarget.ES2022 } }).outputText, context);
 function fixture() {
   const card = { connected: true, remove() { this.connected = false; } };
-  const popup = { isConnected: true, contains: candidate => candidate === card && card.connected };
+  const popup = { isConnected: true, hasAttribute: () => false, contains: candidate => candidate === card && card.connected };
   let attachments = 0;
   cards.push(card);
   const start = () => context.trackPopupDetails(popup, card, () => { attachments++; card.connected = true; });

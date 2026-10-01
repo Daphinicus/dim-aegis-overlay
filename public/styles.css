@@ -9,25 +9,27 @@
   --aegis-badge-scale: 1;
 }
 
+/* Inventory badges scale their layout lengths without zooming descendants.
+   Previews and other hosts retain their original zoom and unscaled lengths. */
 .aegis-badge {
   zoom: var(--aegis-badge-size, 1);
   position: absolute !important;
-  bottom: 2px !important;
-  left: 2px !important;
-  width: 15px !important;
-  height: 15px !important;
+  bottom: calc(2 * var(--aegis-badge-px, 1px)) !important;
+  left: calc(2 * var(--aegis-badge-px, 1px)) !important;
+  width: calc(15 * var(--aegis-badge-px, 1px)) !important;
+  height: calc(15 * var(--aegis-badge-px, 1px)) !important;
   border-radius: 50% !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  font-size: calc(9.5px * var(--aegis-badge-scale, 1)) !important;
+  font-size: calc(9.5 * var(--aegis-badge-px, 1px) * var(--aegis-badge-scale, 1)) !important;
   font-weight: 800 !important;
   color: #ffffff !important;
   z-index: 99 !important;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.7) !important;
-  border: 1px solid rgba(255, 255, 255, 0.35) !important;
+  box-shadow: 0 calc(1 * var(--aegis-badge-px, 1px)) calc(3 * var(--aegis-badge-px, 1px)) rgba(0, 0, 0, 0.7) !important;
+  border: calc(1 * var(--aegis-badge-px, 1px)) solid rgba(255, 255, 255, 0.35) !important;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8) !important;
+  text-shadow: 0 calc(1 * var(--aegis-badge-px, 1px)) calc(2 * var(--aegis-badge-px, 1px)) rgba(0, 0, 0, 0.8) !important;
   user-select: none !important;
   pointer-events: none !important;
   white-space: nowrap !important;
@@ -35,89 +37,87 @@
   transition: transform 0.18s ease, opacity 0.18s ease !important;
 }
 
+/* Keep the scaling unit on the badge, never on an inventory ancestor.
+   Shared decorations inherit it; reading surfaces use the 1px fallback. */
+.item > .aegis-badge {
+  --aegis-badge-px: calc(1px * var(--aegis-badge-size, 1));
+  zoom: 1;
+}
+
 .aegis-badge.aegis-badge-hidden {
   display: none !important;
 }
 
-/* Ensure badge is dimmed if the parent store item is filtered or has low opacity */
-.aegis-badge {
-  opacity: inherit;
-}
-[class*="dimmed"] .aegis-badge,
-[class*="filtered"] .aegis-badge,
-.dimmed .aegis-badge,
-.search-dimmed .aegis-badge {
-  opacity: 0.25 !important;
-  filter: grayscale(0.8) !important;
-}
+/* Keep badge opacity independent: the tile composites its children when DIM
+   filters it. Inheriting opacity here would apply the same fade twice. */
 
 /* Badge Position Options */
 .aegis-badge.aegis-pos-bl {
-  bottom: 2px !important;
-  left: 2px !important;
+  bottom: calc(2 * var(--aegis-badge-px, 1px)) !important;
+  left: calc(2 * var(--aegis-badge-px, 1px)) !important;
   top: auto !important;
   right: auto !important;
 }
 .aegis-badge.aegis-pos-tl {
-  top: 2px !important;
-  left: 2px !important;
+  top: calc(2 * var(--aegis-badge-px, 1px)) !important;
+  left: calc(2 * var(--aegis-badge-px, 1px)) !important;
   bottom: auto !important;
   right: auto !important;
 }
 .aegis-badge.aegis-pos-tr {
-  top: 2px !important;
-  right: 2px !important;
+  top: calc(2 * var(--aegis-badge-px, 1px)) !important;
+  right: calc(2 * var(--aegis-badge-px, 1px)) !important;
   bottom: auto !important;
   left: auto !important;
 }
 .aegis-badge.aegis-pos-br {
-  bottom: 2px !important;
-  right: 2px !important;
+  bottom: calc(2 * var(--aegis-badge-px, 1px)) !important;
+  right: calc(2 * var(--aegis-badge-px, 1px)) !important;
   top: auto !important;
   left: auto !important;
 }
 
 /* Badge Appearance Styles */
 .aegis-badge.aegis-style-classic {
-  width: 18px !important;
-  height: 18px !important;
-  font-size: calc(11px * var(--aegis-badge-scale, 1)) !important;
+  width: calc(18 * var(--aegis-badge-px, 1px)) !important;
+  height: calc(18 * var(--aegis-badge-px, 1px)) !important;
+  font-size: calc(11 * var(--aegis-badge-px, 1px) * var(--aegis-badge-scale, 1)) !important;
   border-radius: 50% !important;
 }
 
 .aegis-badge.aegis-style-classic.aegis-badge-wide {
   width: auto !important;
   max-width: none !important;
-  height: 18px !important;
+  height: calc(18 * var(--aegis-badge-px, 1px)) !important;
   border-radius: 9999px !important;
-  padding: 0 6px !important;
-  font-size: calc(10px * var(--aegis-badge-scale, 1)) !important;
-  letter-spacing: -0.2px !important;
-  line-height: 18px !important;
+  padding: 0 calc(6 * var(--aegis-badge-px, 1px)) !important;
+  font-size: calc(10 * var(--aegis-badge-px, 1px) * var(--aegis-badge-scale, 1)) !important;
+  letter-spacing: calc(-0.2 * var(--aegis-badge-px, 1px)) !important;
+  line-height: calc(18 * var(--aegis-badge-px, 1px)) !important;
 }
 
 /* Option: Slim Pill (Sleek Compact Badge) */
 .aegis-badge.aegis-style-pill {
   width: auto !important;
-  min-width: 16px !important;
-  max-width: 44px !important;
-  height: 13.5px !important;
-  border-radius: 3px !important;
-  padding: 0 4px !important;
-  font-size: calc(8.5px * var(--aegis-badge-scale, 1)) !important;
-  letter-spacing: -0.2px !important;
-  line-height: 13.5px !important;
+  min-width: calc(16 * var(--aegis-badge-px, 1px)) !important;
+  max-width: calc(44 * var(--aegis-badge-px, 1px)) !important;
+  height: calc(13.5 * var(--aegis-badge-px, 1px)) !important;
+  border-radius: calc(3 * var(--aegis-badge-px, 1px)) !important;
+  padding: 0 calc(4 * var(--aegis-badge-px, 1px)) !important;
+  font-size: calc(8.5 * var(--aegis-badge-px, 1px) * var(--aegis-badge-scale, 1)) !important;
+  letter-spacing: calc(-0.2 * var(--aegis-badge-px, 1px)) !important;
+  line-height: calc(13.5 * var(--aegis-badge-px, 1px)) !important;
 }
 
 .aegis-badge.aegis-style-pill.aegis-badge-wide {
   width: auto !important;
   max-width: none !important;
-  height: 13.5px !important;
-  border-radius: 3px !important;
-  padding: 0 4px !important;
-  font-size: calc(8px * var(--aegis-badge-scale, 1)) !important;
-  letter-spacing: -0.2px !important;
-  line-height: 13.5px !important;
+  height: calc(13.5 * var(--aegis-badge-px, 1px)) !important;
+  border-radius: calc(3 * var(--aegis-badge-px, 1px)) !important;
+  padding: 0 calc(4 * var(--aegis-badge-px, 1px)) !important;
+  font-size: calc(8 * var(--aegis-badge-px, 1px) * var(--aegis-badge-scale, 1)) !important;
+  letter-spacing: calc(-0.2 * var(--aegis-badge-px, 1px)) !important;
+  line-height: calc(13.5 * var(--aegis-badge-px, 1px)) !important;
 }
 
 /* Option 4: Top Notch Mode (Full-Width Top Header Ribbon) */
@@ -129,22 +129,22 @@
   width: 100% !important;
   min-width: 100% !important;
   max-width: 100% !important;
-  height: 12px !important;
+  height: calc(12 * var(--aegis-badge-px, 1px)) !important;
   padding: 0 !important;
   margin: 0 !important;
   box-sizing: border-box !important;
-  border-radius: 0 0 3px 3px !important;
+  border-radius: 0 0 calc(3 * var(--aegis-badge-px, 1px)) calc(3 * var(--aegis-badge-px, 1px)) !important;
   border-top: none !important;
   border-left: none !important;
   border-right: none !important;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.4) !important;
-  font-size: calc(9px * var(--aegis-badge-scale, 1)) !important;
-  line-height: 12px !important;
+  border-bottom: calc(1 * var(--aegis-badge-px, 1px)) solid rgba(255, 255, 255, 0.4) !important;
+  font-size: calc(9 * var(--aegis-badge-px, 1px) * var(--aegis-badge-scale, 1)) !important;
+  line-height: calc(12 * var(--aegis-badge-px, 1px)) !important;
   text-align: center !important;
   justify-content: center !important;
   align-items: center !important;
   display: flex !important;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.8) !important;
+  box-shadow: 0 calc(2 * var(--aegis-badge-px, 1px)) calc(4 * var(--aegis-badge-px, 1px)) rgba(0, 0, 0, 0.8) !important;
   transform: none !important;
 }
 
@@ -153,7 +153,7 @@
   width: 100% !important;
   min-width: 100% !important;
   max-width: 100% !important;
-  border-radius: 0 0 3px 3px !important;
+  border-radius: 0 0 calc(3 * var(--aegis-badge-px, 1px)) calc(3 * var(--aegis-badge-px, 1px)) !important;
 }
 
 
@@ -182,25 +182,25 @@
 }
 
 @keyframes aegis-crown-pulse {
-  from { box-shadow: 0 0 6px rgba(255, 215, 0, 0.5), 0 2px 4px rgba(0, 0, 0, 0.7); }
-  to { box-shadow: 0 0 12px rgba(255, 215, 0, 0.9), 0 2px 6px rgba(0, 0, 0, 0.9); }
+  from { box-shadow: 0 0 calc(6 * var(--aegis-badge-px, 1px)) rgba(255, 215, 0, 0.5), 0 calc(2 * var(--aegis-badge-px, 1px)) calc(4 * var(--aegis-badge-px, 1px)) rgba(0, 0, 0, 0.7); }
+  to { box-shadow: 0 0 calc(12 * var(--aegis-badge-px, 1px)) rgba(255, 215, 0, 0.9), 0 calc(2 * var(--aegis-badge-px, 1px)) calc(6 * var(--aegis-badge-px, 1px)) rgba(0, 0, 0, 0.9); }
 }
 
 .aegis-badge-upgrade-arrow {
   position: absolute !important;
-  top: -6px !important;
-  right: -6px !important;
-  font-size: 5.5px !important;
+  top: calc(-6 * var(--aegis-badge-px, 1px)) !important;
+  right: calc(-6 * var(--aegis-badge-px, 1px)) !important;
+  font-size: calc(5.5 * var(--aegis-badge-px, 1px)) !important;
   background: linear-gradient(135deg, #4ade80, #16a34a) !important;
   color: #ffffff !important;
-  width: 10px !important;
-  height: 10px !important;
+  width: calc(10 * var(--aegis-badge-px, 1px)) !important;
+  height: calc(10 * var(--aegis-badge-px, 1px)) !important;
   border-radius: 50% !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  border: 1px solid #ffffff !important;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.75) !important;
+  border: calc(1 * var(--aegis-badge-px, 1px)) solid #ffffff !important;
+  box-shadow: 0 calc(1 * var(--aegis-badge-px, 1px)) calc(3 * var(--aegis-badge-px, 1px)) rgba(0, 0, 0, 0.75) !important;
   font-family: sans-serif !important;
   z-index: 110 !important;
   line-height: 1 !important;
@@ -259,7 +259,7 @@
 
 .aegis-badge-s {
   background: linear-gradient(135deg, #ffd700, #ff8c00) !important; /* Gold */
-  box-shadow: 0 0 6px rgba(255, 215, 0, 0.5), 0 2px 4px rgba(0, 0, 0, 0.6) !important;
+  box-shadow: 0 0 calc(6 * var(--aegis-badge-px, 1px)) rgba(255, 215, 0, 0.5), 0 calc(2 * var(--aegis-badge-px, 1px)) calc(4 * var(--aegis-badge-px, 1px)) rgba(0, 0, 0, 0.6) !important;
 }
 
 .aegis-badge-a {
@@ -284,7 +284,7 @@
 
 .aegis-badge-n {
   background: linear-gradient(135deg, #7f8c8d, #95a5a6) !important; /* Muted Grey */
-  box-shadow: 0 0 6px rgba(127, 140, 141, 0.1), 0 2px 4px rgba(0, 0, 0, 0.6) !important;
+  box-shadow: 0 0 calc(6 * var(--aegis-badge-px, 1px)) rgba(127, 140, 141, 0.1), 0 calc(2 * var(--aegis-badge-px, 1px)) calc(4 * var(--aegis-badge-px, 1px)) rgba(0, 0, 0, 0.6) !important;
 }
 
 /* Split Badge (Both PvE + PvP Mode) - Authentic Aegis Dual Pill */
@@ -298,32 +298,32 @@
   align-items: stretch !important;
   justify-content: center !important;
   width: auto !important;
-  max-width: calc(100% - 4px) !important;
+  max-width: calc(100% - calc(4 * var(--aegis-badge-px, 1px))) !important;
   overflow: visible !important;
   background: transparent !important;
-  border: 1px solid rgba(255, 255, 255, 0.45) !important;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.75) !important;
+  border: calc(1 * var(--aegis-badge-px, 1px)) solid rgba(255, 255, 255, 0.45) !important;
+  box-shadow: 0 calc(1 * var(--aegis-badge-px, 1px)) calc(3 * var(--aegis-badge-px, 1px)) rgba(0, 0, 0, 0.75) !important;
   box-sizing: border-box !important;
 }
 
 .aegis-badge.aegis-badge-split.aegis-style-classic {
-  height: 18.5px !important;
+  height: calc(18.5 * var(--aegis-badge-px, 1px)) !important;
   border-radius: 9999px !important;
-  font-size: calc(10px * var(--aegis-badge-scale, 1)) !important;
+  font-size: calc(10 * var(--aegis-badge-px, 1px) * var(--aegis-badge-scale, 1)) !important;
 }
 
 .aegis-badge.aegis-badge-split.aegis-style-pill {
-  height: 15px !important;
-  border-radius: 3.5px !important;
-  font-size: calc(9.5px * var(--aegis-badge-scale, 1)) !important;
+  height: calc(15 * var(--aegis-badge-px, 1px)) !important;
+  border-radius: calc(3.5 * var(--aegis-badge-px, 1px)) !important;
+  font-size: calc(9.5 * var(--aegis-badge-px, 1px) * var(--aegis-badge-scale, 1)) !important;
 }
 
 .aegis-badge.aegis-badge-split.aegis-style-notch {
-  height: 13.5px !important;
+  height: calc(13.5 * var(--aegis-badge-px, 1px)) !important;
   width: 100% !important;
   max-width: 100% !important;
-  border-radius: 0 0 3.5px 3.5px !important;
-  font-size: calc(9.5px * var(--aegis-badge-scale, 1)) !important;
+  border-radius: 0 0 calc(3.5 * var(--aegis-badge-px, 1px)) calc(3.5 * var(--aegis-badge-px, 1px)) !important;
+  font-size: calc(9.5 * var(--aegis-badge-px, 1px) * var(--aegis-badge-scale, 1)) !important;
 }
 
 .aegis-split-inner {
@@ -342,32 +342,58 @@
   justify-content: center !important;
   text-align: center !important;
   height: 100% !important;
-  padding: 0 4.5px !important;
+  padding: 0 calc(4.5 * var(--aegis-badge-px, 1px)) !important;
   font-weight: 850 !important;
   color: #ffffff !important;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9) !important;
+  text-shadow: 0 calc(1 * var(--aegis-badge-px, 1px)) calc(2 * var(--aegis-badge-px, 1px)) rgba(0, 0, 0, 0.9) !important;
   font-size: inherit !important;
   box-sizing: border-box !important;
   line-height: 1 !important;
-  letter-spacing: -0.3px !important;
+  letter-spacing: calc(-0.3 * var(--aegis-badge-px, 1px)) !important;
   white-space: nowrap !important;
   overflow: hidden !important;
 }
 
 .aegis-split-half.aegis-split-right {
-  border-left: 1px solid rgba(0, 0, 0, 0.35) !important;
+  border-left: calc(1 * var(--aegis-badge-px, 1px)) solid rgba(0, 0, 0, 0.35) !important;
 }
 
 /* Compact scaling for potential transition arrows */
 .aegis-badge-split .aegis-split-half.aegis-split-transition {
-  font-size: calc(8.5px * var(--aegis-badge-scale, 1)) !important;
-  padding: 0 2.5px !important;
-  letter-spacing: -0.4px !important;
+  font-size: calc(8.5 * var(--aegis-badge-px, 1px) * var(--aegis-badge-scale, 1)) !important;
+  padding: 0 calc(2.5 * var(--aegis-badge-px, 1px)) !important;
+  letter-spacing: calc(-0.4 * var(--aegis-badge-px, 1px)) !important;
 }
 
 .aegis-badge-none {
   background: #3b4252 !important;
   color: rgba(255, 255, 255, 0.6) !important;
+}
+
+/* Keep roll stars and both grades readable when a split badge gets narrow. */
+.aegis-badge.aegis-badge-split.aegis-has-roll-star:not(.aegis-style-footer, .aegis-color-only) {
+  height: auto !important;
+  min-height: calc(18.5 * var(--aegis-badge-px, 1px)) !important;
+}
+.aegis-badge.aegis-badge-split.aegis-has-roll-star.aegis-style-pill:not(.aegis-color-only) {
+  min-height: calc(15 * var(--aegis-badge-px, 1px)) !important;
+}
+.aegis-badge.aegis-badge-split.aegis-has-roll-star.aegis-style-notch:not(.aegis-color-only) {
+  min-height: calc(13.5 * var(--aegis-badge-px, 1px)) !important;
+}
+.aegis-badge.aegis-badge-split.aegis-has-roll-star .aegis-split-inner {
+  height: auto !important;
+}
+.aegis-badge-split.aegis-has-roll-star .aegis-split-half {
+  min-width: 0 !important;
+  height: auto !important;
+  padding: calc(1 * var(--aegis-badge-px, 1px)) calc(2 * var(--aegis-badge-px, 1px)) !important;
+  white-space: normal !important;
+  overflow-wrap: anywhere !important;
+  line-height: 1.2 !important;
+}
+.aegis-badge.aegis-has-roll-star .aegis-grade-text {
+  text-box: normal;
 }
 
 /* Dual Section Side-by-Side Tooltip Layout */
@@ -2630,44 +2656,6 @@ button:has(> .aegis-popup-summary) {
   vertical-align: middle;
 }
 
-.aegis-tooltip-compact-recs {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 11px;
-  margin-bottom: 8px;
-  padding: 5px 8px;
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.04);
-  border-radius: 4px;
-}
-
-.aegis-tooltip-recs-label {
-  color: #8f8f94;
-  font-weight: 600;
-}
-
-.aegis-tooltip-recs-value {
-  color: #e3e3e8;
-  font-weight: 500;
-  text-align: right;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  max-width: 170px;
-}
-
-.aegis-tooltip-meta-note {
-  font-size: 11.5px;
-  line-height: 1.4;
-  color: #bcbcbf;
-  background: rgba(255, 255, 255, 0.02);
-  border-left: 2px solid #e8a534;
-  padding: 6px 10px;
-  border-radius: 0 4px 4px 0;
-  margin-top: 4px;
-}
-
 /* ==========================================
    6. Aegis Database Explorer UI
    ========================================== */
@@ -3134,30 +3122,6 @@ button:has(> .aegis-popup-summary) {
 .aegis-help-tooltip .grade-e-pill,
 .aegis-welcome-modal .grade-e-pill {
   background: linear-gradient(135deg, #7f8c8d, #5a5a5a) !important;
-}
-
-.aegis-armor-bonus-section {
-  padding: 10px 14px !important;
-  text-align: left !important;
-}
-
-.aegis-armor-bonus-header {
-  display: flex !important;
-  justify-content: space-between !important;
-  align-items: center !important;
-  margin-bottom: 6px !important;
-}
-
-.aegis-armor-bonus-title {
-  font-size: 13px !important;
-  color: #ffffff !important;
-  font-weight: 700 !important;
-}
-
-.aegis-armor-bonus-desc {
-  font-size: 12px !important;
-  color: #cccccc !important;
-  line-height: 1.4 !important;
 }
 
 .aegis-armor-bonus-numbers {
@@ -4156,11 +4120,151 @@ button:has(> .aegis-popup-summary) {
 }
 
 /* Aegis Search Widget Styles */
-.aegis-search-widget {
+input[data-aegis-native-search="true"] {
   position: absolute !important;
-  right: 108px !important; /* shifted further left to avoid overlapping DIM's search clear (X) and settings buttons */
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  clip-path: inset(50%) !important;
+  overflow: hidden !important;
+  pointer-events: none !important;
+}
+
+.aegis-inline-search {
+  flex: 1 1 0 !important;
+  min-width: 0 !important;
+  width: 0 !important;
+  min-height: 26px !important;
+  max-height: 32px !important;
+  line-height: 26px !important;
+  white-space: pre !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  scrollbar-width: none !important;
+  outline: none !important;
+  color: var(--theme-text, #ddd) !important;
+  caret-color: var(--theme-accent-primary, #e8a534) !important;
+  font: inherit;
+}
+
+.aegis-inline-search::-webkit-scrollbar { display: none; }
+.aegis-inline-search[hidden] { display: none !important; }
+.aegis-inline-search[data-empty="true"]::before {
+  content: attr(data-placeholder);
+  color: #999;
+  pointer-events: none;
+}
+.aegis-inline-search[aria-invalid="true"] { text-decoration: underline wavy #e57373; }
+
+.aegis-search-token {
+  display: inline-flex !important;
+  align-items: center !important;
+  vertical-align: middle !important;
+  box-sizing: border-box !important;
+  height: 22px !important;
+  padding: 2px 6px !important;
+  gap: 5px !important;
+  border: 1px solid rgba(150, 184, 206, 0.3) !important;
+  border-radius: 4px !important;
+  background: rgba(107, 151, 181, 0.13) !important;
+  color: #b8d0df !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  line-height: 16px !important;
+  white-space: pre !important;
+}
+
+/* Match Master's Aegis search-pill palette, independent of item-grade settings. */
+.aegis-search-token[data-kind="aegis"] {
+  color: #ffd700 !important;
+  background: rgba(255, 215, 0, 0.08) !important;
+  border-color: rgba(255, 215, 0, 0.2) !important;
+  font-weight: 700 !important;
+}
+
+.aegis-search-token-remove {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex: 0 0 14px !important;
+  width: 14px !important;
+  height: 16px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: 0 !important;
+  border-radius: 2px !important;
+  background: transparent !important;
+  color: inherit !important;
+  opacity: 0.65;
+  font-size: 14px !important;
+  line-height: 1 !important;
+  cursor: pointer !important;
+  user-select: none !important;
+}
+.aegis-search-token-label { white-space: pre !important; }
+.aegis-search-token-label strong { font-weight: 900 !important; }
+.aegis-search-token-icon {
+  width: 14px !important;
+  height: 14px !important;
+  object-fit: contain !important;
+  flex: 0 0 14px !important;
+}
+.aegis-search-token-icon[hidden] { display: none !important; }
+[data-aegis-search-display-host="true"] {
+  position: relative !important;
+  box-sizing: border-box !important;
+  padding-right: 34px !important;
+  min-width: 0 !important;
+}
+[data-aegis-search-display-host="true"] > [data-aegis-search-display-bar="true"] {
+  min-width: 0 !important;
+  width: auto !important;
+}
+.aegis-search-display-btn {
+  position: absolute !important;
+  right: 0 !important;
   top: 50% !important;
   transform: translateY(-50%) !important;
+  flex: 0 0 28px !important;
+  width: 28px !important;
+  height: 24px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 1px solid transparent !important;
+  border-radius: 4px !important;
+  background: transparent !important;
+  color: #b8d0df !important;
+  font: 600 11px/1 monospace !important;
+  cursor: pointer !important;
+}
+.aegis-search-display-btn[data-mode="exact"], .aegis-search-display-btn[data-mode="readable"] {
+  border-color: rgba(150, 184, 206, 0.3) !important;
+  background: rgba(107, 151, 181, 0.13) !important;
+}
+.aegis-search-display-btn:hover, .aegis-search-display-btn:focus-visible {
+  color: #fff !important;
+  background: rgba(150, 184, 206, 0.2) !important;
+}
+.aegis-search-display-btn:focus-visible { outline: 2px solid #b8d0df !important; outline-offset: 1px; }
+.aegis-search-token-remove:hover, .aegis-search-token-remove:focus-visible {
+  opacity: 1;
+  background: rgba(255, 255, 255, 0.12) !important;
+  outline: 1px solid currentColor !important;
+}
+.aegis-search-operator {
+  color: #dcb97a !important;
+  font-weight: 700 !important;
+}
+.aegis-search-paren { color: #d2b6e8 !important; font-weight: 700 !important; }
+.aegis-search-comment { color: #9ca2aa !important; font-style: italic; }
+
+.aegis-search-widget {
+  /* Reserve space alongside DIM's conditional save, clear, and action buttons.
+     The menu uses the positioned search wrapper as its containing block. */
+  position: static !important;
+  flex: 0 0 auto !important;
+  margin: 0 6px !important;
   display: flex !important;
   align-items: center !important;
   z-index: 100 !important;
@@ -4225,6 +4329,9 @@ button:has(> .aegis-popup-summary) {
 }
 
 .aegis-menu-header {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
   font-size: 10.5px !important;
   font-weight: 700 !important;
   color: #ffd700 !important;
@@ -4233,6 +4340,30 @@ button:has(> .aegis-popup-summary) {
   letter-spacing: 0.5px !important;
   border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
   margin-bottom: 4px !important;
+}
+
+.aegis-menu-pin {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 28px !important;
+  height: 28px !important;
+  padding: 4px !important;
+  border: 1px solid transparent !important;
+  border-radius: 4px !important;
+  background: transparent !important;
+  color: #aaa !important;
+  cursor: pointer !important;
+}
+
+.aegis-menu-pin[aria-pressed="true"], .aegis-menu-pin:hover {
+  color: #ffd700 !important;
+  background: rgba(255, 215, 0, 0.12) !important;
+}
+
+.aegis-menu-pin:focus-visible {
+  outline: 2px solid #ffd700 !important;
+  outline-offset: 1px !important;
 }
 
 .aegis-widget-row {
@@ -4365,55 +4496,6 @@ button:has(> .aegis-popup-summary) {
 .aegis-menu-clear-btn:hover {
   background: rgba(231, 76, 60, 0.12) !important;
   border-color: #e74c3c !important;
-}
-
-/* Aegis Filter Tag Pill */
-.aegis-filter-pill {
-  position: absolute !important;
-  left: 34px !important; /* positioned perfectly after DIM's search magnifying glass icon */
-  top: 50% !important;
-  transform: translateY(-50%) !important;
-  background: rgba(255, 215, 0, 0.08) !important;
-  border: 1px solid rgba(255, 215, 0, 0.2) !important;
-  border-radius: 4px !important;
-  padding: 2px 6px !important;
-  display: flex !important;
-  align-items: center !important;
-  gap: 6px !important;
-  z-index: 10 !important;
-  color: #ffd700 !important;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
-  font-size: 11px !important;
-  font-weight: 700 !important;
-  letter-spacing: 0.2px !important;
-  user-select: none !important;
-  pointer-events: auto !important;
-  box-sizing: border-box !important;
-  height: 22px !important;
-}
-
-.aegis-pill-text {
-  white-space: nowrap !important;
-}
-
-.aegis-pill-close {
-  background: transparent !important;
-  border: none !important;
-  color: rgba(255, 215, 0, 0.5) !important;
-  font-size: 14px !important;
-  font-weight: 700 !important;
-  cursor: pointer !important;
-  padding: 0 !important;
-  line-height: 1 !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  transition: color 0.1s ease !important;
-  outline: none !important;
-}
-
-.aegis-pill-close:hover {
-  color: #ff5c5c !important;
 }
 
 /* Masterwork and Mod Tooltip Recommendation Badges */
@@ -5191,25 +5273,6 @@ button:has(> .aegis-popup-summary) {
   color: #d8dee9;
 }
 
-.aegis-shopping-copies-badge {
-  background: rgba(136, 192, 208, 0.1);
-  border: 1px solid rgba(136, 192, 208, 0.28);
-  color: #88c0d0;
-  font-size: 9.5px;
-  font-weight: 600;
-  padding: 1.5px 6px;
-  border-radius: 3px;
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
-
-.aegis-shopping-copies-badge:hover,
-.aegis-shopping-copies-badge.active {
-  background: rgba(136, 192, 208, 0.22);
-  border-color: #88c0d0;
-  color: #fff;
-}
-
 /* Recommended Perks Layout in Shopping Card */
 .aegis-shopping-perks-section {
   display: flex;
@@ -5287,22 +5350,6 @@ button:has(> .aegis-popup-summary) {
   padding: 1.5px 5px;
   border-radius: 3px;
   white-space: nowrap;
-}
-
-.aegis-shopping-alt-section {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 5px;
-  font-size: 10.5px;
-  color: #d8dee9;
-}
-
-.aegis-shopping-alt-chips-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
-  align-items: center;
 }
 
 .aegis-btn-find-alt {
@@ -5587,25 +5634,26 @@ button:has(> .aegis-popup-summary) {
   /* Keep DIM's explicit height and size containment. Padding adds a strip
      below the native icon/power label without sizing the tile from its
      lazily loaded children. Current/potential grades use the same strip height.
-     The badge's zoom scales its box; reserve that scaled height on the tile
-     without changing DIM's containment. Dual grades reserve their measured height. */
+     Reserve the scaled badge height without changing DIM's containment.
+     Adaptive strips override this padding with their measured CSS height. */
   box-sizing: content-box !important;
   padding-bottom: calc(var(--aegis-footer-height) * var(--aegis-badge-size, 1)) !important;
 }
 
-/* Only Both + Dual needs extra room for equipped-to-potential grades. */
+/* Both + Dual starts taller; roll stars can also expand the strip as needed. */
 .item:has(> .aegis-style-footer.aegis-badge-split),
 .aegis-badge.aegis-style-footer.aegis-badge-split {
   --aegis-footer-height: var(--aegis-split-footer-height, 16px);
 }
 
 .item:has(> .aegis-style-footer.aegis-badge-split[data-aegis-adaptive-footer]) {
-  --aegis-footer-height: var(--aegis-measured-footer-height, 25px);
+  /* Direct sizing reports the final CSS height; do not scale it twice. */
+  padding-bottom: var(--aegis-measured-footer-height, calc(var(--aegis-split-footer-height, 16px) * var(--aegis-badge-size, 1))) !important;
 }
 
 .item > .aegis-badge.aegis-style-footer[data-aegis-adaptive-footer] {
   height: auto !important;
-  min-height: 25px !important;
+  min-height: calc(var(--aegis-split-footer-height, 16px) * var(--aegis-footer-layout-scale, 1)) !important;
 }
 
 .aegis-style-footer[data-aegis-adaptive-footer] .aegis-grade-text {
@@ -5636,27 +5684,47 @@ button:has(> .aegis-popup-summary) {
   width: 100% !important;
   min-width: 0 !important;
   max-width: 100% !important;
-  height: var(--aegis-footer-height) !important;
+  height: calc(var(--aegis-footer-height) * var(--aegis-footer-layout-scale, 1)) !important;
   min-height: 0 !important;
   margin: 0 !important;
-  padding: 1px 2px !important;
+  padding: calc(1 * var(--aegis-badge-px, 1px)) calc(2 * var(--aegis-badge-px, 1px)) !important;
   box-sizing: border-box !important;
   border: 0 !important;
-  border-top: 1px solid rgba(255, 255, 255, 0.4) !important;
-  border-radius: 0 0 3px 3px !important;
-  font-size: calc(9px * var(--aegis-badge-scale, 1)) !important;
+  border-radius: 0 0 calc(3 * var(--aegis-badge-px, 1px)) calc(3 * var(--aegis-badge-px, 1px)) !important;
+  font-size: calc(9 * var(--aegis-badge-px, 1px) * var(--aegis-badge-scale, 1)) !important;
   line-height: 1.2 !important;
   white-space: normal !important;
   overflow-wrap: anywhere !important;
   text-align: center !important;
-  gap: 2px !important;
+  gap: calc(2 * var(--aegis-badge-px, 1px)) !important;
   transform: none !important;
 }
 
-.item > .aegis-badge.aegis-style-footer {
+.aegis-badge.aegis-style-footer,
+.aegis-badge.aegis-style-footer.aegis-badge-split,
+.aegis-badge.aegis-style-footer .aegis-split-half {
+  box-shadow: none !important;
+}
+
+.aegis-badge.aegis-style-footer::after {
+  /* Cast the tile's shadow across the strip, including both split backgrounds. */
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: inset 0 calc(2 * var(--aegis-badge-px, 1px)) calc(3 * var(--aegis-badge-px, 1px)) calc(-2 * var(--aegis-badge-px, 1px)) rgba(0, 0, 0, 0.7);
+  pointer-events: none;
+}
+
+.item > .aegis-badge.aegis-style-footer,
+.item > .aegis-badge.aegis-style-footer.aegis-color-only {
   position: absolute !important;
-  inset: auto 0 0 !important;
-  height: var(--aegis-footer-height) !important;
+  /* Reserve scaled strip height while keeping DIM's icon frame exactly 1px wide.
+     A preview outside a native item retains its original height and zoom. */
+  --aegis-footer-layout-scale: var(--aegis-badge-size, 1);
+  inset: auto 1px 0 !important;
+  width: auto !important;
+  height: calc(var(--aegis-footer-height) * var(--aegis-footer-layout-scale, 1)) !important;
   min-height: 0 !important;
 }
 
@@ -5692,7 +5760,7 @@ button:has(> .aegis-popup-summary) {
   flex: 1 1 0 !important;
   min-width: 0 !important;
   height: auto !important;
-  padding: 1px !important;
+  padding: calc(1 * var(--aegis-badge-px, 1px)) 0 !important;
   white-space: normal !important;
   line-height: 1.2 !important;
 }
@@ -5702,22 +5770,22 @@ button:has(> .aegis-popup-summary) {
 .aegis-style-notch .aegis-badge-upgrade-arrow {
   position: static !important;
   align-self: center !important;
-  margin: 0 2px !important;
+  margin: 0 calc(2 * var(--aegis-badge-px, 1px)) !important;
   z-index: 10 !important;
 }
 
 /* Style Option 1: Classic Circle (scaled up for Top Notch and Bottom Strip) */
 .aegis-style-footer .aegis-badge-upgrade-arrow.aegis-upgrade-circle,
 .aegis-style-notch .aegis-badge-upgrade-arrow.aegis-upgrade-circle {
-  width: 11.5px !important;
-  height: 11.5px !important;
-  flex: 0 0 11.5px !important;
+  width: calc(11.5 * var(--aegis-badge-px, 1px)) !important;
+  height: calc(11.5 * var(--aegis-badge-px, 1px)) !important;
+  flex: 0 0 calc(11.5 * var(--aegis-badge-px, 1px)) !important;
   border-radius: 50% !important;
   background: linear-gradient(135deg, #4ade80, #16a34a) !important;
-  border: 1px solid #ffffff !important;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.8) !important;
+  border: calc(1 * var(--aegis-badge-px, 1px)) solid #ffffff !important;
+  box-shadow: 0 calc(1 * var(--aegis-badge-px, 1px)) calc(3 * var(--aegis-badge-px, 1px)) rgba(0, 0, 0, 0.8) !important;
   color: #ffffff !important;
-  font-size: 6.5px !important;
+  font-size: calc(6.5 * var(--aegis-badge-px, 1px)) !important;
   line-height: 1 !important;
   display: inline-flex !important;
   align-items: center !important;
@@ -5733,11 +5801,11 @@ button:has(> .aegis-popup-summary) {
   border: 0 !important;
   box-shadow: none !important;
   text-shadow: none !important;
-  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.75)) !important;
+  filter: drop-shadow(0 calc(1 * var(--aegis-badge-px, 1px)) calc(1 * var(--aegis-badge-px, 1px)) rgba(0, 0, 0, 0.75)) !important;
   border-radius: 0 !important;
-  width: 9px !important;
-  height: 9px !important;
-  flex: 0 0 9px !important;
+  width: calc(9 * var(--aegis-badge-px, 1px)) !important;
+  height: calc(9 * var(--aegis-badge-px, 1px)) !important;
+  flex: 0 0 calc(9 * var(--aegis-badge-px, 1px)) !important;
   box-sizing: border-box !important;
 }
 
@@ -5749,11 +5817,11 @@ button:has(> .aegis-popup-summary) {
   border: 0 !important;
   box-shadow: none !important;
   text-shadow: none !important;
-  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.9)) drop-shadow(0 0 1px rgba(0, 0, 0, 0.8)) !important;
+  filter: drop-shadow(0 calc(1 * var(--aegis-badge-px, 1px)) calc(2 * var(--aegis-badge-px, 1px)) rgba(0, 0, 0, 0.9)) drop-shadow(0 0 calc(1 * var(--aegis-badge-px, 1px)) rgba(0, 0, 0, 0.8)) !important;
   border-radius: 0 !important;
-  width: 10px !important;
-  height: 10px !important;
-  flex: 0 0 10px !important;
+  width: calc(10 * var(--aegis-badge-px, 1px)) !important;
+  height: calc(10 * var(--aegis-badge-px, 1px)) !important;
+  flex: 0 0 calc(10 * var(--aegis-badge-px, 1px)) !important;
   box-sizing: border-box !important;
 }
 
@@ -5771,20 +5839,20 @@ button:has(> .aegis-popup-summary) {
 }
 
 .aegis-badge.aegis-color-only:is(.aegis-style-classic, .aegis-style-pill) {
-  width: 8px !important;
-  max-width: 8px !important;
-  height: 8px !important;
+  width: calc(8 * var(--aegis-badge-px, 1px)) !important;
+  max-width: calc(8 * var(--aegis-badge-px, 1px)) !important;
+  height: calc(8 * var(--aegis-badge-px, 1px)) !important;
   border-radius: 50% !important;
 }
 
 .aegis-badge.aegis-color-only.aegis-style-pill {
-  border-radius: 2px !important;
+  border-radius: calc(2 * var(--aegis-badge-px, 1px)) !important;
 }
 
 .aegis-badge.aegis-color-only:is(.aegis-style-notch, .aegis-style-footer) {
   width: 100% !important;
   max-width: 100% !important;
-  height: 3px !important;
+  height: calc(3 * var(--aegis-badge-px, 1px)) !important;
   border: 0 !important;
   border-radius: 0 !important;
 }
@@ -5796,6 +5864,27 @@ button:has(> .aegis-popup-summary) {
   height: 100% !important;
   padding: 0 !important;
   border: 0 !important;
+}
+
+/* Split grades use the background element as their text container. A block
+   container gives footer text the same trimming and vertical centering as its
+   former inner span. Unsafe centering preserves clipping of oversized grades. */
+.aegis-style-footer .aegis-split-label {
+  display: block !important;
+  align-content: unsafe center !important;
+  /* A scroll container changes text trimming and fractional-pixel painting. */
+  overflow: clip !important;
+  text-box: trim-both cap alphabetic;
+}
+.aegis-has-roll-star .aegis-split-label,
+.aegis-style-footer[data-aegis-adaptive-footer] .aegis-split-label {
+  text-box: normal;
+}
+.aegis-badge.aegis-color-only .aegis-split-label {
+  /* Keep grade text available to color selection and the badge's accessible
+     label while hiding its glyphs independently of the colored background. */
+  font-size: 0 !important;
+  line-height: 0 !important;
 }
 
 .interactive-weapon-tile:has(> .aegis-style-footer),
@@ -5864,10 +5953,6 @@ button:has(> .aegis-popup-summary) {
   z-index: 119;
 }
 
-.item-drag-container[data-aegis-gradient-glow]:has(> .item > .aegis-badge[data-aegis-dimmed="1"])::before,
-.item-drag-container[data-aegis-gradient-glow]:has(> .item > .aegis-badge[data-aegis-dimmed="1"])::after {
-  opacity: .15;
-}
 .aegis-compare-panel { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; padding: 6px 4px; color: #c6ceda; font-size: 11px; position: sticky; left: 0; width: fit-content; max-width: calc(100vw - 36px); }
 .aegis-compare-panel strong { color: #efc75a; font-weight: 600; }
 .aegis-compare-panel button { color: #bac7da; background: transparent; border: 0; padding: 3px 4px; cursor: pointer; font: inherit; }
@@ -5996,3 +6081,47 @@ button.aegis-perk-layout-toggle { position: static; flex-shrink: 0; }
 .aegis-overview-footer .aegis-compare-context button { padding: 4px 10px; }
 .aegis-overview-footer .aegis-compare-context button[aria-pressed="true"] { background: transparent; color: #ffb300; }
 .aegis-overview-footer .aegis-compare-context button:focus-visible { outline: 2px solid #efbf51; outline-offset: -2px; }
+
+/* One grade in the native row: inherit its size and keep its vertical center.
+   An auto margin leaves the remaining native icons and power right-aligned. */
+.aegis-stat-grade {
+  order: -1;
+  flex: 0 0 auto;
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+  font: inherit;
+  font-weight: 700;
+  line-height: 1;
+  margin-inline-end: auto;
+  text-align: start;
+  white-space: nowrap;
+  text-shadow: none;
+  pointer-events: none;
+  user-select: none;
+}
+[data-aegis-stat-bar] > :is(.fa-thumbs-up, .fa-thumbs-down) { display: none !important; }
+.aegis-wishlist-icon { width: 1em; height: 1em; fill: currentColor; vertical-align: -.1em; flex-shrink: 0; }
+/* Cover the bitmap's baked-in row with fixed mock content. The background
+   matches weapon-mockup.png; none of these hooks depend on DIM markup. */
+.aegis-stat-preview {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  height: 22%;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 1px;
+  padding: 0 2px;
+  background: #9aad11;
+  color: #111;
+  font: 700 12px/1 Arial, sans-serif;
+  pointer-events: none;
+}
+.aegis-stat-preview > .fa-thumbs-up { color: #006582; margin-inline-end: auto; }
+.aegis-preview-ammo, .aegis-preview-damage { width: 10px; height: 12px; flex: 0 0 auto; fill: currentColor; }
+.aegis-preview-ammo { color: #4c543c; }
+.aegis-preview-damage { color: #00aeef; }
+.aegis-tile-footer > .aegis-stat-preview { top: calc(84px * .78); bottom: auto; height: calc(84px * .22); }
+#aegis-badge-style-segmented { flex-wrap: wrap; }

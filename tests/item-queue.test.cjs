@@ -83,3 +83,25 @@ function harness(process) {
 }
 
 console.log('Passed: visible items first, yielding, deduplication, current values, cancellation, removed items, batch callbacks, and recovery after a failed item.');
+
+{
+  const processed = [], h = harness(item => processed.push(item.id));
+  const skipped = h.item('skipped'), visible = h.item('visible');
+  skipped.checkVisibility = () => false;
+  skipped.getBoundingClientRect = () => { throw new Error('Hidden subtree was forced to render'); };
+  h.queue.add(skipped); h.queue.add(visible);
+  h.drain();
+  assert.deepEqual(processed, ['visible', 'skipped'], 'hidden items still finish after visible items');
+  assert.equal(h.batches.flat().length, 2);
+
+  let reads = 0;
+  skipped.checkVisibility = (...args) => {
+    assert.equal(args.length, 0, 'opacity and offscreen rendering remain eligible for preparation');
+    return true;
+  };
+  skipped.getBoundingClientRect = () => { reads++; return { top: 10, bottom: 60, left: 0, right: 50, width: 50, height: 50 }; };
+  h.queue.add(skipped); h.drain();
+  assert.equal(reads, 1, 'a revealed item participates in viewport priority again');
+  assert.equal(processed.at(-1), 'skipped');
+}
+console.log('Passed: hidden content avoids geometry reads, still processes, and reprioritizes after reveal.');

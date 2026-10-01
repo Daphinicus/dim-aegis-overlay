@@ -58,8 +58,18 @@ or Zen and Chromium, both with and without DIMSUM:
 - Drag both badge sliders, switch badge styles rapidly, search, and scroll a large
   vault. Check for missing, duplicate, stale, or incorrectly dimmed badges.
 - Toggle DIMSUM's stats bar and check Bottom Strip spacing.
+- Toggle the 5/5 and omni roll stars under Badges. Check every badge style,
+  independent PvE/PvP stars, color-only visibility, and the live preview.
 
 ## Review transitions and shared state
+
+Popup first-paint tests exercise the captured release and beta `usePopper` modules
+through the native placement adapter. They verify synchronous Aegis preparation,
+expanded Overview width, inline height, and cancellation before the first paint.
+The adapter replaces positioning only for item popups with the native action rail;
+other tooltips keep DIM's hook. If the module signature changes, Aegis retains
+native positioning and uses inline content when the sidebar cannot fit. No
+visibility timer or post-paint popup flip is used.
 
 When reviewing a UI change, inspect the live DIM structure before assuming that
 navigation removes a component. DIM can retain Overview underneath Armory. A
@@ -86,7 +96,29 @@ layer structure. A fixture that removes a popup cannot validate cleanup for a
 popup that DIM actually retains. Run the corresponding live transition after
 the fix; report fixture coverage separately from live verification.
 
+## Badge ownership and native dimming
+
+As of September 25, 2026, DIM badges remain children of the native item tile.
+DIM's search opacity and ancestor filters composite the whole tile, including
+its badge. Aegis no longer observes body class/style changes for badge dimming,
+reads computed styles to infer search state, or schedules dimming timers.
+The old opacity-inherit and descendant dimming rules are removed to avoid
+multiplying the tile fade on its badge. This supersedes the earlier native-search
+plan's requirement to retain badge opacity synchronization.
+
+Tests in tests/badge-dimming-browser.cjs use production badge injection and CSS.
+They cover all four styles and corner positions, directly annotated and wrapped
+tiles, picker tiles, variable native search opacity, late badge attachment,
+ancestor filters, and intermediate tab-animation frames. They require badges
+to remain children of the tile, with no extra opacity/grayscale or per-search
+badge style/state writes. Footer, star, and first-paint cache-restoration suites
+cover layout and presentation independently.
+
 ## Builds and packaging
+
+Native Aegis search has a pinned-DIM browser fixture and an opt-in live consumer
+test. See [Native Aegis search](NATIVE_SEARCH.md#verification) for commands,
+coverage, compatibility assumptions, and the limits of the current live checks.
 
 `npm run build` type-checks without emitting JavaScript beside TypeScript, then
 creates standalone extension bundles in `dist`. Bundlers prefer TypeScript source
@@ -103,3 +135,46 @@ approved. Locally generated ZIPs are review artifacts, not published releases.
 To update the installed Zen testing extension, use `npm run build:testing` before
 the reload shortcut. The shortcut loads the existing testing files; it does not
 compile source. See the README for configuration.
+
+## Inventory badge scaling
+
+All four DIM item badge styles now size their layout lengths directly. See
+[Inventory badge scaling](BADGE_SCALING.md) for ownership, measured performance,
+fractional-font differences, and the independent legacy-zoom comparisons.
+Run `tests/badge-scale-browser.cjs` when changing shared badge dimensions or
+inline grade colors. Check Classic, Slim Pill, Top Notch, and Bottom Strip;
+include popup previews and Aegis-only usage as well as DIM-SUM.
+
+
+`tests/badge-scale-dependencies-browser.cjs` additionally exercises the
+production settings controller against the prior variable-based implementation.
+Its 1,680 cases compare geometry, wrapping, and computed appearance through
+size/text/color updates. It checks real hover, preview and reading surfaces,
+new badge attachment, stylesheet reuse/recovery, and color-cache invalidation.
+Run it when changing resolved badge lengths or inline text-shadow caching.
+It is included in the standard browser test runner.
+
+The footer-root investigation expanded that matrix to root dimensions, fonts,
+shadows, and pseudo-element appearance. Static hover geometry must be captured
+while each reference frame is actually hovered; one pointer cannot hover both
+frames simultaneously. The test then removes the static transition override to
+verify idle transitions and preserved hover-fade entry/exit timing.
+
+## Stat letter variant
+
+The fifth item badge style uses one colored letter in DIM's existing stats bar.
+See [Stat letter experiment](STAT_LETTER_EXPERIMENT.md) for its independent
+activity/grade choices, native-bar lifecycle, and reversible settings.
+
+`tests/stat-grade-browser.cjs` covers 42 standard/beta bar and grade cases,
+one-letter normalization, missing source data, native-node identity, row geometry,
+color changes, and removal. The inventory-badge, badge-stars, activity-mode,
+and translation suites cover live bar replacement, options/preview controls,
+saved activity restoration, and all six languages. These checks are included in
+the regular test runners.
+
+The September 26 Chrome comparison keeps all tile decorations enabled. Its
+24-switch confirmation, separate detailed traces, and Chrome/Zen functional
+checks are documented in DIM-SUM's `docs/stat-letter-performance.md`. These
+measurements use a live standard account; beta account behavior remains a
+fixture check. Raw inventory captures remain private.

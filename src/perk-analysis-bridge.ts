@@ -7,6 +7,7 @@ import { translateEvaluationText, type EvaluationLocaleBundle } from './evaluati
 export function initPerkAnalysisBridge() {
   let cache: PerkRatingsCache | undefined;
   let enabled = true;
+  let mode = 'pve';
   let byHash = buildPerkRatingIndex(cache, {});
   let request = 0;
   async function refresh() {
@@ -38,21 +39,24 @@ export function initPerkAnalysisBridge() {
       (node as HTMLScriptElement).type = 'application/json';
       node.id = 'aegis-perk-analysis-data'; document.documentElement.append(node);
     }
-    node.textContent = JSON.stringify({ enabled, byHash, labels: { rating: t('perkRatingLabel'), tier: t('perkRatingTier'), perks: t('perkRatingPerks'), origins: t('perkRatingOrigins'), selected: t('compareSelected'), selectable: t('selectable'), missing: t('missing') } });
+    node.textContent = JSON.stringify({ enabled: enabled && mode !== 'pvp', byHash, labels: { rating: t('perkRatingLabel'), tier: t('perkRatingTier'), perks: t('perkRatingPerks'), origins: t('perkRatingOrigins'), selected: t('compareSelected'), selectable: t('selectable'), missing: t('missing') } });
     document.dispatchEvent(new Event('aegis-perk-analysis-updated'));
   }
-  chrome.storage.local.get(['aegisPerkRatings', 'aegisPerkAnalysisEnabled', 'aegisLanguage'], result => {
+  chrome.storage.local.get(['aegisPerkRatings', 'aegisPerkAnalysisEnabled', 'aegisLanguage', 'aegisMode'], result => {
     initLanguage(result.aegisLanguage);
     cache = result.aegisPerkRatings; enabled = result.aegisPerkAnalysisEnabled !== false;
+    mode = result.aegisMode || 'pve';
     void refresh();
   });
   chrome.storage.onChanged.addListener((changes, area) => {
-    if (area !== 'local' || (!changes.aegisPerkRatings && !changes.aegisPerkAnalysisEnabled && !changes.aegisLanguage)) return;
+    if (area !== 'local' || (!changes.aegisPerkRatings && !changes.aegisPerkAnalysisEnabled && !changes.aegisLanguage && !changes.aegisMode)) return;
     if (changes.aegisLanguage) initLanguage(changes.aegisLanguage.newValue);
     if (changes.aegisPerkRatings) {
       cache = changes.aegisPerkRatings.newValue;
     }
-    if (changes.aegisPerkAnalysisEnabled) { enabled = changes.aegisPerkAnalysisEnabled.newValue !== false; publish(); }
+    if (changes.aegisMode) mode = changes.aegisMode.newValue || 'pve';
+    if (changes.aegisPerkAnalysisEnabled) enabled = changes.aegisPerkAnalysisEnabled.newValue !== false;
+    if (changes.aegisMode || changes.aegisPerkAnalysisEnabled) publish();
     if (changes.aegisLanguage || changes.aegisPerkRatings) void refresh();
   });
 }

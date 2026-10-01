@@ -123,6 +123,8 @@ document.addEventListener('DOMContentLoaded', () => {
     'aegis-two-tier-options',
     'aegis-tile-glow',
     'aegis-badge-style-segmented',
+    'aegis-stat-grade-options',
+    'aegis-roll-stars-group',
     'aegis-upgrade-style-group',
     'aegis-badge-scale-slider',
     'aegis-badge-size-slider',

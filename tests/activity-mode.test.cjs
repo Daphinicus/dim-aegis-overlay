@@ -6,20 +6,21 @@ const popup = fs.readFileSync('src/popup.ts', 'utf8');
 const helper = fs.readFileSync('src/activity-mode.ts', 'utf8').replace(/^import.*$/m, '').replace('export function', 'function');
 const compile = source => ts.transpileModule(source, { compilerOptions: { target: ts.ScriptTarget.ES2022 } }).outputText;
 const sourceUpdate = content.slice(content.indexOf('    if (changes.scoringSource)'), content.indexOf('    if (changes.aegisLayoutSide)'));
-const modeUpdate = content.slice(content.indexOf('    if (changes.aegisMode || changes.scoringSource)'), content.indexOf('    if (changes.aegisTwoTier)'));
+const modeUpdate = content.slice(content.indexOf('    if (changes.aegisStatGradeBasis)'), content.indexOf('    if (changes.aegisTwoTier)'));
 const startup = content.slice(content.indexOf("  scoringSource = res.scoringSource"), content.indexOf('  aegisTwoTier = res.aegisTwoTier'));
 assert.ok(sourceUpdate && modeUpdate && startup);
 const createState = new Function('res', compile(`
   ${helper}
   let scoringSource, savedAegisMode, aegisMode, aegisLayoutSide, aegisPerkOrder, aegisDbMode, changed;
-  let aegisShoppingDb, aegisSheetDb;
+  let aegisShoppingDb, aegisSheetDb, aegisStatGradeMode, aegisStatGradeBasis, modeChanged, presentationChanged;
+  let aegisBadgeStyle = res.aegisBadgeStyle || 'classic';
   const aegisShoppingDbPvE = { activity: 'pve' }, aegisShoppingDbPvP = { activity: 'pvp' };
   const aegisSheetDbPvE = { activity: 'pve' }, aegisSheetDbPvP = { activity: 'pvp' };
   const applyTooltipWidthStyles = () => {}, updateExplorerTitles = () => {};
   ${startup}
   return {
     get: () => ({ source: scoringSource, saved: savedAegisMode, active: aegisMode }),
-    update: changes => { ${sourceUpdate} ${modeUpdate} },
+    update: changes => { ${sourceUpdate} ${modeUpdate} if (changes.aegisBadgeStyle) aegisBadgeStyle = changes.aegisBadgeStyle.newValue; },
   };
 `));
 
@@ -58,3 +59,13 @@ assert.equal(state.get().active, 'pvp', 'Atomic source and mode updates use both
 state.update({ scoringSource: { newValue: 'lightgg' }, aegisMode: { newValue: 'both' } });
 assert.equal(state.get().active, 'pve');
 console.log('PASS: source switching, reloads, preference restoration, hidden settings labels, and atomic updates.');
+
+const letterState = createState({scoringSource:'aegis',aegisMode:'both',aegisBadgeStyle:'stat',aegisStatGradeMode:'pvp'});
+assert.equal(letterState.get().active,'pvp');
+letterState.update({aegisStatGradeMode:{newValue:'pve'}});
+assert.equal(letterState.get().active,'pve');
+assert.equal(letterState.get().saved,'both');
+letterState.update({aegisBadgeStyle:{newValue:'footer'}});
+assert.equal(letterState.get().active,'both','Leaving letter mode restores the saved activity');
+letterState.update({aegisBadgeStyle:{newValue:'stat'},aegisStatGradeMode:{newValue:'pvp'}});
+assert.equal(letterState.get().active,'pvp','Atomic style/activity changes use the new activity');

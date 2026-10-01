@@ -1,5 +1,13 @@
 # DIM tooltip fixtures
 
+`native-use-popper.cjs` and `native-use-popper.beta.cjs` contain the native
+`usePopper` module factories captured on September 18, 2026, from
+`https://app.destinyitemmanager.com/main-9b65bcdf.js` and
+`https://beta.destinyitemmanager.com/main-cdbec8d8.js`. Only the module factory
+wrapper was changed to a CommonJS export. The native placement tests run these
+factories through the extension's adapter with a synthetic React effect runner
+and the real Floating UI engine. The adjacent license applies to these excerpts.
+
 These files contain the PressTip CSS rules used by the tooltip geometry tests.
 They were extracted from the deployed bundles captured on September 16, 2026:
 

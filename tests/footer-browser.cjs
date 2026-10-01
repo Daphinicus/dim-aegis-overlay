@@ -8,7 +8,7 @@ const { runFixture } = require('./browser-helpers.cjs');
     .inventory { display:flex; flex-wrap:wrap; gap:8px; width:600px }
     .item { --item-size:60px; position:relative; width:60px; height:76px;
       contain:strict; box-sizing:border-box; }
-    .icon { width:60px; height:60px }
+    .icon { width:60px; height:60px; box-sizing:border-box; border:1px solid #333 }
     ${css}
   </style><div class="inventory"></div><pre id="result"></pre><script>
     ${sizing}
@@ -39,8 +39,10 @@ const { runFixture } = require('./browser-helpers.cjs');
             const t=tile.getBoundingClientRect(), b=badge.getBoundingClientRect();
             near(t.height,76+height,label+' reserved height');
             near(b.height,height,label+' badge height');
-            near(b.width,t.width,label+' strip width');
-            near(b.left,t.left,label+' left edge');
+            const icon=tile.querySelector('.icon').getBoundingClientRect();
+            near(b.width,icon.width-2,label+' strip matches the artwork inside its frame');
+            near(b.left,icon.left+1,label+' left edge inside icon frame');
+            near(b.right,icon.right-1,label+' right edge inside icon frame');
             near(b.bottom,t.bottom,label+' bottom edge');
             near(b.top,t.top+76,label+' clears native label');
             check(getComputedStyle(tile).contain==='strict',label+' native containment');

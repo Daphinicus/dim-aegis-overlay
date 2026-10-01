@@ -4,6 +4,7 @@ import { getLocalizedStatName } from './hash-translator';
 import { t } from './i18n';
 import { getLocalizedPerkName, getPerkIcon, getPerkHashFromEnglish } from './hash-translator';
 import { COMPARE_BUCKET_SELECTOR, COMPARE_HEADER_SELECTOR } from './compare-selectors';
+import { placeInlinePopupDetails } from './popup-inline-details';
 import { iconPath, planCompareBubbles, type OwnedComparePerk } from './compare-bubbles';
 import type { AegisSheetWeapon, SheetPerksGroup, TooltipPerk, WeaponEvaluationPayload } from './types';
 
@@ -112,6 +113,9 @@ export function initComparePerks(options: {
   }
 
   function fitOverviewToViewport() {
+    // The native placement transaction measures the expanded body before
+    // positioning. A second left-offset correction would compete with it.
+    if (bucket?.hasAttribute('data-aegis-native-popup-layout')) return;
     if (!bucket || !['absolute', 'fixed'].includes(getComputedStyle(bucket).position)) return;
     const original = originalLeft(bucket);
     const nativeLeft = parseFloat(original.left);
@@ -356,7 +360,15 @@ export function initComparePerks(options: {
     frame = 0;
     layout = options.getLayout?.() || layout;
     const next = document.querySelector<HTMLElement>(rootSelector);
-    if (!next || !options.enabled()) { cleanup(); return; }
+    if (!next || !options.enabled()) {
+      cleanup();
+      if (overview && next) {
+        for (const card of next.querySelectorAll<HTMLElement>('.aegis-popup-details-card:not(.aegis-side-panel)')) {
+          placeInlinePopupDetails(next, card);
+        }
+      }
+      return;
+    }
     if (bucket !== next) { cleanup(); bucket = next; context = 'pve'; }
     // DIM's native button shows the destination layout. Keep its handler and
     // saved preference; only enhance the list that DIM has actually rendered.
@@ -475,6 +487,11 @@ export function initComparePerks(options: {
     if (!overview) attribute(bucket, 'data-aegis-compare-layout', layout);
     renderLayoutButton();
     renderToolbar(mode);
+    if (overview) {
+      for (const card of bucket.querySelectorAll<HTMLElement>('.aegis-popup-details-card:not(.aegis-side-panel)')) {
+        placeInlinePopupDetails(bucket, card);
+      }
+    }
     syncOverviewGeometry();
   }
 
@@ -565,7 +582,7 @@ export function initComparePerks(options: {
     }
   }
   if (overview) window.addEventListener('resize', refresh);
-  return { refresh, observe };
+  return { refresh, observe, flush: () => { if (frame > 0) cancelAnimationFrame(frame); render(); } };
 }
 
 function safeIcon(value?: string | null): string | null {

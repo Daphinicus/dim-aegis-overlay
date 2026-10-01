@@ -26,6 +26,13 @@ export function createItemQueue(
       visible.delete(item);
       background.delete(item);
       if (!item.isConnected) continue;
+      // Geometry reads force rendering inside content-visibility: hidden trees.
+      // Keep grading those items in the background without opening their layout.
+      // Default options preserve opacity fades and offscreen preparation.
+      if (item.checkVisibility?.() === false) {
+        background.add(item);
+        continue;
+      }
       const rect = item.getBoundingClientRect();
       const inView = rect.width > 0 && rect.height > 0 && rect.bottom > 0 && rect.right > 0
         && rect.top < h && rect.left < w;
