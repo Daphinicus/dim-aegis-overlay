@@ -1,3 +1,5 @@
+import { readScoreSettings, SCORE_SETTING_KEYS } from './score-config';
+import { formatScore } from './score-format';
 import { initLanguage, t } from './i18n';
 import { LocalStorageSchema, AegisMode } from './types';
 
@@ -52,6 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
         'scoringSource',
         'lightggData',
         'lightggLastSync',
+        ...SCORE_SETTING_KEYS,
         'aegisLayoutSide',
         'aegisPerkOrder',
         'aegisDbMode',
@@ -209,6 +212,27 @@ document.addEventListener('DOMContentLoaded', () => {
           }
         }
 
+        const scoreSettings = readScoreSettings(res);
+        const scoreAvailable = sourceVal === 'aegis' && dbModeVal !== 'wishlist';
+        const showScores = scoreAvailable && scoreSettings.aegisRatingDisplay === 'scores';
+        for (const [id, value] of [
+          ['aegis-rating-display-segmented', scoreSettings.aegisRatingDisplay],
+          ['aegis-score-profile-segmented', scoreSettings.aegisScoreProfile],
+          ['aegis-score-precision-segmented', String(scoreSettings.aegisScorePrecision)],
+          ['aegis-score-comparison-segmented', scoreSettings.aegisScoreComparisonActivity]
+        ]) {
+          document.getElementById(id)?.querySelectorAll<HTMLButtonElement>('button').forEach(button => {
+            button.classList.toggle('active', button.dataset.value === value);
+            button.disabled = !scoreAvailable && (id !== 'aegis-rating-display-segmented' || button.dataset.value === 'scores');
+          });
+        }
+        document.getElementById('aegis-score-source-help')?.classList.toggle('hidden', scoreAvailable);
+        document.getElementById('aegis-score-controls')?.classList.toggle('hidden', !showScores);
+        document.getElementById('aegis-score-comparison-group')?.classList.toggle('hidden', (res.aegisMode || 'pve') !== 'both');
+        for (const id of ['aegis-two-tier-segmented', 'aegis-grade-display-segmented']) {
+          document.getElementById(id)?.closest('.input-group')?.classList.toggle('hidden', showScores);
+        }
+
         // Set Aegis Mode (PvE vs PvP) segmented control
         const aegisModeVal = res.aegisMode || 'pve';
         const aegisModeSegmented = document.getElementById('aegis-mode-segmented');
@@ -319,6 +343,19 @@ document.addEventListener('DOMContentLoaded', () => {
           } else {
             mockBadge.classList.remove('aegis-badge-split');
             mockBadge.textContent = isTwoTier ? 'SS+' : 'S+';
+          }
+        }
+
+        if (mockBadge) {
+          mockBadge.classList.toggle('aegis-score', showScores);
+          mockBadge.classList.toggle('aegis-badge-s', !showScores);
+          if (showScores) {
+            const pveText = formatScore({ value: 87.234, perfectOverall: false }, scoreSettings.aegisScorePrecision);
+            const pvpText = formatScore({ value: 92.456, perfectOverall: false }, scoreSettings.aegisScorePrecision);
+            mockBadge.classList.add('aegis-badge-wide');
+            if (aegisModeVal === 'both') {
+              mockBadge.innerHTML = `<span class="aegis-split-half aegis-split-left aegis-score">${pveText}</span><span class="aegis-split-half aegis-split-right aegis-score">${pvpText}</span>`;
+            } else mockBadge.textContent = aegisModeVal === 'pvp' ? pvpText : pveText;
           }
         }
 
@@ -546,6 +583,21 @@ document.addEventListener('DOMContentLoaded', () => {
           });
         }
       }
+    });
+  }
+
+  for (const [id, key] of [
+    ['aegis-rating-display-segmented', 'aegisRatingDisplay'],
+    ['aegis-score-profile-segmented', 'aegisScoreProfile'],
+    ['aegis-score-precision-segmented', 'aegisScorePrecision'],
+    ['aegis-score-comparison-segmented', 'aegisScoreComparisonActivity']
+  ]) {
+    document.getElementById(id)?.addEventListener('click', event => {
+      const button = (event.target as HTMLElement).closest<HTMLButtonElement>('button[data-value]');
+      if (!button || button.disabled) return;
+      const raw = key === 'aegisScorePrecision' ? Number(button.dataset.value) : button.dataset.value;
+      const validated = readScoreSettings({ [key]: raw });
+      chrome.storage.local.set({ [key]: validated[key as keyof typeof validated] }, updateUI);
     });
   }
 

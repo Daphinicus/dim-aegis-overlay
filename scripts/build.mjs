@@ -27,6 +27,8 @@ if (fs.existsSync(localesSource)) {
   fs.cpSync(localesSource, path.join(dataDir, 'locales'), { recursive: true });
 }
 
+fs.copyFileSync(path.join(root, 'data/score-origin-benchmarks.json'), path.join(dataDir, 'score-origin-benchmarks.json'));
+
 const entries = {
   background: path.join(root, 'src/background.ts'),
   content: path.join(root, 'src/content.ts'),

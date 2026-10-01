@@ -26,7 +26,7 @@ function zip(sourceDir, outFile) {
   if (process.platform === 'win32') {
     execSync(`tar -a -cf "${outFile}" -C "${sourceDir}" *`, { stdio: 'inherit' });
   } else {
-    execSync(`zip -rj "${outFile}" "${sourceDir}"`, { stdio: 'inherit' });
+    execSync(`zip -r "${outFile}" .`, { cwd: sourceDir, stdio: 'inherit' });
   }
 }
 

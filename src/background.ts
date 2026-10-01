@@ -1,3 +1,4 @@
+import { scoreRowMetadata } from '../scripts/score-sync.mjs';
 import { parseWishlist } from './parser';
 import { AegisSheetDatabase, AegisSheetWeapon, AegisArmorSet, AegisShoppingDatabase, AegisShoppingItem } from './types';
 import { fetchEvaluationLocale } from './evaluation-i18n';
@@ -276,6 +277,7 @@ async function fetchSpreadsheetDatabase(sheetId: string, tabs: string[]): Promis
 
         const weaponData: AegisSheetWeapon = {
           name: weaponName,
+          ...scoreRowMetadata(getVal, row, tab, r),
           energy: getVal(row, ['Energy', 'INFO Energy', 'Slot', 'Affinity', 'Type']),
           frame: getVal(row, ['Frame', 'Tags']),
           barrel: getVal(row, ['PERKS Barrel', 'Barrel']),
@@ -465,7 +467,7 @@ async function fetchSpreadsheetDatabase(sheetId: string, tabs: string[]): Promis
     }
   }
 
-  return { weapons, variants, categories, armor, armorAegis };
+  return { scoreSchemaVersion: 1, weapons, variants, categories, armor, armorAegis };
 }
 
 /**

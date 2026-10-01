@@ -12,6 +12,8 @@
  * wishlist calculations and UI injections without needing direct React Fiber access.
  */
 
+import { extractRawOwnedSnapshot } from './score-owned';
+
 interface PerkInfo {
   name: string;
   icon: string;
@@ -788,6 +790,7 @@ function processElement(el: HTMLElement) {
       el.removeAttribute('data-aegis-perk-hashes');
       el.removeAttribute('data-aegis-perks-data');
       el.removeAttribute('data-aegis-active-perk-hashes');
+      el.removeAttribute('data-aegis-score-owned');
       return;
     }
 
@@ -887,6 +890,7 @@ function processElement(el: HTMLElement) {
       // statName is the clean stat name (e.g. "Reload Speed", "Range", "Handling")
       // — use it directly without stripping since it won't contain "masterwork"
       const mwStatName =
+        item.masterworkInfo.stats?.find((stat: any) => stat.isPrimary)?.name ||
         item.masterworkInfo.statName ||
         item.masterworkInfo.stat?.displayProperties?.name ||
         item.masterworkInfo.name ||
@@ -1009,9 +1013,18 @@ function processElement(el: HTMLElement) {
     // Always write the MW attribute before the early-return check so it's
     // never skipped on re-scans where only the hash/perks are unchanged.
     if (equippedMasterwork) {
-      el.setAttribute('data-aegis-masterwork', equippedMasterwork);
+      if (el.getAttribute('data-aegis-masterwork') !== equippedMasterwork) el.setAttribute('data-aegis-masterwork', equippedMasterwork);
     } else {
       el.removeAttribute('data-aegis-masterwork');
+    }
+
+    const scoreOwned = JSON.stringify(extractRawOwnedSnapshot(item));
+    if (el.getAttribute('data-aegis-score-owned') !== scoreOwned) {
+      el.setAttribute('data-aegis-score-owned', scoreOwned);
+    }
+    const newActivePerks = activePerkHashes.join(',');
+    if (el.getAttribute('data-aegis-active-perk-hashes') !== newActivePerks) {
+      el.setAttribute('data-aegis-active-perk-hashes', newActivePerks);
     }
 
     // Optimization: Avoid re-triggering content.ts if no scoring-relevant data changed

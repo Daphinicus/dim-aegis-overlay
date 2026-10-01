@@ -8,13 +8,15 @@
     "build": "tsc && node scripts/build.mjs",
     "package": "node scripts/package.mjs",
     "build:all": "tsc && node scripts/build.mjs && node scripts/package.mjs",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test:scores": "vitest run tests/scores"
   },
-  "dependencies": {},
   "devDependencies": {
     "@types/chrome": "^0.0.268",
     "@types/node": "^20.11.0",
+    "jsdom": "^25.0.1",
     "typescript": "^5.3.3",
-    "vite": "^5.0.11"
+    "vite": "^5.0.11",
+    "vitest": "^2.1.9"
   }
 }
