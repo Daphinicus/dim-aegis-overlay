@@ -4,6 +4,8 @@ import type { BadgeRollQuality, BadgeVisibilitySettings } from './badge-presenta
 /**
  * Represents a single parsed wishlist entry.
  */
+import type { OwnedScoreSnapshot, ScoreEvaluations, ScoreSettings } from './score-types';
+
 export interface WishlistRoll {
   itemHash: number;
   perks: number[];
@@ -49,7 +51,7 @@ export type AegisMode = 'pve' | 'pvp' | 'both';
 /**
  * Storage schema for chrome.storage.local
  */
-export interface LocalStorageSchema {
+export interface LocalStorageSchema extends Partial<ScoreSettings> {
   aegisTwoTierColors?: boolean;
   aegisBadgeColor?: BadgeColor;
   aegisMaxTierGlow?: boolean;
@@ -146,6 +148,11 @@ export interface ManifestWeapon {
  */
 export interface AegisSheetWeapon {
   name: string;
+  categoryKey?: string;
+  weaponType?: string;
+  weaponSlot?: string;
+  affinity?: string;
+  sourceRowId?: string;
   energy: string;
   frame: string;
   barrel: string;
@@ -198,6 +205,8 @@ export interface AegisArmorSet {
  * containing a flat map of weapons by normalized name and lists grouped by category.
  */
 export interface AegisSheetDatabase {
+  scoreSchemaVersion?: number;
+  scoreRevision?: string;
   weapons: Record<string, AegisSheetWeapon>;
   variants?: Record<string, AegisSheetWeapon[]>;
   categories: Record<string, AegisSheetWeapon[]>;
@@ -271,6 +280,8 @@ export interface AegisShoppingDatabase {
  * Universal, strongly-typed evaluation payload attached to a weapon/armor DOM tile via WeakMap.
  */
 export interface WeaponEvaluationPayload {
+  scoreEvaluations?: ScoreEvaluations;
+  scoreOwned?: OwnedScoreSnapshot;
   result: ScoringResult;
   name: string;
   perksMap: Record<number, { name: string; icon: string }>;

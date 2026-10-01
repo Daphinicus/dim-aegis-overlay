@@ -6,6 +6,7 @@ import { initGradeSettings } from './grade-settings';
 import { normalizeGradeSettings } from './grading';
 import { setGradeColors, setBadgeColor, resolveBadgeColor, resolveTileGlow } from './grade-colors';
 import { initLanguage, t, localizeElements } from './i18n';
+import { readScoreSettings, SCORE_SETTING_KEYS } from './score-config';
 import { LocalStorageSchema, AegisMode } from './types';
 import { normalizeBadgeSize, normalizeBadgeVisibility, type BadgeCategory, type BadgeVisibility } from './badge-presentation';
 import { initVersionPill } from './version-pill';
@@ -47,6 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
         'scoringSource',
         'lightggData',
         'lightggLastSync',
+        ...SCORE_SETTING_KEYS,
         'aegisLayoutSide',
         'aegisPerkOrder',
         'aegisDbMode',
@@ -218,6 +220,27 @@ document.addEventListener('DOMContentLoaded', () => {
               revealOption(aegisModeGroup, true);
             }
           }
+        }
+
+        const scoreSettings = readScoreSettings(res);
+        const scoreAvailable = sourceVal === 'aegis' && dbModeVal !== 'wishlist';
+        const showScores = scoreAvailable && scoreSettings.aegisRatingDisplay === 'scores';
+        for (const [id, value] of [
+          ['aegis-rating-display-segmented', scoreSettings.aegisRatingDisplay],
+          ['aegis-score-profile-segmented', scoreSettings.aegisScoreProfile],
+          ['aegis-score-precision-segmented', String(scoreSettings.aegisScorePrecision)],
+          ['aegis-score-comparison-segmented', scoreSettings.aegisScoreComparisonActivity]
+        ]) {
+          document.getElementById(id)?.querySelectorAll<HTMLButtonElement>('button').forEach(button => {
+            button.classList.toggle('active', button.dataset.value === value);
+            button.disabled = !scoreAvailable && (id !== 'aegis-rating-display-segmented' || button.dataset.value === 'scores');
+          });
+        }
+        document.getElementById('aegis-score-source-help')?.classList.toggle('hidden', scoreAvailable);
+        document.getElementById('aegis-score-controls')?.classList.toggle('hidden', !showScores);
+        document.getElementById('aegis-score-comparison-group')?.classList.toggle('hidden', (res.aegisMode || 'pve') !== 'both');
+        for (const id of ['aegis-two-tier-segmented', 'aegis-grade-display-segmented']) {
+          document.getElementById(id)?.closest('.input-group')?.classList.toggle('hidden', showScores);
         }
 
         // Set Aegis Mode (PvE vs PvP) segmented control
@@ -580,6 +603,21 @@ document.addEventListener('DOMContentLoaded', () => {
         langDropdown.classList.remove('active');
         langMenu.classList.add('hidden');
       }
+    });
+  }
+
+  for (const [id, key] of [
+    ['aegis-rating-display-segmented', 'aegisRatingDisplay'],
+    ['aegis-score-profile-segmented', 'aegisScoreProfile'],
+    ['aegis-score-precision-segmented', 'aegisScorePrecision'],
+    ['aegis-score-comparison-segmented', 'aegisScoreComparisonActivity']
+  ]) {
+    document.getElementById(id)?.addEventListener('click', event => {
+      const button = (event.target as HTMLElement).closest<HTMLButtonElement>('button[data-value]');
+      if (!button || button.disabled) return;
+      const raw = key === 'aegisScorePrecision' ? Number(button.dataset.value) : button.dataset.value;
+      const validated = readScoreSettings({ [key]: raw });
+      chrome.storage.local.set({ [key]: validated[key as keyof typeof validated] }, updateUI);
     });
   }
 

@@ -100,6 +100,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   move('Scoring', [
     'scoring-source-segmented',
+    'aegis-rating-display-segmented',
+    'aegis-score-controls',
     'aegis-db-segmented',
     'aegis-mode-segmented',
     'aegis-grade-display-segmented',

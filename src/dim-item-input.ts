@@ -1,3 +1,4 @@
+import { extractRawOwnedSnapshot } from './score-owned';
 import { masterworkStatName } from './masterwork';
 type PerkInfo = { name: string; icon: string };
 
@@ -5,7 +6,7 @@ type PerkInfo = { name: string; icon: string };
 export interface DimSearchInput {
   id: string; hash: number; name: string; kind: 'weapon' | 'armor';
   perkHashes: number[]; activeHashes: number[]; perksMap: Record<number, PerkInfo>;
-  masterwork: string; variantText: string; ready: boolean; isExotic?: boolean; index?: string;
+  scoreOwned?: string; masterwork: string; variantText: string; ready: boolean; isExotic?: boolean; index?: string;
 }
 export function readDimMasterwork(item: any): string {
   let equippedMasterwork = '';
@@ -87,6 +88,7 @@ export function projectDimItem(item: any): DimSearchInput | null {
   const { perkHashes, activeHashes, perksMap } = readDimPerks(item);
   const sockets = item.sockets?.allSockets;
   return { id: item.id, hash: item.hash, name: item.name || '', kind, perkHashes, activeHashes, perksMap,
+    scoreOwned: kind === 'weapon' ? JSON.stringify(extractRawOwnedSnapshot(item)) : undefined,
     masterwork: readDimMasterwork(item), variantText: item.name || '', isExotic: item.isExotic === true,
     index: typeof item.index === 'string' ? item.index : item.id,
     ready: !!item.name && (kind === 'armor' || (Array.isArray(sockets) && activeHashes.length > 0)) };

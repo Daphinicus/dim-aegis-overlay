@@ -31,6 +31,8 @@ if (fs.existsSync(manifestWeaponsSource)) {
   fs.copyFileSync(manifestWeaponsSource, path.join(dataDir, 'manifest-weapons.json'));
 }
 
+fs.copyFileSync(path.join(root, 'data/score-origin-benchmarks.json'), path.join(dataDir, 'score-origin-benchmarks.json'));
+
 const entries = {
   background: path.join(root, 'src/background.ts'),
   content: path.join(root, 'src/content.ts'),

@@ -19,7 +19,9 @@ const rootStyles = new Map();
 const items = Array.from({length: 120}, (_, id) => ({id, isConnected:true,
   getBoundingClientRect: () => ({top:0,bottom:60,left:0,right:60,width:60,height:60})}));
 const ctx = vm.createContext({
+  SCORE_SETTING_KEYS: [],
   nativeSearchEvaluator: { invalidate() {} },
+  activityModeProvider: { refresh() {} },
   managedPreview: { refresh() {} },
   IS_WINNOWER_HOST: false, setStatGradeLayout: active => assert.equal(active, false),
   console, setTimeout: fn => {timers.set(++next,fn); return next;},

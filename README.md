@@ -33,6 +33,45 @@ Get it on the chrome webstore: **[Download for Chromium-based browsers (Opera/Ch
 
 ---
 
+## Percentage scores (local trial)
+
+In the extension menu, select **Rating display → Scores**. Choose **Best selections**
+(default) or **Omni coverage**, and 0, 1, or 2 decimal places (default 0). Scores
+require the Aegis/Finnald spreadsheet source. Grades remain the installation default.
+
+Best selections combines weapon tier/rank with the strongest official recommendations
+actually available on that drop, including masterwork type. Omni adds 10% coverage
+against the Tier-5 benchmark: two barrels, two magazines, three options in each
+trait column, one masterwork type, and verified weapon-specific origin combinations.
+Unlisted perks earn zero; personal wishlists do not change scores. Compare within
+the same spreadsheet category. PvE and PvP stay separate.
+
+`—` means source or ownership data is unresolved; `0%` means a known roll has no
+matches. Multiple recommended origins without a verified maximum leave Omni unrated,
+while Best selections can still work. Exotics are currently unrated. Winnower needs
+the new structured owned-slot payload; flat hashes alone cannot establish columns.
+
+Expand **Score details** on an item to inspect its ceiling, selection quality and
+Omni coverage, then **Copy score details** to supply reproducible feedback. Nothing
+is uploaded automatically. Score sorting and search use unrounded values:
+
+```text
+aegis:score:>=90
+aegis:pve:score:>89.99
+aegis:pvp:score:<=80
+aegis:score:unrated
+aegis:score:omni
+```
+
+Unqualified filters use the selected activity, or either activity in dual mode.
+Dual copy comparisons have an explicit PvE/PvP preference in the score menu.
+Changing decimal places changes display only. Incomplete scores never round to 100%.
+
+Implementation and fixtures: [score implementation plan](docs/score-implementation-plan.md).
+Run `npm run test:scores` and `npm run build:all` to produce the local trial build.
+
+---
+
 ##  How It Works
 
 ```

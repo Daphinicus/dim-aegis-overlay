@@ -1,11 +1,14 @@
+import { parseScorePredicate, matchesScorePredicate } from './score-search';
+import type { ScoreEvaluations, ScoreProfile } from './score-types';
 import { gradeValue as getGradeValue } from './grading';
 import { rollGradeDisplay } from './grade-colors';
 import type { WeaponEvaluationPayload, ScoringResult, AegisSheetWeapon } from './types';
 
-export interface SearchContext { mode: 'pve' | 'pvp' | 'both'; chase: boolean; source?: string }
+export interface SearchContext { mode: 'pve' | 'pvp' | 'both'; chase: boolean; source?: string; scoreProfile?: ScoreProfile }
 type SearchSheet = Pick<AegisSheetWeapon, 'tier' | 'source'>;
 type SearchShopping = { priority: string };
 export interface AegisSearchData {
+  scoreEvaluations?: ScoreEvaluations;
   result: Pick<ScoringResult, 'grade' | 'pveGrade' | 'pvpGrade' | 'isPerfect5of5' | 'isOmniRoll' | 'upgradeAvailable'>;
   sheetWeapon?: SearchSheet | null;
   sheetWeaponPvE?: SearchSheet | null;
@@ -27,6 +30,7 @@ export function compactSearchData(data: WeaponEvaluationPayload): AegisSearchDat
   const sheet = (value: SearchSheet | null | undefined) => value ? { tier: value.tier, source: value.source } : null;
   const shopping = (value: SearchShopping | null | undefined) => value ? { priority: value.priority } : null;
   return {
+    scoreEvaluations: data.scoreEvaluations,
     result: { grade, pveGrade, pvpGrade, isPerfect5of5, isOmniRoll, upgradeAvailable },
     sheetWeapon: sheet(data.sheetWeapon), sheetWeaponPvE: sheet(data.sheetWeaponPvE), sheetWeaponPvP: sheet(data.sheetWeaponPvP),
     shoppingItem: shopping(data.shoppingItem), shoppingItemPvE: shopping(data.shoppingItemPvE), shoppingItemPvP: shopping(data.shoppingItemPvP),
@@ -50,6 +54,7 @@ const rank = '(?:[sabcdef][+-]?){1,2}(?:➔[sabcdef][+-]?)?';
 const gradeQuery = new RegExp('^(?:[><]=?|==?)?' + rank + '$');
 export function parseAegisArgument(argument: string): AegisArgument {
   const value = argument.toLowerCase().trim();
+  if (parseScorePredicate(value)) return { ok: true, value };
   if (aliases.has(value)) return { ok: true, value };
   if (/^(?:s|source):\S.*$/.test(value)) return { ok: true, value };
   const grade = value.replace(/^(?:a|armor):/, '').replace(/^(?:p|perk|w|weapon|pve|pvp|2p|2piece|4p|4piece):/, '');
@@ -129,6 +134,8 @@ export function finalizeSearchGrade(result: ScoringResult, sheetWeapon: AegisShe
 }
 
 export function matchesAegisArgument(targetQuery: string, data: AegisSearchData, context: SearchContext): boolean {
+  const score = parseScorePredicate(targetQuery);
+  if (score) return matchesScorePredicate(score, data.scoreEvaluations, context.mode, context.scoreProfile || 'best');
   const result = data?.result;
   const grade = result?.grade?.toLowerCase() || '';
   // A loaded but unrated item is not a zero-valued rating. In particular, it

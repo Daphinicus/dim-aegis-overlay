@@ -1,9 +1,14 @@
+import { readScoreSettings } from './score-config';
+import { formatScore } from './score-format';
+import type { ScoreSettings } from './score-types';
 import { renderStatGradeInBar, removeStatGrade } from './stat-grade';
 import { applyGradeColors, applyGradeGlow, setTileGlow, resolveTileGlow } from './grade-colors';
 import type { TileGlow } from './types';
 import { applyBadgePresentation, normalizeBadgeVisibility, rollBadgeSymbol, type BadgeVisibilitySettings } from './badge-presentation';
 
-interface PreviewSettings {
+interface PreviewSettings extends Partial<ScoreSettings> {
+  scoringSource?: string;
+  aegisDbMode?: string;
   aegisBadgeVisibility?: BadgeVisibilitySettings;
   aegisBadgeStyle?: string;
   aegisStatGradeBasis?: string;
@@ -29,7 +34,8 @@ export function renderOptionsPreview() {
   const badge = tile.querySelector<HTMLElement>('.aegis-badge');
   if (!badge) return;
 
-  const style = settings.aegisBadgeStyle || 'classic';
+  const useScores = settings.aegisRatingDisplay === 'scores' && settings.scoringSource !== 'lightgg' && settings.aegisDbMode !== 'wishlist';
+  const style = useScores && settings.aegisBadgeStyle === 'stat' ? 'classic' : settings.aegisBadgeStyle || 'classic';
   const statPreview = tile.querySelector<HTMLElement>('.aegis-stat-preview');
   tile.classList.toggle('aegis-tile-stat', style === 'stat');
   if (style === 'stat') {
@@ -53,6 +59,23 @@ export function renderOptionsPreview() {
 
   badge.className = `aegis-badge aegis-badge-s aegis-badge-wide aegis-style-${style} aegis-pos-${posKey}`;
   badge.replaceChildren();
+
+  if (useScores) {
+    const scoreSettings = readScoreSettings({ ...settings });
+    const pve = formatScore({value: 87.234, perfectOverall: false}, scoreSettings.aegisScorePrecision);
+    const pvp = formatScore({value: 92.456, perfectOverall: false}, scoreSettings.aegisScorePrecision);
+    badge.classList.remove('aegis-badge-s');
+    badge.classList.add('aegis-score');
+    if (settings.aegisMode === 'both') {
+      badge.classList.add('aegis-badge-split');
+      badge.innerHTML = `<span class="aegis-split-half aegis-split-left aegis-score">${pve}</span><span class="aegis-split-half aegis-split-right aegis-score">${pvp}</span>`;
+    } else badge.textContent = settings.aegisMode === 'pvp' ? pvp : pve;
+    const visibility = normalizeBadgeVisibility(settings.aegisBadgeVisibility).weapon;
+    applyBadgePresentation(badge, visibility);
+    badge.classList.toggle('aegis-badge-hidden', visibility === 'off');
+    applyGradeGlow(tile, '');
+    return;
+  }
 
   const label = document.createElement('span');
   label.className = 'aegis-grade-text';
@@ -85,3 +108,4 @@ export function updateOptionsPreview(value: PreviewSettings) {
   settings = value;
   renderOptionsPreview();
 }
+

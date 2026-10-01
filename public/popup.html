@@ -223,6 +223,39 @@
             <button type="button" data-value="wishlist" data-i18n="sourceWishlist">Wishlist txt</button>
           </div>
         </div>
+        <div class="input-group input-group-compact">
+          <label data-i18n="ratingDisplay">Rating display</label>
+          <div class="segmented-control" id="aegis-rating-display-segmented">
+            <button type="button" data-value="grades" class="active" data-i18n="ratingGrades">Grades</button>
+            <button type="button" data-value="scores" data-i18n="ratingScores">Scores</button>
+          </div>
+          <p id="aegis-score-source-help" class="description hidden" data-i18n="scoreRequiresSpreadsheet">Scores require the Aegis/Finnald spreadsheet source.</p>
+        </div>
+        <div id="aegis-score-controls" class="hidden">
+          <div class="input-group input-group-compact">
+            <label data-i18n="scoreBasis">Score basis</label>
+            <div class="segmented-control" id="aegis-score-profile-segmented">
+              <button type="button" data-value="best" class="active" data-i18n="scoreBest">Best selections</button>
+              <button type="button" data-value="omni" data-i18n="scoreOmni">Omni coverage</button>
+            </div>
+          </div>
+          <div class="input-group input-group-compact">
+            <label data-i18n="scorePrecision">Decimal places</label>
+            <div class="segmented-control" id="aegis-score-precision-segmented">
+              <button type="button" data-value="0" class="active">0</button>
+              <button type="button" data-value="1">1</button>
+              <button type="button" data-value="2">2</button>
+            </div>
+          </div>
+          <div id="aegis-score-comparison-group" class="input-group input-group-compact">
+            <label data-i18n="scoreComparisonActivity">Compare drops by</label>
+            <div class="segmented-control" id="aegis-score-comparison-segmented">
+              <button type="button" data-value="pve" class="active">PvE</button>
+              <button type="button" data-value="pvp">PvP</button>
+            </div>
+          </div>
+          <p class="description" data-i18n="scoreCategoryHelp">Compare scores within the same spreadsheet weapon category. Extra options count only in Omni coverage.</p>
+        </div>
         <div id="aegis-mode-toggle-group" class="input-group input-group-compact">
           <label data-i18n="spreadsheetMode">Spreadsheet Mode</label>
           <div class="segmented-control" id="aegis-mode-segmented">

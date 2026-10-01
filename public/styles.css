@@ -6125,3 +6125,35 @@ button.aegis-perk-layout-toggle { position: static; flex-shrink: 0; }
 .aegis-preview-damage { color: #00aeef; }
 .aegis-tile-footer > .aegis-stat-preview { top: calc(84px * .78); bottom: auto; height: calc(84px * .22); }
 #aegis-badge-style-segmented { flex-wrap: wrap; }
+
+/* Percentage scores use a neutral presentation and never inherit letter-grade colors. */
+.aegis-score {
+  background: #263342 !important;
+  color: #f4f7fa !important;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.aegis-badge.aegis-score {
+  width: auto !important;
+  min-width: calc(28px * var(--aegis-badge-scale, 1)) !important;
+  padding-inline: calc(3px * var(--aegis-badge-scale, 1)) !important;
+  border-radius: 4px !important;
+}
+.aegis-badge.aegis-score.aegis-badge-split { padding: 0 !important; }
+.aegis-score .aegis-split-half { min-width: 0; width: auto; padding-inline: 4px; }
+.aegis-score-details {
+  color: #d8dee9;
+  font-size: 11px;
+  margin-top: 8px;
+  white-space: normal;
+  line-height: 1.5;
+}
+.aegis-score-details summary { cursor: pointer; font-weight: 600; }
+.aegis-score-details-activity { padding: 5px 0; }
+.aegis-score-help { color: #aab8c8; }
+.aegis-copy-score-details {
+  background: #263342; border: 1px solid #71849b; color: #f4f7fa;
+  border-radius: 4px; padding: 4px 8px; cursor: pointer;
+}
+.aegis-score-tooltip { pointer-events: auto !important; }
+#aegis-score-controls button:disabled, #aegis-rating-display-segmented button:disabled { opacity: .45; cursor: default; }

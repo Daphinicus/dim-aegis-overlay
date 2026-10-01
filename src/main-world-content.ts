@@ -18,6 +18,7 @@ import { outermostElements } from './dom-utils';
  * wishlist calculations and UI injections without needing direct React Fiber access.
  */
 
+import { extractRawOwnedSnapshot } from './score-owned';
 import { WEAPON_STAT_HASHES } from './weapon-stats';
 import { masterworkStatName } from './masterwork';
 import { COMPARE_BUCKET_SELECTOR } from './compare-selectors';
@@ -54,11 +55,12 @@ const weaponReadCache = new WeakMap<object, { inputs: unknown[]; attributes: [st
 function weaponReadInputs(item: any): unknown[] {
   const mw = item.masterworkInfo;
   const inputs: unknown[] = [instanceCache[item.id], item.id, item.hash, item.name,
-    masterworkStatName(mw?.stats), mw?.statName, mw?.stat?.displayProperties?.name, mw?.name, mw?.typeName];
+    item.crafted, item.sockets?.fromDefinitions, masterworkStatName(mw?.stats), mw?.statName, mw?.stat?.displayProperties?.name, mw?.name, mw?.typeName];
   const addPlug = (def: any) => inputs.push(!!def, def?.hash, def?.displayProperties?.name,
     def?.displayProperties?.icon, def?.plug?.plugCategoryIdentifier, def?.itemTypeDisplayName);
   for (const socket of item.sockets?.allSockets || []) {
-    inputs.push(!!socket, socket?.plugOptions?.length);
+    inputs.push(!!socket, socket?.socketIndex, socket?.hasRandomizedPlugItems, !!socket?.plugSet?.craftingData, socket?.reusablePlugItems?.length, ...(socket?.reusablePlugItems || []).map((plug: any) => plug.plugItemHash), socket?.plugOptions?.length);
+    addPlug(socket?.actuallyPlugged?.plugDef);
     addPlug(socket?.plugged?.plugDef);
     for (const option of socket?.plugOptions || []) addPlug(option.plugDef);
   }
@@ -876,6 +878,7 @@ function processElement(el: HTMLElement) {
       setItemAttribute(el, 'data-aegis-perk-hashes', null);
       setItemAttribute(el, 'data-aegis-perks-data', null);
       setItemAttribute(el, 'data-aegis-active-perk-hashes', null);
+      setItemAttribute(el, 'data-aegis-score-owned', null);
       return;
     }
 
@@ -1022,6 +1025,7 @@ function processElement(el: HTMLElement) {
       writeAttribute('data-aegis-masterwork', null);
     }
 
+    writeAttribute('data-aegis-score-owned', JSON.stringify(extractRawOwnedSnapshot(item)));
     writeAttribute('data-aegis-item-hash', newHash);
     writeAttribute('data-aegis-item-name', item.name || 'Unknown Weapon');
     writeAttribute('data-aegis-perk-hashes', newPerks);

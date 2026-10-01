@@ -1,4 +1,6 @@
 import { isTileTooltipSuppressed } from './popup-interaction';
+import type { ScoreEvaluations, ScoreSettings } from './score-types';
+import { scorePresentation, scoreDetailsHtml, bindScoreDetails } from './score-presentation';
 import { ScoringResult, AegisSheetWeapon, TooltipPerk, AegisArmorSet, SheetPerksGroup, AegisShoppingItem, DualSheetInfo } from './types';
 import { t, getLocalizedElement, getLocalizedRole } from './i18n';
 import { getOriginalEvaluationText, getLocalizedSource } from './evaluation-i18n';
@@ -440,6 +442,7 @@ export function showTooltip(
   shoppingItem?: AegisShoppingItem | null,
   shoppingAlt?: { primaryName: string; role: string; priority: string; priorityNum: number } | null,
   options?: {
+    scoreDisplay?: { evaluations?: ScoreEvaluations; settings: ScoreSettings; details?: unknown };
     compactPerksMatrix?: boolean;
     autoMaxHeight?: boolean;
     tooltipWidthMode?: 'auto' | 'fixed';
@@ -453,6 +456,8 @@ export function showTooltip(
     return;
   }
   const tooltip = options?.contentHost || initTooltip();
+  tooltip.classList.toggle('aegis-score-tooltip', !!options?.scoreDisplay);
+  tooltip.onmouseleave = options?.scoreDisplay ? () => hideTooltip() : null;
   const isLightGGMode = !!isLightGG;
   const isCompactMatrix = options?.compactPerksMatrix === true;
   const isAutoMaxHeight = options?.autoMaxHeight !== false;
@@ -533,7 +538,8 @@ export function showTooltip(
   }
 
   // Normalize grade to match CSS classes
-  const gradeStr = result.grade || '';
+  const scoreDisplay = options?.scoreDisplay;
+  const gradeStr = scoreDisplay ? '' : result.grade || '';
   const isSplit = gradeStr.includes('|');
   const isTwoTier = !isSplit && (gradeStr.length > 2 || (gradeStr.length === 2 && !gradeStr.endsWith('+') && !gradeStr.endsWith('-')));
   const baseGradeLetter = isTwoTier 
@@ -609,7 +615,7 @@ export function showTooltip(
       }
 
       let pveUpgradeBanner = '';
-      if (pveResult?.upgradeAdvice) {
+      if (!scoreDisplay && pveResult?.upgradeAdvice) {
         pveUpgradeBanner = `
           <div class="aegis-tooltip-upgrade-pill" style="margin: 4px 0 6px 0;">
             <span class="aegis-upgrade-pill-text">${pveResult.upgradeAdvice}</span>
@@ -653,7 +659,7 @@ export function showTooltip(
       }
 
       let pvpUpgradeBanner = '';
-      if (pvpResult?.upgradeAdvice) {
+      if (!scoreDisplay && pvpResult?.upgradeAdvice) {
         pvpUpgradeBanner = `
           <div class="aegis-tooltip-upgrade-pill" style="margin: 4px 0 6px 0;">
             <span class="aegis-upgrade-pill-text">${pvpResult.upgradeAdvice}</span>
@@ -739,7 +745,10 @@ export function showTooltip(
   }
 
   let gradeBadgeHtml = '';
-  if (isSplit) {
+  if (scoreDisplay) {
+    const display = scorePresentation(scoreDisplay.evaluations, aegisMode || 'pve', scoreDisplay.settings);
+    gradeBadgeHtml = `<span class="aegis-tooltip-grade aegis-score${aegisMode === 'both' ? ' aegis-tooltip-split-grade' : ''}" aria-label="${display.label}">${display.html}</span>`;
+  } else if (isSplit) {
     const [pveStr, pvpStr] = gradeStr.split('|').map(s => s.trim());
     const getLetter = (str: string) => {
       if (!str || str === '—') return 'none';
@@ -799,7 +808,7 @@ export function showTooltip(
   */
 
   let perfectBannerHtml = '';
-  if (aegisMode !== 'both') {
+  if (!scoreDisplay && aegisMode !== 'both') {
     if (result.isOmniRoll) {
       perfectBannerHtml = `
         <div class="aegis-tooltip-perfect-banner omni" style="margin-bottom: 8px; padding: 6px 10px; background: linear-gradient(135deg, rgba(255,215,0,0.18), rgba(255,170,0,0.08)); border: 1px solid rgba(255,215,0,0.4); border-radius: 6px; color: #ffd700; font-size: 11px; font-weight: 700; display: flex; align-items: center; gap: 6px; box-shadow: 0 0 10px rgba(255,215,0,0.15);">
@@ -818,7 +827,7 @@ export function showTooltip(
   }
 
   let upgradeBannerHtml = '';
-  if (aegisMode !== 'both' && result.upgradeAdvice) {
+  if (!scoreDisplay && aegisMode !== 'both' && result.upgradeAdvice) {
     upgradeBannerHtml = `
       <div class="aegis-tooltip-upgrade-pill">
         <span class="aegis-upgrade-pill-text">${result.upgradeAdvice}</span>
@@ -949,7 +958,9 @@ export function showTooltip(
     </div>
   `;
 
+  if (scoreDisplay) html += scoreDetailsHtml(scoreDisplay.evaluations, aegisMode || 'pve', scoreDisplay.settings);
   safeSetInnerHTML(tooltip, html);
+  if (scoreDisplay) bindScoreDetails(tooltip, scoreDisplay.details);
 
   // Position and display
   if (options?.contentHost) {
