@@ -68,6 +68,7 @@ export function renderStatGradeInBar(bar: HTMLElement, result: StatGradeResult, 
   }
   let badge = bar.querySelector<HTMLElement>(':scope > .aegis-stat-grade');
   if (!badge) { badge = document.createElement('span'); badge.className = 'aegis-stat-grade'; bar.append(badge); }
+  badge.classList.remove('aegis-score');
   const text = letter;
   if (badge.textContent !== text) badge.textContent = text;
   if (badge.dataset.aegisGrade !== letter) badge.dataset.aegisGrade = letter;
@@ -75,4 +76,22 @@ export function renderStatGradeInBar(bar: HTMLElement, result: StatGradeResult, 
   if (badge.getAttribute('aria-label') !== label) badge.setAttribute('aria-label', label);
   if (!bar.hasAttribute('data-aegis-stat-bar')) bar.setAttribute('data-aegis-stat-bar', '');
   applyGradeColors(badge);
+}
+
+/** Keep Scores in the same native stat-row position as the Letter style. */
+export function renderStatScore(tile: HTMLElement, text: string, label: string) {
+  const bar = tile.querySelector<HTMLElement>(STAT_BAR_SELECTOR);
+  if (!bar) { removeStatGrade(tile); return; }
+  renderStatScoreInBar(bar, text, label);
+}
+
+export function renderStatScoreInBar(bar: HTMLElement, text: string, label: string) {
+  let badge = bar.querySelector<HTMLElement>(':scope > .aegis-stat-grade');
+  if (!badge) { badge = document.createElement('span'); bar.append(badge); }
+  badge.className = 'aegis-stat-grade aegis-score';
+  badge.removeAttribute('data-aegis-grade');
+  badge.style.removeProperty('color');
+  if (badge.textContent !== text) badge.textContent = text;
+  if (badge.getAttribute('aria-label') !== label) badge.setAttribute('aria-label', label);
+  if (!bar.hasAttribute('data-aegis-stat-bar')) bar.setAttribute('data-aegis-stat-bar', '');
 }

@@ -1,11 +1,18 @@
 // @vitest-environment jsdom
-import { it, expect, vi } from 'vitest';
+import { afterEach, it, expect, vi } from 'vitest';
 import pve from '../../data/pve-database.json';
 import { buildScoreSourceIndex } from '../../src/score-source';
 import { getWeaponHashFromEnglish } from '../../src/hash-translator';
 import { MASTERWORK_STAT_IDS } from '../../src/score-owned';
 import { SCORE_SLOTS } from '../../src/score-config';
 import type { AegisSheetDatabase } from '../../src/types';
+
+const observers: MutationObserver[] = [];
+const NativeMutationObserver = MutationObserver;
+vi.stubGlobal('MutationObserver', class extends NativeMutationObserver {
+  constructor(callback: MutationCallback) { super(callback); observers.push(this); }
+});
+afterEach(() => { observers.forEach(observer => observer.disconnect()); });
 
 it('renders cached scores and reacts to settings, masterwork, source, and decimal search changes', async () => {
   const source=buildScoreSourceIndex(pve as AegisSheetDatabase,'pve').get('no hesitation')!;

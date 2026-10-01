@@ -1,7 +1,7 @@
 import { readScoreSettings } from './score-config';
 import { formatScore } from './score-format';
 import type { ScoreSettings } from './score-types';
-import { renderStatGradeInBar, removeStatGrade } from './stat-grade';
+import { renderStatGradeInBar, renderStatScoreInBar, removeStatGrade } from './stat-grade';
 import { applyGradeColors, applyGradeGlow, setTileGlow, resolveTileGlow } from './grade-colors';
 import type { TileGlow } from './types';
 import { applyBadgePresentation, normalizeBadgeVisibility, rollBadgeSymbol, type BadgeVisibilitySettings } from './badge-presentation';
@@ -35,7 +35,7 @@ export function renderOptionsPreview() {
   if (!badge) return;
 
   const useScores = settings.aegisRatingDisplay === 'scores' && settings.scoringSource !== 'lightgg' && settings.aegisDbMode !== 'wishlist';
-  const style = useScores && settings.aegisBadgeStyle === 'stat' ? 'classic' : settings.aegisBadgeStyle || 'classic';
+  const style = settings.aegisBadgeStyle || 'classic';
   const statPreview = tile.querySelector<HTMLElement>('.aegis-stat-preview');
   tile.classList.toggle('aegis-tile-stat', style === 'stat');
   if (style === 'stat') {
@@ -44,9 +44,15 @@ export function renderOptionsPreview() {
     const basis = settings.aegisStatGradeBasis === 'weapon' ? 'weapon' : 'perk';
     const grade = basis === 'weapon' ? 'B+' : 'S+';
     const visibility = normalizeBadgeVisibility(settings.aegisBadgeVisibility).weapon;
-    if (statPreview && visibility !== 'off') renderStatGradeInBar(statPreview, { grade: 'S+', weaponGrade: 'B+' }, basis);
+    if (statPreview && visibility !== 'off') {
+      if (useScores) {
+        const scoreSettings = readScoreSettings({ ...settings });
+        const text = formatScore({ value: settings.aegisMode === 'pvp' ? 92.456 : 87.234, perfectOverall: false }, scoreSettings.aegisScorePrecision);
+        renderStatScoreInBar(statPreview, text, 'Aegis: ' + text);
+      } else renderStatGradeInBar(statPreview, { grade: 'S+', weaponGrade: 'B+' }, basis);
+    }
     else removeStatGrade(tile);
-    applyGradeGlow(tile, visibility === 'off' ? '' : grade);
+    applyGradeGlow(tile, useScores || visibility === 'off' ? '' : grade);
     return;
   }
   removeStatGrade(tile);

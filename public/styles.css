@@ -6157,3 +6157,5 @@ button.aegis-perk-layout-toggle { position: static; flex-shrink: 0; }
 }
 .aegis-score-tooltip { pointer-events: auto !important; }
 #aegis-score-controls button:disabled, #aegis-rating-display-segmented button:disabled { opacity: .45; cursor: default; }
+
+.aegis-stat-grade.aegis-score { font-size: calc(var(--item-size) * .125); color: #dae8f2; }

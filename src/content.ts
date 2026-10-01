@@ -1,5 +1,5 @@
 import { installScrollHover } from './scroll-hover';
-import { renderStatGrade, removeStatGrade, setStatGradeLayout, type StatGradeBasis } from './stat-grade';
+import { renderStatGrade, renderStatScore, removeStatGrade, setStatGradeLayout, type StatGradeBasis } from './stat-grade';
 import { installAttunementProvider, attunementGradeLabel } from './attunement-provider';
 import { placeInlinePopupDetails } from './popup-inline-details';
 import { aegisQuery, compactSearchData, finalizeSearchGrade } from './aegis-search';
@@ -3997,7 +3997,7 @@ function evaluateSearchItem(item: DimSearchInput): SearchFact {
   }
   inventoryBadges?.add(item, data.result);
   const name = item.name.toLowerCase().trim();
-  return { id: item.id, hash: item.hash, data: compactSearchData(data), context: { mode: aegisMode, scoreProfile: scoreSettings.aegisScoreProfile, chase: !!chaseList[normName(name)],
+  return { id: item.id, hash: item.hash, data: compactSearchData(data), context: { mode: aegisMode, kind: item.kind, scoreProfile: scoreSettings.aegisScoreProfile, chase: !!chaseList[normName(name)],
     source: aegisSheetDb?.weapons[name]?.source || aegisSheetDbPvE?.weapons[name]?.source || aegisSheetDbPvP?.weapons[name]?.source } };
 }
 
@@ -5906,7 +5906,7 @@ function publishInventoryGrade(container: HTMLElement, result: ScoringResult) {
   const labels = (halves.length ? halves : [template]).map(source => {
     const text = source.querySelector('.aegis-grade-text')?.textContent ||
       [...source.childNodes].filter(node => !(node instanceof Element && node.matches('.aegis-badge-upgrade-arrow'))).map(node => node.textContent).join('');
-    return { text: (text || '').trim(), ...(template.classList.contains('aegis-score') ? { color: '#dae8f2', background: '#263442' } : inventoryGradeAppearance(text || '')) };
+    return { text: (text || '').trim(), ...(template.classList.contains('aegis-score') ? { color: '#dae8f2', gradient: null } : inventoryGradeAppearance(text || '')) };
   }).filter(label => label.text);
   const value = JSON.stringify({ version: 1, labels, upgrade: !template.classList.contains('aegis-score') && result.upgradeAvailable === true });
   if (tile.getAttribute('data-aegis-inventory-grade') !== value) tile.setAttribute('data-aegis-inventory-grade', value);
@@ -5964,9 +5964,13 @@ function injectBadge(el: HTMLElement, result: ScoringResult, category?: BadgeCat
     applyGradeGlow(badgeTarget, scoresEnabled() ? '' : result.grade || '');
   }
 
-  if (!scoresEnabled() && aegisBadgeStyle === 'stat' && !IS_WINNOWER_HOST && badgeTarget.matches('.item')) {
+  if (aegisBadgeStyle === 'stat' && !IS_WINNOWER_HOST && badgeTarget.matches('.item')) {
     itemContainer.querySelectorAll<HTMLElement>('.aegis-badge').forEach(badge => { releaseFooterSize(badge); badge.remove(); });
-    renderStatGrade(badgeTarget, result, aegisStatGradeBasis);
+    const data = weaponDataMap.get(el) || nativeScoreData.get(el.getAttribute('data-aegis-instance-id') || el.id.replace('item-', ''));
+    if (scoresEnabled() && !('sheetArmor' in (data || {}))) {
+      const display = scorePresentation(data?.scoreEvaluations, aegisMode, scoreSettings);
+      renderStatScore(badgeTarget, display.text, display.label);
+    } else renderStatGrade(badgeTarget, result, aegisStatGradeBasis);
     return;
   }
   removeStatGrade(itemContainer);

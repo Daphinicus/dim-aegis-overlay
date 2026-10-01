@@ -4,7 +4,7 @@ import { gradeValue as getGradeValue } from './grading';
 import { rollGradeDisplay } from './grade-colors';
 import type { WeaponEvaluationPayload, ScoringResult, AegisSheetWeapon } from './types';
 
-export interface SearchContext { mode: 'pve' | 'pvp' | 'both'; chase: boolean; source?: string; scoreProfile?: ScoreProfile }
+export interface SearchContext { mode: 'pve' | 'pvp' | 'both'; chase: boolean; source?: string; scoreProfile?: ScoreProfile; kind?: 'weapon' | 'armor' }
 type SearchSheet = Pick<AegisSheetWeapon, 'tier' | 'source'>;
 type SearchShopping = { priority: string };
 export interface AegisSearchData {
@@ -135,6 +135,7 @@ export function finalizeSearchGrade(result: ScoringResult, sheetWeapon: AegisShe
 
 export function matchesAegisArgument(targetQuery: string, data: AegisSearchData, context: SearchContext): boolean {
   const score = parseScorePredicate(targetQuery);
+  if (score && context.kind === 'armor') return false;
   if (score) return matchesScorePredicate(score, data.scoreEvaluations, context.mode, context.scoreProfile || 'best');
   const result = data?.result;
   const grade = result?.grade?.toLowerCase() || '';
