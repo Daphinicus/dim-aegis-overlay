@@ -51,11 +51,11 @@
       "frame": "High-Impact",
       "barrel": "Arrowhead Brake\nCorkscrew Rifling\nSmallbore",
       "mag": "Accurized Rounds",
-      "perk1": "Tap the Trigger\nDynamic Sway Reduction",
+      "perk1": "Tap the Trigger\nDynamic Sway Reduction\nMeganeura",
       "perk2": "Kill Clip\nGolden Tricorn\nRampage",
       "origin": "Explosive Pact",
       "source": "Last Wish Raid",
-      "notes": "Best-in-Class 400 RPM auto.\nStrong perks in both columns, Origin provides free stats after activating grenade/grenade kills.\n16 zoom for ease of use.\nTTK shift via Kill Clip, Harmony, Rampage x2, Focused Fury, Adrenaline Junkie x3, or Golden Tricorn x1 + 128 Weapons: 0.75 -> 0.60",
+      "notes": "Best-in-Class 400 RPM auto.\nStrong perks in both columns, Origin provides free stats after activating grenade/grenade kills.\n16 zoom for ease of use.\nVERY Strong vs. Team Stacking via Meganeura\nTTK shift via Kill Clip, Harmony, Rampage x2, Focused Fury, Adrenaline Junkie x3, or Golden Tricorn x1 + 128 Weapons: 0.75 -> 0.60",
       "rank": "",
       "tier": "S",
       "mw": "Stability\nRange"
@@ -70,7 +70,7 @@
       "perk2": "Kill Clip\nSwashbuckler\nAdagio",
       "origin": "Bray Legacy",
       "source": "Tenet of Bravery",
-      "notes": "Good frame, weak column 1 perks.\nBad recoil direction & bounce intensity demands Arrowhead Brake.\nOrigin provides passive ability energy.",
+      "notes": "Good frame, weak column 1 perks.\nBad recoil direction & high bounce intensity demands Arrowhead Brake.\nOrigin provides passive ability energy.\nTtK shift via Kill Clip, Binary Orbit, or Swashbuckler x5: 0.75 -> 0.58\nSwashbuckler x2: => 0.67\nAdagio: => 0.70",
       "rank": "",
       "tier": "B",
       "mw": "Range\nStability"
@@ -304,7 +304,7 @@
       "name": "Herod-C",
       "energy": "Kinetic",
       "frame": "High-Impact",
-      "barrel": "Smallbore\nHammer-forged Rifling Rifling\nArrowhead Brake",
+      "barrel": "Smallbore\nHammer-forged Rifling\nArrowhead Brake",
       "mag": "Ricochet Rounds\nHigh-Caliber Rounds\nArmor-Piercing Rounds",
       "perk1": "Dynamic Sway Reduction\nPerpetual Motion",
       "perk2": "Vorpal Weapon\nMultikill Clip\nTap the Trigger",
@@ -334,7 +334,7 @@
       "name": "Lethal Abundance",
       "energy": "Kinetic",
       "frame": "High-Impact",
-      "barrel": "Arrowhead Brake\nChambered Compensator\nHammer-forged Rifling Rifling",
+      "barrel": "Arrowhead Brake\nChambered Compensator\nHammer-forged Rifling",
       "mag": "Accurized Rounds\nSteady Rounds",
       "perk1": "Slice\nZen Moment\nKeep Away",
       "perk2": "Desperate Measures\nOnslaught\nRampage",
@@ -349,7 +349,7 @@
       "name": "Lodbrok-C",
       "energy": "Kinetic",
       "frame": "High-Impact",
-      "barrel": "Chambered Compensator\nSmallbore\nHammer-forged Rifling Rifling",
+      "barrel": "Chambered Compensator\nSmallbore\nHammer-forged Rifling",
       "mag": "Ricochet Rounds\nHigh-Caliber Rounds\nArmor-Piercing Rounds",
       "perk1": "Dynamic Sway Reduction\nFragile Focus\nPerpetual Motion",
       "perk2": "Kill Clip\nCascade Point\nTap the Trigger",
@@ -394,7 +394,7 @@
       "name": "Pluperfect",
       "energy": "Kinetic",
       "frame": "High-Impact",
-      "barrel": "Chambered Compensator\nSmallbore\nHammer-forged Rifling Rifling",
+      "barrel": "Chambered Compensator\nSmallbore\nHammer-forged Rifling",
       "mag": "Ricochet Rounds\nHigh-Caliber Rounds\nArmor-Piercing Rounds",
       "perk1": "Rangefinder\nDynamic Sway Reduction\nStopping Power",
       "perk2": "Rampage\nAll-Star\nAdhesive Ordnance",
@@ -454,13 +454,13 @@
       "name": "Reckless Oracle",
       "energy": "Energy",
       "frame": "Rapid-Fire",
-      "barrel": "Hammer-forged Rifling Rifling\nFull Bore\nSmallbore",
+      "barrel": "Hammer-forged Rifling\nFull Bore\nSmallbore",
       "mag": "Ricochet Rounds\nHigh-Caliber Rounds\nArmor-Piercing Rounds",
       "perk1": "Dynamic Sway Reduction\nDestabilizing Rounds",
       "perk2": "Kill Clip\nParacausal Affinity\nSwashbuckler",
       "origin": "Photoinhibition",
-      "source": "Garden of Salvation Raid / Pantheon Raid Encounters",
-      "notes": "Anti-over shield\nDouble damage perks via Kill-activated-TtK shift perks",
+      "source": "Garden of Salvation Raid",
+      "notes": "Anti-Over Shield / Woven Mail via Origin trait\nDouble damage perks via Kill-activated-TtK shift perks\nTtK shift via Kill Clip, Swashbuckler x5, or One For All: 0.75 -> 0.58\nParacausal Affinity: => 0.67",
       "rank": "",
       "tier": "A",
       "mw": "Range\nStability"
@@ -475,7 +475,7 @@
       "perk2": "Kill Clip\nGolden Tricorn\nRepulsor Brace",
       "origin": "Skulking Wolf",
       "source": "Iron Banner / Saladin Vendor",
-      "notes": "Skulking Wolf\nDouble damage perks via Kill-activated-TtK shift perks",
+      "notes": "Skulking Wolf\nDouble damage perks via Kill-activated-TtK shift perks\nTtK shift via Kill Clip: 0.75 -> 0.58\nGolden Tricorn x1: => 0.67\nGold Tricorn x2: => 0.50\nSwashbuckler x5: => 0.58",
       "rank": "",
       "tier": "A",
       "mw": "Range\nStability"
@@ -505,7 +505,7 @@
       "perk2": "Target Lock\nOnslaught\nAll-Star",
       "origin": "Eyes Up",
       "source": "Cosmodrome Destination",
-      "notes": "Possible combo of Stopping Power+Target Lock for TtK shift from neutral.\nNeeds more testing.",
+      "notes": "Consistency / ease of use AR.\nStopping Power + Target Lock does NOT reduce base TTK without investing into Radiant or 150?+ Weapons stat also.\nStopping Power + Target Lock + 150 Weapons causes base TtK shift: 0.80 => 0.67\nStopping Power + Target Lock + Radiant + 190? Weapons: => 0.53",
       "rank": "",
       "tier": "C",
       "mw": "Range\nStability"
@@ -535,7 +535,7 @@
       "perk2": "Vorpal Weapon\nAll-Star\nMultikill Clip",
       "origin": "Cast No Shadows",
       "source": "World Drops / Gunsmith Vendor / Hawthorne Engrams",
-      "notes": "Modern  Vorpal Weapon in Kinetic Slot. \nLacks meaningful perks for general use and has a low base stat package.",
+      "notes": "Modern Vorpal Weapon in Kinetic Slot. \nLacks meaningful perks for general use and has a low base stat package.",
       "rank": "",
       "tier": "B",
       "mw": "Range\nStability"
@@ -550,7 +550,7 @@
       "perk2": "Multikill Clip\nTap the Trigger\nSwashbuckler",
       "origin": "Skulking Wolf",
       "source": "Iron Banner / Saladin Vendor",
-      "notes": "Slice\nKill Chaining\nMelee build",
+      "notes": "Slice\nLacks strong perks for substantial TtK shifts or Kill Chains.\nCan be useful with melee based builds utilizing Swashbuckler.\nTtK shift via Swashbuckler x5: 0.80 -> 0.60\nMultikill Clip x1: => 0.70\nMKC x2: => 0.60\nMKC x3 => 0.50\nDon't use Onslaught on this frame. It is bad.",
       "rank": "",
       "tier": "A",
       "mw": "Range\nStability"
@@ -655,7 +655,7 @@
       "perk2": "Moving Target\nHeadstone\nDesperate Measures",
       "origin": "Radiolaria Transposer",
       "source": "Encore Exotic Mission \nClassic Collections Modifier: ON",
-      "notes": "Res Block w/ Headstone",
+      "notes": "Res Block w/ Headstone\nLacks strong damage perks.\nTtK shfit via Desperate Measures x2: 0.75 -> 0.67\nDM x3: => 0.58",
       "rank": "",
       "tier": "D",
       "mw": "Range\nStability"
@@ -820,7 +820,7 @@
       "perk2": "Golden Tricorn\nCascade Point\nTarget Lock",
       "origin": "Noble Deeds",
       "source": "//node.ovrd.AVALON//\nLegacy Loot\nClassic Collections Modifier: ON",
-      "notes": "Good frame, decent perks.\nDecent origin.\nLower base zoom for ease of use.",
+      "notes": "Good frame, decent perks.\nDecent origin.\nLower base zoom for ease of use.\nTtK shift via Golden Tricorn x1: 0.80 -> 0.70\nGolden Tricorn x2: => 0.50\nCascade Point: => 0.48",
       "rank": "",
       "tier": "B",
       "mw": "Range\nStability"
@@ -850,7 +850,7 @@
       "perk2": "Golden Tricorn\nRangefinder",
       "origin": "Skulking Wolf\nVeist Stinger",
       "source": "Iron Banner / Saladin Vendor",
-      "notes": "Good frame, decent perks.\nSkulking Wolf auto rifle.\nNon-tiered. Non-enhanceable.",
+      "notes": "Good frame, decent perks.\nSkulking Wolf auto rifle.\nNon-tiered. Non-enhanceable.\nTTK shift via Golden Tricorn x1: 0.75 -> 0.67\nGold Tricorn x2: => 0.50",
       "rank": "",
       "tier": "B",
       "mw": "Range\nStability"
@@ -865,7 +865,7 @@
       "perk2": "Tap the Trigger\n Vorpal Weapon",
       "origin": "Land Tank",
       "source": "Vox Obscura\nLegacy Loot\nClassic Collections Modifier: ON",
-      "notes": "Good frame, mid perks.\n Vorpal Weapon vs. Supers.",
+      "notes": "Good frame, mid perks.\n Vorpal Weapon vs. Supers.\nNo meaningful damage increase perks.",
       "rank": "",
       "tier": "C",
       "mw": "Range\nStability"
@@ -1093,6 +1093,22 @@
       "notes": "Curated roll.\nNon-tiered, non-enhanceable. No origin.\nPowercrept massively but still usable.",
       "rank": "",
       "tier": "D",
+      "mw": "Range\nStability"
+    },
+    "reckless oracle (pantheon variant)": {
+      "name": "Reckless Oracle (Pantheon Variant)",
+      "energy": "Energy",
+      "frame": "Rapid-Fire",
+      "barrel": "Hammer-forged Rifling\nFull Bore\nSmallbore",
+      "mag": "Ricochet Rounds\nHigh-Caliber Rounds\nArmor-Piercing Rounds",
+      "perk1": "Keep Away\nDestabilizing Rounds\nDimensional Shift",
+      "perk2": "Kill Clip\nParacausal Affinity\nSwashbuckler",
+      "origin": "Photoinhibition\nElliptical Orbit",
+      "source": "Pantheon Raid",
+      "notes": "Anti-Over Shield / Woven Mail or extra Ammo Gen + Stability / Flinch Resist via Origin trait\nDouble damage perks via Kill-activated-TtK shift perks\nTtK shift via Kill Clip, Chaos Reshaped x2, Swashbuckler x5, or One For All: 0.75 -> 0.58\nChaos Reshaped x1 or Paracausal Affinity: => 0.67",
+      "rank": "",
+      "tier": "A",
+      "versionTag": "pantheon",
       "mw": "Range\nStability"
     },
     "a good shout": {
@@ -2809,7 +2825,7 @@
       "name": "Round Robin",
       "energy": "Kinetic",
       "frame": "Aggressive",
-      "barrel": "Smallbore\nHammer-forged Rifling Rifling\nCorkscrew Rifling",
+      "barrel": "Smallbore\nHammer-forged Rifling\nCorkscrew Rifling",
       "mag": "Ricochet Rounds\nAccurized Rounds",
       "perk1": "Slideshot\nKeep Away",
       "perk2": "Adagio\nPrecision Instrument",
@@ -2824,7 +2840,7 @@
       "name": "Seventh Seraph Officer Revolver",
       "energy": "Kinetic",
       "frame": "Precision",
-      "barrel": "Full Bore\nHammer-forged Rifling Rifling\nSmallbore",
+      "barrel": "Full Bore\nHammer-forged Rifling\nSmallbore",
       "mag": "Accurized Rounds\nSeraph Rounds",
       "perk1": "Lone Wolf\nBewildering Burst",
       "perk2": "Precision Instrument\nAll-Star\nAdhesive Ordnance",
@@ -2839,7 +2855,7 @@
       "name": "Sightline Survey",
       "energy": "Energy",
       "frame": "Precision",
-      "barrel": "Full Bore\nHammer-forged Rifling Rifling\nSmallbore",
+      "barrel": "Full Bore\nHammer-forged Rifling\nSmallbore",
       "mag": "Accurized Rounds",
       "perk1": "Keep Away\nFragile Focus",
       "perk2": "Precision Instrument",
@@ -2929,7 +2945,7 @@
       "name": "Trust",
       "energy": "Energy",
       "frame": "Precision",
-      "barrel": "Full Bore\nHammer-forged Rifling Rifling\nSmallbore",
+      "barrel": "Full Bore\nHammer-forged Rifling\nSmallbore",
       "mag": "Accurized Rounds",
       "perk1": "Slideshot\nKeep Away\nOpening Shot\nFirefly",
       "perk2": "Precision Instrument\nMagnificent Howl\nDragonfly",
@@ -4595,7 +4611,7 @@
       "name": "Bitter End",
       "energy": "Heavy",
       "frame": "Balanced Heat (900 RPM)",
-      "barrel": "Arrowhead Brake\nHammer-forged Rifling Rifling\nExtended Barrel",
+      "barrel": "Arrowhead Brake\nHammer-forged Rifling\nExtended Barrel",
       "mag": "Overclocked\nProjection Fuse\nParticle Repeater",
       "perk1": "Delicate Tuning",
       "perk2": "Killing Tally\nOne for All",
@@ -4610,7 +4626,7 @@
       "name": "Circular Logic",
       "energy": "Heavy",
       "frame": "Adaptive",
-      "barrel": "Smallbore\nHammer-forged Rifling Rifling\nCorkscrew Rifling",
+      "barrel": "Smallbore\nHammer-forged Rifling\nCorkscrew Rifling",
       "mag": "Ricochet Rounds\nHigh-Caliber Rounds\nArmor-Piercing Rounds",
       "perk1": "Fourth Time's The Charm",
       "perk2": "Killing Tally\nElemental Honing",
@@ -8030,7 +8046,7 @@
     "mida-macro tool": {
       "name": "Mida-Macro Tool",
       "energy": "Energy",
-      "frame": "MIDA Synergy",
+      "frame": "MIDA Synergy (Precision Shotgun)",
       "barrel": "Corkscrew Rifling\nBarrel Shroud\nSmallbore",
       "mag": "Accurized Rounds",
       "perk1": "Threat Detector\nLone Wolf\nDiscord",
@@ -8411,7 +8427,7 @@
       "perk1": "One-Two Punch",
       "perk2": "Trench Barrel\nElemental Honing\nChaos Reshaped",
       "origin": "Elliptical Orbit\nForge's Kin",
-      "source": "Pantheon",
+      "source": "Pantheon Raid",
       "notes": "Bad frame.\nPrimarily PvE focused perks & frame type.\nNeutral damage buffs to reduce pellet count needed for 1HKO, but strictly still just worse than all other frames.",
       "rank": "",
       "tier": "D",
@@ -9560,7 +9576,7 @@
     "mida mini-tool": {
       "name": "Mida Mini-Tool",
       "energy": "Energy",
-      "frame": "MIDA Synergy",
+      "frame": "MIDA Synergy (Lightweight SMG)",
       "barrel": "Hammer-forged Rifling\nSmallbore\nFull Bore",
       "mag": "Ricochet Rounds\nHigh-Caliber Rounds\nArmor-Piercing Rounds",
       "perk1": "Perpetual Motion\nHeal Clip\nHip-Fire Grip",
@@ -10122,7 +10138,7 @@
       "perk2": "Kill Clip\nIron Reach\nDynamic Sway Reduction",
       "origin": "Skulking Wolf\nSuros Synergy",
       "source": "Iron Banner / Valus Saladin Vendor Focusing",
-      "notes": "Skulking Wolf SMG in Energy slot.\nOne of the best all-around Adaptive SMGs.\nNeutral TTK shift via 113 Weapons stat: 0.80 -> 0.73\nTTK shift via Kill Clip: 0.80 -> 0.60",
+      "notes": "Skulking Wolf SMG in Energy slot.\nOne of the best all-around Adaptive SMGs.\nNeutral TTK shift via 113 Weapons stat: 0.80 -> 0.73\nTTK shift via Kill Clip: 0.80 -> 0.60\nKill Clip + Radiant: => 0.53",
       "rank": "",
       "tier": "A",
       "mw": "Range\nStability"
@@ -10340,7 +10356,7 @@
     "calus mini-tool": {
       "name": "CALUS Mini-Tool",
       "energy": "Energy",
-      "frame": "MIDA Synergy",
+      "frame": "MIDA Synergy (Lightweight SMG)",
       "barrel": "Smallbore\nHammer-forged Rifling\nExtended Barrel",
       "mag": "Accurized Rounds\nSteady Rounds",
       "perk1": "Moving Target\nSlideways\nThreat Detector",
@@ -10355,7 +10371,7 @@
     "mida mini-tool (original variant)": {
       "name": "MIDA Mini-Tool (Original Variant)",
       "energy": "Energy",
-      "frame": "MIDA Synergy",
+      "frame": "MIDA Synergy (Lightweight SMG)",
       "barrel": "Fluted Barrel",
       "mag": "Alloy Magazine",
       "perk1": "Hip-Fire Grip",
@@ -16074,11 +16090,11 @@
         "frame": "High-Impact",
         "barrel": "Arrowhead Brake\nCorkscrew Rifling\nSmallbore",
         "mag": "Accurized Rounds",
-        "perk1": "Tap the Trigger\nDynamic Sway Reduction",
+        "perk1": "Tap the Trigger\nDynamic Sway Reduction\nMeganeura",
         "perk2": "Kill Clip\nGolden Tricorn\nRampage",
         "origin": "Explosive Pact",
         "source": "Last Wish Raid",
-        "notes": "Best-in-Class 400 RPM auto.\nStrong perks in both columns, Origin provides free stats after activating grenade/grenade kills.\n16 zoom for ease of use.\nTTK shift via Kill Clip, Harmony, Rampage x2, Focused Fury, Adrenaline Junkie x3, or Golden Tricorn x1 + 128 Weapons: 0.75 -> 0.60",
+        "notes": "Best-in-Class 400 RPM auto.\nStrong perks in both columns, Origin provides free stats after activating grenade/grenade kills.\n16 zoom for ease of use.\nVERY Strong vs. Team Stacking via Meganeura\nTTK shift via Kill Clip, Harmony, Rampage x2, Focused Fury, Adrenaline Junkie x3, or Golden Tricorn x1 + 128 Weapons: 0.75 -> 0.60",
         "rank": "",
         "tier": "S",
         "mw": "Stability\nRange"
@@ -16095,7 +16111,7 @@
         "perk2": "Kill Clip\nSwashbuckler\nAdagio",
         "origin": "Bray Legacy",
         "source": "Tenet of Bravery",
-        "notes": "Good frame, weak column 1 perks.\nBad recoil direction & bounce intensity demands Arrowhead Brake.\nOrigin provides passive ability energy.",
+        "notes": "Good frame, weak column 1 perks.\nBad recoil direction & high bounce intensity demands Arrowhead Brake.\nOrigin provides passive ability energy.\nTtK shift via Kill Clip, Binary Orbit, or Swashbuckler x5: 0.75 -> 0.58\nSwashbuckler x2: => 0.67\nAdagio: => 0.70",
         "rank": "",
         "tier": "B",
         "mw": "Range\nStability"
@@ -16342,7 +16358,7 @@
         "name": "Herod-C",
         "energy": "Kinetic",
         "frame": "High-Impact",
-        "barrel": "Smallbore\nHammer-forged Rifling Rifling\nArrowhead Brake",
+        "barrel": "Smallbore\nHammer-forged Rifling\nArrowhead Brake",
         "mag": "Ricochet Rounds\nHigh-Caliber Rounds\nArmor-Piercing Rounds",
         "perk1": "Dynamic Sway Reduction\nPerpetual Motion",
         "perk2": "Vorpal Weapon\nMultikill Clip\nTap the Trigger",
@@ -16376,7 +16392,7 @@
         "name": "Lethal Abundance",
         "energy": "Kinetic",
         "frame": "High-Impact",
-        "barrel": "Arrowhead Brake\nChambered Compensator\nHammer-forged Rifling Rifling",
+        "barrel": "Arrowhead Brake\nChambered Compensator\nHammer-forged Rifling",
         "mag": "Accurized Rounds\nSteady Rounds",
         "perk1": "Slice\nZen Moment\nKeep Away",
         "perk2": "Desperate Measures\nOnslaught\nRampage",
@@ -16393,7 +16409,7 @@
         "name": "Lodbrok-C",
         "energy": "Kinetic",
         "frame": "High-Impact",
-        "barrel": "Chambered Compensator\nSmallbore\nHammer-forged Rifling Rifling",
+        "barrel": "Chambered Compensator\nSmallbore\nHammer-forged Rifling",
         "mag": "Ricochet Rounds\nHigh-Caliber Rounds\nArmor-Piercing Rounds",
         "perk1": "Dynamic Sway Reduction\nFragile Focus\nPerpetual Motion",
         "perk2": "Kill Clip\nCascade Point\nTap the Trigger",
@@ -16444,7 +16460,7 @@
         "name": "Pluperfect",
         "energy": "Kinetic",
         "frame": "High-Impact",
-        "barrel": "Chambered Compensator\nSmallbore\nHammer-forged Rifling Rifling",
+        "barrel": "Chambered Compensator\nSmallbore\nHammer-forged Rifling",
         "mag": "Ricochet Rounds\nHigh-Caliber Rounds\nArmor-Piercing Rounds",
         "perk1": "Rangefinder\nDynamic Sway Reduction\nStopping Power",
         "perk2": "Rampage\nAll-Star\nAdhesive Ordnance",
@@ -16510,15 +16526,31 @@
         "name": "Reckless Oracle",
         "energy": "Energy",
         "frame": "Rapid-Fire",
-        "barrel": "Hammer-forged Rifling Rifling\nFull Bore\nSmallbore",
+        "barrel": "Hammer-forged Rifling\nFull Bore\nSmallbore",
         "mag": "Ricochet Rounds\nHigh-Caliber Rounds\nArmor-Piercing Rounds",
         "perk1": "Dynamic Sway Reduction\nDestabilizing Rounds",
         "perk2": "Kill Clip\nParacausal Affinity\nSwashbuckler",
         "origin": "Photoinhibition",
-        "source": "Garden of Salvation Raid / Pantheon Raid Encounters",
-        "notes": "Anti-over shield\nDouble damage perks via Kill-activated-TtK shift perks",
+        "source": "Garden of Salvation Raid",
+        "notes": "Anti-Over Shield / Woven Mail via Origin trait\nDouble damage perks via Kill-activated-TtK shift perks\nTtK shift via Kill Clip, Swashbuckler x5, or One For All: 0.75 -> 0.58\nParacausal Affinity: => 0.67",
         "rank": "",
         "tier": "A",
+        "mw": "Range\nStability"
+      },
+      {
+        "name": "Reckless Oracle (Pantheon Variant)",
+        "energy": "Energy",
+        "frame": "Rapid-Fire",
+        "barrel": "Hammer-forged Rifling\nFull Bore\nSmallbore",
+        "mag": "Ricochet Rounds\nHigh-Caliber Rounds\nArmor-Piercing Rounds",
+        "perk1": "Keep Away\nDestabilizing Rounds\nDimensional Shift",
+        "perk2": "Kill Clip\nParacausal Affinity\nSwashbuckler",
+        "origin": "Photoinhibition\nElliptical Orbit",
+        "source": "Pantheon Raid",
+        "notes": "Anti-Over Shield / Woven Mail or extra Ammo Gen + Stability / Flinch Resist via Origin trait\nDouble damage perks via Kill-activated-TtK shift perks\nTtK shift via Kill Clip, Chaos Reshaped x2, Swashbuckler x5, or One For All: 0.75 -> 0.58\nChaos Reshaped x1 or Paracausal Affinity: => 0.67",
+        "rank": "",
+        "tier": "A",
+        "versionTag": "pantheon",
         "mw": "Range\nStability"
       }
     ],
@@ -16533,7 +16565,7 @@
         "perk2": "Kill Clip\nGolden Tricorn\nRepulsor Brace",
         "origin": "Skulking Wolf",
         "source": "Iron Banner / Saladin Vendor",
-        "notes": "Skulking Wolf\nDouble damage perks via Kill-activated-TtK shift perks",
+        "notes": "Skulking Wolf\nDouble damage perks via Kill-activated-TtK shift perks\nTtK shift via Kill Clip: 0.75 -> 0.58\nGolden Tricorn x1: => 0.67\nGold Tricorn x2: => 0.50\nSwashbuckler x5: => 0.58",
         "rank": "",
         "tier": "A",
         "mw": "Range\nStability"
@@ -16567,7 +16599,7 @@
         "perk2": "Target Lock\nOnslaught\nAll-Star",
         "origin": "Eyes Up",
         "source": "Cosmodrome Destination",
-        "notes": "Possible combo of Stopping Power+Target Lock for TtK shift from neutral.\nNeeds more testing.",
+        "notes": "Consistency / ease of use AR.\nStopping Power + Target Lock does NOT reduce base TTK without investing into Radiant or 150?+ Weapons stat also.\nStopping Power + Target Lock + 150 Weapons causes base TtK shift: 0.80 => 0.67\nStopping Power + Target Lock + Radiant + 190? Weapons: => 0.53",
         "rank": "",
         "tier": "C",
         "mw": "Range\nStability"
@@ -16601,7 +16633,7 @@
         "perk2": "Vorpal Weapon\nAll-Star\nMultikill Clip",
         "origin": "Cast No Shadows",
         "source": "World Drops / Gunsmith Vendor / Hawthorne Engrams",
-        "notes": "Modern  Vorpal Weapon in Kinetic Slot. \nLacks meaningful perks for general use and has a low base stat package.",
+        "notes": "Modern Vorpal Weapon in Kinetic Slot. \nLacks meaningful perks for general use and has a low base stat package.",
         "rank": "",
         "tier": "B",
         "mw": "Range\nStability"
@@ -16618,7 +16650,7 @@
         "perk2": "Multikill Clip\nTap the Trigger\nSwashbuckler",
         "origin": "Skulking Wolf",
         "source": "Iron Banner / Saladin Vendor",
-        "notes": "Slice\nKill Chaining\nMelee build",
+        "notes": "Slice\nLacks strong perks for substantial TtK shifts or Kill Chains.\nCan be useful with melee based builds utilizing Swashbuckler.\nTtK shift via Swashbuckler x5: 0.80 -> 0.60\nMultikill Clip x1: => 0.70\nMKC x2: => 0.60\nMKC x3 => 0.50\nDon't use Onslaught on this frame. It is bad.",
         "rank": "",
         "tier": "A",
         "mw": "Range\nStability"
@@ -16735,7 +16767,7 @@
         "perk2": "Moving Target\nHeadstone\nDesperate Measures",
         "origin": "Radiolaria Transposer",
         "source": "Encore Exotic Mission \nClassic Collections Modifier: ON",
-        "notes": "Res Block w/ Headstone",
+        "notes": "Res Block w/ Headstone\nLacks strong damage perks.\nTtK shfit via Desperate Measures x2: 0.75 -> 0.67\nDM x3: => 0.58",
         "rank": "",
         "tier": "D",
         "mw": "Range\nStability"
@@ -16922,7 +16954,7 @@
         "perk2": "Golden Tricorn\nCascade Point\nTarget Lock",
         "origin": "Noble Deeds",
         "source": "//node.ovrd.AVALON//\nLegacy Loot\nClassic Collections Modifier: ON",
-        "notes": "Good frame, decent perks.\nDecent origin.\nLower base zoom for ease of use.",
+        "notes": "Good frame, decent perks.\nDecent origin.\nLower base zoom for ease of use.\nTtK shift via Golden Tricorn x1: 0.80 -> 0.70\nGolden Tricorn x2: => 0.50\nCascade Point: => 0.48",
         "rank": "",
         "tier": "B",
         "mw": "Range\nStability"
@@ -16956,7 +16988,7 @@
         "perk2": "Golden Tricorn\nRangefinder",
         "origin": "Skulking Wolf\nVeist Stinger",
         "source": "Iron Banner / Saladin Vendor",
-        "notes": "Good frame, decent perks.\nSkulking Wolf auto rifle.\nNon-tiered. Non-enhanceable.",
+        "notes": "Good frame, decent perks.\nSkulking Wolf auto rifle.\nNon-tiered. Non-enhanceable.\nTTK shift via Golden Tricorn x1: 0.75 -> 0.67\nGold Tricorn x2: => 0.50",
         "rank": "",
         "tier": "B",
         "mw": "Range\nStability"
@@ -16973,7 +17005,7 @@
         "perk2": "Tap the Trigger\n Vorpal Weapon",
         "origin": "Land Tank",
         "source": "Vox Obscura\nLegacy Loot\nClassic Collections Modifier: ON",
-        "notes": "Good frame, mid perks.\n Vorpal Weapon vs. Supers.",
+        "notes": "Good frame, mid perks.\n Vorpal Weapon vs. Supers.\nNo meaningful damage increase perks.",
         "rank": "",
         "tier": "C",
         "mw": "Range\nStability"
@@ -19161,7 +19193,7 @@
         "name": "Round Robin",
         "energy": "Kinetic",
         "frame": "Aggressive",
-        "barrel": "Smallbore\nHammer-forged Rifling Rifling\nCorkscrew Rifling",
+        "barrel": "Smallbore\nHammer-forged Rifling\nCorkscrew Rifling",
         "mag": "Ricochet Rounds\nAccurized Rounds",
         "perk1": "Slideshot\nKeep Away",
         "perk2": "Adagio\nPrecision Instrument",
@@ -19178,7 +19210,7 @@
         "name": "Seventh Seraph Officer Revolver",
         "energy": "Kinetic",
         "frame": "Precision",
-        "barrel": "Full Bore\nHammer-forged Rifling Rifling\nSmallbore",
+        "barrel": "Full Bore\nHammer-forged Rifling\nSmallbore",
         "mag": "Accurized Rounds\nSeraph Rounds",
         "perk1": "Lone Wolf\nBewildering Burst",
         "perk2": "Precision Instrument\nAll-Star\nAdhesive Ordnance",
@@ -19195,7 +19227,7 @@
         "name": "Sightline Survey",
         "energy": "Energy",
         "frame": "Precision",
-        "barrel": "Full Bore\nHammer-forged Rifling Rifling\nSmallbore",
+        "barrel": "Full Bore\nHammer-forged Rifling\nSmallbore",
         "mag": "Accurized Rounds",
         "perk1": "Keep Away\nFragile Focus",
         "perk2": "Precision Instrument",
@@ -19312,7 +19344,7 @@
         "name": "Trust",
         "energy": "Energy",
         "frame": "Precision",
-        "barrel": "Full Bore\nHammer-forged Rifling Rifling\nSmallbore",
+        "barrel": "Full Bore\nHammer-forged Rifling\nSmallbore",
         "mag": "Accurized Rounds",
         "perk1": "Slideshot\nKeep Away\nOpening Shot\nFirefly",
         "perk2": "Precision Instrument\nMagnificent Howl\nDragonfly",
@@ -20929,7 +20961,7 @@
         "name": "Bitter End",
         "energy": "Heavy",
         "frame": "Balanced Heat (900 RPM)",
-        "barrel": "Arrowhead Brake\nHammer-forged Rifling Rifling\nExtended Barrel",
+        "barrel": "Arrowhead Brake\nHammer-forged Rifling\nExtended Barrel",
         "mag": "Overclocked\nProjection Fuse\nParticle Repeater",
         "perk1": "Delicate Tuning",
         "perk2": "Killing Tally\nOne for All",
@@ -20946,7 +20978,7 @@
         "name": "Circular Logic",
         "energy": "Heavy",
         "frame": "Adaptive",
-        "barrel": "Smallbore\nHammer-forged Rifling Rifling\nCorkscrew Rifling",
+        "barrel": "Smallbore\nHammer-forged Rifling\nCorkscrew Rifling",
         "mag": "Ricochet Rounds\nHigh-Caliber Rounds\nArmor-Piercing Rounds",
         "perk1": "Fourth Time's The Charm",
         "perk2": "Killing Tally\nElemental Honing",
@@ -24529,7 +24561,7 @@
       {
         "name": "Mida-Macro Tool",
         "energy": "Energy",
-        "frame": "MIDA Synergy",
+        "frame": "MIDA Synergy (Precision Shotgun)",
         "barrel": "Corkscrew Rifling\nBarrel Shroud\nSmallbore",
         "mag": "Accurized Rounds",
         "perk1": "Threat Detector\nLone Wolf\nDiscord",
@@ -24924,7 +24956,7 @@
         "perk1": "One-Two Punch",
         "perk2": "Trench Barrel\nElemental Honing\nChaos Reshaped",
         "origin": "Elliptical Orbit\nForge's Kin",
-        "source": "Pantheon",
+        "source": "Pantheon Raid",
         "notes": "Bad frame.\nPrimarily PvE focused perks & frame type.\nNeutral damage buffs to reduce pellet count needed for 1HKO, but strictly still just worse than all other frames.",
         "rank": "",
         "tier": "D",
@@ -26043,7 +26075,7 @@
       {
         "name": "Mida Mini-Tool",
         "energy": "Energy",
-        "frame": "MIDA Synergy",
+        "frame": "MIDA Synergy (Lightweight SMG)",
         "barrel": "Hammer-forged Rifling\nSmallbore\nFull Bore",
         "mag": "Ricochet Rounds\nHigh-Caliber Rounds\nArmor-Piercing Rounds",
         "perk1": "Perpetual Motion\nHeal Clip\nHip-Fire Grip",
@@ -26058,7 +26090,7 @@
       {
         "name": "MIDA Mini-Tool (Original Variant)",
         "energy": "Energy",
-        "frame": "MIDA Synergy",
+        "frame": "MIDA Synergy (Lightweight SMG)",
         "barrel": "Fluted Barrel",
         "mag": "Alloy Magazine",
         "perk1": "Hip-Fire Grip",
@@ -26635,7 +26667,7 @@
         "perk2": "Kill Clip\nIron Reach\nDynamic Sway Reduction",
         "origin": "Skulking Wolf\nSuros Synergy",
         "source": "Iron Banner / Valus Saladin Vendor Focusing",
-        "notes": "Skulking Wolf SMG in Energy slot.\nOne of the best all-around Adaptive SMGs.\nNeutral TTK shift via 113 Weapons stat: 0.80 -> 0.73\nTTK shift via Kill Clip: 0.80 -> 0.60",
+        "notes": "Skulking Wolf SMG in Energy slot.\nOne of the best all-around Adaptive SMGs.\nNeutral TTK shift via 113 Weapons stat: 0.80 -> 0.73\nTTK shift via Kill Clip: 0.80 -> 0.60\nKill Clip + Radiant: => 0.53",
         "rank": "",
         "tier": "A",
         "mw": "Range\nStability"
@@ -26883,7 +26915,7 @@
       {
         "name": "CALUS Mini-Tool",
         "energy": "Energy",
-        "frame": "MIDA Synergy",
+        "frame": "MIDA Synergy (Lightweight SMG)",
         "barrel": "Smallbore\nHammer-forged Rifling\nExtended Barrel",
         "mag": "Accurized Rounds\nSteady Rounds",
         "perk1": "Moving Target\nSlideways\nThreat Detector",
@@ -33058,11 +33090,11 @@
         "frame": "High-Impact",
         "barrel": "Arrowhead Brake\nCorkscrew Rifling\nSmallbore",
         "mag": "Accurized Rounds",
-        "perk1": "Tap the Trigger\nDynamic Sway Reduction",
+        "perk1": "Tap the Trigger\nDynamic Sway Reduction\nMeganeura",
         "perk2": "Kill Clip\nGolden Tricorn\nRampage",
         "origin": "Explosive Pact",
         "source": "Last Wish Raid",
-        "notes": "Best-in-Class 400 RPM auto.\nStrong perks in both columns, Origin provides free stats after activating grenade/grenade kills.\n16 zoom for ease of use.\nTTK shift via Kill Clip, Harmony, Rampage x2, Focused Fury, Adrenaline Junkie x3, or Golden Tricorn x1 + 128 Weapons: 0.75 -> 0.60",
+        "notes": "Best-in-Class 400 RPM auto.\nStrong perks in both columns, Origin provides free stats after activating grenade/grenade kills.\n16 zoom for ease of use.\nVERY Strong vs. Team Stacking via Meganeura\nTTK shift via Kill Clip, Harmony, Rampage x2, Focused Fury, Adrenaline Junkie x3, or Golden Tricorn x1 + 128 Weapons: 0.75 -> 0.60",
         "rank": "",
         "tier": "S",
         "mw": "Stability\nRange"
@@ -33077,7 +33109,7 @@
         "perk2": "Kill Clip\nSwashbuckler\nAdagio",
         "origin": "Bray Legacy",
         "source": "Tenet of Bravery",
-        "notes": "Good frame, weak column 1 perks.\nBad recoil direction & bounce intensity demands Arrowhead Brake.\nOrigin provides passive ability energy.",
+        "notes": "Good frame, weak column 1 perks.\nBad recoil direction & high bounce intensity demands Arrowhead Brake.\nOrigin provides passive ability energy.\nTtK shift via Kill Clip, Binary Orbit, or Swashbuckler x5: 0.75 -> 0.58\nSwashbuckler x2: => 0.67\nAdagio: => 0.70",
         "rank": "",
         "tier": "B",
         "mw": "Range\nStability"
@@ -33281,7 +33313,7 @@
         "name": "Herod-C",
         "energy": "Kinetic",
         "frame": "High-Impact",
-        "barrel": "Smallbore\nHammer-forged Rifling Rifling\nArrowhead Brake",
+        "barrel": "Smallbore\nHammer-forged Rifling\nArrowhead Brake",
         "mag": "Ricochet Rounds\nHigh-Caliber Rounds\nArmor-Piercing Rounds",
         "perk1": "Dynamic Sway Reduction\nPerpetual Motion",
         "perk2": "Vorpal Weapon\nMultikill Clip\nTap the Trigger",
@@ -33311,7 +33343,7 @@
         "name": "Lethal Abundance",
         "energy": "Kinetic",
         "frame": "High-Impact",
-        "barrel": "Arrowhead Brake\nChambered Compensator\nHammer-forged Rifling Rifling",
+        "barrel": "Arrowhead Brake\nChambered Compensator\nHammer-forged Rifling",
         "mag": "Accurized Rounds\nSteady Rounds",
         "perk1": "Slice\nZen Moment\nKeep Away",
         "perk2": "Desperate Measures\nOnslaught\nRampage",
@@ -33326,7 +33358,7 @@
         "name": "Lodbrok-C",
         "energy": "Kinetic",
         "frame": "High-Impact",
-        "barrel": "Chambered Compensator\nSmallbore\nHammer-forged Rifling Rifling",
+        "barrel": "Chambered Compensator\nSmallbore\nHammer-forged Rifling",
         "mag": "Ricochet Rounds\nHigh-Caliber Rounds\nArmor-Piercing Rounds",
         "perk1": "Dynamic Sway Reduction\nFragile Focus\nPerpetual Motion",
         "perk2": "Kill Clip\nCascade Point\nTap the Trigger",
@@ -33371,7 +33403,7 @@
         "name": "Pluperfect",
         "energy": "Kinetic",
         "frame": "High-Impact",
-        "barrel": "Chambered Compensator\nSmallbore\nHammer-forged Rifling Rifling",
+        "barrel": "Chambered Compensator\nSmallbore\nHammer-forged Rifling",
         "mag": "Ricochet Rounds\nHigh-Caliber Rounds\nArmor-Piercing Rounds",
         "perk1": "Rangefinder\nDynamic Sway Reduction\nStopping Power",
         "perk2": "Rampage\nAll-Star\nAdhesive Ordnance",
@@ -33416,13 +33448,13 @@
         "name": "Reckless Oracle",
         "energy": "Energy",
         "frame": "Rapid-Fire",
-        "barrel": "Hammer-forged Rifling Rifling\nFull Bore\nSmallbore",
+        "barrel": "Hammer-forged Rifling\nFull Bore\nSmallbore",
         "mag": "Ricochet Rounds\nHigh-Caliber Rounds\nArmor-Piercing Rounds",
         "perk1": "Dynamic Sway Reduction\nDestabilizing Rounds",
         "perk2": "Kill Clip\nParacausal Affinity\nSwashbuckler",
         "origin": "Photoinhibition",
-        "source": "Garden of Salvation Raid / Pantheon Raid Encounters",
-        "notes": "Anti-over shield\nDouble damage perks via Kill-activated-TtK shift perks",
+        "source": "Garden of Salvation Raid",
+        "notes": "Anti-Over Shield / Woven Mail via Origin trait\nDouble damage perks via Kill-activated-TtK shift perks\nTtK shift via Kill Clip, Swashbuckler x5, or One For All: 0.75 -> 0.58\nParacausal Affinity: => 0.67",
         "rank": "",
         "tier": "A",
         "mw": "Range\nStability"
@@ -33437,7 +33469,7 @@
         "perk2": "Kill Clip\nGolden Tricorn\nRepulsor Brace",
         "origin": "Skulking Wolf",
         "source": "Iron Banner / Saladin Vendor",
-        "notes": "Skulking Wolf\nDouble damage perks via Kill-activated-TtK shift perks",
+        "notes": "Skulking Wolf\nDouble damage perks via Kill-activated-TtK shift perks\nTtK shift via Kill Clip: 0.75 -> 0.58\nGolden Tricorn x1: => 0.67\nGold Tricorn x2: => 0.50\nSwashbuckler x5: => 0.58",
         "rank": "",
         "tier": "A",
         "mw": "Range\nStability"
@@ -33467,7 +33499,7 @@
         "perk2": "Target Lock\nOnslaught\nAll-Star",
         "origin": "Eyes Up",
         "source": "Cosmodrome Destination",
-        "notes": "Possible combo of Stopping Power+Target Lock for TtK shift from neutral.\nNeeds more testing.",
+        "notes": "Consistency / ease of use AR.\nStopping Power + Target Lock does NOT reduce base TTK without investing into Radiant or 150?+ Weapons stat also.\nStopping Power + Target Lock + 150 Weapons causes base TtK shift: 0.80 => 0.67\nStopping Power + Target Lock + Radiant + 190? Weapons: => 0.53",
         "rank": "",
         "tier": "C",
         "mw": "Range\nStability"
@@ -33497,7 +33529,7 @@
         "perk2": "Vorpal Weapon\nAll-Star\nMultikill Clip",
         "origin": "Cast No Shadows",
         "source": "World Drops / Gunsmith Vendor / Hawthorne Engrams",
-        "notes": "Modern  Vorpal Weapon in Kinetic Slot. \nLacks meaningful perks for general use and has a low base stat package.",
+        "notes": "Modern Vorpal Weapon in Kinetic Slot. \nLacks meaningful perks for general use and has a low base stat package.",
         "rank": "",
         "tier": "B",
         "mw": "Range\nStability"
@@ -33512,7 +33544,7 @@
         "perk2": "Multikill Clip\nTap the Trigger\nSwashbuckler",
         "origin": "Skulking Wolf",
         "source": "Iron Banner / Saladin Vendor",
-        "notes": "Slice\nKill Chaining\nMelee build",
+        "notes": "Slice\nLacks strong perks for substantial TtK shifts or Kill Chains.\nCan be useful with melee based builds utilizing Swashbuckler.\nTtK shift via Swashbuckler x5: 0.80 -> 0.60\nMultikill Clip x1: => 0.70\nMKC x2: => 0.60\nMKC x3 => 0.50\nDon't use Onslaught on this frame. It is bad.",
         "rank": "",
         "tier": "A",
         "mw": "Range\nStability"
@@ -33602,7 +33634,7 @@
         "perk2": "Moving Target\nHeadstone\nDesperate Measures",
         "origin": "Radiolaria Transposer",
         "source": "Encore Exotic Mission \nClassic Collections Modifier: ON",
-        "notes": "Res Block w/ Headstone",
+        "notes": "Res Block w/ Headstone\nLacks strong damage perks.\nTtK shfit via Desperate Measures x2: 0.75 -> 0.67\nDM x3: => 0.58",
         "rank": "",
         "tier": "D",
         "mw": "Range\nStability"
@@ -33767,7 +33799,7 @@
         "perk2": "Golden Tricorn\nCascade Point\nTarget Lock",
         "origin": "Noble Deeds",
         "source": "//node.ovrd.AVALON//\nLegacy Loot\nClassic Collections Modifier: ON",
-        "notes": "Good frame, decent perks.\nDecent origin.\nLower base zoom for ease of use.",
+        "notes": "Good frame, decent perks.\nDecent origin.\nLower base zoom for ease of use.\nTtK shift via Golden Tricorn x1: 0.80 -> 0.70\nGolden Tricorn x2: => 0.50\nCascade Point: => 0.48",
         "rank": "",
         "tier": "B",
         "mw": "Range\nStability"
@@ -33797,7 +33829,7 @@
         "perk2": "Golden Tricorn\nRangefinder",
         "origin": "Skulking Wolf\nVeist Stinger",
         "source": "Iron Banner / Saladin Vendor",
-        "notes": "Good frame, decent perks.\nSkulking Wolf auto rifle.\nNon-tiered. Non-enhanceable.",
+        "notes": "Good frame, decent perks.\nSkulking Wolf auto rifle.\nNon-tiered. Non-enhanceable.\nTTK shift via Golden Tricorn x1: 0.75 -> 0.67\nGold Tricorn x2: => 0.50",
         "rank": "",
         "tier": "B",
         "mw": "Range\nStability"
@@ -33812,7 +33844,7 @@
         "perk2": "Tap the Trigger\n Vorpal Weapon",
         "origin": "Land Tank",
         "source": "Vox Obscura\nLegacy Loot\nClassic Collections Modifier: ON",
-        "notes": "Good frame, mid perks.\n Vorpal Weapon vs. Supers.",
+        "notes": "Good frame, mid perks.\n Vorpal Weapon vs. Supers.\nNo meaningful damage increase perks.",
         "rank": "",
         "tier": "C",
         "mw": "Range\nStability"
@@ -34025,6 +34057,22 @@
         "notes": "Curated roll.\nNon-tiered, non-enhanceable. No origin.\nPowercrept massively but still usable.",
         "rank": "",
         "tier": "D",
+        "mw": "Range\nStability"
+      },
+      {
+        "name": "Reckless Oracle (Pantheon Variant)",
+        "energy": "Energy",
+        "frame": "Rapid-Fire",
+        "barrel": "Hammer-forged Rifling\nFull Bore\nSmallbore",
+        "mag": "Ricochet Rounds\nHigh-Caliber Rounds\nArmor-Piercing Rounds",
+        "perk1": "Keep Away\nDestabilizing Rounds\nDimensional Shift",
+        "perk2": "Kill Clip\nParacausal Affinity\nSwashbuckler",
+        "origin": "Photoinhibition\nElliptical Orbit",
+        "source": "Pantheon Raid",
+        "notes": "Anti-Over Shield / Woven Mail or extra Ammo Gen + Stability / Flinch Resist via Origin trait\nDouble damage perks via Kill-activated-TtK shift perks\nTtK shift via Kill Clip, Chaos Reshaped x2, Swashbuckler x5, or One For All: 0.75 -> 0.58\nChaos Reshaped x1 or Paracausal Affinity: => 0.67",
+        "rank": "",
+        "tier": "A",
+        "versionTag": "pantheon",
         "mw": "Range\nStability"
       },
       {
@@ -35726,7 +35774,7 @@
         "name": "Round Robin",
         "energy": "Kinetic",
         "frame": "Aggressive",
-        "barrel": "Smallbore\nHammer-forged Rifling Rifling\nCorkscrew Rifling",
+        "barrel": "Smallbore\nHammer-forged Rifling\nCorkscrew Rifling",
         "mag": "Ricochet Rounds\nAccurized Rounds",
         "perk1": "Slideshot\nKeep Away",
         "perk2": "Adagio\nPrecision Instrument",
@@ -35741,7 +35789,7 @@
         "name": "Seventh Seraph Officer Revolver",
         "energy": "Kinetic",
         "frame": "Precision",
-        "barrel": "Full Bore\nHammer-forged Rifling Rifling\nSmallbore",
+        "barrel": "Full Bore\nHammer-forged Rifling\nSmallbore",
         "mag": "Accurized Rounds\nSeraph Rounds",
         "perk1": "Lone Wolf\nBewildering Burst",
         "perk2": "Precision Instrument\nAll-Star\nAdhesive Ordnance",
@@ -35756,7 +35804,7 @@
         "name": "Sightline Survey",
         "energy": "Energy",
         "frame": "Precision",
-        "barrel": "Full Bore\nHammer-forged Rifling Rifling\nSmallbore",
+        "barrel": "Full Bore\nHammer-forged Rifling\nSmallbore",
         "mag": "Accurized Rounds",
         "perk1": "Keep Away\nFragile Focus",
         "perk2": "Precision Instrument",
@@ -35846,7 +35894,7 @@
         "name": "Trust",
         "energy": "Energy",
         "frame": "Precision",
-        "barrel": "Full Bore\nHammer-forged Rifling Rifling\nSmallbore",
+        "barrel": "Full Bore\nHammer-forged Rifling\nSmallbore",
         "mag": "Accurized Rounds",
         "perk1": "Slideshot\nKeep Away\nOpening Shot\nFirefly",
         "perk2": "Precision Instrument\nMagnificent Howl\nDragonfly",
@@ -37392,7 +37440,7 @@
         "name": "Bitter End",
         "energy": "Heavy",
         "frame": "Balanced Heat (900 RPM)",
-        "barrel": "Arrowhead Brake\nHammer-forged Rifling Rifling\nExtended Barrel",
+        "barrel": "Arrowhead Brake\nHammer-forged Rifling\nExtended Barrel",
         "mag": "Overclocked\nProjection Fuse\nParticle Repeater",
         "perk1": "Delicate Tuning",
         "perk2": "Killing Tally\nOne for All",
@@ -37407,7 +37455,7 @@
         "name": "Circular Logic",
         "energy": "Heavy",
         "frame": "Adaptive",
-        "barrel": "Smallbore\nHammer-forged Rifling Rifling\nCorkscrew Rifling",
+        "barrel": "Smallbore\nHammer-forged Rifling\nCorkscrew Rifling",
         "mag": "Ricochet Rounds\nHigh-Caliber Rounds\nArmor-Piercing Rounds",
         "perk1": "Fourth Time's The Charm",
         "perk2": "Killing Tally\nElemental Honing",
@@ -40542,7 +40590,7 @@
       {
         "name": "Mida-Macro Tool",
         "energy": "Energy",
-        "frame": "MIDA Synergy",
+        "frame": "MIDA Synergy (Precision Shotgun)",
         "barrel": "Corkscrew Rifling\nBarrel Shroud\nSmallbore",
         "mag": "Accurized Rounds",
         "perk1": "Threat Detector\nLone Wolf\nDiscord",
@@ -40878,7 +40926,7 @@
         "perk1": "One-Two Punch",
         "perk2": "Trench Barrel\nElemental Honing\nChaos Reshaped",
         "origin": "Elliptical Orbit\nForge's Kin",
-        "source": "Pantheon",
+        "source": "Pantheon Raid",
         "notes": "Bad frame.\nPrimarily PvE focused perks & frame type.\nNeutral damage buffs to reduce pellet count needed for 1HKO, but strictly still just worse than all other frames.",
         "rank": "",
         "tier": "D",
@@ -41952,7 +42000,7 @@
       {
         "name": "Mida Mini-Tool",
         "energy": "Energy",
-        "frame": "MIDA Synergy",
+        "frame": "MIDA Synergy (Lightweight SMG)",
         "barrel": "Hammer-forged Rifling\nSmallbore\nFull Bore",
         "mag": "Ricochet Rounds\nHigh-Caliber Rounds\nArmor-Piercing Rounds",
         "perk1": "Perpetual Motion\nHeal Clip\nHip-Fire Grip",
@@ -42439,7 +42487,7 @@
         "perk2": "Kill Clip\nIron Reach\nDynamic Sway Reduction",
         "origin": "Skulking Wolf\nSuros Synergy",
         "source": "Iron Banner / Valus Saladin Vendor Focusing",
-        "notes": "Skulking Wolf SMG in Energy slot.\nOne of the best all-around Adaptive SMGs.\nNeutral TTK shift via 113 Weapons stat: 0.80 -> 0.73\nTTK shift via Kill Clip: 0.80 -> 0.60",
+        "notes": "Skulking Wolf SMG in Energy slot.\nOne of the best all-around Adaptive SMGs.\nNeutral TTK shift via 113 Weapons stat: 0.80 -> 0.73\nTTK shift via Kill Clip: 0.80 -> 0.60\nKill Clip + Radiant: => 0.53",
         "rank": "",
         "tier": "A",
         "mw": "Range\nStability"
@@ -42657,7 +42705,7 @@
       {
         "name": "CALUS Mini-Tool",
         "energy": "Energy",
-        "frame": "MIDA Synergy",
+        "frame": "MIDA Synergy (Lightweight SMG)",
         "barrel": "Smallbore\nHammer-forged Rifling\nExtended Barrel",
         "mag": "Accurized Rounds\nSteady Rounds",
         "perk1": "Moving Target\nSlideways\nThreat Detector",
@@ -42672,7 +42720,7 @@
       {
         "name": "MIDA Mini-Tool (Original Variant)",
         "energy": "Energy",
-        "frame": "MIDA Synergy",
+        "frame": "MIDA Synergy (Lightweight SMG)",
         "barrel": "Fluted Barrel",
         "mag": "Alloy Magazine",
         "perk1": "Hip-Fire Grip",
@@ -49669,8 +49717,8 @@
         "column1": "N/A",
         "column2": "N/A",
         "alternatives": [
-          "Lucky Pants, Lightweight frame weapons, Per Audacia set bonus, Triumphal Anthem Set Bonus, and",
-          "or Shrewd Survivor Set Bonus"
+          "Lucky Pants, Lightweight frame weapons, Per Audacia set bonus, and",
+          "or Triumphal Anthem Set Bonus"
         ],
         "isArmor": true,
         "isExotic": true
@@ -49817,8 +49865,8 @@
         "column1": "N/A",
         "column2": "N/A",
         "alternatives": [
-          "Peacekeepers, Lightweight frame weapons, Per Audacia set bonus, Triumphal Anthem Set Bonus, and",
-          "or Shrewd Survivor Set Bonus"
+          "Peacekeepers, Lightweight frame weapons, Per Audacia set bonus, and",
+          "or Triumphal Anthem Set Bonus"
         ],
         "isArmor": true,
         "isExotic": true
@@ -50062,7 +50110,9 @@
         "priority": "niche",
         "column1": "N/A",
         "column2": "N/A",
-        "alternatives": [],
+        "alternatives": [
+          "Cyberserpent Null set bonus, Triumphal Anthem set bonus, or Spirit of the Ophidian (Prismatic Only)"
+        ],
         "isArmor": true,
         "isExotic": true
       },
@@ -50791,8 +50841,8 @@
         "column1": "N/A",
         "column2": "N/A",
         "alternatives": [
-          "Lucky Pants, Lightweight frame weapons, Per Audacia set bonus, Triumphal Anthem Set Bonus, and",
-          "or Shrewd Survivor Set Bonus"
+          "Lucky Pants, Lightweight frame weapons, Per Audacia set bonus, and",
+          "or Triumphal Anthem Set Bonus"
         ],
         "isArmor": true,
         "isExotic": true
@@ -50939,8 +50989,8 @@
         "column1": "N/A",
         "column2": "N/A",
         "alternatives": [
-          "Peacekeepers, Lightweight frame weapons, Per Audacia set bonus, Triumphal Anthem Set Bonus, and",
-          "or Shrewd Survivor Set Bonus"
+          "Peacekeepers, Lightweight frame weapons, Per Audacia set bonus, and",
+          "or Triumphal Anthem Set Bonus"
         ],
         "isArmor": true,
         "isExotic": true
@@ -51184,7 +51234,9 @@
         "priority": "niche",
         "column1": "N/A",
         "column2": "N/A",
-        "alternatives": [],
+        "alternatives": [
+          "Cyberserpent Null set bonus, Triumphal Anthem set bonus, or Spirit of the Ophidian (Prismatic Only)"
+        ],
         "isArmor": true,
         "isExotic": true
       },
@@ -51640,21 +51692,27 @@
         "priority": "niche",
         "priorityNum": 4
       },
-      "lucky pants, lightweight frame weapons, per audacia set bonus, triumphal anthem set bonus, and": {
+      "lucky pants, lightweight frame weapons, per audacia set bonus, and": {
         "primaryName": "St0mp-EE5",
         "role": "Movement & Jump buff Exotic",
         "priority": "niche",
         "priorityNum": 4
       },
-      "or shrewd survivor set bonus": {
-        "primaryName": "Astrocyte Verse",
-        "role": "Improved Blink Movement & Handling, grants Void Air Dodge, Improved Nova Warp, and on-demand Volatile Rounds",
+      "or triumphal anthem set bonus": {
+        "primaryName": "Dunemarchers",
+        "role": "Improved Movement & Grants Chain Lightning Melees after Sprinting",
         "priority": "niche",
         "priorityNum": 4
       },
       "st0mp-ee5, lightweight frame weapons, per audacia set bonus, triumphal anthem set bonus, and": {
         "primaryName": "Lucky Pants",
         "role": "Movement & Hand Cannon Weapon buffs",
+        "priority": "niche",
+        "priorityNum": 4
+      },
+      "or shrewd survivor set bonus": {
+        "primaryName": "Astrocyte Verse",
+        "role": "Improved Blink Movement & Handling, grants Void Air Dodge, Improved Nova Warp, and on-demand Volatile Rounds",
         "priority": "niche",
         "priorityNum": 4
       },
@@ -51688,7 +51746,7 @@
         "priority": "niche",
         "priorityNum": 4
       },
-      "peacekeepers, lightweight frame weapons, per audacia set bonus, triumphal anthem set bonus, and": {
+      "peacekeepers, lightweight frame weapons, per audacia set bonus, and": {
         "primaryName": "Dunemarchers",
         "role": "Improved Movement & Grants Chain Lightning Melees after Sprinting",
         "priority": "niche",
@@ -51769,6 +51827,12 @@
       "mantle of battle harmony, nezarec's sin, or spirit of harmony (prismatic only)": {
         "primaryName": "Geomag Stabilizers",
         "role": "Fast Charging Super",
+        "priority": "niche",
+        "priorityNum": 4
+      },
+      "cyberserpent null set bonus, triumphal anthem set bonus, or spirit of the ophidian (prismatic only)": {
+        "primaryName": "Ophidian Aspect",
+        "role": "General Use Warlock Exotic",
         "priority": "niche",
         "priorityNum": 4
       },
