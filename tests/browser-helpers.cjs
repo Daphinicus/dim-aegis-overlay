@@ -5,11 +5,24 @@ const { chromium, firefox } = require('playwright');
 async function launchBrowser() {
   const engine = process.env.BROWSER_ENGINE || 'chromium';
   assert.ok(['chromium', 'firefox'].includes(engine), 'BROWSER_ENGINE must be chromium or firefox');
-  return (engine === 'firefox' ? firefox : chromium).launch({
+  const browser = await (engine === 'firefox' ? firefox : chromium).launch({
     headless: true,
     ...(process.env.BROWSER_CHANNEL ? { channel: process.env.BROWSER_CHANNEL } : {}),
     ...(process.env.BROWSER_PATH ? { executablePath: process.env.BROWSER_PATH } : {}),
   });
+  const newPage = browser.newPage.bind(browser);
+  browser.newPage = async options => {
+    const page = await newPage(options);
+    const defaults = () => {
+      window.scoresEnabled = () => false;
+      window.weaponDataMap = new WeakMap();
+      window.nativeScoreData = new Map();
+    };
+    await page.addInitScript(defaults);
+    await page.evaluate(defaults);
+    return page;
+  };
+  return browser;
 }
 
 async function bundle(entry, name) {

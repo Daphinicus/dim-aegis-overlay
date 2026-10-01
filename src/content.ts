@@ -17,7 +17,7 @@ import { installActivityModeProvider } from './activity-mode-provider';
 import { readScoreSettings, SCORE_SETTING_KEYS } from './score-config';
 import { parseOwnedSnapshot } from './score-owned';
 import { canonicalScoreHash } from './score-source';
-import { evaluateOwnedActivity, clearScoreCache, scoreInputSource } from './score-runtime';
+import { evaluateOwnedActivity, clearScoreCache, scoreCacheStats, scoreInputSource } from './score-runtime';
 import { scorePresentation, scoreDetailsHtml, bindScoreDetails } from './score-presentation';
 import { compareScores } from './score-format';
 import type { ScoreEvaluations, ScoreSettings } from './score-types';
@@ -3928,7 +3928,7 @@ const nativeSearchEvaluator = IS_WINNOWER_HOST ? null : initSearchEvaluator(eval
       shopping: !!(aegisMode === 'both' ? aegisShoppingDbPvE && aegisShoppingDbPvP : aegisMode === 'pvp' ? aegisShoppingDbPvP : aegisShoppingDbPvE || aegisShoppingDb),
       source: sheet, armor: !!getAegisArmorDatabase(), chase: searchSettingsReady,
     };
-  }, () => ({ weapons: weaponEvaluations.stats(), armor: armorEvaluations.stats() }),
+  }, () => ({ weapons: weaponEvaluations.stats(), armor: armorEvaluations.stats(), scores: scoreCacheStats() }),
   status => inventoryBadges?.status(status));
 
 function evaluateArmorItem(weaponName: string, hash: number): WeaponEvaluationPayload {
@@ -4132,7 +4132,8 @@ chrome.storage.onChanged.addListener((changes, namespace) => {
       const raw: Record<string, unknown> = { ...scoreSettings };
       for (const key of SCORE_SETTING_KEYS) if (changes[key]) raw[key] = changes[key].newValue;
       scoreSettings = readScoreSettings(raw);
-      changed = true;
+      presentationChanged = true;
+      document.querySelectorAll<HTMLElement>('[data-aegis-item-hash]').forEach(item => pendingProcessTargets.add(item));
     }
     if (changes.aegisSheetDbPvE || changes.aegisSheetDbPvP || changes.enhancedToNormal) clearScoreCache();
     let evaluationLocaleRefreshNeeded = false;

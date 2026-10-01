@@ -33,6 +33,7 @@ const { bundle, launchBrowser } = require('./browser-helpers.cjs');
    let aegisStatGradeBasis="perk";
       const getGradeValue=Grading.gradeValue,t=value=>value;
       const badgeTemplates=new Map(),renderedBadges=new WeakMap(),badgeResults=new WeakMap();
+      const scoresEnabled=()=>false; const weaponDataMap=new WeakMap(),nativeScoreData=new Map();
       const IS_WINNOWER_HOST=false;
       let aegisBadgeStyle='footer',aegisBadgePosition='bottom-left',aegisFadeHover=false;
       let aegisUpgradeStyle='none',aegisShowPerfectStar=true,aegisShowOmniStar=true,aegisGradeDisplayMode='dual';

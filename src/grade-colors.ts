@@ -83,6 +83,7 @@ export function twoTierGradient(text: string, palette = settings): string | null
 export function applyGradeColors(root: HTMLElement, palette = settings) {
   const badges = [...(root.matches(badgeSelector) ? [root] : []), ...root.querySelectorAll<HTMLElement>(badgeSelector)];
   for (const badge of badges) {
+    if (badge.classList.contains('aegis-score')) continue;
     const text = badge.dataset.aegisGrade || badge.textContent || '';
     if (badge.classList.contains('aegis-stat-grade')) {
       const color = palette.colorsEnabled && (palette.colors[text as Grade] || palette.colors[text.charAt(0) as Grade])

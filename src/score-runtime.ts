@@ -10,7 +10,9 @@ interface SourceIndex { rows: Map<string, ScoreSource>; families: Map<string, Sc
 const indexes = new WeakMap<AegisSheetDatabase, Partial<Record<ScoreActivity, SourceIndex>>>();
 const evaluations = new Map<string, WeaponScoreEvaluation>();
 const MAX_SCORE_CACHE = 4000;
-export function clearScoreCache(): void { evaluations.clear(); }
+let hits = 0, misses = 0;
+export function scoreCacheStats() { return { entries: evaluations.size, hits, misses }; }
+export function clearScoreCache(): void { evaluations.clear(); hits = 0; misses = 0; }
 const baseName = (name: string): string => name.toLowerCase().trim()
   .replace(/\s*\([^)]*\)\s*$/, '')
   .replace(/\s+(brave|pantheon|rotn|legacy|adept|timelost|harrowed|re-issue|reissued)(\s+version)?$/, '').trim();
@@ -48,7 +50,8 @@ export function evaluateOwnedActivity(db: AegisSheetDatabase | null, activity: S
   if (!source) return unratedScore(candidates.length ? 'unresolved-variant' : 'missing-source');
   const key = JSON.stringify([activity, owned.itemHash, owned.instanceId, owned.slots, source.rowId, source.sourceRevision, ORIGIN_BENCHMARK_REVISION, SCORE_MODEL_VERSION]);
   const cached = evaluations.get(key);
-  if (cached) return cached;
+  if (cached) { hits++; return cached; }
+  misses++;
   const result = evaluateWeaponScore(source, owned, resolveOriginSets(owned.itemHash, source.rowId));
   if (evaluations.size >= MAX_SCORE_CACHE) evaluations.delete(evaluations.keys().next().value!);
   evaluations.set(key, result);

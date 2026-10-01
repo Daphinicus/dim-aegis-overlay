@@ -35,15 +35,21 @@ export function scoreDetailsHtml(evaluations: ScoreEvaluations | undefined, mode
     return `<div class="aegis-score-details-activity"><strong>${p.activity === 'pve' ? 'PvE' : 'PvP'} · ${p.text}</strong>${value?.value === null || !value ? `<p>${escape(scoreReason(value?.reason))}</p>` : `<div>${escape(t('scoreCeiling'))}: ${result?.ceiling?.toFixed(2)}%</div><div>${escape(t('scoreQuality'))}: ${((result?.quality ?? 0) * 100).toFixed(2)}%</div>${settings.aegisScoreProfile === 'omni' ? `<div>${escape(t('scoreCoverage'))}: ${((result?.coverage ?? 0) * 100).toFixed(2)}%</div>` : ''}`}</div>`;
   }).join('')}<p class="aegis-score-help">${escape(t('scoreCategoryHelp'))}</p><button type="button" class="aegis-copy-score-details">${escape(t('copyScoreDetails'))}</button></details>`;
 }
-/** User-triggered local clipboard action; never transmits inventory or telemetry. */
+/** Retain feedback through the cloned cards used by the inventory preview. */
 export function bindScoreDetails(root: HTMLElement, details: unknown): void {
+  const serialized = JSON.stringify(details);
   root.querySelectorAll<HTMLButtonElement>('.aegis-copy-score-details').forEach(button => {
-    button.addEventListener('click', async event => {
-      event.stopPropagation();
-      try {
-        await navigator.clipboard.writeText(JSON.stringify(details, null, 2));
-        button.textContent = t('scoreCopied');
-      } catch { button.textContent = t('scoreCopyFailed'); }
-    });
+    button.dataset.aegisScoreDetails = serialized;
   });
 }
+
+// Delegation survives cached card clones and keeps copying tied to a user click.
+document.addEventListener('click', async event => {
+  const button = event.target instanceof Element ? event.target.closest<HTMLButtonElement>('.aegis-copy-score-details') : null;
+  if (!button?.dataset.aegisScoreDetails) return;
+  event.stopPropagation();
+  try {
+    await navigator.clipboard.writeText(button.dataset.aegisScoreDetails);
+    button.textContent = t('scoreCopied');
+  } catch { button.textContent = t('scoreCopyFailed'); }
+});
