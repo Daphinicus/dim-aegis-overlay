@@ -4,7 +4,8 @@ import type { OwnedScoreSnapshot, RawOwnedScoreSnapshot, ScoreSlot } from './sco
 export const MASTERWORK_STAT_IDS: Readonly<Record<number, string>> = {
   1240592695: 'range', 155624089: 'stability', 943549884: 'handling', 4188031367: 'reload',
   3614673599: 'blast radius', 2523465841: 'velocity', 2961396640: 'charge time',
-  447667954: 'draw time', 4043523819: 'impact', 2837207746: 'swing speed'
+  447667954: 'draw time', 4043523819: 'impact', 2837207746: 'swing speed',
+  4006394725: 'heat efficiency', 1591432999: 'accuracy', 1842278586: 'shield duration'
 };
 export function unknownOwned(itemHash: number, instanceId?: string): OwnedScoreSnapshot {
   return { schemaVersion: 1, itemHash, instanceId, slots: Object.fromEntries(SCORE_SLOTS.map(slot => [slot, { state: 'unknown', reason: `unknown-owned-${slot}` }])) as OwnedScoreSnapshot['slots'] };
@@ -37,6 +38,10 @@ export function parseOwnedSnapshot(rawText: string | null, itemHash: number,
 function category(def: any): ScoreSlot | 'trait' | null {
   const id = (def?.plug?.plugCategoryIdentifier ?? '').toLowerCase();
   if (/origin|^enhancements\./.test(id)) return 'origin';
+  // Current Bungie categories captured from DIM include weapon-specific socket families.
+  if (/^(magazines(?:_gl)?|batteries|guards|arrows|bolts)$/.test(id)) return 'mag';
+  if (/^(barrels|scopes|tubes|blades|bowstrings|hafts|rails)$/.test(id)) return 'barrel';
+  if (id === 'frames') return 'trait';
   if (/sword_guard|weapon_magazine|weapon_battery|bow_arrow/.test(id)) return 'mag';
   if (/weapon_barrel|weapon_scope|bow_string|sword_blade|grenade_launcher_barrel/.test(id)) return 'barrel';
   if (/^weapon_perks|^weapon_perk|^word_perks/.test(id)) return 'trait';
@@ -65,7 +70,7 @@ export function extractRawOwnedSnapshot(item: any): RawOwnedScoreSnapshot {
     const actualHash = actual?.plugDef?.hash;
     if (!Number.isSafeInteger(actualHash) || actualHash <= 0) continue;
     let hashes: number[];
-    if (item.crafted === 'crafted' || socket.plugSet?.craftingData) {
+    if (item.crafted === 'crafted') {
       hashes = [actualHash];
     } else if (Array.isArray(socket.reusablePlugItems)) {
       hashes = socket.reusablePlugItems.map((plug: any) => plug.plugItemHash).filter((h: unknown): h is number => typeof h === 'number' && Number.isSafeInteger(h) && h > 0);
@@ -78,12 +83,20 @@ export function extractRawOwnedSnapshot(item: any): RawOwnedScoreSnapshot {
     const prior = raw.slots[slot];
     raw.slots[slot] = { state: 'known', availableHashes: [...new Set([...(prior.state === 'known' ? prior.availableHashes : []), ...hashes])].sort((a, b) => a - b) };
   }
-  const primary = item.masterworkInfo?.stats?.filter((stat: any) => stat.isPrimary && MASTERWORK_STAT_IDS[stat.hash]);
-  if (primary?.length === 1) raw.masterwork = { state: 'known', statHash: primary[0].hash };
-  else {
+  const primary = item.masterworkInfo?.stats?.filter((stat: any) => stat.isPrimary);
+  if (primary?.length === 1 && MASTERWORK_STAT_IDS[primary[0].hash]) {
+    raw.masterwork = { state: 'known', statHash: primary[0].hash };
+  } else if (!primary?.length) {
     for (const socket of item.sockets.allSockets) {
       const def = (socket.actuallyPlugged ?? socket.plugged)?.plugDef;
-      if (!/masterwork/.test(def?.plug?.plugCategoryIdentifier ?? '')) continue;
+      const categoryId = def?.plug?.plugCategoryIdentifier ?? '';
+      if (!/masterwork/.test(categoryId)) continue;
+      // Tier-5 stat bundles can omit isPrimary; the equipped plug retains its type.
+      const categoryStat = /\.masterworks\.stat\.([a-z_]+)$/.exec(categoryId)?.[1];
+      const aliases: Record<string, string> = { damage: 'impact', projectile_speed: 'velocity' };
+      const statName = categoryStat ? aliases[categoryStat] ?? categoryStat.replaceAll('_', ' ') : '';
+      const statHash = Object.entries(MASTERWORK_STAT_IDS).find(([, name]) => name === statName)?.[0];
+      if (statHash) { raw.masterwork = { state: 'known', statHash: Number(statHash) }; break; }
       const stats = def?.investmentStats?.filter((stat: any) => MASTERWORK_STAT_IDS[stat.statTypeHash]);
       if (stats?.length === 1) { raw.masterwork = { state: 'known', statHash: stats[0].statTypeHash }; break; }
     }

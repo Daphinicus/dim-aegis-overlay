@@ -16,7 +16,7 @@ export function canonicalScoreHash(hash: number, enhanced: Record<number, number
   return english ? canonicalScorePerk(english) : null;
 }
 const statAliases: Record<string, string> = { 'reload speed': 'reload', 'projectile speed': 'velocity' };
-const statNames = new Set(['range', 'handling', 'stability', 'reload', 'charge time', 'draw time', 'blast radius', 'velocity', 'impact', 'swing speed']);
+const statNames = new Set(['range', 'handling', 'stability', 'reload', 'charge time', 'draw time', 'blast radius', 'velocity', 'impact', 'swing speed', 'heat efficiency', 'accuracy', 'shield duration']);
 export function sourceScoreSlot(raw: string | undefined, slot: ScoreSlot): SourceSlot {
   if (!raw?.trim()) return { state: 'unknown', reason: `unknown-source-${slot}` };
   if (/^(none(?:\b|$)|n\/a$|-$)/i.test(raw.trim())) return { state: 'not-applicable' };
