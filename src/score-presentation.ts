@@ -1,6 +1,6 @@
 import type { AegisMode } from './types';
 import type { ScoreEvaluations, ScoreSettings } from './score-types';
-import { formatScore } from './score-format';
+import { formatScore, scoreColor, scoreValueHtml } from './score-format';
 import { t } from './i18n';
 
 const escape = (s: string): string => s.replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!);
@@ -11,13 +11,13 @@ export function scorePresentation(evaluations: ScoreEvaluations | undefined, mod
     const score = evaluation?.[settings.aegisScoreProfile];
     return { activity, text: formatScore(score, settings.aegisScorePrecision),
       fullCoverage: settings.aegisScoreProfile === 'omni' && !!evaluation?.fullCoverage,
-      reason: score?.reason };
+      reason: score?.reason, color: scoreColor(score), html: scoreValueHtml(score, settings.aegisScorePrecision) };
   });
   const basis = t(settings.aegisScoreProfile === 'best' ? 'scoreBest' : 'scoreOmni');
   const text = parts.map(p => p.text).join(' | ');
   const label = parts.map(p => `${p.activity === 'pve' ? 'PvE' : 'PvP'} ${basis}: ${p.text}`).join(', ');
   return { parts, text, label, fullCoverage: parts.some(p => p.fullCoverage),
-    html: parts.length === 2 ? `<span class="aegis-split-half aegis-split-left aegis-score">${parts[0].fullCoverage ? '✦ ' : ''}${parts[0].text}</span><span class="aegis-split-half aegis-split-right aegis-score">${parts[1].fullCoverage ? '✦ ' : ''}${parts[1].text}</span>` : `${parts[0].fullCoverage ? '✦ ' : ''}${text}` };
+    html: parts.length === 2 ? `<span class="aegis-split-half aegis-split-left aegis-score">${parts[0].fullCoverage ? '✦ ' : ''}${parts[0].html}</span><span class="aegis-split-half aegis-split-right aegis-score">${parts[1].fullCoverage ? '✦ ' : ''}${parts[1].html}</span>` : `${parts[0].fullCoverage ? '✦ ' : ''}${parts[0].html}` };
 }
 export function scoreReason(reason?: string): string {
   if (!reason) return t('scoreUnrated');
@@ -32,7 +32,7 @@ export function scoreDetailsHtml(evaluations: ScoreEvaluations | undefined, mode
   return `<details class="aegis-score-details"><summary>${escape(t('scoreDetails'))}</summary>${display.parts.map(p => {
     const result = evaluations?.[p.activity];
     const value = result?.[settings.aegisScoreProfile];
-    return `<div class="aegis-score-details-activity"><strong>${p.activity === 'pve' ? 'PvE' : 'PvP'} · ${p.text}</strong>${value?.value === null || !value ? `<p>${escape(scoreReason(value?.reason))}</p>` : `<div>${escape(t('scoreCeiling'))}: ${result?.ceiling?.toFixed(2)}%</div><div>${escape(t('scoreQuality'))}: ${((result?.quality ?? 0) * 100).toFixed(2)}%</div>${settings.aegisScoreProfile === 'omni' ? `<div>${escape(t('scoreCoverage'))}: ${((result?.coverage ?? 0) * 100).toFixed(2)}%</div>` : ''}`}</div>`;
+    return `<div class="aegis-score-details-activity"><strong>${p.activity === 'pve' ? 'PvE' : 'PvP'} · ${p.html}</strong>${value?.value === null || !value ? `<p>${escape(scoreReason(value?.reason))}</p>` : `<div>${escape(t('scoreCeiling'))}: ${result?.ceiling?.toFixed(2)}%</div><div>${escape(t('scoreQuality'))}: ${((result?.quality ?? 0) * 100).toFixed(2)}%</div>${settings.aegisScoreProfile === 'omni' ? `<div>${escape(t('scoreCoverage'))}: ${((result?.coverage ?? 0) * 100).toFixed(2)}%</div>` : ''}`}</div>`;
   }).join('')}<p class="aegis-score-help">${escape(t('scoreCategoryHelp'))}</p><button type="button" class="aegis-copy-score-details">${escape(t('copyScoreDetails'))}</button></details>`;
 }
 /** Retain feedback through the cloned cards used by the inventory preview. */

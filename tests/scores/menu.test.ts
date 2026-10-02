@@ -2,6 +2,7 @@
 import { it, expect, vi } from 'vitest';
 import fs from 'node:fs';
 import { scorePresentation, scoreDetailsHtml } from '../../src/score-presentation';
+import { scoreColor, scoreValueHtml } from '../../src/score-format';
 import { readScoreSettings } from '../../src/score-config';
 
 it('menu persists scores/profile/precision and restores grade controls and source preferences', async () => {
@@ -34,12 +35,30 @@ it('menu persists scores/profile/precision and restores grade controls and sourc
   expect(store.aegisTwoTier).toBe(true);expect(store.aegisGradeDisplayMode).toBe('dual');
   expect(document.getElementById('mock-aegis-badge')!.textContent).toBe('✦ BS+');
 });
-it('split presentation retains activity, uses neutral classes, and distinguishes unrated from zero', () => {
+it('split presentation retains activity, colors each activity, and distinguishes unrated from zero', () => {
   const settings=readScoreSettings({aegisRatingDisplay:'scores'});
   const scores:any={pve:{best:{value:0,perfectOverall:false},omni:{value:null,reason:'unknown-origin-benchmark'},fullCoverage:false,quality:0,ceiling:100}};
   const presentation=scorePresentation(scores,'both',settings);
   expect(presentation.text).toBe('0% | —');expect(presentation.label).toContain('PvP');
   expect(presentation.html).not.toContain('aegis-badge-s');
+  expect(presentation.parts.map(p => p.color)).toEqual(['hsl(0, 75%, 65%)', 'rgba(218, 232, 242, 0.4)']);
+  expect(presentation.html).toContain('aegis-score-unavailable');
   const details=scoreDetailsHtml(scores,'pve',{...settings,aegisScoreProfile:'omni'});
   expect(details).toContain('not yet verified');expect(details).toContain('aegis-copy-score-details');
+});
+
+it('uses raw scores for the color scale while reserving fading for unavailable values', () => {
+  const score = (value: number | null) => ({ value, perfectOverall: value === 100 });
+  expect([0, 50, 100].map(value => scoreColor(score(value)))).toEqual([
+    'hsl(0, 75%, 65%)', 'hsl(60, 75%, 65%)', 'hsl(120, 75%, 65%)',
+  ]);
+  const color = scoreColor(score(89.999));
+  for (const precision of [0, 1, 2] as const) {
+    expect(scoreValueHtml(score(89.999), precision)).toContain(color);
+    expect(scoreValueHtml(score(0), precision)).not.toContain('unavailable');
+  }
+  for (const value of [null, NaN, Infinity]) {
+    expect(scoreColor(score(value))).toBe('rgba(218, 232, 242, 0.4)');
+    expect(scoreValueHtml(score(value))).toContain('aegis-score-unavailable');
+  }
 });

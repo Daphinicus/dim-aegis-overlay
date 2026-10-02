@@ -1,3 +1,4 @@
+import { safeSetInnerHTML } from './dom-utils';
 import { displayGrade, applyGradeColors } from './grade-colors';
 import type { ScoringResult } from './types';
 
@@ -81,19 +82,19 @@ export function renderStatGradeInBar(bar: HTMLElement, result: StatGradeResult, 
 }
 
 /** Keep Scores in the same native stat-row position as the Letter style. */
-export function renderStatScore(tile: HTMLElement, text: string, label: string) {
+export function renderStatScore(tile: HTMLElement, html: string, label: string) {
   const bar = tile.querySelector<HTMLElement>(STAT_BAR_SELECTOR);
   if (!bar) { removeStatGrade(tile); return; }
-  renderStatScoreInBar(bar, text, label);
+  renderStatScoreInBar(bar, html, label);
 }
 
-export function renderStatScoreInBar(bar: HTMLElement, text: string, label: string) {
+export function renderStatScoreInBar(bar: HTMLElement, html: string, label: string) {
   let badge = bar.querySelector<HTMLElement>(':scope > .aegis-stat-grade');
   if (!badge) { badge = document.createElement('span'); bar.append(badge); }
   badge.className = 'aegis-stat-grade aegis-score';
   badge.removeAttribute('data-aegis-grade');
   badge.style.removeProperty('color');
-  if (badge.textContent !== text) badge.textContent = text;
+  if (badge.innerHTML !== html) safeSetInnerHTML(badge, html);
   if (badge.getAttribute('aria-label') !== label) badge.setAttribute('aria-label', label);
   if (!bar.hasAttribute('data-aegis-stat-bar')) bar.setAttribute('data-aegis-stat-bar', '');
 }

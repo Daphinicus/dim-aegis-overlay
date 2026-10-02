@@ -1,5 +1,5 @@
 import { readScoreSettings } from './score-config';
-import { formatScore } from './score-format';
+import { formatScore, scoreValueHtml } from './score-format';
 import type { ScoreSettings } from './score-types';
 import { renderStatGradeInBar, renderStatScoreInBar, removeStatGrade } from './stat-grade';
 import { applyGradeColors, applyGradeGlow, setTileGlow, resolveTileGlow } from './grade-colors';
@@ -47,8 +47,9 @@ export function renderOptionsPreview() {
     if (statPreview && visibility !== 'off') {
       if (useScores) {
         const scoreSettings = readScoreSettings({ ...settings });
-        const text = formatScore({ value: settings.aegisMode === 'pvp' ? 92.456 : 87.234, perfectOverall: false }, scoreSettings.aegisScorePrecision);
-        renderStatScoreInBar(statPreview, text, 'Aegis: ' + text);
+        const value = { value: settings.aegisMode === 'pvp' ? 92.456 : 87.234, perfectOverall: false };
+        const text = formatScore(value, scoreSettings.aegisScorePrecision);
+        renderStatScoreInBar(statPreview, scoreValueHtml(value, scoreSettings.aegisScorePrecision), 'Aegis: ' + text);
       } else renderStatGradeInBar(statPreview, { grade: 'S+', weaponGrade: 'B+' }, basis);
     }
     else removeStatGrade(tile);
@@ -68,14 +69,14 @@ export function renderOptionsPreview() {
 
   if (useScores) {
     const scoreSettings = readScoreSettings({ ...settings });
-    const pve = formatScore({value: 87.234, perfectOverall: false}, scoreSettings.aegisScorePrecision);
-    const pvp = formatScore({value: 92.456, perfectOverall: false}, scoreSettings.aegisScorePrecision);
+    const pve = scoreValueHtml({value: 87.234, perfectOverall: false}, scoreSettings.aegisScorePrecision);
+    const pvp = scoreValueHtml({value: 92.456, perfectOverall: false}, scoreSettings.aegisScorePrecision);
     badge.classList.remove('aegis-badge-s');
     badge.classList.add('aegis-score');
     if (settings.aegisMode === 'both') {
       badge.classList.add('aegis-badge-split');
       badge.innerHTML = `<span class="aegis-split-half aegis-split-left aegis-score">${pve}</span><span class="aegis-split-half aegis-split-right aegis-score">${pvp}</span>`;
-    } else badge.textContent = settings.aegisMode === 'pvp' ? pvp : pve;
+    } else badge.innerHTML = settings.aegisMode === 'pvp' ? pvp : pve;
     const visibility = normalizeBadgeVisibility(settings.aegisBadgeVisibility).weapon;
     applyBadgePresentation(badge, visibility);
     badge.classList.toggle('aegis-badge-hidden', visibility === 'off');

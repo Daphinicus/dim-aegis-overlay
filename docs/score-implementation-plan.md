@@ -36,7 +36,7 @@ These choices make the handoff executable. They are initial implementation choic
 - Base and enhanced forms of the same perk are equivalent for v1 matching and coverage. Deduplicate them. No separate enhancement bonus has been calibrated.
 - Score legendary weapons with adequate source and owned-slot data. Exotics display `—` in score mode until an explicit exotic model exists. Armor retains its current grading presentation.
 - Scores are available with the Aegis/Finnald engine and Spreadsheet or Both ranking sources. In Light.gg or wishlist-only mode, use the existing source presentation and disable the Scores control with a short explanation. Preserve the user's saved score preferences for when official spreadsheet scoring is available again; do not silently change ranking sources.
-- Use neutral score text within the existing badge/container and activity layout. Do not infer a grade color by parsing `97%`, or show an S-roll gold glow for a numerically weak weapon. A future numeric color scale can be calibrated separately.
+- Color numerical scores from red at 0% through yellow at 50% to green at 100%, using the raw percentage independently of displayed precision. Use a neutral dash with 40% alpha for unavailable values; a real zero stays red. Preserve the existing badge/container and activity layout. Do not infer letter-grade styling by parsing `97%` or show an S-roll gold glow for a numerically weak weapon.
 - Preserve existing personal wishlist bookmark behavior: outlined for a complete owned roll, filled for an applied complete roll, with bookmark priority over other whole-roll markers. Numbers do not replace bookmark meaning.
 
 ## Exact scoring contract

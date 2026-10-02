@@ -1,5 +1,6 @@
 // @vitest-environment jsdom
 import { it, expect, vi } from 'vitest';
+import { scoreValueHtml } from '../../src/score-format';
 import { bindScoreDetails, scoreDetailsHtml } from '../../src/score-presentation';
 import { readScoreSettings } from '../../src/score-config';
 import { matchesAegisArgument, parseAegisArgument } from '../../src/aegis-search';
@@ -37,12 +38,14 @@ it('uses raw scores in native search and excludes armor from score predicates', 
   expect(matchesAegisArgument('score:unrated', data, { mode: 'pve', chase: false, kind: 'armor' })).toBe(false);
 });
 
-it('keeps stat-row Scores neutral and restores Letter grading', () => {
+it('colors stat-row Scores and restores Letter grading', () => {
   const bar = document.createElement('div');
-  renderStatScoreInBar(bar, '94.23%', 'PvE Best selections: 94.23%');
+  renderStatScoreInBar(bar, scoreValueHtml({ value: 94.23, perfectOverall: false }, 2), 'PvE Best selections: 94.23%');
   expect(bar.querySelector('.aegis-stat-grade')?.textContent).toBe('94.23%');
   expect(bar.querySelector('.aegis-stat-grade')?.classList.contains('aegis-score')).toBe(true);
+  expect(bar.querySelector<HTMLElement>('.aegis-score-value')?.style.color).not.toBe('');
   renderStatGradeInBar(bar, {grade:'S+'}, 'perk');
   expect(bar.querySelector('.aegis-stat-grade')?.textContent).toBe('S+');
   expect(bar.querySelector('.aegis-stat-grade')?.classList.contains('aegis-score')).toBe(false);
+  expect(bar.querySelector('.aegis-score-value')).toBeNull();
 });

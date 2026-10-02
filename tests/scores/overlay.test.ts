@@ -38,6 +38,11 @@ it('renders cached scores and reacts to settings, masterwork, source, and decima
   const change=(patch:any)=>{const changes:any={};for(const [key,newValue]of Object.entries(patch))changes[key]={oldValue:store[key],newValue};store={...store,...patch};storageChanged.forEach(listener=>listener(changes,'local'));};
   await vi.waitFor(()=>expect(tile.querySelector('.aegis-badge')?.textContent).toBe('100%—'));
   expect(tile.classList.contains('aegis-gold-glow')).toBe(false);
+  expect(JSON.parse(tile.getAttribute('data-aegis-inventory-grade')!).labels).toEqual([
+    {text:'100%',color:'hsl(120, 75%, 65%)',gradient:null},
+    {text:'—',color:'rgba(218, 232, 242, 0.4)',gradient:null},
+  ]);
+  expect(tile.querySelectorAll('.aegis-score-value')).toHaveLength(2);
   expect(tile.getAttribute('data-aegis-score-pve')).toBe('100');
   const cached=weaponDataMap.get(tile)!.scoreEvaluations!.pve;
   change({aegisScorePrecision:2});

@@ -2060,7 +2060,7 @@ function renderResults() {
                 const archTier = activeSheetW.tier.trim();
                 displayRollGrade = `${archTier}${displayRollGrade}`;
               }
-              bestGrade = scoresEnabled() ? scorePresentation(bestOwnedEval.scoreEvaluations, comparisonActivity(), scoreSettings).text : displayRollGrade;
+              bestGrade = scoresEnabled() ? scorePresentation(bestOwnedEval.scoreEvaluations, comparisonActivity(), scoreSettings).html : displayRollGrade;
             }
           }
         } else {
@@ -5922,10 +5922,11 @@ function publishInventoryGrade(container: HTMLElement, result: ScoringResult) {
   const scoreData = weaponDataMap.get(container) || nativeScoreData.get(container.getAttribute('data-aegis-instance-id') || container.id.replace('item-', ''));
   const template = getBadgeTemplate(result, 'classic', scoreData);
   const halves = [...template.querySelectorAll<HTMLElement>('.aegis-split-half')];
-  const labels = (halves.length ? halves : [template]).map(source => {
+  const scoreParts = template.classList.contains('aegis-score') ? scorePresentation(scoreData?.scoreEvaluations, aegisMode, scoreSettings).parts : undefined;
+  const labels = (halves.length ? halves : [template]).map((source, index) => {
     const text = source.querySelector('.aegis-grade-text')?.textContent ||
       [...source.childNodes].filter(node => !(node instanceof Element && node.matches('.aegis-badge-upgrade-arrow'))).map(node => node.textContent).join('');
-    return { text: (text || '').trim(), ...(template.classList.contains('aegis-score') ? { color: '#dae8f2', gradient: null } : inventoryGradeAppearance(text || '')) };
+    return { text: (text || '').trim(), ...(template.classList.contains('aegis-score') ? { color: scoreParts![index].color, gradient: null } : inventoryGradeAppearance(text || '')) };
   }).filter(label => label.text);
   const value = JSON.stringify({ version: 1, labels, upgrade: !template.classList.contains('aegis-score') && result.upgradeAvailable === true });
   if (tile.getAttribute('data-aegis-inventory-grade') !== value) tile.setAttribute('data-aegis-inventory-grade', value);
@@ -5988,7 +5989,7 @@ function injectBadge(el: HTMLElement, result: ScoringResult, category?: BadgeCat
     const data = weaponDataMap.get(el) || nativeScoreData.get(el.getAttribute('data-aegis-instance-id') || el.id.replace('item-', ''));
     if (scoresEnabled() && !('sheetArmor' in (data || {}))) {
       const display = scorePresentation(data?.scoreEvaluations, aegisMode, scoreSettings);
-      renderStatScore(badgeTarget, display.text, display.label);
+      renderStatScore(badgeTarget, display.parts.map(part => part.html).join(' | '), display.label);
     } else renderStatGrade(badgeTarget, result, aegisStatGradeBasis);
     return;
   }

@@ -6126,7 +6126,7 @@ button.aegis-perk-layout-toggle { position: static; flex-shrink: 0; }
 .aegis-tile-footer > .aegis-stat-preview { top: calc(84px * .78); bottom: auto; height: calc(84px * .22); }
 #aegis-badge-style-segmented { flex-wrap: wrap; }
 
-/* Percentage scores use a neutral presentation and never inherit letter-grade colors. */
+/* Score backgrounds stay neutral; each value supplies its own percentage color. */
 .aegis-score {
   background: #263342 !important;
   color: #f4f7fa !important;
@@ -6141,6 +6141,7 @@ button.aegis-perk-layout-toggle { position: static; flex-shrink: 0; }
 }
 .aegis-badge.aegis-score.aegis-badge-split { padding: 0 !important; }
 .aegis-score .aegis-split-half { min-width: 0; width: auto; padding-inline: 4px; }
+.aegis-score-value { font-variant-numeric: tabular-nums; }
 .aegis-score-details {
   color: #d8dee9;
   font-size: 11px;
