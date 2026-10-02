@@ -139,4 +139,51 @@ Remaining legendary Best gaps in that replay are explicit: PvE has 15 unknown ow
 
 Follow-up automated checks passed: 167 score tests in seven files, TypeScript, the full existing unit and Chromium browser suites, and production builds/packages. Original local source files still match the initial uncommitted-work snapshot.
 
-Installed-browser validation of the missing-score follow-up is pending the coordinated Shader browser/install handoff. The replay above does not establish activation of the updated installed build. The tile integration regression separately verifies number/dash transitions and cache invalidation when the masterwork changes between known-empty, unknown, and selected-bonus states.
+Installed-browser validation is complete as described below. The tile integration regression also verifies number/dash transitions and cache invalidation between known-empty, unknown, and selected masterwork bonuses.
+
+## Installed missing-score follow-up
+
+The updated production build was tested in signed-in Chrome standard first, Chrome beta second, then Zen standard and beta. Final functional runs have no assertion failures. Each target reproduces 595 rated PvE and 548 rated PvP legendary evaluations from 616 owned instances. All 17 crafted base-frame configurations score with zero masterwork credit. Explosive Personality's actual detail card displays 11.90% PvE Best and 92.24% PvP Best, with matching instance identity and raw score details. Best/Omni, precision 0/1/2, and PvE/PvP/Both checks preserve raw evaluations and keep numeric presentation neutral.
+
+The matched Both-mode checks temporarily use Classic because Stat rows retain a separate single-activity preference. Zen's original Stat style and activity preferences are restored. Initial Zen attempts with mismatched Stat/Both expectations and an unsupported textual BiDi Escape key are recorded privately as failed harness attempts; final runs use the correct supported setup and key encoding.
+
+Current numeric search matches are identical across all four targets:
+
+| Query | Matches |
+| --- | ---: |
+| `aegis:score:>=90` | 57 |
+| `aegis:pve:score:>89.99` | 28 |
+| `aegis:pvp:score:<=80` | 477 |
+| `aegis:score:unrated` | 183 |
+| `aegis:score:omni` | 1 |
+| `aegis:>=S` | 458 |
+
+Raw evaluations agree with the numeric filter identities; changing precision retains them. Settled foreground Grades/Scores comparisons preserve exact legacy grade and shopping identities within each persistent profile. Shopping-high matches are 25 in Chrome and 26 in Zen; the cross-profile difference is one armor fact, which score predicates exclude. Preferences and data were not normalized to force those counts to agree. A cold/background Chrome probe that observed an identity shift is retained as a failed attempt; matched foreground settled repeats pass.
+
+### Follow-up timing investigation
+
+The first transition-inclusive Zen measurements showed large apparent regressions (Grades/Scores medians 74/227.5 ms on standard and 293.5/383.5 ms on beta). Those runs replayed requests while preference-driven presentation work could still be pending and do not establish warmed steady-state timing. We investigated with the same installed source: foreground focus, 1.2 seconds for each display transition to settle, two animation frames, three untimed vault replays, and a fourth timed replay, in six alternating Grades/Scores pairs per target.
+
+| Target | Grades | Scores | Change |
+| --- | ---: | ---: | ---: |
+| Chrome standard | 66.60 ms | 65.85 ms | -1.13% |
+| Chrome beta | 71.40 ms | 74.55 ms | +4.41% |
+| Zen standard | 75.50 ms | 75.00 ms | -0.66% |
+| Zen beta | 82.50 ms | 84.50 ms | +2.42% |
+
+All measured requests contain 1,298 facts. Score-cache misses stay at 1,404 throughout warmups and timed requests. None of the settled medians exceeds the 10% investigation threshold. The earlier observations are preserved rather than relabeled as passes. These measurements cover warmed native evaluation; they do not establish overall display-switch latency, tab motion, or a complete hover-network guarantee.
+
+### Final stock installation and preservation
+
+The temporary Zen preference bridge was removed by the stock testing build, followed by the official Aegis-only Both reload. Chrome's four existing DIM tabs and Zen's two existing tabs were refreshed through the helper. Four new stock activation checks independently verify both extensions active, the bridge absent, 17 recovered crafted configurations, and the 595/548 rated counts. All owned tabs, attachments, and Zen sessions were closed before explicitly handing browser/install access to Compare.
+
+Every one of 6,244 installed DIM-SUM files per browser matches the post-Shader baseline. Every modified Aegis preference was restored, including removing originally absent keys. The original local source snapshot remains intact. Account captures, preference backups, screenshots, traces, and harness attempts remain in ignored local scratch files.
+
+Authoritative stock JavaScript hashes match production, Chrome, and Zen:
+
+| Bundle | SHA-256 |
+| --- | --- |
+| `background.js` | `c98628a1cfc862d3be4bc577e493046fe566f6059b796c2410dfd3f4e93b31ed` |
+| `content.js` | `0406994a18f52b4c492c2ae86e788fb5309ecaa13b16631cedb21e5f550a4bd7` |
+| `main-world-content.js` | `b1cf3f4958a20b3b6f0c336203b06bc9ebb1f1d39abb4194f2a09af537bdea0c` |
+| `popup.js` | `5f737655b09fec2508ce590ef21fea716596adacc55f0dc5d1a82f752c6d48a9` |
