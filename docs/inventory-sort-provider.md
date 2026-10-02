@@ -124,7 +124,14 @@ armor ordering, both directions, unchanged native DIM settings, and exact
 preference restoration. The initial incomplete beta receipt remains local; the
 stock rerun waits for grouping completion before asserting final order, passes
 both channels without application changes, and closes its owned tabs and
-attachments. Zen helper activation is
-verified, while its live contexts time out. The [live evidence](score-live-evidence.md)
-records these limits, final stock hashes, and companion preservation separately
-from automated fixture results.
+attachments.
+
+After foreground recovery, Zen 1.22.3b also passes all 12 cases on standard
+8.144.0 first and beta 8.144.0.4905 second. Its own restored PvE/Best/spreadsheet/
+potential preferences supply 1,298 items, 595 scores, and 1,099 grade ranks;
+586 scored weapons, 718 graded weapons, and 213 graded armor items are checked
+in each direction. Final stock activation, bridge removal, exact preference
+restoration, and session/tab cleanup are independently recorded. The initial
+session timeouts remain historical failed attempts. The [live evidence](score-live-evidence.md)
+records the recovered checks, differing Chrome/Zen preferences, final stock hashes,
+and companion preservation separately from automated fixture results.

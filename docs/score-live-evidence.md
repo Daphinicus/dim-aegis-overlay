@@ -244,10 +244,35 @@ The official Both/Both helper reactivated the stock builds after removing the
 temporary token-protected DIM-SUM preference bridge. Chrome independently
 confirms both sorting options and a ready 1,298-item provider after stock reload.
 Its saved preferences are exactly restored; owned tabs and debugging attachments
-are closed, and the relay is stopped. Zen's helper independently activates both
-extensions, but new-tab creation and existing-tab activation time out. Zen live
-sorting order and visual checks remain pending. No Zen sorting preference was
-changed. Browser and source slots are released.
+are closed, and the relay is stopped.
+
+### Zen recovery and completed sorting verification
+
+After the user closed and reopened Zen, the first official helper still timed out
+at session creation. A foreground retry activated both extensions with no
+warnings. The sorting chat then ran standard 8.144.0 first and beta 8.144.0.4905
+second in Zen 1.22.3b, at 1064 × 1826 CSS pixels and DPR 1. Both authoritative
+Zen receipts complete 12 cases with complete, restored, and closed true. Each
+direction verifies 586 rendered scored weapons, 718 graded weapons, and 213
+graded armor items against raw provider values. Scope round trips, fonts on/off,
+null ordering, unchanged native DIM settings, and grouping completion
+synchronization pass.
+
+Zen has 1,298 owned items, 595 selected scores, and 1,099 selected grades. Its
+own provider preferences are independently verified and restored: PvE, Best,
+PvE comparison activity, Aegis source, spreadsheet database, and potential
+grades. Chrome retains PvP and the combined database mode. These distinct saved
+configurations explain different functional counts; no matched cross-browser
+performance claim is made.
+
+The temporary allowlisted DIM-SUM preference bridge is removed and the official
+Zen-only helper reactivates stock DIM-SUM. Final checks independently confirm
+Aegis and DIM-SUM, both sorting choices, unchanged provider preferences, 1,298
+items, no bridge, and exact restored Zen sorting configuration on both channels.
+All automation sessions end and owned tabs close; the reused user's standard tab
+is preserved and Zen remains open. Source and browser control are explicitly
+released, then handed to Compare for its separate standard/beta pass. No Aegis
+application source or Chrome installation changed during Zen verification.
 
 Only DIM-SUM content.js and grouping-bridge.js changed in the sorting installation.
 Every other installed DIM-SUM file, including fonts and the accepted Compare
@@ -269,6 +294,11 @@ stock-results.json and stock-live.log per channel, stock choice-menu screenshots
 receipt-audit.json, final-verification.json, installation.json,
 combined-sync.json, and final-stock-reload.log. This chat independently checked
 the receipts and both installed hash sets. Aegis's ignored scratch/score-live
-contains its staging and final installed-hash receipts. The earlier missing-score
+contains its staging and final installed-hash receipts. Authoritative Zen files
+are zen-app-complete-results.json, zen-beta-complete-results.json, their live logs
+and choice screenshots, zen-final-verification.json, and official foreground/final
+stock reload logs. This chat independently verifies both complete 12-case Zen
+receipts, native settings equality, and required weapon/armor directions.
+The earlier missing-score
 browser results and preceding stock hashes remain historical evidence; the
 sorting provider does not change the score model.
