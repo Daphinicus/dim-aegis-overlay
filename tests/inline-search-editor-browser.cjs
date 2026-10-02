@@ -62,9 +62,11 @@ const { bundle, launchBrowser } = require('./browser-helpers.cjs');
     await page.keyboard.press('Control+Shift+z');
     assert.equal(await input.inputValue(),'aegis:p:>=a is:solar','Redo removal');
     await page.keyboard.press('Control+a');
-    const copied=await editor.evaluate(el=>{const data=new DataTransfer();el.dispatchEvent(new ClipboardEvent('copy',{clipboardData:data,bubbles:true,cancelable:true}));return data.getData('text/plain')});
+    // Firefox creates its own DataTransfer for synthetic clipboard events.
+    // Read and seed the event's store rather than assuming constructor identity.
+    const copied=await editor.evaluate(el=>{const event=new ClipboardEvent('copy',{clipboardData:new DataTransfer(),bubbles:true,cancelable:true});el.dispatchEvent(event);return event.clipboardData.getData('text/plain')});
     assert.equal(copied,'aegis:p:>=a is:solar','Copy excludes remove glyphs');
-    await editor.evaluate(el=>{const data=new DataTransfer();data.setData('text/plain','notes:"two  spaces"\naegis:god');el.dispatchEvent(new ClipboardEvent('paste',{clipboardData:data,bubbles:true,cancelable:true}));});
+    await editor.evaluate(el=>{const event=new ClipboardEvent('paste',{clipboardData:new DataTransfer(),bubbles:true,cancelable:true});event.clipboardData.setData('text/plain','notes:"two  spaces"\naegis:god');el.dispatchEvent(event);});
     assert.equal(await input.inputValue(),'notes:"two  spaces" aegis:god','Paste preserves quoted spacing');
     await page.keyboard.press('Backspace');
     assert.equal(await input.inputValue(),'notes:"two  spaces" aegis:go','Backspace edits text, not close button');

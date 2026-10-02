@@ -57,8 +57,9 @@ const { bundle, launchBrowser } = require('./browser-helpers.cjs');
     assert.equal(await editor.locator('.aegis-search-token').count(), 2, 'Readable mode keeps the active draft editable');
     await page.keyboard.press('Enter');
     await page.keyboard.press('Control+a');
+    // Firefox's synthetic event owns a different store than the constructor input.
     const copy = await editor.evaluate(el => {
-      const data = new DataTransfer(); el.dispatchEvent(new ClipboardEvent('copy', { clipboardData: data, bubbles: true, cancelable: true })); return data.getData('text/plain');
+      const event = new ClipboardEvent('copy', { clipboardData: new DataTransfer(), bubbles: true, cancelable: true }); el.dispatchEvent(event); return event.clipboardData.getData('text/plain');
     });
     assert.equal(copy, raw + ' notes:"two  spaces"', 'Copy returns exact syntax, not readable labels or icon text');
     await cycle('classic');
@@ -86,7 +87,7 @@ const { bundle, launchBrowser } = require('./browser-helpers.cjs');
       const index = nodes.indexOf(badge); document.getSelection().setBaseAndExtent(el, index + 1, el, index);
     });
     const cut = await editor.evaluate(el => {
-      const data = new DataTransfer(); el.dispatchEvent(new ClipboardEvent('cut', { clipboardData: data, bubbles: true, cancelable: true })); return data.getData('text/plain');
+      const event = new ClipboardEvent('cut', { clipboardData: new DataTransfer(), bubbles: true, cancelable: true }); el.dispatchEvent(event); return event.clipboardData.getData('text/plain');
     });
     assert.equal(cut, 'breaker:overload', 'Backward selection cuts exact syntax');
     assert.equal(await input.inputValue(), 'aegis:p:>=s  notes:"two  spaces" draf');
