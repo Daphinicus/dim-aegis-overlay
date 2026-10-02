@@ -50,6 +50,17 @@ it('renders cached scores and reacts to settings, masterwork, source, and decima
   const data = weaponDataMap.get(tile)!;
   expect(matchesAegisArgument('pve:score:>=94.01', data, {mode:'both',chase:false})).toBe(false);
   expect(matchesAegisArgument('pve:score:>=93.99', data, {mode:'both',chase:false})).toBe(true);
+  raw.masterwork={state:'none'};
+  tile.setAttribute('data-aegis-score-owned',JSON.stringify(raw));
+  await vi.waitFor(()=>expect(tile.querySelector('.aegis-badge')?.textContent).toBe('94.00%—'));
+  expect(weaponDataMap.get(tile)!.scoreEvaluations!.pve!.slots.find(slot=>slot.slot==='masterwork')?.quality).toBe(0);
+  raw.masterwork={state:'unknown',reason:'unknown-owned-masterwork'};
+  tile.setAttribute('data-aegis-score-owned',JSON.stringify(raw));
+  await vi.waitFor(()=>expect(tile.querySelector('.aegis-badge')?.textContent).toBe('——'));
+  expect(tile.getAttribute('data-aegis-score-pve-status')).toBe('unrated');
+  raw.masterwork={state:'known',statHash};
+  tile.setAttribute('data-aegis-score-owned',JSON.stringify(raw));
+  await vi.waitFor(()=>expect(tile.querySelector('.aegis-badge')?.textContent).toBe('100.00%—'));
   change({aegisSheetDbPvE:null});
   await vi.waitFor(() => expect(tile.querySelector('.aegis-badge')?.textContent).toBe('——'));
   expect(tile.hasAttribute('data-aegis-score-pve')).toBe(false);

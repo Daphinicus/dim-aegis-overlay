@@ -45,7 +45,7 @@ Stable installations:
 - Zen Aegis: `C:/Users/dante/Documents/Codex/2026-09-12/i/outputs/Aegis-performance-playtest/extension`, ID `dim-aegis-overlay@maxeption.github.io`.
 - Zen DIM-SUM: `C:/Users/dante/Documents/Codex/2026-09-05/cva/outputs/dimsum-playtest/extension`, ID `dimsum@daphinicus.local`.
 
-Final production JavaScript SHA-256 hashes:
+Production JavaScript SHA-256 hashes from the initial score pass:
 
 | Bundle | SHA-256 |
 | --- | --- |
@@ -54,7 +54,7 @@ Final production JavaScript SHA-256 hashes:
 | `main-world-content.js` | `c9581fec20238bb064d129edeec2292b391ae7d7a42f51e89a2680ddbe845572` |
 | `popup.js` | `5f737655b09fec2508ce590ef21fea716596adacc55f0dc5d1a82f752c6d48a9` |
 
-The final stock build verified 28 Zen files. The official Aegis-only reload helper activated both extensions in all four existing Chrome DIM tabs; Zen's separate activation records also report both extensions active. Staging alone was not counted as activation.
+The initial stock build verified 28 Zen files. The official Aegis-only reload helper activated both extensions in all four existing Chrome DIM tabs; Zen's separate activation records also report both extensions active. Staging alone was not counted as activation.
 
 ## Authenticated functional results
 
@@ -106,10 +106,37 @@ Repeated hover attempts recorded no additional Resource Timing entries and uncha
 
 The origin benchmark registry remains empty. Captured coexisting origins, including Accelerated Assault variants, are not sufficient provenance for a legal maximum. Ambiguous multiple-origin Omni results remain a dash; Best can still work when only the origin maximum is unknown. Tier-5 trait denominators remain three per column, even on drops with fewer choices.
 
-The live scan contained 537 rated PvE and 404 rated PvP weapon evaluations. Unsupported exotics and unresolved source recommendations, variants, or actual masterwork/origin inputs remain explicit unrated values. No fuzzy matches or invented origin provenance were added to increase coverage.
+The initial live scan contained 537 rated PvE and 404 rated PvP weapon evaluations. Unsupported exotics and unresolved source recommendations, variants, or actual masterwork/origin inputs remain explicit unrated values. No fuzzy matches or invented origin provenance were added to increase coverage.
 
 Original settings were saved before writes and restored, including removing keys that were originally absent. Chrome DIM-SUM's right placement and inventory-preview settings were restored exactly; Zen's original bottom placement was restored. Zen preference changes used a temporary, token-protected bridge restricted to 14 Aegis settings. The bridge was removed; the installed Zen content bundle equals the production bundle and contains no testing listener. No relay token was printed or committed.
 
 All owned tabs, Chrome attachments, and Zen debugging sessions were closed before the next handoff. The shared relay remains available to the coordinated Shader pass. Raw account fixtures, screenshots, traces, preference backups, and private drivers remain only in ignored `scratch/score-live/`; only sanitized fixtures and this report are published.
 
 Keep the PR a draft. No merge or store release is included.
+
+## Compare integration follow-up
+
+DIM-SUM annotates native Compare headers with `role="columnheader"`. The older Aegis selector excluded those headers, so recommendations disappeared. Commit `aac0303` accepts the role while retaining the direct item-header structure and excluding stat and perk cells. The standard, beta, and legacy browser fixture passed 934 checks. The coordinated Compare chat also verified recommendations, masterworks, settings cleanup, grid/list layouts, and native tooltips in signed-in Chrome standard/beta and Zen standard/beta. Its Aegis production reload removed the temporary Zen bridge and retained all installed DIM-SUM files. This fix is included in the combined PR source.
+
+## Missing-score investigation
+
+The user's crafted Explosive Personality exposed a distinct extraction bug. A read-only signed-in Chrome capture found 17 crafted weapons with `masterworkInfo=null`, an equipped base intrinsic with empty `investmentStats` and runtime `stats`, and the empty masterwork plug `233125175`. Those fields prove that no masterwork bonus is configured. The old adapter treated this as unknown metadata and erased the whole score. The adapter now serializes that verified absence explicitly and awards zero masterwork credit without removing its weight. Missing fields, contradictory stats, definition-only sockets, and frame previews remain unknown or retain their actual equipped configuration.
+
+This agrees with [DIM's masterwork implementation](https://github.com/DestinyItemManager/DIM/blob/master/src/app/inventory/store/masterwork.ts), which reads crafted masterwork bonuses from the intrinsic and returns null when it has no stat bonus. Seventeen sanitized actual socket fixtures are committed in [crafted-no-masterwork.json](../tests/scores/fixtures/crafted-no-masterwork.json).
+
+Two source normalization failures also affected many weapons: comma splitting broke the canonical origin name Nail, Meet Hammer, and exact source abbreviations or typos failed to resolve. The fix retains complete canonical perk names before splitting comma-delimited lists and recognizes verified exact aliases, including Fluted Barrel Barrel, Hammer-forged Rifling Rifling, Ricochet, Extended Magazine, and High Explosive. It also maps Cooling Efficiency to its existing stat hash and supports Persistence. Unknown or explicitly uncertain source text still fails closed; no fuzzy matching or invented version/origin evidence was added.
+
+A before/after replay uses the same 616 actual owned legendary runtime items and the same cached live PvE/PvP databases. The baseline comes from `aac0303`; the fixed implementation is `817cda7`. This replay is separate from installed-browser validation.
+
+| Activity | Rated before | Rated after | Restored evaluations |
+| --- | ---: | ---: | ---: |
+| PvE | 537 | 595 | 58 |
+| PvP | 404 | 548 | 144 |
+
+Crafted Explosive Personality now has PvE ceiling 74.36363636 × quality 0.16 = 11.89818182% Best and Omni. Its PvP Best is 92.24%, and Omni is 87.25942090%. The masterwork contributes zero in both activities. These values describe its current crafted configuration, without granting crafting recipe alternatives.
+
+Remaining legendary Best gaps in that replay are explicit: PvE has 15 unknown owned origins, four ambiguous versions, and two missing source rows; PvP has 16 unknown origins, 36 ambiguous versions, 13 missing source rows, and three explicitly uncertain perk recommendations. Multi-origin Omni benchmark gaps and unsupported exotics remain unchanged.
+
+Follow-up automated checks passed: 167 score tests in seven files, TypeScript, the full existing unit and Chromium browser suites, and production builds/packages. Original local source files still match the initial uncommitted-work snapshot.
+
+Installed-browser validation of the missing-score follow-up is pending the coordinated Shader browser/install handoff. The replay above does not establish activation of the updated installed build. The tile integration regression separately verifies number/dash transitions and cache invalidation when the masterwork changes between known-empty, unknown, and selected-bonus states.
