@@ -363,3 +363,62 @@ receipts cover the promoted presentation. Older Shader counts and earlier
 reports remain historical. Settings are restored, debugging sessions are
 closed, and the Chrome relay is stopped before the explicit shared source,
 staging, and reload release. Neither draft PR is merged or released.
+
+### Score colors, October 2, 2026
+
+At the user's request, percentage scores now run from red at 0% through yellow
+at 50% to green at 100%. Hue uses the raw value, so precision changes do not
+change the color. Unavailable values use a neutral dash with 40% alpha; a real
+zero remains red. The shared presentation covers Aegis badges, score details,
+tooltips, shopping comparisons, stat rows, and options previews. The existing
+DIM-SUM label-color protocol accepts the same HSL/RGBA colors without companion
+source or preference changes. Numeric values retain their neutral backgrounds
+and never enter letter-grade styling.
+
+The source at `6b7e0844c6f842f8bdc34eaf537cf89008407bac` includes the concurrent
+user-authored narrow-stat-row, diagnostic, CI, and cross-browser clipboard fixes
+through `694d397`. These changes were fetched and preserved before publishing;
+no forced push or original-checkout replacement occurred. All 175 score tests,
+TypeScript, the full unit suite, and all 22 Chromium browser suites pass. The
+updated 2,240-case narrow-row regression and both modified clipboard browser
+suites pass after integrating the concurrent commits. Production builds and
+Chromium/Firefox/source packaging pass.
+
+Authenticated color checks run Chrome standard first, beta second, then Zen
+standard and beta against the coordinated Shader stock integration. Chrome is
+154.0.8037.59 at 2560 × 1305, DPR 1.5; Zen is 1.22.3b / Firefox 156 at
+1064 × 1826, DPR 1. Each target supplies 12 foreground animation frames.
+Each completes 18 combinations: Best/Omni, precision 0/1/2, and PvE/PvP/Both.
+Computed colors match the raw values on 729 rendered weapon labels in single
+activity and 1,458 in Both, including rated values and unavailable dashes.
+These are rendered-label counts, not full-inventory coverage counts. Screenshots
+were visually inspected. Grades restoration and exact original preferences
+pass on all four targets. The first Zen beta check observed 12 queued score
+values at 300 ms; an unchanged rerun waits for settled DOM restoration and
+passes. Both receipts are retained.
+
+The representative equipped tile did not open a native detail card through
+the scripted click on this follow-up. New popup-color live verification is
+therefore not established; the earlier score-feature popup checks and shared
+presentation tests remain separate evidence. This pass does not repeat the
+original search, ownership, comparison-interaction, or performance matrix.
+
+The temporary Zen preference bridge is removed, and the official Aegis-only
+reload succeeds in both browsers. Independent stock activation checks confirm
+Aegis, its inventory provider, and DIM-SUM active with 1,298 facts in each
+browser. The stock content.js hash is
+`d3e6d046188c318cde8bdb6fd627698f303050b347c2caf52aec177fd863ff59`;
+popup.js is
+`36e7ba05c7f1e8f14af79bb0137b3649924496fd0ba1899d45a7727b1399ef41`.
+Background and main-world bundles remain unchanged. All 6,244 installed DIM-SUM
+files per browser remain unchanged, including Shader content.js
+`a200549b69bf26caba82af5c5a8586608063a99665d3ca91e902fd1a0d6db33c`.
+Original Aegis local source still matches the initial 100-file snapshot.
+
+Private evidence is in ignored scratch/score-live: color-{chrome,zen}-{standard,beta}-results.json,
+original preference receipts, first-attempt receipts, vault/click screenshots,
+color-final-stock.json, color-dimsum-before.json, and official reload/test logs.
+All owned tabs, CDP attachments, and BiDi sessions close before the explicit
+handoff to the scrolling chat. Its existing Chrome target and shared relay
+remain available at its request. Stable installation paths, extension IDs,
+sign-in, and saved preferences are preserved. PR #1 remains a draft.
