@@ -115,3 +115,14 @@ fallback without assigning a numerical weapon score.
 
 Authenticated Chrome and Zen checks must be recorded separately from these
 fixtures after a coordinated shared testing-slot handoff.
+
+Authenticated sorting checks on October 2, 2026 verify the stock provider in
+Chrome 154.0.8037.59 on DIM standard 8.144.0 and beta 8.144.0.4905. Both expose
+1,298 owned items, 548 PvP/Best scores, and 1,090 potential-grade ranks. The
+standard receipt completes global/local weapon and armor ordering, both
+directions, and exact preference restoration. The initial beta receipt verifies
+weapon ordering but fails the final local-scope assertion before armor checks;
+those cases require a completed follow-up receipt. Zen helper activation is
+verified, while its live contexts time out. The [live evidence](score-live-evidence.md)
+records these limits, final stock hashes, and companion preservation separately
+from automated fixture results.

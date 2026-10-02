@@ -206,8 +206,61 @@ profile invalidation, and Light.gg grade fallback. A malformed request now
 invalidates an in-progress generation before marking it unavailable, so it
 cannot later publish stale sorting or search facts.
 
-These are automated results. The provider has not yet been installed into the
-shared authenticated browsers; Compare owns that slot until its explicit
-handoff. The earlier missing-score browser evidence and hashes describe the
-previous stock build. Sorting activation and updated installed hashes will be
-recorded after the coordinated combined reload.
+### Coordinated sorting installation and Chrome results
+
+October 2, 2026. Compare explicitly released source and Chrome before sorting
+integration, then released Zen separately. The sorting candidate applies its
+narrow delta to the accepted combined DIM-SUM source, preserving Shader Browser
+and Compare. Aegis's stock provider was staged with its existing testing helper;
+only Aegis content.js changed. Both manifests and the extension ID remained
+byte-identical.
+
+The sorting chat's authenticated receipts verify Chrome 154.0.8037.59 on DIM
+standard 8.144.0 first and beta 8.144.0.4905 second. The viewport is 1080 × 1785
+CSS pixels at DPR 1; focus and animation frames were confirmed. Each channel
+exposes 1,298 owned provider items, with 548 rated scores and 1,090 grade ranks.
+Chrome retains PvP, Best, and potential-grade settings. Each direction checks
+540 rendered scored weapons and 709 graded weapons against the supplied raw
+values. Standard additionally verifies 213 graded armor items in each direction.
+The initial beta receipt stops before armor and the final local grade case;
+those beta cases remain unverified in this evidence until a complete receipt
+is supplied.
+
+Global/section scope, typography, equipped exclusion, null ordering, native
+settings isolation, and saved preference restoration are covered by the
+recorded Chrome cases. The DIM-SUM standard/beta acceptance runs and focused
+combined toolbar, Shader Browser, grouping, precision/provider, and compatibility
+fixtures passed. These functional and fixture results do not establish a sorting
+performance improvement or a matched cross-browser benchmark.
+
+The official Both/Both helper reactivated the stock builds after removing the
+temporary token-protected DIM-SUM preference bridge. Chrome independently
+confirms both sorting options and a ready 1,298-item provider after stock reload.
+Its saved preferences are exactly restored; owned tabs and debugging attachments
+are closed, and the relay is stopped. Zen's helper independently activates both
+extensions, but new-tab creation and existing-tab activation time out. Zen live
+sorting order and visual checks remain pending. No Zen sorting preference was
+changed. Browser and source slots are released.
+
+Only DIM-SUM content.js and grouping-bridge.js changed in the sorting installation.
+Every other installed DIM-SUM file, including fonts and the accepted Compare
+bridge, remains unchanged. Sorting source, tests, docs, and verified bundles are
+saved into its canonical combined-playtest; the historical Compare candidate is
+untouched. Original Aegis local source still matches the initial 100-file snapshot.
+
+Final installed SHA-256 hashes match Chrome and Zen:
+
+| Bundle | SHA-256 |
+| --- | --- |
+| Aegis content.js | c55d3b275a324a17b34af907de86b285a753c2b715d73a1b1c2b73bed4a2c2b7 |
+| DIM-SUM content.js | 7384656d4e23790e72ba48e5f57cbea814960e64fa1cf41281c0f9825e98976e |
+| DIM-SUM grouping-bridge.js | 018d034e694c3ae2b2c7cf79984788d8ee57e654b0ca815f486a4b3bd312a377 |
+| DIM-SUM compare-bridge.js | d9dcc43e446505581a688377316cafed40c7356e7c8e4083686302393d223f35 |
+
+Private evidence is retained in DIM-SUM's .tooltip-fix/aegis-sorting: channel
+results and choice-menu screenshots, final-verification.json, installation.json,
+combined-sync.json, and final-stock-reload.log. This chat independently checked
+the receipts and both installed hash sets. Aegis's ignored scratch/score-live
+contains its staging and final installed-hash receipts. The earlier missing-score
+browser results and preceding stock hashes remain historical evidence; the
+sorting provider does not change the score model.
