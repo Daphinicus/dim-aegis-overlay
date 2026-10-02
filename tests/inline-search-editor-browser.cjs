@@ -8,7 +8,7 @@ const { bundle, launchBrowser } = require('./browser-helpers.cjs');
   try {
     const page = await browser.newPage({viewport:{width:850,height:350}});
     const errors=[]; page.on('pageerror',e=>errors.push(e.message));
-    await page.setContent(`<style>body{background:#222;color:white;font:13px Arial}.native-search-bar{display:flex;align-items:center;position:relative;width:100%;background:#333}input{flex:1}button{flex-shrink:0}</style><style>${fs.readFileSync('public/styles.css','utf8')}</style><div class="native-search-bar"><input name="filter" placeholder="Search"><button class="aegis-search-widget">Shield</button><button>Star</button><button>Clear</button></div><script>${code}\n${syntax}\nwindow.changes=[]; const input=document.querySelector('input'); input.__reactProps$test={onChange:e=>changes.push(e.target.value),onKeyDown:e=>{if(e.key==='Tab'){e.preventDefault();input.setSelectionRange(0,input.value.length);document.execCommand('insertText',false,'is:handcannon ');}}}; window.dispose=Inline.attachInlineSearchEditor(input, term => /^(aegis:|is:(solar|arc|handcannon)$|notes:)/.test(term));</script>`);
+    await page.setContent(`<style>body{background:#222;color:white;font:13px Arial}.native-search-bar{display:flex;align-items:center;position:relative;width:100%;background:#333}input{flex:1}button{flex-shrink:0}</style><style>${fs.readFileSync('public/styles.css','utf8')}</style><button id="before-search">Before search</button><div class="native-search-bar"><input name="filter" placeholder="Search"><button class="aegis-search-widget">Shield</button><button>Star</button><button>Clear</button></div><script>${code}\n${syntax}\nwindow.changes=[]; const input=document.querySelector('input'); input.__reactProps$test={onChange:e=>changes.push(e.target.value),onKeyDown:e=>{if(e.key==='Tab'){e.preventDefault();input.setSelectionRange(0,input.value.length);document.execCommand('insertText',false,'is:handcannon ');}}}; window.dispose=Inline.attachInlineSearchEditor(input, term => /^(aegis:|is:(solar|arc|handcannon)$|notes:)/.test(term));</script>`);
     const editor=page.locator('.aegis-inline-search'), input=page.locator('input');
     await editor.click();
     await page.keyboard.type('is:sol');
@@ -116,7 +116,7 @@ const { bundle, launchBrowser } = require('./browser-helpers.cjs');
     assert.equal(overlap,false,'Narrow viewport retains shield space');
     await editor.focus();
     await page.keyboard.press('Shift+Tab');
-    assert.equal(await editor.evaluate(el=>document.activeElement===el),false,'Shift+Tab leaves the field instead of completing a term');
+    assert.equal(await page.locator('#before-search').evaluate(el=>document.activeElement===el),true,'Shift+Tab reaches the preceding control instead of completing a term');
     assert.equal(await input.inputValue(),rich);
     await editor.focus();
     await input.evaluate(el=>{window.testProps=el.__reactProps$test;delete el.__reactProps$test;});
