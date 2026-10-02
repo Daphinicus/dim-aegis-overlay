@@ -14,6 +14,7 @@ import { setInventoryBadgeScale } from './inventory-badge-scale';
 import type { BadgeCategory } from './badge-presentation';
 import { resolveActivityMode } from './activity-mode';
 import { installActivityModeProvider } from './activity-mode-provider';
+import { installInventorySortProvider, inventorySortItem, type InventorySortItem, type InventorySortSettings } from './inventory-sort';
 import { readScoreSettings, SCORE_SETTING_KEYS } from './score-config';
 import { parseOwnedSnapshot } from './score-owned';
 import { canonicalScoreHash } from './score-source';
@@ -3921,6 +3922,15 @@ const inventoryBadges = IS_WINNOWER_HOST ? null : createInventoryBadges((tile, b
 });
 let searchSettingsReady = false;
 let searchLocaleReady = false;
+const inventorySortItems = new Map<string, InventorySortItem>();
+function inventorySortSettings(): InventorySortSettings {
+  return { mode: aegisMode, profile: scoreSettings.aegisScoreProfile,
+    comparisonActivity: scoreSettings.aegisScoreComparisonActivity, source: scoringSource,
+    dbMode: aegisDbMode, gradeDisplayMode: aegisGradeDisplayMode };
+}
+const inventorySortProvider = IS_WINNOWER_HOST ? null : installInventorySortProvider({
+  settings: inventorySortSettings, connected: () => !!chrome.runtime.id,
+});
 const nativeSearchEvaluator = IS_WINNOWER_HOST ? null : initSearchEvaluator(evaluateSearchItem, () =>
   searchSettingsReady && searchLocaleReady, () => {
     const sheet = !!(aegisMode === 'both' ? aegisSheetDbPvE && aegisSheetDbPvP : (aegisMode === 'pvp' ? aegisSheetDbPvP : aegisSheetDbPvE) || aegisSheetDb);
@@ -3930,7 +3940,14 @@ const nativeSearchEvaluator = IS_WINNOWER_HOST ? null : initSearchEvaluator(eval
       source: sheet, armor: !!getAegisArmorDatabase(), chase: searchSettingsReady,
     };
   }, () => ({ weapons: weaponEvaluations.stats(), armor: armorEvaluations.stats(), scores: scoreCacheStats() }),
-  status => inventoryBadges?.status(status));
+  status => inventoryBadges?.status(status), (status, response) => {
+    if (status !== 'ready') inventorySortItems.clear();
+    const items = status === 'ready' ? (response?.facts || []).flatMap(fact => {
+      const item = inventorySortItems.get(fact.id);
+      return item && item.hash === fact.hash ? [item] : [];
+    }) : [];
+    inventorySortProvider?.publish(status, response, items);
+  });
 
 function evaluateArmorItem(weaponName: string, hash: number): WeaponEvaluationPayload {
   return armorEvaluations.get(String(hash), weaponName, () => computeArmorEvaluation(weaponName, hash));
@@ -3996,6 +4013,7 @@ function evaluateSearchItem(item: DimSearchInput): SearchFact {
     nativeScoreData.set(item.id, scores);
     data = { ...evaluation, ...scores, name: item.name, perksMap: {}, result };
   }
+  inventorySortItems.set(item.id, inventorySortItem(item, data, inventorySortSettings()));
   inventoryBadges?.add(item, data.result);
   const name = item.name.toLowerCase().trim();
   return { id: item.id, hash: item.hash, data: compactSearchData(data), context: { mode: aegisMode, kind: item.kind, scoreProfile: scoreSettings.aegisScoreProfile, chase: !!chaseList[normName(name)],

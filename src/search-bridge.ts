@@ -49,7 +49,8 @@ export function readSearchMessage<T>(id: string): T | null {
 let disposePreviousEvaluator: (() => void) | undefined;
 export function initSearchEvaluator(evaluate: (item: DimSearchInput) => SearchFact,
   ready: () => boolean, availability: () => SearchAvailability, cacheStats: () => unknown = () => ({}),
-  onStatus: (status: SearchResponse['status']) => void = () => {}): { invalidate: () => void; dispose: () => void } {
+  onStatus: (status: SearchResponse['status']) => void = () => {},
+  onSnapshot: (status: SearchResponse['status'], response?: SearchResponse) => void = () => {}): { invalidate: () => void; dispose: () => void } {
   disposePreviousEvaluator?.();
   let generation = 0;
   let disposed = false;
@@ -65,14 +66,16 @@ export function initSearchEvaluator(evaluate: (item: DimSearchInput) => SearchFa
   document.addEventListener('dimsum-grade-preload-request', preloadRequest);
   const receive = () => {
     if (disposed) return;
-    const request = readSearchMessage<SearchRequest>(SEARCH_REQUEST);
-    if (!request || !Array.isArray(request.items)) { preload = { status: 'unavailable', items: 0 }; onStatus('unavailable'); return; }
     const token = ++generation;
+    const request = readSearchMessage<SearchRequest>(SEARCH_REQUEST);
+    if (!request || !Array.isArray(request.items)) { preload = { status: 'unavailable', items: 0 }; onStatus('unavailable'); onSnapshot('unavailable'); return; }
     const respond = (status: SearchResponse['status'], facts: SearchFact[] = []) => {
       preload = { status, items: facts.length };
       onStatus(status);
       const { session, accountEpoch, inventoryRevision, evaluationRevision } = request;
-      publishSearchMessage(SEARCH_RESPONSE, { session, accountEpoch, inventoryRevision, evaluationRevision, status, facts, available: availability() });
+      const response: SearchResponse = { session, accountEpoch, inventoryRevision, evaluationRevision, status, facts, available: availability() };
+      onSnapshot(status, response);
+      publishSearchMessage(SEARCH_RESPONSE, response);
     };
     respond('pending');
     void (async () => {
@@ -98,7 +101,8 @@ export function initSearchEvaluator(evaluate: (item: DimSearchInput) => SearchFa
   };
   document.addEventListener(SEARCH_REQUEST, receive);
   const dispose = () => {
-    disposed = true; ++generation; onStatus('unavailable');
+    if (disposed) return;
+    disposed = true; ++generation; onStatus('unavailable'); onSnapshot('unavailable');
     document.removeEventListener(SEARCH_REQUEST, receive);
     document.removeEventListener('dimsum-grade-preload-request', preloadRequest);
     window.removeEventListener('pagehide', leave);
@@ -107,5 +111,5 @@ export function initSearchEvaluator(evaluate: (item: DimSearchInput) => SearchFa
   disposePreviousEvaluator = dispose;
   window.addEventListener('pagehide', leave);
   receive();
-  return { dispose, invalidate() { if (!disposed) { ++generation; preload = { status: 'pending', items: 0 }; onStatus('pending'); document.dispatchEvent(new Event(SEARCH_INVALIDATE)); } } };
+  return { dispose, invalidate() { if (!disposed) { ++generation; preload = { status: 'pending', items: 0 }; onStatus('pending'); onSnapshot('pending'); document.dispatchEvent(new Event(SEARCH_INVALIDATE)); } } };
 }

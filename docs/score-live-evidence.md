@@ -187,3 +187,27 @@ Authoritative stock JavaScript hashes match production, Chrome, and Zen:
 | `content.js` | `0406994a18f52b4c492c2ae86e788fb5309ecaa13b16631cedb21e5f550a4bd7` |
 | `main-world-content.js` | `b1cf3f4958a20b3b6f0c336203b06bc9ebb1f1d39abb4194f2a09af537bdea0c` |
 | `popup.js` | `5f737655b09fec2508ce590ef21fea716596adacc55f0dc5d1a82f752c6d48a9` |
+
+## DIM-SUM sorting provider follow-up
+
+The numerical/grade sorting integration adds a read-only, versioned full-inventory
+provider. It publishes raw Best/Omni scores and canonical legacy grade ranks,
+independently of Grades/Scores display and precision. It reuses native inventory
+search evaluation rather than scanning tiles or recalculating during comparisons.
+Pending, unavailable, replaced, and disposed providers clear stale sorting data.
+See [Inventory sorting provider](inventory-sort-provider.md) for the cross-world
+schema and lifecycle.
+
+All 174 score tests across eight files, TypeScript, and the full unit/browser
+suite passed. The seven new provider tests cover ranks, real zero versus null,
+profile/activity selection, armor, liveness, cleanup, and stale request rejection.
+The existing production content test also checks display/precision independence,
+profile invalidation, and Light.gg grade fallback. A malformed request now
+invalidates an in-progress generation before marking it unavailable, so it
+cannot later publish stale sorting or search facts.
+
+These are automated results. The provider has not yet been installed into the
+shared authenticated browsers; Compare owns that slot until its explicit
+handoff. The earlier missing-score browser evidence and hashes describe the
+previous stock build. Sorting activation and updated installed hashes will be
+recorded after the coordinated combined reload.

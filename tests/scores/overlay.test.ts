@@ -31,7 +31,7 @@ it('renders cached scores and reacts to settings, masterwork, source, and decima
   for(const [key,value] of Object.entries({'item-hash':String(itemHash),'instance-id':'12345','item-name':'No Hesitation','perk-hashes':hashes.join(','),'active-perk-hashes':hashes.join(','),'score-owned':JSON.stringify(raw)})) tile.setAttribute('data-aegis-'+key,value);
   let store:any={scoringSource:'aegis',aegisDbMode:'spreadsheet',aegisMode:'both',aegisRatingDisplay:'scores',aegisSheetDb:pve,aegisSheetDbPvE:pve,aegisWelcomeDismissed:true,aegisLanguage:'en'};
   const storageChanged:Function[]=[];
-  vi.stubGlobal('chrome',{runtime:{getURL:(p:string)=>p,sendMessage:()=>Promise.resolve(),onMessage:{addListener:vi.fn()}},storage:{local:{get:(_keys:unknown,cb?:Function)=>{if (cb) queueMicrotask(()=>cb(store));return Promise.resolve(store);},set:()=>Promise.resolve()},onChanged:{addListener:(fn:Function)=>storageChanged.push(fn)}}});
+  vi.stubGlobal('chrome',{runtime:{id:'aegis-test',getURL:(p:string)=>p,sendMessage:()=>Promise.resolve(),onMessage:{addListener:vi.fn()}},storage:{local:{get:(_keys:unknown,cb?:Function)=>{if (cb) queueMicrotask(()=>cb(store));return Promise.resolve(store);},set:()=>Promise.resolve()},onChanged:{addListener:(fn:Function)=>storageChanged.push(fn)}}});
   vi.spyOn(console,'debug').mockImplementation(()=>{});
   vi.stubGlobal('ResizeObserver', class { observe() {} unobserve() {} disconnect() {} });
   const {weaponDataMap}=await import('../../src/content');
@@ -67,4 +67,28 @@ it('renders cached scores and reacts to settings, masterwork, source, and decima
   expect(tile.getAttribute('data-aegis-score-pve-status')).toBe('unrated');
   change({aegisRatingDisplay:'grades',aegisSheetDbPvE:pve});
   await vi.waitFor(() => expect(tile.querySelector('.aegis-badge')?.classList.contains('aegis-score')).toBe(false));
+  // Sorting uses the state-backed owned evaluation even when badges show grades.
+  change({aegisMode:'pve',aegisScoreProfile:'best'});
+  const {publishSearchMessage,SEARCH_REQUEST}=await import('../../src/search-bridge');
+  const sortState=()=>JSON.parse(document.getElementById('aegis-inventory-sort-state-v1')!.textContent!);
+  const request=()=>publishSearchMessage(SEARCH_REQUEST,{session:'sort-test',accountEpoch:1,inventoryRevision:1,evaluationRevision:1,
+    inventoryReady:true,items:[{id:'12345',hash:itemHash,name:'No Hesitation',kind:'weapon',ready:true,
+      perkHashes:hashes,activeHashes:hashes,perksMap:{},variantText:'',masterwork:'',scoreOwned:JSON.stringify(raw)}]});
+  await vi.waitFor(()=>{request();expect(sortState().status).toBe('ready');});
+  expect(sortState().items).toHaveLength(1);
+  expect(sortState().items[0]).toMatchObject({id:'12345',hash:itemHash,selected:{score:100}});
+  expect(sortState().items[0].selected.grade).toBeGreaterThan(0);
+  const gradeRank=sortState().items[0].selected.grade;
+  change({aegisRatingDisplay:'scores',aegisScorePrecision:0});
+  expect(sortState()).toMatchObject({status:'pending',items:[]});
+  request();
+  expect(sortState().items[0].selected).toEqual({score:100,grade:gradeRank});
+  change({aegisScoreProfile:'omni'}); expect(sortState().status).toBe('pending'); request();
+  expect(sortState().settings.profile).toBe('omni');
+  expect(sortState().items[0].selected.score).toBe(sortState().items[0].scores.pve.omni);
+  expect(sortState().items[0].selected.grade).toBe(gradeRank);
+  change({scoringSource:'lightgg',lightggData:{'12345':'A'}}); request();
+  expect(sortState().items[0].selected).toEqual({score:null,grade:85});
+  expect(sortState().settings.source).toBe('lightgg');
+
 });
