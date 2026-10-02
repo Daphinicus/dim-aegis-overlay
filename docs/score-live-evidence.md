@@ -220,11 +220,18 @@ standard 8.144.0 first and beta 8.144.0.4905 second. The viewport is 1080 × 178
 CSS pixels at DPR 1; focus and animation frames were confirmed. Each channel
 exposes 1,298 owned provider items, with 548 rated scores and 1,090 grade ranks.
 Chrome retains PvP, Best, and potential-grade settings. Each direction checks
-540 rendered scored weapons and 709 graded weapons against the supplied raw
-values. Standard additionally verifies 213 graded armor items in each direction.
-The initial beta receipt stops before armor and the final local grade case;
-those beta cases remain unverified in this evidence until a complete receipt
-is supplied.
+540 rendered scored weapons, 709 graded weapons, and 213 graded armor items
+against the supplied raw values. Both authoritative stock receipts complete all
+12 cases, including global/local scope and both armor directions; complete,
+restored, and closed are true. Native DIM settings match before and after each run.
+
+The initial beta receipt was incomplete after a local-scope ordering assertion,
+before its armor checks. It remains local as failed evidence. The stock rerun
+waits for data-dimsum-grouping-drawn to match data-dimsum-dual-config before
+asserting final order. Standard passes first, then beta, on unchanged application
+bundles and without a temporary preference bridge. The corrected synchronization
+resolves the premature snapshot; the follow-up establishes final ordering, not
+scope-change latency.
 
 Global/section scope, typography, equipped exclusion, null ordering, native
 settings isolation, and saved preference restoration are covered by the
@@ -258,7 +265,8 @@ Final installed SHA-256 hashes match Chrome and Zen:
 | DIM-SUM compare-bridge.js | d9dcc43e446505581a688377316cafed40c7356e7c8e4083686302393d223f35 |
 
 Private evidence is retained in DIM-SUM's .tooltip-fix/aegis-sorting: channel
-results and choice-menu screenshots, final-verification.json, installation.json,
+stock-results.json and stock-live.log per channel, stock choice-menu screenshots,
+receipt-audit.json, final-verification.json, installation.json,
 combined-sync.json, and final-stock-reload.log. This chat independently checked
 the receipts and both installed hash sets. Aegis's ignored scratch/score-live
 contains its staging and final installed-hash receipts. The earlier missing-score
