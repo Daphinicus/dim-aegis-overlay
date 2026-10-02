@@ -333,3 +333,33 @@ Private evidence is under DIM-SUM's
 reads all four receipts and confirms channel versions, fonts-on/off matrices,
 cleanup, and no-item-write markers. Compare retains its detailed verification
 and documentation in its own checkout.
+
+### Shared Shader presentation promotion and preservation
+
+After the coordinated stock passes, Shader completed its separate presentation
+work at commit `a79b3bd91d3dcd832fe252c2ec0da8d40b1e090a` in its draft PR #2.
+Its authoritative October 2 report and promotion receipt record Chrome and Zen
+standard/beta activation, 522 shaders, 394 owned shaders, and 475 season symbols.
+Those are Shader functional results; they do not repeat the numerical sorting
+or Aegis interaction matrix. The Shader report retains its mobile, account-switch,
+and live interaction limits.
+
+This chat independently hashes both installed copies after promotion. DIM-SUM
+content.js is now `f8f8675f5dd70f9c6c58018003f40017f2ed90da9139ac5264620c7c014e3068`;
+the earlier sorting stock hash remains historical. Aegis content.js remains
+`c55d3b275a324a17b34af907de86b285a753c2b715d73a1b1c2b73bed4a2c2b7`,
+DIM-SUM grouping-bridge.js remains
+`018d034e694c3ae2b2c7cf79984788d8ee57e654b0ca815f486a4b3bd312a377`,
+and Compare bridge remains
+`d9dcc43e446505581a688377316cafed40c7356e7c8e4083686302393d223f35`.
+The repaired canonical vault pin rule retains `justify-content:flex-start`.
+Original Aegis local source still matches its initial 100-file snapshot.
+
+The authoritative Shader report is in its isolated shader-browser-testing
+worktree, docs/shader-browser.md, under Destiny presentation implementation,
+October 2, 2026. Its private live/interface-promotion.json records preserved
+bridges, fonts, and vault alignment; the final Chrome interface and Zen layout
+receipts cover the promoted presentation. Older Shader counts and earlier
+reports remain historical. Settings are restored, debugging sessions are
+closed, and the Chrome relay is stopped before the explicit shared source,
+staging, and reload release. Neither draft PR is merged or released.
