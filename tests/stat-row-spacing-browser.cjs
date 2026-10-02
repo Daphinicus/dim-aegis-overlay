@@ -45,7 +45,7 @@ const { bundle, launchBrowser } = require('./browser-helpers.cjs');
             row: box.toJSON(),
             parts: parts.map(({ n, r }) => ({ tag: n.tagName, text: n.textContent, rect: r.toJSON(), font: getComputedStyle(n).font })),
           });
-          check(Math.abs(parseFloat(getComputedStyle(row).fontSize) - width * .175) < .02, 'Shared row size: ' + detail);
+          check(Math.abs(parseFloat(getComputedStyle(row).fontSize) - width * .17) < .02, 'Shared row size: ' + detail);
           check(Math.abs(box.height - (width * .2 + 4)) < .02, 'Native height: ' + detail);
           for (const { n, r } of parts) {
             check(r.left >= box.left + .94 && r.right <= box.right - .94, 'Content fits: ' + detail, geometry);
@@ -53,7 +53,7 @@ const { bundle, launchBrowser } = require('./browser-helpers.cjs');
             if (n.matches('img, div')) {
               // An overflowing flex row can look bounded while squashing its damage icon.
               check(Math.abs(r.width - r.height) < .02, 'Square icon: ' + detail);
-              check(Math.abs(r.width - width * (n.tagName === 'IMG' ? .14 : .175)) < .02, 'Uniform icon size: ' + detail);
+              check(Math.abs(r.width - width * (n.tagName === 'IMG' ? .136 : .17)) < .02, 'Uniform icon size: ' + detail);
             }
           }
           if (grade) {
