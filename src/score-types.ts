@@ -19,7 +19,7 @@ export interface RawOwnedScoreSnapshot {
   instanceId?: string;
   slots: Record<Exclude<ScoreSlot, 'masterwork'>,
     { state: 'known'; availableHashes: readonly number[] } | { state: 'unknown'; reason: string }>;
-  masterwork: { state: 'known'; statHash: number } | { state: 'unknown'; reason: string };
+  masterwork: { state: 'known'; statHash: number } | { state: 'none' } | { state: 'unknown'; reason: string };
 }
 export interface ScoreSource {
   activity: ScoreActivity;

@@ -5,9 +5,29 @@ import { getEnglishPerkNameFromHash, getPerkHashFromEnglish } from './hash-trans
 import categoryRecovery from '../data/score-weapon-categories.json';
 
 const categoryNames: Record<string, string> = categoryRecovery;
+// Exact spellings used in the source sheets, verified against Bungie's English identities.
+const sourcePerkAliases: Readonly<Record<string, string>> = {
+  'hammer-forged rifling rifling': 'Hammer-forged Rifling',
+  'fluted barrel barrel': 'Fluted Barrel',
+  'omolon fluid dynamics dynamics': 'Omolon Fluid Dynamics',
+  'ricochet': 'Ricochet Rounds',
+  'extended magazine': 'Extended Mag',
+  'high explosive': 'High-Explosive Ordnance',
+  'tempered truss': 'Tempered Truss Rod',
+  'auxiliary': 'Auxiliary Reserves',
+  'overclocked': 'Overclocked Heatsink',
+  'destablizing rounds': 'Destabilizing Rounds',
+  'attritiion orbs': 'Attrition Orbs',
+  'ambitious assasin': 'Ambitious Assassin',
+  'ambition assassin': 'Ambitious Assassin',
+  'blunt execution': 'Blunt Execution Rounds',
+  'hammer, meet nail': 'Nail, Meet Hammer',
+  'hammer forged': 'Hammer-forged Rifling',
+  'rifled': 'Rifled Barrel'
+};
 export function canonicalScorePerk(name: string): string | null {
   const base = name.trim().replace(/^enhanced\s+/i, '');
-  const hash = getPerkHashFromEnglish(base);
+  const hash = getPerkHashFromEnglish(sourcePerkAliases[base.toLowerCase()] ?? base);
   return hash ? `perk:${hash}` : null;
 }
 export function canonicalScoreHash(hash: number, enhanced: Record<number, number> = {}): string | null {
@@ -15,13 +35,17 @@ export function canonicalScoreHash(hash: number, enhanced: Record<number, number
   const english = getEnglishPerkNameFromHash(base);
   return english ? canonicalScorePerk(english) : null;
 }
-const statAliases: Record<string, string> = { 'reload speed': 'reload', 'projectile speed': 'velocity' };
-const statNames = new Set(['range', 'handling', 'stability', 'reload', 'charge time', 'draw time', 'blast radius', 'velocity', 'impact', 'swing speed', 'heat efficiency', 'accuracy', 'shield duration']);
+const statAliases: Record<string, string> = { 'reload speed': 'reload', 'projectile speed': 'velocity', 'cooling efficiency': 'heat efficiency' };
+const statNames = new Set(['range', 'handling', 'stability', 'reload', 'charge time', 'draw time', 'blast radius', 'velocity', 'impact', 'swing speed', 'heat efficiency', 'accuracy', 'shield duration', 'persistence']);
 export function sourceScoreSlot(raw: string | undefined, slot: ScoreSlot): SourceSlot {
   if (!raw?.trim()) return { state: 'unknown', reason: `unknown-source-${slot}` };
   if (/^(none(?:\b|$)|n\/a$|-$)/i.test(raw.trim())) return { state: 'not-applicable' };
   if (raw.includes('?')) return { state: 'unknown', reason: `uncertain-source-${slot}` };
-  const tokens = raw.split(/[\n,\/]+/).map(x => x.trim()).filter(Boolean);
+  // A comma can belong to a perk name, such as Nail, Meet Hammer.
+  const tokens = raw.split(/[\n\/]+/).flatMap(line => {
+    const token = line.trim();
+    return slot !== 'masterwork' && canonicalScorePerk(token) ? [token] : token.split(',');
+  }).map(x => x.trim()).filter(Boolean);
   const ids = tokens.map(token => {
     if (slot !== 'masterwork') return canonicalScorePerk(token);
     const normalized = token.toLowerCase();

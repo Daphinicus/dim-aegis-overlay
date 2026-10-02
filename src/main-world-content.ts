@@ -55,14 +55,22 @@ const weaponReadCache = new WeakMap<object, { inputs: unknown[]; attributes: [st
 function weaponReadInputs(item: any): unknown[] {
   const mw = item.masterworkInfo;
   const inputs: unknown[] = [instanceCache[item.id], item.id, item.hash, item.name,
-    item.crafted, item.sockets?.fromDefinitions, masterworkStatName(mw?.stats), mw?.statName, mw?.stat?.displayProperties?.name, mw?.name, mw?.typeName];
-  const addPlug = (def: any) => inputs.push(!!def, def?.hash, def?.displayProperties?.name,
-    def?.displayProperties?.icon, def?.plug?.plugCategoryIdentifier, def?.itemTypeDisplayName);
+    item.crafted, item.sockets?.fromDefinitions, mw === null, masterworkStatName(mw?.stats), mw?.statName, mw?.stat?.displayProperties?.name, mw?.name, mw?.typeName];
+  const addPlug = (def: any, stats?: unknown) => {
+    inputs.push(!!def, def?.hash, def?.displayProperties?.name,
+      def?.displayProperties?.icon, def?.plug?.plugCategoryIdentifier, def?.itemTypeDisplayName);
+    if (/intrinsics|masterwork/.test(def?.plug?.plugCategoryIdentifier ?? '')) {
+      inputs.push(Array.isArray(def?.investmentStats), def?.investmentStats?.length,
+        ...(def?.investmentStats ?? []).map((stat: any) => stat.statTypeHash),
+        stats != null && typeof stats === 'object' && !Array.isArray(stats),
+        stats != null && typeof stats === 'object' ? Object.keys(stats).length : undefined);
+    }
+  };
   for (const socket of item.sockets?.allSockets || []) {
     inputs.push(!!socket, socket?.socketIndex, socket?.hasRandomizedPlugItems, !!socket?.plugSet?.craftingData, socket?.reusablePlugItems?.length, ...(socket?.reusablePlugItems || []).map((plug: any) => plug.plugItemHash), socket?.plugOptions?.length);
-    addPlug(socket?.actuallyPlugged?.plugDef);
-    addPlug(socket?.plugged?.plugDef);
-    for (const option of socket?.plugOptions || []) addPlug(option.plugDef);
+    addPlug(socket?.actuallyPlugged?.plugDef, socket?.actuallyPlugged?.stats);
+    addPlug(socket?.plugged?.plugDef, socket?.plugged?.stats);
+    for (const option of socket?.plugOptions || []) addPlug(option.plugDef, option.stats);
   }
   return inputs;
 }

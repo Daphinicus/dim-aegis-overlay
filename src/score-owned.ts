@@ -5,7 +5,7 @@ export const MASTERWORK_STAT_IDS: Readonly<Record<number, string>> = {
   1240592695: 'range', 155624089: 'stability', 943549884: 'handling', 4188031367: 'reload',
   3614673599: 'blast radius', 2523465841: 'velocity', 2961396640: 'charge time',
   447667954: 'draw time', 4043523819: 'impact', 2837207746: 'swing speed',
-  4006394725: 'heat efficiency', 1591432999: 'accuracy', 1842278586: 'shield duration'
+  4006394725: 'heat efficiency', 1591432999: 'accuracy', 1842278586: 'shield duration', 3085395333: 'persistence'
 };
 export function unknownOwned(itemHash: number, instanceId?: string): OwnedScoreSnapshot {
   return { schemaVersion: 1, itemHash, instanceId, slots: Object.fromEntries(SCORE_SLOTS.map(slot => [slot, { state: 'unknown', reason: `unknown-owned-${slot}` }])) as OwnedScoreSnapshot['slots'] };
@@ -22,6 +22,8 @@ export function parseOwnedSnapshot(rawText: string | null, itemHash: number,
       if (slot === 'masterwork') {
         if (raw.masterwork?.state === 'known' && MASTERWORK_STAT_IDS[raw.masterwork.statHash]) {
           out.slots.masterwork = { state: 'known', available: [`stat:${MASTERWORK_STAT_IDS[raw.masterwork.statHash]}`] };
+        } else if (raw.masterwork?.state === 'none') {
+          out.slots.masterwork = { state: 'known', available: [] };
         }
         continue;
       }
@@ -46,6 +48,19 @@ function category(def: any): ScoreSlot | 'trait' | null {
   if (/weapon_barrel|weapon_scope|bow_string|sword_blade|grenade_launcher_barrel/.test(id)) return 'barrel';
   if (/^weapon_perks|^weapon_perk|^word_perks/.test(id)) return 'trait';
   return null;
+}
+
+function hasNoCraftedMasterwork(item: any): boolean {
+  if (item.crafted !== 'crafted' || item.masterworkInfo !== null) return false;
+  const equipped = item.sockets.allSockets.map((socket: any) => socket.actuallyPlugged ?? socket.plugged);
+  const intrinsics = equipped.filter((plug: any) => plug?.plugDef?.plug?.plugCategoryIdentifier === 'intrinsics');
+  const masterworks = equipped.filter((plug: any) => plug?.plugDef?.plug?.plugCategoryIdentifier === 'v400.plugs.weapons.masterworks');
+  const hasNoStats = (plug: any) => Array.isArray(plug?.plugDef?.investmentStats) &&
+    plug.plugDef.investmentStats.length === 0 && plug.stats != null &&
+    typeof plug.stats === 'object' && !Array.isArray(plug.stats) && Object.keys(plug.stats).length === 0;
+  // Captured base frames and the empty masterwork plug prove absence, not missing metadata.
+  return intrinsics.length === 1 && hasNoStats(intrinsics[0]) && masterworks.length === 1 &&
+    masterworks[0].plugDef.hash === 233125175 && hasNoStats(masterworks[0]);
 }
 
 /** DIM live sockets: reusablePlugItems are runtime options; plugSet contains recipes/pools.
@@ -93,13 +108,16 @@ export function extractRawOwnedSnapshot(item: any): RawOwnedScoreSnapshot {
       if (!/masterwork/.test(categoryId)) continue;
       // Tier-5 stat bundles can omit isPrimary; the equipped plug retains its type.
       const categoryStat = /\.masterworks\.stat\.([a-z_]+)$/.exec(categoryId)?.[1];
-      const aliases: Record<string, string> = { damage: 'impact', projectile_speed: 'velocity' };
+      const aliases: Record<string, string> = { damage: 'impact', projectile_speed: 'velocity', cooling_efficiency: 'heat efficiency' };
       const statName = categoryStat ? aliases[categoryStat] ?? categoryStat.replaceAll('_', ' ') : '';
       const statHash = Object.entries(MASTERWORK_STAT_IDS).find(([, name]) => name === statName)?.[0];
       if (statHash) { raw.masterwork = { state: 'known', statHash: Number(statHash) }; break; }
       const stats = def?.investmentStats?.filter((stat: any) => MASTERWORK_STAT_IDS[stat.statTypeHash]);
       if (stats?.length === 1) { raw.masterwork = { state: 'known', statHash: stats[0].statTypeHash }; break; }
     }
+  }
+  if (raw.masterwork.state === 'unknown' && hasNoCraftedMasterwork(item)) {
+    raw.masterwork = { state: 'none' };
   }
   return raw;
 }
