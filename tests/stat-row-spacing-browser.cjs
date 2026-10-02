@@ -16,7 +16,7 @@ const { bundle, launchBrowser } = require('./browser-helpers.cjs');
     ` + fs.readFileSync('public/styles.css', 'utf8') });
     await page.addScriptTag({ content: script });
     const count = await page.evaluate(() => {
-      const check = (value, message) => { if (!value) throw Error(message); };
+      const check = (value, message, geometry) => { if (!value) throw Error(message + (geometry ? '\n' + JSON.stringify(geometry()) : '')); };
       const layoutRules = () => [...document.styleSheets].flatMap(sheet => [...sheet.cssRules]).filter(rule => rule.selectorText?.includes('data-aegis-letter-layout'));
       let count = 0;
       Stat.setStatGradeLayout(false);
@@ -41,10 +41,14 @@ const { bundle, launchBrowser } = require('./browser-helpers.cjs');
           if (grade) Stat.renderStatGrade(tile, { grade }, 'perk');
           const box = row.getBoundingClientRect(), parts = [...row.children].map(n => ({ n, r: n.getBoundingClientRect() })).sort((a, b) => a.r.left - b.r.left);
           const detail = JSON.stringify({ hook, font, width, grade, mask });
+          const geometry = () => ({
+            row: box.toJSON(),
+            parts: parts.map(({ n, r }) => ({ tag: n.tagName, text: n.textContent, rect: r.toJSON(), font: getComputedStyle(n).font })),
+          });
           check(Math.abs(parseFloat(getComputedStyle(row).fontSize) - width * .175) < .02, 'Shared row size: ' + detail);
           check(Math.abs(box.height - (width * .2 + 4)) < .02, 'Native height: ' + detail);
           for (const { n, r } of parts) {
-            check(r.left >= box.left + .94 && r.right <= box.right - .94, 'Content fits: ' + detail);
+            check(r.left >= box.left + .94 && r.right <= box.right - .94, 'Content fits: ' + detail, geometry);
             check(Math.abs(r.top + r.height / 2 - box.top - box.height / 2) < .02, 'Centered: ' + detail);
             if (n.matches('img, div')) {
               // An overflowing flex row can look bounded while squashing its damage icon.
