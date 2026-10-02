@@ -2343,7 +2343,7 @@ function renderResults() {
                   }
 
                   return `
-                    <div class="aegis-shopping-copy-row" data-shopping-name="${item.name.replace(/"/g, '&quot;')}" data-copy-idx="${cIdx}">
+                    <div class="aegis-shopping-copy-row" data-shopping-name="${item.name.replace(/"/g, '&quot;')}" data-copy-idx="${cIdx}" data-copy-instance-id="${copy.instanceId || ''}">
                       <div class="aegis-copy-info">
                         <span class="aegis-copy-num">#${cIdx + 1}</span>
                         ${copyBadgeHtml}
@@ -2436,7 +2436,8 @@ function renderResults() {
         const norm = normName(itemName);
         const cIdx = parseInt(cIdxStr, 10);
         const owned = playerVaultInventory.get(norm) || [];
-        const copy = owned[cIdx];
+        const instanceId = row.getAttribute('data-copy-instance-id');
+        const copy = instanceId ? owned.find(item => item.instanceId === instanceId) : owned[cIdx];
 
         if (copy && copy.element) {
           row.addEventListener('mouseenter', () => {
@@ -2454,7 +2455,7 @@ function renderResults() {
         if (!altName) return;
         const norm = normName(altName);
         const owned = playerVaultInventory.get(norm) || [];
-        const copy = owned.length > 0 ? owned[0] : null;
+        const copy = owned.length > 0 ? (scoresEnabled() ? orderOwnedCopies(owned)[0] : owned[0]) : null;
 
         row.addEventListener('mouseenter', () => {
           if (copy && copy.element) {
