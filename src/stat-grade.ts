@@ -12,11 +12,13 @@ const STAT_GRADE_LAYOUT_STYLE_ID = 'aegis-stat-grade-layout-style';
 // A disabled ancestor flag does not prevent these descendant rules from
 // invalidating tile subtrees when DIM changes search classes. Load them only
 // while the layout is active. Keep the native hooks aligned with STAT_BAR_SELECTOR.
+// At 50px, DejaVu Sans A+ / 888 plus both icons must fit the 48px inner row.
+// Scale text and square icons together; .185 overflowed by almost 2px on Linux.
 const STAT_GRADE_LAYOUT_CSS = `
 html[data-aegis-letter-layout] .item > :is(.SLO2oppG, [class*="BadgeInfo_badge"], [class*="BadgeInfo-badge-"], [class*="BadgeInfo-m_badge-"]) {
-  --breaker-size: calc(var(--item-size) * .148);
-  --element-size: calc(var(--item-size) * .185);
-  font-size: calc(var(--item-size) * .185);
+  --breaker-size: calc(var(--item-size) * .14);
+  --element-size: calc(var(--item-size) * .175);
+  font-size: calc(var(--item-size) * .175);
   letter-spacing: 0;
   padding-inline: 1px;
   column-gap: .25px;
