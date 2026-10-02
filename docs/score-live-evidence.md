@@ -302,3 +302,34 @@ receipts, native settings equality, and required weapon/armor directions.
 The earlier missing-score
 browser results and preceding stock hashes remain historical evidence; the
 sorting provider does not change the score model.
+
+### Coordinated Zen Compare follow-up
+
+After sorting released Zen, the Compare chat verified the unchanged combined
+stock build on standard 8.144.0 first and beta 8.144.0.4905 second. Four receipts
+cover sword/armor and firearm checks with fonts enabled and disabled. Each
+records cleanup and no item writes. The viewport remains 1064 × 1826 at DPR 1,
+with foreground animation frames and the original PvE activity preference.
+
+The pass verifies reference selection, signed stat differences, Aegis
+recommendation marks, native preview updates, native sort identity, collapse,
+reference removal fallback, and layout re-entry. Sullen Claw retains 104 px
+headers; Hungry Edge preview updates other rolls without replacing native bar
+roots. Mykel's Reverence supports Polygonal Rifling preview and recoil indicators
+remain clear of the difference labels. Keyboard reference activation passes.
+These checks do not extend the earlier unverified Aegis popup-menu or docking
+coverage.
+
+No application source, staging, reload, settings, or game item writes occur in
+this pass. Temporary page font attributes are restored, owned tabs close, and
+BiDi sessions end. Compare explicitly releases Zen to the queued Shader chat,
+which must preserve the canonical sorting/provider/Compare integration for its
+separate presentation work. The accepted Compare bridge remains
+`d9dcc43e446505581a688377316cafed40c7356e7c8e4083686302393d223f35`.
+
+Private evidence is under DIM-SUM's
+`.tooltip-fix/pr-1-integration/compare-reference-live`: `zen-app-results.json`,
+`zen-beta-results.json`, their firearm counterparts, and screenshots. This chat
+reads all four receipts and confirms channel versions, fonts-on/off matrices,
+cleanup, and no-item-write markers. Compare retains its detailed verification
+and documentation in its own checkout.
