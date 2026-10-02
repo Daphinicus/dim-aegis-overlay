@@ -8,10 +8,12 @@ const results=[];
 function check(value,label){if(!value)throw new Error(label);results.push(label);}
 const frame=()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
 async function run(){
- for(const flavor of ['release','beta','legacy']){
+ for(const flavor of ['release','release-columnheader','beta','beta-columnheader','legacy']){
   const fixture=document.getElementById('fixture');
-  const bucketClass=flavor==='release'?'opaque_grid':flavor==='beta'?'Compare_bucket_test':'Compare-bucket-test';
-  const headerClass=flavor==='release'?'opaque_header':flavor==='beta'?'CompareItem_headerContainer_test':'CompareItem-headerContainer-test';
+  const bucketClass=flavor.startsWith('release')?'opaque_grid':flavor.startsWith('beta')?'Compare_bucket_test':'Compare-bucket-test';
+  const headerClass=flavor.startsWith('release')?'opaque_header':flavor.startsWith('beta')?'CompareItem_headerContainer_test':'CompareItem-headerContainer-test';
+  // DIM-SUM annotates native item headers without changing their classes or children.
+  const headerRole=flavor.endsWith('-columnheader')?' role="columnheader"':'';
   const categories={}, perksMap={}, all=[];
   const icon=hash=>'https://www.bungie.net/common/'+hash+'.png';
   const nativeSocket=(slot,i)=>{
@@ -21,10 +23,11 @@ async function run(){
    return '<div class="native-socket">'+[1,2,3].map(n=>'<div role="button" class="native-plug" title="DIM tooltip"><div><svg viewBox="0 0 100 100" class="native-circle"><circle cx="50" cy="50" r="48"/><image href="'+icon(base+n)+'" width="80" height="80"/><circle cx="50" cy="50" r="46" fill="transparent"/></svg></div></div>').join('')+'</div>';
   };
   const socketHTML=slots.map(nativeSocket).join('');
-  fixture.innerHTML='<div role="dialog"><div class="native-toolbar"><a href="/organizer">Show in Organizer</a></div><div class="'+bucketClass+'" style="grid-template-rows:80px auto 40px;grid-template-columns:0px 100px;display:grid;grid-auto-flow:column;grid-auto-columns:220px 1px"><div></div><div class="native-highlight"></div><div class="native-highlight"></div><div></div><div role="rowheader"><div>Perks</div></div><div role="rowheader"><div>Mods</div></div>'+[1,2].map(id=>'<div class="'+headerClass+'"><div><div class="item" data-aegis-item-hash="'+id+'"></div></div></div><div role="cell"><div style="display:flex;gap:4px">'+socketHTML+'</div></div><div role="cell" class="native-mods"><div>Mods</div></div><div style="grid-row:1 / -1"></div>').join('')+'</div></div>';
+  fixture.innerHTML='<div role="dialog"><div class="native-toolbar"><a href="/organizer">Show in Organizer</a></div><div class="'+bucketClass+'" style="grid-template-rows:80px auto 40px;grid-template-columns:0px 100px;display:grid;grid-auto-flow:column;grid-auto-columns:220px 1px"><div></div><div class="native-highlight"></div><div class="native-highlight"></div><div></div><div role="rowheader"><div>Perks</div></div><div role="rowheader"><div>Mods</div></div>'+[1,2].map(id=>'<div class="'+headerClass+'"'+headerRole+'><div><div class="item" data-aegis-item-hash="'+id+'"></div></div></div><div role="cell"><div style="display:flex;gap:4px">'+socketHTML+'</div></div><div role="cell" class="native-mods"><div>Mods</div></div><div style="grid-row:1 / -1"></div>').join('')+'</div></div>';
   fixture.querySelectorAll('.item').forEach(item=>item.dataset.aegisWeaponPossiblePerks=JSON.stringify(categories));
   const bucket=fixture.querySelector(COMPARE_BUCKET_SELECTOR);
   check(!!bucket,flavor+' grid detected');
+  check([...bucket.querySelectorAll(COMPARE_HEADER_SELECTOR)].filter(header=>header.parentElement===bucket).length===2,flavor+' both native item headers detected');
   const native=[...fixture.querySelectorAll('[role="button"]')];
   let clicks=0; native.forEach(node=>node.addEventListener('click',()=>clicks++));
   const data={equippedMasterwork:'Range',sheetWeapon:{mw:'Range/Handling'},sheetWeaponPvE:{mw:'Range'},sheetWeaponPvP:{mw:'Stability'},perksMap,activeHashes:[1,11,21,31,41],sheetPerks:{all},sheetPerksPvE:{all},sheetPerksPvP:{all:all.filter(p=>p.rankIndex===1)}};
@@ -331,6 +334,8 @@ async function run(){
  }
  document.getElementById('fixture').innerHTML='<div style="grid-template-rows:20px"><div role="rowheader">Organizer</div><div role="cell"><div><div class="item"></div></div></div></div><div role="dialog"><div style="grid-template-rows:20px"><div role="rowheader">Other dialog</div></div></div>';
  check(!document.querySelector(COMPARE_BUCKET_SELECTOR),'Unrelated grids are excluded');
+ document.getElementById('fixture').innerHTML='<div id="header-boundary"><div><div><div class="item"></div></div></div><div role="columnheader"><div><div class="item"></div></div></div><div role="cell"><div><div class="item"></div></div></div><div role="rowheader"><div><div class="item"></div></div></div><div role="columnheader"><div class="item"></div></div></div>';
+ check(document.getElementById('header-boundary').querySelectorAll(COMPARE_HEADER_SELECTOR).length===2,'Item headers retain structural boundaries with or without columnheader roles');
  // Use the real layout classes: both declare display with !important.
  const detailsFixture=document.getElementById('fixture');
  for(const compact of [false,true]){
