@@ -38,6 +38,6 @@ describe('portable scoring contract', () => {
   });
 });
 it('validates storage and does not sort unknown as zero', () => {
-  expect(readScoreSettings({ aegisScorePrecision: '2', aegisScoreProfile: 'bad', aegisRatingDisplay: null })).toEqual({ aegisRatingDisplay: 'grades', aegisScoreProfile: 'best', aegisScorePrecision: 0, aegisScoreComparisonActivity: 'pve' });
+  expect(readScoreSettings({ aegisScorePrecision: '2', aegisScoreProfile: 'bad', aegisRatingDisplay: null })).toEqual({ aegisRatingDisplay: 'grades', aegisScoreProfile: 'best', aegisScorePrecision: 0, aegisScoreShowPercent: true, aegisScoreComparisonActivity: 'pve' });
   expect(compareScores({ value: 0, perfectOverall: false }, { value: null, perfectOverall: false })).toBe(-1);
 });

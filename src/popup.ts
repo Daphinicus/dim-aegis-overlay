@@ -229,6 +229,7 @@ document.addEventListener('DOMContentLoaded', () => {
           ['aegis-rating-display-segmented', scoreSettings.aegisRatingDisplay],
           ['aegis-score-profile-segmented', scoreSettings.aegisScoreProfile],
           ['aegis-score-precision-segmented', String(scoreSettings.aegisScorePrecision)],
+          ['aegis-score-percent-segmented', String(scoreSettings.aegisScoreShowPercent)],
           ['aegis-score-comparison-segmented', scoreSettings.aegisScoreComparisonActivity]
         ]) {
           document.getElementById(id)?.querySelectorAll<HTMLButtonElement>('button').forEach(button => {
@@ -610,12 +611,14 @@ document.addEventListener('DOMContentLoaded', () => {
     ['aegis-rating-display-segmented', 'aegisRatingDisplay'],
     ['aegis-score-profile-segmented', 'aegisScoreProfile'],
     ['aegis-score-precision-segmented', 'aegisScorePrecision'],
+    ['aegis-score-percent-segmented', 'aegisScoreShowPercent'],
     ['aegis-score-comparison-segmented', 'aegisScoreComparisonActivity']
   ]) {
     document.getElementById(id)?.addEventListener('click', event => {
       const button = (event.target as HTMLElement).closest<HTMLButtonElement>('button[data-value]');
       if (!button || button.disabled) return;
-      const raw = key === 'aegisScorePrecision' ? Number(button.dataset.value) : button.dataset.value;
+      const raw = key === 'aegisScorePrecision' ? Number(button.dataset.value)
+        : key === 'aegisScoreShowPercent' ? button.dataset.value === 'true' : button.dataset.value;
       const validated = readScoreSettings({ [key]: raw });
       chrome.storage.local.set({ [key]: validated[key as keyof typeof validated] }, updateUI);
     });

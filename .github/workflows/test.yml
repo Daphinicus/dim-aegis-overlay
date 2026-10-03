@@ -20,6 +20,7 @@ jobs:
       - run: npm ci
       - run: npx playwright install --with-deps chromium firefox
       - run: npm run test:scores
+      - run: npm run test:scores:browser
       - run: npm test
       - run: npm run test:browser
         env:

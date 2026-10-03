@@ -38,6 +38,9 @@ Get it on the chrome webstore: **[Download for Chromium-based browsers (Opera/Ch
 In the extension menu, select **Rating display → Scores**. Choose **Best selections**
 (default) or **Omni coverage**, and 0, 1, or 2 decimal places (default 0). Scores
 require the Aegis/Finnald spreadsheet source. Grades remain the installation default.
+Use **Percent symbols → On/Off** to show or hide the `%` suffix. This preference
+is saved and also applies to DIM-SUM score tiles; score values, colors, accessible
+percentage labels, search, and sorting retain their meanings.
 
 Best selections combines weapon tier/rank with the strongest official recommendations
 actually available on that drop, including masterwork type. Omni adds 10% coverage

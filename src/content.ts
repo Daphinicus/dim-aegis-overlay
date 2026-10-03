@@ -21,6 +21,7 @@ import { canonicalScoreHash } from './score-source';
 import { evaluateOwnedActivity, clearScoreCache, scoreCacheStats, scoreInputSource } from './score-runtime';
 import { scorePresentation, scoreDetailsHtml, bindScoreDetails } from './score-presentation';
 import { compareScores } from './score-format';
+import { setScorePercentVisibility } from './score-display';
 import type { ScoreEvaluations, ScoreSettings } from './score-types';
 import { scoreWeapon } from './scorer';
 import { WishlistDatabase, ScoringResult, AegisSheetDatabase, AegisSheetWeapon, TooltipPerk, AegisArmorSet, SheetPerksGroup, AegisShoppingDatabase, AegisShoppingItem, DualSheetInfo, ManifestWeapon, AegisChaseItem, WeaponEvaluationPayload } from './types';
@@ -4030,6 +4031,7 @@ const activityModeProvider = IS_WINNOWER_HOST ? undefined : installActivityModeP
 chrome.storage.local.get([...SCORE_SETTING_KEYS,'wishlistData', 'enhancedToNormal', 'scoringSource', 'lightggData', 'aegisSheetDb', 'aegisSheetDbPvE', 'aegisSheetDbPvP', 'aegisShoppingDb', 'aegisShoppingDbPvE', 'aegisShoppingDbPvP', 'perkRegistry', 'aegisLayoutSide', 'aegisPerkOrder', 'aegisDbMode', 'aegisMode', 'aegisTwoTier', 'aegisTwoTierColors', 'aegisBadgeColor', 'aegisMaxTierGlow', 'aegisTileGlow', 'aegisBadgePosition', 'aegisBadgeStyle', 'aegisStatGradeMode', 'aegisStatGradeBasis', 'aegisUpgradeStyle', 'aegisShowPerfectStar', 'aegisShowOmniStar', 'aegisBadgeScale', 'aegisBadgeSize', 'aegisBadgeVisibility', 'aegisFadeHover', 'aegisGradeDisplayMode', 'aegisHoverEnabled', 'aegisCompactPerksMatrix', 'aegisPopupSummaryMode', 'aegisArmoryEnabled', 'aegisAutoMaxHeight', 'aegisTooltipWidthMode', 'aegisTooltipWidth', 'aegisArmorSource', 'aegisCompletedWeapons', 'aegisChaseList', 'aegisWelcomeDismissed', 'aegisLanguage', 'aegisGradeSettings', 'aegisGradeColors'], (res) => {
   initLanguage(res.aegisLanguage);
   scoreSettings = readScoreSettings(res);
+  setScorePercentVisibility(scoreSettings.aegisScoreShowPercent);
   storedGradeSettings = res.aegisGradeSettings;
   gradePalette = res.aegisGradeColors;
   gradeSettings = normalizeGradeSettings(storedGradeSettings, gradePalette);
@@ -4151,8 +4153,12 @@ chrome.storage.onChanged.addListener((changes, namespace) => {
       const raw: Record<string, unknown> = { ...scoreSettings };
       for (const key of SCORE_SETTING_KEYS) if (changes[key]) raw[key] = changes[key].newValue;
       scoreSettings = readScoreSettings(raw);
-      presentationChanged = true;
-      document.querySelectorAll<HTMLElement>('[data-aegis-item-hash]').forEach(item => pendingProcessTargets.add(item));
+      setScorePercentVisibility(scoreSettings.aegisScoreShowPercent);
+      // Suffix visibility is CSS-only and does not require evaluating inventory.
+      if (SCORE_SETTING_KEYS.some(key => key !== 'aegisScoreShowPercent' && changes[key])) {
+        presentationChanged = true;
+        document.querySelectorAll<HTMLElement>('[data-aegis-item-hash]').forEach(item => pendingProcessTargets.add(item));
+      }
     }
     if (changes.aegisSheetDbPvE || changes.aegisSheetDbPvP || changes.enhancedToNormal) clearScoreCache();
     let evaluationLocaleRefreshNeeded = false;
@@ -4399,8 +4405,8 @@ chrome.storage.onChanged.addListener((changes, namespace) => {
       scheduleBadgePresentation();
     }
     if (changes.aegisMode || changes.aegisStatGradeMode || changes.aegisBadgeStyle || changes.scoringSource) activityModeProvider?.refresh();
-    const scoringKeys = [...SCORE_SETTING_KEYS, 'wishlistData', 'enhancedToNormal', 'scoringSource', 'lightggData', 'aegisGradeSettings', 'aegisDbMode', 'aegisMode', 'aegisTwoTier', 'aegisGradeDisplayMode', 'aegisArmorSource', 'aegisChaseList'];
-    managedPreview?.refresh();
+    const scoringKeys = [...SCORE_SETTING_KEYS.filter(key => key !== 'aegisScoreShowPercent'), 'wishlistData', 'enhancedToNormal', 'scoringSource', 'lightggData', 'aegisGradeSettings', 'aegisDbMode', 'aegisMode', 'aegisTwoTier', 'aegisGradeDisplayMode', 'aegisArmorSource', 'aegisChaseList'];
+    if (Object.keys(changes).some(key => key !== 'aegisScoreShowPercent')) managedPreview?.refresh();
     if (modeChanged || scoringKeys.some(key => changes[key])) nativeSearchEvaluator?.invalidate();
     if (evaluationLocaleRefreshNeeded) {
       void refreshEvaluationLocale(forceEvaluationLocaleRefresh).then(() => renderResults());

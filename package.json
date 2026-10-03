@@ -15,7 +15,8 @@
     "test:unit": "node scripts/test.mjs --unit",
     "test:browser": "node scripts/test-browser.mjs",
     "test:scores": "vitest run tests/scores",
-    "test:browser:install": "playwright install chromium firefox"
+    "test:browser:install": "playwright install chromium firefox",
+    "test:scores:browser": "node tests/scores/percent-visibility-browser.cjs"
   },
   "dependencies": {
     "@floating-ui/dom": "1.8.0",

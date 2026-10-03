@@ -558,3 +558,68 @@ and BiDi sessions close; the temporary bridge is removed and relay stopped
 before explicit release of the shared slot. No equipment writes occur.
 Private percent65 receipts, screenshots, fixture results, preservation hashes,
 and reload logs remain in ignored scratch/score-live. PR #1 remains a draft.
+
+
+## Saved percent-symbol toggle — October 3, 2026
+
+**Scoring → Scores → Percent symbols → On/Off** now saves
+`aegisScoreShowPercent`. Existing settings default to On. Off visually hides
+only `.aegis-score-percent` and DIM-SUM's existing `.dimsum-grade-percent`
+suffixes. Enabling them restores their 65% numeral-relative size. The root
+presentation attribute and visually hidden CSS retain complete canonical
+percentage text and screen-reader text. Digits, colors, unavailable dashes,
+raw evaluations, precision, and copied feedback retain their behavior. The
+setting updates open surfaces without a reload. A suffix-only change does not
+invalidate native search, enqueue inventory processing, or refresh previews.
+This integration requires no DIM-SUM source or generated-file changes.
+The new caption is translated in all six supported menu languages.
+
+Validation: 178 score tests pass, including menu persistence, default/input
+validation, translations, and preservation of cached evaluations and provider
+labels. TypeScript and extension builds pass. The new
+`npm run test:scores:browser` Chromium fixture passes nine On/Off/On cases
+at 100%, 150%, and 200% zoom. Native and delegated percentage text remains in
+the accessibility snapshot; hidden symbols occupy no inline space, and
+colors, real zero, and the unavailable dash remain unchanged.
+
+The official Aegis-only helper reload succeeds independently in Chrome and
+Zen. Signed-in Chrome standard then beta each pass four live cases:
+Best/Omni and precision 0/2 in Both activity mode. Each Best case checks
+1,141 symbols; each Omni case checks 960. Published canonical labels and raw
+score attributes remain identical during Off/On transitions. Reopening the
+extension menu restores the saved Off selection. Both targets deliver 12
+visible, focused frames. Their original preferences, including originally
+absent keys, are restored after verification. Chrome is 154.0.8037.59.
+Vault On/Off and installed-menu screenshots are inspected. These are focused
+presentation checks, not a repeat of the full ownership, search, sorting,
+comparison, or performance matrices. The initial harness sampled the
+profile/precision transition before all tile labels settled; the corrected
+harness waits for stable labels before checking the toggle.
+
+Fresh Zen live verification remains pending. Initial new-tab creation times
+out; after the user foregrounds Zen, direct extension-page navigation is
+unsupported. The existing temporary allowlisted preference bridge and an
+existing signed-in DIM context allow preference access, but activation then
+times out. A final preflight on the already visible, focused context delivers
+zero animation frames in four seconds, so no live toggle cases are counted.
+Changed preferences restore exactly. The temporary bridge is removed, stock
+Aegis is restored, and the normal Zen reload succeeds. A final combined
+Zen reload confirms both extensions at their stable IDs. Successful installation
+and activation are separate from a live toggle pass. No profile reset or
+browser restart is performed.
+
+All 6,245 installed DIM-SUM files per browser and the original 100-file Aegis
+local work snapshot remain unchanged. Stable extension IDs, testing paths,
+sign-in, and saved settings are preserved. The initial final-activation probe
+used toolbar visibility, which is insufficient
+when the toolbar is hidden. The authoritative `data-dimsum-active` marker and
+Aegis provider confirm both stock extensions active in Chrome and Zen with
+1,314 facts each, and no temporary bridge. Application bundles and styles match
+between dist and both installed targets. Content SHA-256 is
+`e77eb6575bab6bf4ae5efb7ea0919667b507909c2d3c9dfdfd48f56b6c310bb2`;
+styles SHA-256 is
+`7426d235d4e5c2dd8eea2aa055b4d3cf880fbb1340abf188fed4a0cf52bef06d`.
+Owned debug sessions and tabs close, the relay stops, and the shared slot
+is explicitly released to Shader before isolated Git/PR updates.
+Private receipts and screenshots use the `percent-toggle-*` prefix under
+ignored `scratch/score-live`. PR #1 remains a draft; no merge or release.

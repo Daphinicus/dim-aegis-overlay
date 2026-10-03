@@ -19,6 +19,7 @@ export const LANGUAGE_NAMES: Record<SupportedLanguage, string> = {
 
 const translations: Record<SupportedLanguage, Record<string, string>> = {
   en: {
+    scorePercentSymbols: 'Percent symbols',
     searchDisplayClassic: 'Classic text',
     searchDisplayExact: 'Exact badges',
     searchDisplayReadable: 'Readable badges',
@@ -513,6 +514,7 @@ const translations: Record<SupportedLanguage, Record<string, string>> = {
   },
 
   es: {
+    scorePercentSymbols: 'Símbolos de porcentaje',
     searchDisplayClassic: 'Texto clásico',
     searchDisplayExact: 'Etiquetas exactas',
     searchDisplayReadable: 'Etiquetas legibles',
@@ -984,6 +986,7 @@ const translations: Record<SupportedLanguage, Record<string, string>> = {
   },
 
   ko: {
+    scorePercentSymbols: '백분율 기호',
     searchDisplayClassic: '일반 텍스트',
     searchDisplayExact: '원문 배지',
     searchDisplayReadable: '읽기 쉬운 배지',
@@ -1455,6 +1458,7 @@ const translations: Record<SupportedLanguage, Record<string, string>> = {
   },
 
   ja: {
+    scorePercentSymbols: 'パーセント記号',
     searchDisplayClassic: '通常のテキスト',
     searchDisplayExact: '原文バッジ',
     searchDisplayReadable: '読みやすいバッジ',
@@ -1926,6 +1930,7 @@ const translations: Record<SupportedLanguage, Record<string, string>> = {
   },
 
   'zh-CHS': {
+    scorePercentSymbols: '百分号',
     searchDisplayClassic: '经典文本',
     searchDisplayExact: '原文徽章',
     searchDisplayReadable: '易读徽章',
@@ -2397,6 +2402,7 @@ const translations: Record<SupportedLanguage, Record<string, string>> = {
   },
 
   'zh-CHT': {
+    scorePercentSymbols: '百分號',
     searchDisplayClassic: '經典文字',
     searchDisplayExact: '原文徽章',
     searchDisplayReadable: '易讀徽章',

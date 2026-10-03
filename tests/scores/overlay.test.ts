@@ -45,6 +45,13 @@ it('renders cached scores and reacts to settings, masterwork, source, and decima
   expect(tile.querySelectorAll('.aegis-score-value')).toHaveLength(2);
   expect(tile.getAttribute('data-aegis-score-pve')).toBe('100');
   const cached=weaponDataMap.get(tile)!.scoreEvaluations!.pve;
+  const providerBefore = tile.getAttribute('data-aegis-inventory-grade');
+  change({aegisScoreShowPercent:false});
+  expect(document.documentElement.dataset.aegisScorePercent).toBe('off');
+  expect(tile.getAttribute('data-aegis-inventory-grade')).toBe(providerBefore);
+  expect(weaponDataMap.get(tile)!.scoreEvaluations!.pve).toBe(cached);
+  change({aegisScoreShowPercent:true});
+  expect(document.documentElement.hasAttribute('data-aegis-score-percent')).toBe(false);
   change({aegisScorePrecision:2});
   await vi.waitFor(() => expect(tile.querySelector('.aegis-badge')?.textContent).toBe('100.00%—'));
   expect(weaponDataMap.get(tile)!.scoreEvaluations!.pve).toBe(cached);

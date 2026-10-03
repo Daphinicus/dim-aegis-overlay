@@ -64,5 +64,6 @@ export interface ScoreSettings {
   aegisRatingDisplay: 'grades' | 'scores';
   aegisScoreProfile: ScoreProfile;
   aegisScorePrecision: ScorePrecision;
+  aegisScoreShowPercent: boolean;
   aegisScoreComparisonActivity: ScoreActivity;
 }

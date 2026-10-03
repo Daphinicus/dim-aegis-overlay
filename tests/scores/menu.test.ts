@@ -23,6 +23,14 @@ it('menu persists scores/profile/precision and restores grade controls and sourc
   button('aegis-score-precision-segmented','2').click();
   expect(store.aegisScorePrecision).toBe(2);
   expect(document.getElementById('mock-aegis-badge')!.textContent).toBe('87.23%92.46%');
+  button('aegis-score-percent-segmented','false').click();
+  expect(store.aegisScoreShowPercent).toBe(false);
+  expect(document.documentElement.getAttribute('data-aegis-score-percent')).toBe('off');
+  expect(document.getElementById('mock-aegis-badge')!.textContent).toBe('87.23%92.46%');
+  expect(button('aegis-score-percent-segmented','false').classList.contains('active')).toBe(true);
+  button('aegis-score-percent-segmented','true').click();
+  expect(store.aegisScoreShowPercent).toBe(true);
+  expect(document.documentElement.hasAttribute('data-aegis-score-percent')).toBe(false);
   button('aegis-score-profile-segmented','omni').click();
   button('aegis-score-comparison-segmented','pvp').click();
   expect(store.aegisScoreProfile).toBe('omni'); expect(store.aegisScoreComparisonActivity).toBe('pvp');

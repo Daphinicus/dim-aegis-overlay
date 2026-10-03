@@ -1,4 +1,5 @@
 import { readScoreSettings } from './score-config';
+import { setScorePercentVisibility } from './score-display';
 import { formatScore, scoreValueHtml } from './score-format';
 import type { ScoreSettings } from './score-types';
 import { renderStatGradeInBar, renderStatScoreInBar, removeStatGrade } from './stat-grade';
@@ -26,6 +27,7 @@ interface PreviewSettings extends Partial<ScoreSettings> {
 let settings: PreviewSettings = {};
 
 export function renderOptionsPreview() {
+  setScorePercentVisibility(settings.aegisScoreShowPercent !== false);
   const tile = document.getElementById('interactive-weapon-tile');
   if (!tile) return;
 

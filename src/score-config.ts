@@ -7,12 +7,13 @@ export const SCORE_WEIGHTS: Record<ScoreActivity, Record<ScoreSlot, number>> = {
   pvp: { barrel: 10, mag: 14, perk1: 34, perk2: 34, masterwork: 6, origin: 2 }
 };
 export const SCORE_CAPACITIES: Record<ScoreSlot, number> = { barrel: 2, mag: 2, perk1: 3, perk2: 3, masterwork: 1, origin: 1 };
-export const SCORE_SETTING_KEYS = ['aegisRatingDisplay', 'aegisScoreProfile', 'aegisScorePrecision', 'aegisScoreComparisonActivity'] as const;
+export const SCORE_SETTING_KEYS = ['aegisRatingDisplay', 'aegisScoreProfile', 'aegisScorePrecision', 'aegisScoreShowPercent', 'aegisScoreComparisonActivity'] as const;
 export function readScoreSettings(raw: Record<string, unknown>): ScoreSettings {
   return {
     aegisRatingDisplay: raw.aegisRatingDisplay === 'scores' ? 'scores' : 'grades',
     aegisScoreProfile: raw.aegisScoreProfile === 'omni' ? 'omni' : 'best',
     aegisScorePrecision: raw.aegisScorePrecision === 1 || raw.aegisScorePrecision === 2 ? raw.aegisScorePrecision : 0,
+    aegisScoreShowPercent: raw.aegisScoreShowPercent !== false,
     aegisScoreComparisonActivity: raw.aegisScoreComparisonActivity === 'pvp' ? 'pvp' : 'pve'
   };
 }
