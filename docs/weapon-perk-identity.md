@@ -204,6 +204,11 @@ Fresh Zen verification of this broader revision remains pending. The outline cha
 closed its test clients after Zen tab initialization/creation timed out, and its
 remaining outline checks are reserved. The user has been asked to foreground the
 testing Zen window. Earlier Zen evidence belongs to the preceding revision.
+Until that handoff completes, the ordinary reload shortcut still reads the older
+reserved Zen Aegis directory and can restage that older build into Chrome. The
+private Chrome-only config retains the new build without changing shared defaults.
+Complete the Zen installation/handoff before using the ordinary Aegis reload
+shortcut for this revision.
 
 Private captures, screenshots, cache observations, and the settled timing results
 are retained in ignored `scratch/score-live/identity-*` files. They contain account
