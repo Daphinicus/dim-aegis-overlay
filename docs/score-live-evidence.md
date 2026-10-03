@@ -500,3 +500,61 @@ Private receipts, screenshots, fixture results, preservation hashes, and
 reload logs are retained in ignored scratch/score-live with the percent prefix.
 The typography audit in both shared DIM-SUM source copies records this scoped
 unit role. PR #1 remains a draft; no merge or release is performed.
+
+
+## 65% symbol legibility follow-up — October 2, 2026
+
+The user found the 55% suffix muddy at compact inventory sizes. Application
+commit `467a0d7abf0f5e3ce461b7921596a5570fa90550` raises it to 65%
+(`.65em`) in Aegis and the DIM-SUM companion patch. Baseline alignment,
+inherited color, complete plain labels, score digits, and the faded unavailable
+dash retain their previous behavior. The earlier 55% evidence remains historical.
+
+Aegis TypeScript/build/package checks pass. The Chromium typography fixture
+passes 36 assertions across 12/20/32 px parents and 100/125/150/200% zoom.
+DIM-SUM passes TypeScript/build, all 107 compatibility roles on the captured
+standard 8.143.0 and beta 8.143.0.4890 classes, generated-style validation,
+and the existing tile-presentation fixture on both channels with the updated
+0.65 ratio assertion. Full channel acceptance for the latest shared baseline
+is recorded separately by the completed Compare handoff. This narrow retune
+uses targeted checks and does not repeat the ownership, search, sorting,
+comparison, or performance matrices. No new scoring logic or label protocol
+is introduced, and these checks do not establish complete WCAG conformance.
+
+Authenticated order is Chrome standard, Chrome beta, Zen standard, then Zen
+beta. Each passes four focused cases: Best, precision 0/2, and PvE/Both
+(16 total). Checks cover 729 single-activity and 1,458 dual-activity rendered
+weapon labels per case, including unavailable values. Computed suffix ratios
+are 0.65, baseline alignment and inherited colors pass, and plain labels remain
+complete. Each target supplies 12 visible/focused frames. Chrome is
+154.0.8037.59 at 2560 × 1305 / DPR 1.5; Zen is 1.22.3b at
+1064 × 1826 / DPR 1. All four screenshots are inspected. Grades and exact
+original saved preferences restore. The Zen preference snapshot also matches
+its preceding 55% snapshot after the coordinated same-profile recovery.
+The current standard 8.144.0 and beta 8.144.0.4905 release versions are verified
+by the immediately preceding Compare live handoff; this glyph pass records
+hosts and browser metadata independently.
+
+The existing official helper reloads both extensions and then restores stock
+Aegis after removal of the temporary Zen preference bridge. Both independent
+stock activations pass with 1,314 facts, the provider, and DIM-SUM active. All
+Aegis JavaScript bundle hashes remain unchanged from the 55% build.
+styles.css alone changes; dist, Chrome, and Zen match
+`837fb4eb880ff6703597e01e27744f09253ba883c84e40dabb99255a6ec53ff7`.
+DIM-SUM changes exactly three stylesheets among 6,245 installed files per
+browser. Its main content remains
+`aa97dfa880d2ffac8248860eb8ef175ac9ec22f5a6b92029f6074ab3894d4e08`;
+Compare bridge remains
+`9520d24bec611cc6800814a597f9b9eaa3952ed62ddc5fb803d6d89a32ba46b8`;
+tile bridge remains
+`540ea31215f2eb309c6aacbf9a06a37ce72309caf21f6d10fcf3e185ee599254`.
+All 6,242 other DIM-SUM files per browser are preserved. The original Aegis
+checkout still matches the initial 100-file local snapshot. Stable extension
+IDs, paths, sign-in, fonts, and saved settings are preserved.
+
+The shared source receives only the two ratio replacements and the typography
+audit update alongside the latest Compare work. All owned tabs, attachments,
+and BiDi sessions close; the temporary bridge is removed and relay stopped
+before explicit release of the shared slot. No equipment writes occur.
+Private percent65 receipts, screenshots, fixture results, preservation hashes,
+and reload logs remain in ignored scratch/score-live. PR #1 remains a draft.

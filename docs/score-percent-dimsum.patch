@@ -1,5 +1,4 @@
 diff --git a/src/tile-presentation.js b/src/tile-presentation.js
-index 11a8f08..adb50db 100644
 --- a/src/tile-presentation.js
 +++ b/src/tile-presentation.js
 @@ -241,7 +241,11 @@ export function createTilePresentation() {
@@ -16,7 +15,6 @@ index 11a8f08..adb50db 100644
            if (label.gradient) { text.style.backgroundImage = label.gradient; text.style.backgroundClip = 'text'; text.style.color = 'transparent'; }
            entry.grade.append(text);
 diff --git a/src/styles/inventory-tiles.css b/src/styles/inventory-tiles.css
-index 70395f6..f8c4986 100644
 --- a/src/styles/inventory-tiles.css
 +++ b/src/styles/inventory-tiles.css
 @@ -50,6 +50,7 @@ html[data-dimsum-tiles] .item[data-dimsum-tile] > @dim(bar) > .aegis-stat-grade
@@ -28,7 +26,6 @@ index 70395f6..f8c4986 100644
  .dimsum-tile-lock {
    /* The detail gradient covers the corner; native Power stays above both. */
 diff --git a/tests/tile-presentation.cjs b/tests/tile-presentation.cjs
-index 17ac972..e4fdf71 100644
 --- a/tests/tile-presentation.cjs
 +++ b/tests/tile-presentation.cjs
 @@ -227,6 +227,13 @@ const root = path.resolve(__dirname, '..');
