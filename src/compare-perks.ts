@@ -3,6 +3,7 @@ import { masterworkMatches } from './masterwork';
 import { getLocalizedStatName } from './hash-translator';
 import { t } from './i18n';
 import { getLocalizedPerkName, getPerkIcon, getPerkHashFromEnglish } from './hash-translator';
+import { weaponPerkBaseHash } from './weapon-perk-identity';
 import { COMPARE_BUCKET_SELECTOR, COMPARE_HEADER_SELECTOR } from './compare-selectors';
 import { placeInlinePopupDetails } from './popup-inline-details';
 import { iconPath, planCompareBubbles, type OwnedComparePerk } from './compare-bubbles';
@@ -298,7 +299,7 @@ export function initComparePerks(options: {
     const enhancedColumn = owned.some(perk => !!enhancements[perk.hash]) || native.some(node => !!node.querySelector('svg > path[fill="#eade8b"]'));
     const normalToEnhanced = new Map(Object.entries(enhancements).map(([enhanced, normal]) => [normal, Number(enhanced)]));
     const missingHash = (perk: { hash?: number; name: string }) => {
-      const hash = perk.hash || getPerkHashFromEnglish(perk.name) || undefined;
+      const hash = (perk.hash && weaponPerkBaseHash(perk.hash, slot)) || getPerkHashFromEnglish(perk.name, slot) || undefined;
       if (!hash) return;
       const normal = enhancements[hash] || hash;
       return enhancedColumn ? normalToEnhanced.get(normal) || hash : normal;
@@ -318,7 +319,8 @@ export function initComparePerks(options: {
         const perkHash = missingHash(perk);
         attribute(node, 'data-aegis-compare-perk-hash', perkHash ? String(perkHash) : null);
         const svg = node.querySelector('svg')!;
-        const url = safeIcon(getPerkIcon(perkHash || perk.name) || perk.icon);
+        const matchingIcon = perk.hash && weaponPerkBaseHash(perk.hash, slot) === (perkHash && weaponPerkBaseHash(perkHash, slot)) ? perk.icon : null;
+        const url = safeIcon(perkHash ? getPerkIcon(perkHash) || matchingIcon : null);
         let icon = svg.querySelector('image');
         if (url) {
           if (!icon) {
@@ -345,7 +347,7 @@ export function initComparePerks(options: {
       attribute(node, 'data-aegis-compare-perk-hash', ratingHash ? String(ratingHash) : null);
       attribute(node, 'data-aegis-compare-selected', perk.selected ? '' : null);
       if (node.style.getPropertyValue('--aegis-compare-order') !== String(index)) node.style.setProperty('--aegis-compare-order', String(index));
-      const name = getLocalizedPerkName(perk.hash || perk.name, perk.name);
+      const name = getLocalizedPerkName(ratingHash || perk.name, perk.name);
       property(node, '--aegis-perk-column', String(index + 2));
       const description = `${name} — ${t(statusLabels[perk.status])}${perk.selected && perk.status !== 'active' ? ` · ${t('compareSelected')}` : ''}`;
       // Native and generated perks already have rich tooltips. Keep the status

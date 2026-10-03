@@ -1,10 +1,11 @@
+import { findNativeSearchInput } from './native-search-input';
 import { installScrollHover } from './scroll-hover';
 import { renderStatGrade, renderStatScore, removeStatGrade, setStatGradeLayout, type StatGradeBasis } from './stat-grade';
 import { installAttunementProvider, attunementGradeLabel } from './attunement-provider';
 import { placeInlinePopupDetails } from './popup-inline-details';
 import { aegisQuery, compactSearchData, finalizeSearchGrade } from './aegis-search';
 import { appendSearchQuery, initSearchEvaluator, publishSearchMessage, SEARCH_QUERY, type SearchFact } from './search-bridge';
-import type { DimSearchInput } from './dim-item-input';
+import type { DimSearchInput, PerkInfo } from './dim-item-input';
 import { computeGrade, defaultGradeSettings, normalizeGradeSettings, evaluateCustomRoll, gradeValue as getGradeValue, Slots } from './grading';
 import { inventoryGradeAppearance, setGradeColors, setBadgeColor, resolveBadgeColor, setTileGlow, resolveTileGlow, applyGradeColors, applyGradeGlow, displayGrade, refreshInventoryBadgeShadows } from './grade-colors';
 import { createItemQueue } from './item-queue';
@@ -18,6 +19,7 @@ import { installInventorySortProvider, inventorySortItem, type InventorySortItem
 import { readScoreSettings, SCORE_SETTING_KEYS } from './score-config';
 import { parseOwnedSnapshot } from './score-owned';
 import { canonicalScoreHash } from './score-source';
+import { evaluateCategoryPerks, type EvaluatedPerk, type AvailablePerk } from './perk-evaluation';
 import { evaluateOwnedActivity, clearScoreCache, scoreCacheStats, scoreInputSource } from './score-runtime';
 import { scorePresentation, scoreDetailsHtml, bindScoreDetails } from './score-presentation';
 import { compareScores } from './score-format';
@@ -53,7 +55,7 @@ const inventoryEvaluations = new Map<string, {
   signature: (string | number | null)[];
   value: ReturnType<typeof evaluateWeapon>;
   perkHashes: number[];
-  perksMap: Record<number, { name: string; icon: string }>;
+  perksMap: Record<number, PerkInfo>;
   perkNames: string[];
   activeHashes: number[];
   perkIcons: [string, string][];
@@ -614,15 +616,15 @@ const expandedShoppingCards = new Set<string>();
 function renderCompactShoppingPerkChip(perkName: string, isCol1: boolean): string {
   const trimmed = perkName.trim();
   if (!trimmed || trimmed === '-' || trimmed.toLowerCase() === 'n/a') return '';
-  const cleanName = cleanPerkName(trimmed);
-  const displayName = getLocalizedPerkName(trimmed);
-  const icon = getPerkIcon(trimmed) || perkNameToIcon[normName(trimmed)] || perkNameToIcon[cleanName.toLowerCase()] || perkNameToIcon[trimmed.toLowerCase().trim()];
+  const hash = getPerkHashFromEnglish(trimmed, isCol1 ? 'perk1' : 'perk2');
+  const displayName = hash ? getLocalizedPerkName(hash, trimmed) : trimmed;
+  const icon = hash ? getPerkIcon(hash) : null;
   const iconHtml = icon ? `<img src="https://www.bungie.net${icon}" class="aegis-shopping-chip-icon" />` : '';
   const colClass = isCol1 ? 'col1' : 'col2';
   return `
     <span class="aegis-shopping-perk-chip ${colClass}" title="${trimmed}">
       ${iconHtml}
-      <span class="aegis-shopping-chip-text">${renderLocalizedName('perk', trimmed, displayName)}</span>
+      <span class="aegis-shopping-chip-text">${renderLocalizedName('perk', hash || trimmed, displayName)}</span>
     </span>
   `;
 }
@@ -935,7 +937,7 @@ function weaponLookupName(name: string, itemHash?: number): string {
 
 function findAegisWeapon(
   name: string,
-  perksMap?: Record<number, { name: string; icon: string }>,
+  perksMap?: Record<number, PerkInfo>,
   activeHashes?: number[],
   elText?: string,
   itemHash?: number,
@@ -1208,118 +1210,11 @@ function isPerkMatch(perkName: string, recName: string): boolean {
 }
 
 
-interface EvaluatedPerk {
-  name: string;
-  hash?: number;
-  icon?: string;
-  matched: boolean;
-  status: 'active' | 'selectable' | 'missing';
-}
-
-type AvailablePerk = { hash: number; name: string; icon: string; active: boolean };
-
-function prepareAvailablePerks(perksMap: Record<number, { name: string; icon: string }>, activeHashes: number[]): AvailablePerk[] {
+function prepareAvailablePerks(perksMap: Record<number, PerkInfo>, activeHashes: number[]): AvailablePerk[] {
   return Object.entries(perksMap).flatMap(([hashStr, p]) => {
     const hash = parseInt(hashStr, 10);
-    return isNaN(hash) ? [] : [{ hash, name: p.name.toLowerCase().trim(), icon: p.icon, active: activeHashes.includes(hash) }];
+    return isNaN(hash) ? [] : [{ hash, name: p.name.toLowerCase().trim(), icon: p.icon, active: activeHashes.includes(hash), slots: p.slots, activeSlots: p.activeSlots }];
   });
-}
-
-// Cache only string preparation; manifest lookups and localized details stay current.
-const recommendationCache = new Map<string, { rawRec: string; rec: string }[]>();
-
-function prepareRecommendations(recString: string) {
-  let recs = recommendationCache.get(recString);
-  if (!recs) {
-    recs = recString.split(/[\/\n]+/).map(raw => {
-      const rawRec = raw.trim();
-      return { rawRec, rec: cleanPerkName(rawRec) };
-    }).filter(({ rawRec, rec }) => rawRec && rec);
-    if (recommendationCache.size >= 1500) recommendationCache.delete(recommendationCache.keys().next().value!);
-    recommendationCache.set(recString, recs);
-  }
-  return recs;
-}
-
-function evaluateCategoryPerks(
-  recString: string,
-  availablePerks: { hash: number; name: string; icon: string; active: boolean }[],
-  perksMap: Record<number, { name: string; icon: string }>
-): EvaluatedPerk[] {
-  if (!recString || recString.trim() === '' || recString.trim() === '-' || recString.toLowerCase() === 'none') {
-    return [];
-  }
-
-  const results: EvaluatedPerk[] = [];
-
-  for (const { rawRec, rec } of prepareRecommendations(recString)) {
-
-    const recHash = getPerkHashFromEnglish(rawRec);
-    let foundPerk: { hash: number; name: string; icon: string; active: boolean } | null = null;
-
-    const matchesRec = (p: { hash: number; name: string }) => {
-      // 1. Direct name match (e.g. English DIM)
-      if (isPerkMatch(p.name, rec)) return true;
-
-      // 2. English name from Hash match (e.g. non-English DIM)
-      const englishName = getEnglishPerkNameFromHash(p.hash);
-      if (englishName && isPerkMatch(englishName, rec)) return true;
-
-      // 3. Normal hash from enhancedToNormalMap
-      const normalHash = enhancedToNormalMap[p.hash];
-      if (normalHash) {
-        const normalEnglish = getEnglishPerkNameFromHash(normalHash);
-        if (normalEnglish && isPerkMatch(normalEnglish, rec)) return true;
-        if (recHash && normalHash === recHash) return true;
-      }
-
-      // 4. Hash exact match
-      if (recHash && p.hash === recHash) return true;
-
-      return false;
-    };
-    
-    // First pass: try to find an active matching perk
-    for (const perk of availablePerks) {
-      if (perk.active && matchesRec(perk)) {
-        foundPerk = perk;
-        break;
-      }
-    }
-
-    // Second pass: if no active match, try to find a selectable matching perk
-    if (!foundPerk) {
-      for (const perk of availablePerks) {
-        if (matchesRec(perk)) {
-          foundPerk = perk;
-          break;
-        }
-      }
-    }
-
-    if (foundPerk) {
-      results.push({
-        name: perksMap[foundPerk.hash]?.name || foundPerk.name,
-        hash: foundPerk.hash,
-        icon: foundPerk.icon,
-        matched: true,
-        status: foundPerk.active ? 'active' : 'selectable',
-      });
-    } else {
-      // Localized display name and icon for missing perks
-      const displayName = getLocalizedPerkName(rawRec);
-      const missingIcon = getPerkIcon(rawRec) || perkNameToIcon[rec] || perkNameToIcon[displayName.toLowerCase().trim()];
-      results.push({
-        name: displayName,
-        hash: recHash || undefined,
-        icon: missingIcon || undefined,
-        matched: false,
-        status: 'missing',
-      });
-    }
-  }
-
-  return results;
 }
 
 function getSlotStatusFromEvaluations(evals: EvaluatedPerk[]): 'active' | 'selectable' | 'missing' {
@@ -1337,7 +1232,7 @@ function getSlotStatusFromEvaluations(evals: EvaluatedPerk[]): 'active' | 'selec
 
 function scoreSheetWeapon(
   sheetWeapon: AegisSheetWeapon,
-  perksMap: Record<number, { name: string; icon: string }>,
+  perksMap: Record<number, PerkInfo>,
   activeHashes: number[],
   context: 'pve' | 'pvp' = aegisMode === 'pvp' ? 'pvp' : 'pve',
   equippedMasterwork = '',
@@ -1367,11 +1262,11 @@ function scoreSheetWeapon(
 
   availablePerks ??= prepareAvailablePerks(perksMap, activeHashes);
 
-  const barrelEvals = evaluateCategoryPerks(sheetWeapon.barrel, availablePerks, perksMap);
-  const magEvals = evaluateCategoryPerks(sheetWeapon.mag, availablePerks, perksMap);
-  const p1Evals = evaluateCategoryPerks(sheetWeapon.perk1, availablePerks, perksMap);
-  const p2Evals = evaluateCategoryPerks(sheetWeapon.perk2, availablePerks, perksMap);
-  const originEvals = evaluateCategoryPerks(sheetWeapon.origin, availablePerks, perksMap);
+  const barrelEvals = evaluateCategoryPerks(sheetWeapon.barrel, availablePerks, perksMap, 'barrel', enhancedToNormalMap);
+  const magEvals = evaluateCategoryPerks(sheetWeapon.mag, availablePerks, perksMap, 'mag', enhancedToNormalMap);
+  const p1Evals = evaluateCategoryPerks(sheetWeapon.perk1, availablePerks, perksMap, 'perk1', enhancedToNormalMap);
+  const p2Evals = evaluateCategoryPerks(sheetWeapon.perk2, availablePerks, perksMap, 'perk2', enhancedToNormalMap);
+  const originEvals = evaluateCategoryPerks(sheetWeapon.origin, availablePerks, perksMap, 'origin', enhancedToNormalMap);
 
   const barrelStatus = getSlotStatusFromEvaluations(barrelEvals);
   const magStatus = getSlotStatusFromEvaluations(magEvals);
@@ -1565,7 +1460,7 @@ function populateComboboxMenu(id: string) {
       if (id === 'category') populateFramesFilter(val);
       if (id === 'ammo') populateFilters();
       if (id === 'widget-source') {
-        const mainSearchInput = document.querySelector('input[name="filter"], input[placeholder*="filter" i], input[type="search"]') as HTMLInputElement;
+        const mainSearchInput = findNativeSearchInput();
         if (mainSearchInput && val) {
           appendSearchQuery(aegisQuery('source:' + val));
         }
@@ -1669,7 +1564,7 @@ function updateProgressIndicator() {
 }
 
 function triggerDimSearchForIds(instanceIds: string[]) {
-  const searchInput = document.querySelector('input[name="filter"], input[placeholder*="filter" i], input[type="search"]') as HTMLInputElement;
+  const searchInput = findNativeSearchInput();
   if (searchInput && instanceIds.length > 0) {
     const query = instanceIds.map(id => `id:${id}`).join(' or ');
     searchInput.value = query;
@@ -3149,7 +3044,7 @@ function bindChaseItemEvents() {
 }
 
 function triggerDimSearch(weaponName: string) {
-  const searchInput = document.querySelector('input[name="filter"], input[placeholder*="filter" i], input[type="search"]') as HTMLInputElement;
+  const searchInput = findNativeSearchInput();
   if (searchInput) {
     searchInput.value = `name:"${weaponName}"`;
     searchInput.dispatchEvent(new Event('input', { bubbles: true }));
@@ -4501,7 +4396,7 @@ document.addEventListener('aegis-popup-layout', event => {
  * Returns false when the element has no displayable grade.
  */
 function evaluateScoreInput(name: string, hash: number, id: string, raw?: string) {
-  const scoreOwned = parseOwnedSnapshot(raw || null, hash, value => canonicalScoreHash(value, enhancedToNormalMap), id || undefined);
+  const scoreOwned = parseOwnedSnapshot(raw || null, hash, (value, slot) => canonicalScoreHash(value, enhancedToNormalMap, slot), id || undefined);
   const scoreEvaluations: ScoreEvaluations = scoringSource === 'aegis' && aegisDbMode !== 'wishlist' ? {
     pve: evaluateOwnedActivity(aegisSheetDbPvE, 'pve', name, scoreOwned),
     pvp: evaluateOwnedActivity(aegisSheetDbPvP, 'pvp', name, scoreOwned),
@@ -4745,7 +4640,7 @@ function renderWeaponDetailsContent(
 
     if (!chipsHtml) {
       const rawVal = item.rawVal;
-      const cleanVal = rawVal.split(/[\/\n]/).map(s => s.trim()).filter(Boolean).map(name => renderLocalizedName('perk', name)).join(' / ');
+      const cleanVal = rawVal.split(/[\/\n]/).map(s => s.trim()).filter(Boolean).map(name => renderLocalizedName('perk', getPerkHashFromEnglish(name, item.type) || name, name)).join(' / ');
       if (!cleanVal) return '';
       chipsHtml = `<span class="aegis-details-value-text">${cleanVal}</span>`;
     }
@@ -6064,7 +5959,7 @@ function removeBadge(el: HTMLElement, keepResult = false) {
 /** Reuse full-inventory grades when tiles mount, including after route changes. */
 function evaluateWeapon(
   weaponName: string, itemHash: number, perkHashes: number[],
-  perksMap: Record<number, { name: string; icon: string }>, activeHashes: number[],
+  perksMap: Record<number, PerkInfo>, activeHashes: number[],
   elText: string, rawInstanceId: string, equippedMasterwork: string,
 ) {
   equippedMasterwork = equippedMasterwork.trim().toLowerCase();
@@ -6081,7 +5976,7 @@ function evaluateWeapon(
 /** Calculate the grade and detail payload without attaching it to a DOM node. */
 function computeWeaponEvaluation(
   weaponName: string, itemHash: number, perkHashes: number[],
-  perksMap: Record<number, { name: string; icon: string }>, activeHashes: number[],
+  perksMap: Record<number, PerkInfo>, activeHashes: number[],
   elText: string, rawInstanceId: string, equippedMasterwork: string,
 ) {
   let result: ScoringResult;
@@ -6543,7 +6438,7 @@ function processElement(el: HTMLElement) {
       .map((h) => parseInt(h.trim(), 10))
       .filter((h) => !isNaN(h));
 
-    let perksMap: Record<number, { name: string; icon: string }> = cached?.perksMap || {};
+    let perksMap: Record<number, PerkInfo> = cached?.perksMap || {};
     const perkIcons: [string, string][] = cached?.perkIcons || [];
     if (!cached && perksDataStr) {
       try { perksMap = JSON.parse(perksDataStr); } catch (e) { /* ignore */ }
@@ -6612,7 +6507,7 @@ function processElement(el: HTMLElement) {
     } = evaluation;
 
     const scoreOwned = parseOwnedSnapshot(el.getAttribute('data-aegis-score-owned'), itemHash,
-      hash => canonicalScoreHash(hash, enhancedToNormalMap), instanceId || undefined);
+      (hash, slot) => canonicalScoreHash(hash, enhancedToNormalMap, slot), instanceId || undefined);
     const scoreEvaluations: ScoreEvaluations = scoringSource === 'aegis' && aegisDbMode !== 'wishlist' ? {
       pve: evaluateOwnedActivity(aegisSheetDbPvE, 'pve', weaponName, scoreOwned),
       pvp: evaluateOwnedActivity(aegisSheetDbPvP, 'pvp', weaponName, scoreOwned)
@@ -6832,13 +6727,10 @@ function setupSearchWidget() {
   // Winnower's own filter input matches this selector; injecting the widget
   // there would rewrite Winnower's controlled input.
   if (IS_WINNOWER_HOST) return;
-  const searchInput = document.querySelector('input[name="filter"], input[placeholder*="filter" i], input[type="search"]') as HTMLInputElement;
-  if (!searchInput) return;
+  const searchInput = findNativeSearchInput();
+  const searchWrapper = searchInput?.parentElement;
 
-  const searchWrapper = searchInput.parentElement;
-  if (!searchWrapper) return;
-
-  if (searchWidget?.input === searchInput && searchWidget.container.parentElement === searchWrapper &&
+  if (searchInput && searchWrapper && searchWidget?.input === searchInput && searchWidget.container.parentElement === searchWrapper &&
       searchWidget.container.querySelector('.aegis-search-widget-btn') === searchWidget.button &&
       searchWidget.container.querySelector('.aegis-search-widget-menu') === searchWidget.menu &&
       searchWrapper.nextElementSibling?.classList.contains('aegis-search-display-btn')) return;
@@ -6852,6 +6744,7 @@ function setupSearchWidget() {
     searchWidget = null;
   }
   document.querySelectorAll('.aegis-search-widget').forEach(widget => widget.remove());
+  if (!searchInput || !searchWrapper) return;
 
   // Closure state variables for modular filter building
   let activeTarget = 'perk'; // 'perk', 'weapon', 'armor2p', 'armor4p'

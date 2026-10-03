@@ -3,7 +3,7 @@ const fs = require('node:fs');
 const { runFixture } = require('./browser-helpers.cjs');
 const ts = require('typescript');
 const source = ['activity-mode', 'masterwork', 'compare-selectors', 'compare-bubbles', 'popup-inline-details', 'compare-perks'].map(name => fs.readFileSync('src/'+name+'.ts','utf8').replace(/^import .*;\r?\n/gm,'').replace(/export /g,'')).join('\n');
-const script = ts.transpileModule(`const getRecommendedMasterworks=sheet=>sheet.mw?sheet.mw.split('/'):[], getLocalizedStatName=stat=>stat; const t=key=>key, getLocalizedPerkName=(_hash,name)=>name, getPerkIcon=()=>undefined, getPerkHashFromEnglish=()=>null;\n` + source + `
+const script = ts.transpileModule(`const getRecommendedMasterworks=sheet=>sheet.mw?sheet.mw.split('/'):[], getLocalizedStatName=stat=>stat; const t=key=>key, getLocalizedPerkName=(_hash,name)=>name, getPerkIcon=()=>undefined, getPerkHashFromEnglish=()=>null, weaponPerkBaseHash=hash=>hash;\n` + source + `
 const results=[];
 function check(value,label){if(!value)throw new Error(label);results.push(label);}
 const frame=()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));

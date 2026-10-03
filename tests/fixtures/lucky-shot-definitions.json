@@ -1,0 +1,51 @@
+{
+  "source": "https://www.bungie.net/common/destiny2_content/json/en/DestinyInventoryItemDefinition-a8ba855a-93c7-4014-8f2e-d92357fdfb42.json",
+  "version": "244213.26.06.29.2000-1-bnet.65864",
+  "definitions": {
+    "896553940": {
+      "hash": 896553940,
+      "displayProperties": {
+        "name": "Lucky Shot",
+        "icon": "/common/destiny2_content/icons/d73f361e83683088ccf53a9712d51300.jpg"
+      },
+      "itemType": 19,
+      "itemTypeDisplayName": "Emote",
+      "inventory": {
+        "tierType": 4
+      },
+      "plug": {
+        "plugCategoryIdentifier": "emote"
+      }
+    },
+    "2054520291": {
+      "hash": 2054520291,
+      "displayProperties": {
+        "name": "Lucky Shot",
+        "icon": "/common/destiny2_content/icons/05ff3c3914a333ff12abdea5782ceed9.png"
+      },
+      "itemType": 19,
+      "itemTypeDisplayName": "Trait",
+      "inventory": {
+        "tierType": 2
+      },
+      "plug": {
+        "plugCategoryIdentifier": "frames"
+      }
+    },
+    "4170193963": {
+      "hash": 4170193963,
+      "displayProperties": {
+        "name": "Lucky Shot",
+        "icon": "/common/destiny2_content/icons/05ff3c3914a333ff12abdea5782ceed9.png"
+      },
+      "itemType": 19,
+      "itemTypeDisplayName": "Enhanced Trait",
+      "inventory": {
+        "tierType": 3
+      },
+      "plug": {
+        "plugCategoryIdentifier": "frames"
+      }
+    }
+  }
+}

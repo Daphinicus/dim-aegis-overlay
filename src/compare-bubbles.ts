@@ -1,4 +1,5 @@
 import type { TooltipPerk } from './types';
+import { weaponPerkBaseHash } from './weapon-perk-identity';
 
 export type CompareStatus = 'active' | 'selectable' | 'missing' | 'other';
 export type OwnedComparePerk = { hash: number; name: string; icon: string; selected: boolean };
@@ -19,8 +20,9 @@ export function planCompareBubbles(recommendations: TooltipPerk[], owned: OwnedC
     if (seen.has(key)) continue;
     seen.add(key);
     const matches = owned.flatMap((candidate, index) => !used.has(index) && (
-      (perk.hash && candidate.hash === perk.hash) || nameKey(candidate.name) === nameKey(perk.name)
-      || (perk.icon && iconPath(candidate.icon) === iconPath(perk.icon))
+      perk.hash && candidate.hash
+        ? candidate.hash === perk.hash || (weaponPerkBaseHash(candidate.hash) !== null && weaponPerkBaseHash(candidate.hash) === weaponPerkBaseHash(perk.hash))
+        : nameKey(candidate.name) === nameKey(perk.name)
     ) ? [index] : []);
     if (!matches.length) planned.push({ name: perk.name, hash: perk.hash, icon: perk.icon, status: 'missing', selected: false });
     else for (const index of matches) {

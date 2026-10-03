@@ -53,6 +53,10 @@ function nativeContext(anchor: HTMLElement) {
 export function prepareMissingPlug(item: HostValue, socketIndex: number, definition: HostValue, state: HostValue, overrideSockets: Function) {
   const socket = item.sockets?.allSockets.find((s: HostValue) => s.socketIndex === socketIndex);
   if (!socket?.plugged) return;
+  // Name collisions must not turn unrelated plugs into weapon-perk previews.
+  const category = definition.plug?.plugCategoryIdentifier;
+  if (!category || !socket.plugOptions.some((option: HostValue) =>
+    option.plugDef.plug?.plugCategoryIdentifier === category)) return;
   const plug = { plugDef: definition, enabled: true, enableFailReasons: '', plugObjectives: [], stats: null };
   const copy = { ...item, sockets: { ...item.sockets, allSockets: item.sockets.allSockets.map((s: HostValue) =>
     s === socket ? { ...s, plugOptions: [...s.plugOptions, plug] } : s) } };

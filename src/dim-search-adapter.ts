@@ -1,3 +1,4 @@
+import { findNativeSearchInput } from './native-search-input';
 import { isAegisArgumentAvailable, matchesAegisArgument, parseAegisArgument, type SearchAvailability } from './aegis-search';
 import { projectDimItem } from './dim-item-input';
 import { updateAegisQuery } from './search-query-edit';
@@ -197,8 +198,8 @@ export function installDimSearch(runtime: Runtime): () => void {
         'query' in message && typeof message.query === 'string' && message.query.trim()) {
       // DIM debounces typing. Read the widget's input so an unfinished edit is
       // included, even when Redux still contains the previous search.
-      const input = document.querySelector('.aegis-search-widget')?.parentElement
-        ?.querySelector<HTMLInputElement>('input[name="filter"], input[placeholder*="filter" i], input[type="search"]');
+      const wrapper = document.querySelector('.aegis-search-widget')?.parentElement;
+      const input = wrapper ? findNativeSearchInput(wrapper) : null;
       const current = (input?.value ?? store.getState().shell.searchQuery ?? '').trim();
       const addition = message.query.trim();
       query = updateAegisQuery(current, addition);

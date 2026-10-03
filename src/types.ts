@@ -1,4 +1,5 @@
 import type { GradeSettings } from './grading';
+import type { PerkInfo } from './dim-item-input';
 import type { BadgeRollQuality, BadgeVisibilitySettings } from './badge-presentation';
 
 /**
@@ -284,7 +285,7 @@ export interface WeaponEvaluationPayload {
   scoreOwned?: OwnedScoreSnapshot;
   result: ScoringResult;
   name: string;
-  perksMap: Record<number, { name: string; icon: string }>;
+  perksMap: Record<number, PerkInfo>;
   activeHashes?: number[];
   sheetWeapon?: AegisSheetWeapon | null;
   sheetPerks?: SheetPerksGroup | null;

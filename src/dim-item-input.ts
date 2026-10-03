@@ -1,6 +1,7 @@
-import { extractRawOwnedSnapshot } from './score-owned';
+import { extractRawOwnedSnapshot, weaponPlugCategory } from './score-owned';
+import type { WeaponPerkSlot } from './weapon-perk-identity';
 import { masterworkStatName } from './masterwork';
-type PerkInfo = { name: string; icon: string };
+export type PerkInfo = { name: string; icon: string; slots?: WeaponPerkSlot[]; activeSlots?: WeaponPerkSlot[] };
 
 // DIM objects are a runtime integration boundary, validated before projection.
 export interface DimSearchInput {
@@ -98,14 +99,25 @@ export function readDimPerks(item: any): Pick<DimSearchInput, 'perkHashes' | 'ac
   const perkHashes: number[] = [], activeHashes: number[] = [];
   const perksMap: Record<number, PerkInfo> = {};
   const sockets = item.sockets?.allSockets;
-  for (const socket of sockets || []) {
+  let traitIndex = 0;
+  for (const socket of [...(sockets || [])].filter(Boolean).sort((a, b) => a.socketIndex - b.socketIndex)) {
     if (!socket) continue;
+    const category = weaponPlugCategory(socket.plugged?.plugDef ?? socket.plugOptions?.[0]?.plugDef);
+    const slot = category === 'trait' ? (++traitIndex === 1 ? 'perk1' : traitIndex === 2 ? 'perk2' : null) : category;
     if (socket.plugged?.plugDef?.hash) activeHashes.push(socket.plugged.plugDef.hash);
-    for (const plug of [socket.plugged, ...(socket.plugOptions || [])]) {
+    const runtimeHashes = Array.isArray(socket.reusablePlugItems)
+      ? new Set(socket.reusablePlugItems.map((plug: any) => plug.plugItemHash)) : null;
+    const options = item.crafted === 'crafted' ? [] : (socket.plugOptions || []).filter((plug: any) =>
+      !runtimeHashes || runtimeHashes.has(plug.plugDef?.hash));
+    for (const plug of [socket.plugged, ...options]) {
       const def = plug?.plugDef;
       if (!def?.hash) continue;
       if (!perkHashes.includes(def.hash)) perkHashes.push(def.hash);
-      perksMap[def.hash] = { name: def.displayProperties?.name || 'Unknown Perk', icon: def.displayProperties?.icon || '' };
+      const slots = perksMap[def.hash]?.slots ?? [];
+      if (slot && slot !== 'masterwork' && !slots.includes(slot)) slots.push(slot);
+      const activeSlots = perksMap[def.hash]?.activeSlots ?? [];
+      if (slot && slot !== 'masterwork' && def.hash === socket.plugged?.plugDef?.hash && !activeSlots.includes(slot)) activeSlots.push(slot);
+      perksMap[def.hash] = { name: def.displayProperties?.name || 'Unknown Perk', icon: def.displayProperties?.icon || '', slots, activeSlots };
     }
   }
   return { perkHashes, activeHashes, perksMap };

@@ -1,3 +1,4 @@
+import { findNativeSearchInput, isNativeSearchInput } from './native-search-input';
 import { removeSearchTerm, tokenizeSearch, type SearchToken } from './search-syntax';
 import { isNativeSearchTermValid } from './dim-search-adapter';
 import { normalizeSearchDisplay, readableSearchTerm, SEARCH_DISPLAY_ATTRIBUTE, type SearchDisplayMode } from './search-display';
@@ -18,7 +19,7 @@ function supportedInput(input: HTMLInputElement): boolean {
 
 /** Keep DIM's input and React handlers authoritative behind an inline editor. */
 export function attachInlineSearchEditor(input: HTMLInputElement, validTerm = isNativeSearchTermValid, initialMode: SearchDisplayMode = 'exact') {
-  if (!supportedInput(input)) return Object.assign(() => {}, { setMode(_mode: SearchDisplayMode) {} });
+  if (!isNativeSearchInput(input) || !supportedInput(input)) return Object.assign(() => {}, { setMode(_mode: SearchDisplayMode) {} });
   let mode = initialMode, pendingMode: SearchDisplayMode | undefined;
   const editor = document.createElement('div');
   editor.className = 'aegis-inline-search';
@@ -492,9 +493,10 @@ export function initInlineSearchEditor(): void {
   let input: HTMLInputElement | null = null, stop: ReturnType<typeof attachInlineSearchEditor> | undefined;
   const mount = () => {
     const mode = normalizeSearchDisplay(document.documentElement.getAttribute(SEARCH_DISPLAY_ATTRIBUTE));
-    if (input?.isConnected && input.nextElementSibling?.classList.contains('aegis-inline-search')) { stop?.setMode(mode); return; }
+    if (input?.isConnected && isNativeSearchInput(input) && input.nextElementSibling?.classList.contains('aegis-inline-search')) { stop?.setMode(mode); return; }
     stop?.(); stop = undefined;
-    input = document.querySelector('.aegis-search-widget')?.parentElement?.querySelector<HTMLInputElement>('input[name="filter"], input[type="search"]') || null;
+    const wrapper = document.querySelector('.aegis-search-widget')?.parentElement;
+    input = wrapper ? findNativeSearchInput(wrapper) : null;
     if (input && supportedInput(input)) stop = attachInlineSearchEditor(input, isNativeSearchTermValid, mode);
   };
   const observer = new MutationObserver(mount);

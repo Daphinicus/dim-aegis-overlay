@@ -12,7 +12,7 @@ export function unknownOwned(itemHash: number, instanceId?: string): OwnedScoreS
 }
 /** Untrusted page bridge input. A bad slot stays unknown rather than becoming an empty known list. */
 export function parseOwnedSnapshot(rawText: string | null, itemHash: number,
-  resolve: (hash: number) => string | null, instanceId?: string): OwnedScoreSnapshot {
+  resolve: (hash: number, slot: ScoreSlot) => string | null, instanceId?: string): OwnedScoreSnapshot {
   const out = unknownOwned(itemHash, instanceId);
   if (!rawText || rawText.length > 64000) return out;
   try {
@@ -29,7 +29,7 @@ export function parseOwnedSnapshot(rawText: string | null, itemHash: number,
       }
       const input = raw.slots?.[slot];
       if (input?.state !== 'known' || !Array.isArray(input.availableHashes) || input.availableHashes.length > 128 || !input.availableHashes.every(h => Number.isSafeInteger(h) && h > 0)) continue;
-      const ids = input.availableHashes.map(resolve);
+      const ids = input.availableHashes.map(hash => resolve(hash, slot));
       if (ids.some(id => id === null)) continue;
       out.slots[slot] = { state: 'known', available: [...new Set(ids as string[])].sort() };
     }
@@ -37,12 +37,12 @@ export function parseOwnedSnapshot(rawText: string | null, itemHash: number,
   return out;
 }
 
-function category(def: any): ScoreSlot | 'trait' | null {
+export function weaponPlugCategory(def: any): ScoreSlot | 'trait' | null {
   const id = (def?.plug?.plugCategoryIdentifier ?? '').toLowerCase();
-  if (/origin|^enhancements\./.test(id)) return 'origin';
+  if (/origin/.test(id)) return 'origin';
   // Current Bungie categories captured from DIM include weapon-specific socket families.
   if (/^(magazines(?:_gl)?|batteries|guards|arrows|bolts)$/.test(id)) return 'mag';
-  if (/^(barrels|scopes|tubes|blades|bowstrings|hafts|rails)$/.test(id)) return 'barrel';
+  if (/^(barrels|scopes|tubes|blades|bowstrings|hafts|rails|v950\.new\.sword0\.blades)$/.test(id)) return 'barrel';
   if (id === 'frames') return 'trait';
   if (/sword_guard|weapon_magazine|weapon_battery|bow_arrow/.test(id)) return 'mag';
   if (/weapon_barrel|weapon_scope|bow_string|sword_blade|grenade_launcher_barrel/.test(id)) return 'barrel';
@@ -75,7 +75,7 @@ export function extractRawOwnedSnapshot(item: any): RawOwnedScoreSnapshot {
   for (const socket of [...item.sockets.allSockets].sort((a, b) => a.socketIndex - b.socketIndex)) {
     const actual = socket.actuallyPlugged ?? socket.plugged;
     const def = actual?.plugDef ?? socket.plugOptions?.[0]?.plugDef;
-    let slot = category(def);
+    let slot = weaponPlugCategory(def);
     if (slot === 'trait') {
       traitIndex++;
       if (traitIndex > 2) continue;

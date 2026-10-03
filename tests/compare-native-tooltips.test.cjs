@@ -25,10 +25,10 @@ assert.equal(discoverTooltipRuntime({}),undefined,'Unsupported host fails safely
 assert.equal(discoverTooltipRuntime({rspackChunkdim:[]}),undefined,'Inactive runtime fails safely');
 assert.ok(discoverTooltipRuntime({webpackChunkdim:chunks}),'Webpack host supported too');
 
-const originalPlug=Object.freeze({plugDef:{hash:1},enabled:true,stats:{}});
+const originalPlug=Object.freeze({plugDef:{hash:1,plug:{plugCategoryIdentifier:"frames"}},enabled:true,stats:{}});
 const originalSocket=Object.freeze({socketIndex:2,plugged:originalPlug,plugOptions:Object.freeze([originalPlug])});
 const item=Object.freeze({id:'test',sockets:Object.freeze({allSockets:Object.freeze([originalSocket])})});
-const definition={hash:3};
+const definition={hash:3,plug:{plugCategoryIdentifier:"frames"}};
 const state={manifest:{d2Manifest:{}},dimApi:{settings:{customStats:[]}}};
 const result=prepareMissingPlug(item,2,definition,state,(context,copy,overrides)=>{
   assert.notEqual(copy,item);assert.notEqual(copy.sockets.allSockets,item.sockets.allSockets);
@@ -43,4 +43,8 @@ assert.equal(result.plug.plugDef,definition);assert.equal(result.plug.stats[9435
 assert.equal(item.sockets.allSockets[0].plugOptions.length,1,'No missing perk added to the real weapon');
 assert.equal(item.sockets.allSockets[0].plugged,originalPlug,'No inventory or preview selection changed');
 assert.equal(prepareMissingPlug(item,99,definition,state,()=>{throw new Error('Should not run');}),undefined);
+for(const plugCategoryIdentifier of ['emote','shaders','ornaments']) {
+  assert.equal(prepareMissingPlug(item,2,{hash:3,plug:{plugCategoryIdentifier}},state,()=>{throw new Error('Unrelated plug must not calculate stats');}),undefined,'Reject a same-name plug from another category');
+}
+assert.equal(prepareMissingPlug(item,2,{hash:3},state,()=>{throw new Error('Unknown category must not calculate stats');}),undefined);
 console.log('PASS: native module discovery, unsupported-host fallback, isolated stat preview, and unchanged inventory selections.');

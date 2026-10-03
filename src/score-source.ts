@@ -1,8 +1,9 @@
 import type { AegisSheetDatabase, AegisSheetWeapon } from './types';
 import type { ScoreActivity, ScoreSource, ScoreSlot, SourceSlot } from './score-types';
 import { SCORE_SLOTS } from './score-config';
-import { getEnglishPerkNameFromHash, getPerkHashFromEnglish } from './hash-translator';
+import { getPerkHashFromEnglish } from './hash-translator';
 import categoryRecovery from '../data/score-weapon-categories.json';
+import { weaponPerkScoreHash, type WeaponPerkSlot } from './weapon-perk-identity';
 
 const categoryNames: Record<string, string> = categoryRecovery;
 // Exact spellings used in the source sheets, verified against Bungie's English identities.
@@ -25,15 +26,20 @@ const sourcePerkAliases: Readonly<Record<string, string>> = {
   'hammer forged': 'Hammer-forged Rifling',
   'rifled': 'Rifled Barrel'
 };
-export function canonicalScorePerk(name: string): string | null {
-  const base = name.trim().replace(/^enhanced\s+/i, '');
-  const hash = getPerkHashFromEnglish(sourcePerkAliases[base.toLowerCase()] ?? base);
-  return hash ? `perk:${hash}` : null;
+export function canonicalScorePerk(name: string, slot?: WeaponPerkSlot): string | null {
+  const raw = name.trim();
+  let hash = getPerkHashFromEnglish(sourcePerkAliases[raw.toLowerCase()] ?? raw, slot);
+  if (!hash && /^enhanced\s+/i.test(raw)) {
+    const alias = sourcePerkAliases[raw.replace(/^enhanced\s+/i, '').toLowerCase()];
+    if (alias) hash = getPerkHashFromEnglish(alias, slot);
+  }
+  return hash ? canonicalScoreHash(hash, {}, slot) : null;
 }
-export function canonicalScoreHash(hash: number, enhanced: Record<number, number> = {}): string | null {
-  const base = enhanced[hash] ?? hash;
-  const english = getEnglishPerkNameFromHash(base);
-  return english ? canonicalScorePerk(english) : null;
+export function canonicalScoreHash(hash: number, enhanced: Record<number, number> | ScoreSlot = {}, slot?: ScoreSlot): string | null {
+  if (typeof enhanced === 'string') { slot = enhanced; enhanced = {}; }
+  if (slot === 'masterwork') return null;
+  const base = weaponPerkScoreHash(enhanced[hash] ?? hash, slot);
+  return base ? `perk:${base}` : null;
 }
 const statAliases: Record<string, string> = { 'reload speed': 'reload', 'projectile speed': 'velocity', 'cooling efficiency': 'heat efficiency' };
 const statNames = new Set(['range', 'handling', 'stability', 'reload', 'charge time', 'draw time', 'blast radius', 'velocity', 'impact', 'swing speed', 'heat efficiency', 'accuracy', 'shield duration', 'persistence']);
@@ -44,10 +50,10 @@ export function sourceScoreSlot(raw: string | undefined, slot: ScoreSlot): Sourc
   // A comma can belong to a perk name, such as Nail, Meet Hammer.
   const tokens = raw.split(/[\n\/]+/).flatMap(line => {
     const token = line.trim();
-    return slot !== 'masterwork' && canonicalScorePerk(token) ? [token] : token.split(',');
+    return slot !== 'masterwork' && canonicalScorePerk(token, slot) ? [token] : token.split(',');
   }).map(x => x.trim()).filter(Boolean);
   const ids = tokens.map(token => {
-    if (slot !== 'masterwork') return canonicalScorePerk(token);
+    if (slot !== 'masterwork') return canonicalScorePerk(token, slot);
     const normalized = token.toLowerCase();
     const stat = statAliases[normalized] ?? normalized;
     return statNames.has(stat) ? `stat:${stat}` : null;
@@ -69,7 +75,7 @@ export function sourceRevision(db: AegisSheetDatabase): string {
   const text = JSON.stringify(Object.entries(db.categories).map(([category, rows]) => [category, rows.map(w => [w.name, w.categoryKey, w.weaponType, w.versionTag, w.tier, w.rank, w.barrel, w.mag, w.perk1, w.perk2, w.mw, w.origin])]));
   let hash = 2166136261;
   for (let i = 0; i < text.length; i++) hash = Math.imul(hash ^ text.charCodeAt(i), 16777619);
-  return `score-source-${(hash >>> 0).toString(16)}-${text.length}`;
+  return `score-source-socket-v2-${(hash >>> 0).toString(16)}-${text.length}`;
 }
 export function buildScoreSourceIndex(db: AegisSheetDatabase, activity: ScoreActivity): Map<string, ScoreSource> {
   const revision = sourceRevision(db);

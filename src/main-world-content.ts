@@ -1,7 +1,7 @@
 import { initDimSearch } from './dim-search-adapter';
 import { initInlineSearchEditor } from './inline-search-editor';
 import { interceptDimPopupModules } from './native-popup-positioning';
-import { readDimMasterwork, readDimPerks } from './dim-item-input';
+import { readDimMasterwork, readDimPerks, type PerkInfo } from './dim-item-input';
 import { createItemQueue } from './item-queue';
 import { outermostElements } from './dom-utils';
 /**
@@ -34,11 +34,6 @@ interceptDimPopupModules(window as unknown as Record<string, any>, popup => {
   annotateOverviewPerks(popup);
   popup.dispatchEvent(new Event('aegis-popup-prepare', { bubbles: true }));
 });
-
-interface PerkInfo {
-  name: string;
-  icon: string;
-}
 
 // Global registry of all seen perks, shared via a hidden DOM element
 const globalRegistry: Record<number, PerkInfo> = {};

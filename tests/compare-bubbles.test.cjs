@@ -1,7 +1,7 @@
 const assert=require('node:assert/strict'),fs=require('node:fs'),ts=require('typescript');
-const moduleSource=ts.transpileModule(fs.readFileSync('src/compare-bubbles.ts','utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText;
-const exportsObject={};new Function('exports',moduleSource)(exportsObject);
-const {planCompareBubbles}=exportsObject;
+const cache=new Map();
+function load(name){name=name.replace('./','');if(cache.has(name))return cache.get(name);const code=ts.transpileModule(fs.readFileSync('src/'+name+'.ts','utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText;const module={exports:{}};cache.set(name,module.exports);new Function('require','module','exports',code)(load,module,module.exports);return module.exports;}
+const {planCompareBubbles}=load('compare-bubbles');
 const owned=[{hash:4,name:'Other',icon:'/4.png',selected:false},{hash:3,name:'Selected',icon:'/3.png',selected:true},{hash:2,name:'Available',icon:'/2.png',selected:false}];
 const recs=[{hash:3,name:'Selected',type:'perk1',rankIndex:3},{hash:1,name:'Missing',type:'perk1',rankIndex:1},{hash:2,name:'Available',type:'perk1',rankIndex:2}];
 const before=JSON.stringify([owned,recs]);
@@ -16,5 +16,6 @@ const localized=planCompareBubbles([{hash:30,name:'Localized',rankIndex:1}], [{h
 assert.equal(localized[0].status,'active','Hash identity works across languages');
 assert.equal(planCompareBubbles([...recs,recs[0]],owned,'sheet').length,4,'No duplicate recommendations');
 assert.equal(planCompareBubbles([],owned,'sheet').every(p=>p.status==='other'),true);
-assert.equal(planCompareBubbles([{hash:9,name:'Enhanced match',icon:'/2.png'}],owned,'sheet')[0].hash,2,'Matching icon handles equivalent plug definitions');
+assert.equal(planCompareBubbles([{hash:9,name:'Shared icon',icon:'/2.png'}],owned,'sheet')[0].status,'missing','A shared icon does not establish plug identity');
+assert.equal(planCompareBubbles([{hash:2360754333,name:'Trench Barrel'}],[{hash:2459015849,name:'Localized enhanced',icon:'/x.png',selected:true}],'sheet')[0].status,'active','Manifest normal/enhanced equivalence works across languages');
 console.log('PASS: Aegis ranking, owned-first ordering, four statuses, selection markers, hash identity, duplicates, and immutable inputs.');

@@ -1,6 +1,7 @@
 import { HASH_TO_ENGLISH_WEAPON, HASH_TO_ENGLISH_PERK, CANONICAL_PERK_HASHES } from './canonical-hashes';
 import { WEAPON_STAT_HASHES } from './weapon-stats';
 import { t } from './i18n';
+import { resolveWeaponPerkHash, isAmbiguousWeaponPerkName, type WeaponPerkSlot } from './weapon-perk-identity';
 
 // Localized registries populated by DIM React Fiber & IndexedDB manifest scans
 let localizedPerkRegistry: Record<number, { name: string; icon: string }> = {};
@@ -87,8 +88,10 @@ export function cleanName(s: string): string {
 /**
  * Returns the Bungie Hash for a given English perk name.
  */
-export function getPerkHashFromEnglish(englishName: string): number | null {
+export function getPerkHashFromEnglish(englishName: string, slot?: WeaponPerkSlot): number | null {
   if (!englishName) return null;
+  const weaponHash = resolveWeaponPerkHash(englishName, slot);
+  if (weaponHash || slot || isAmbiguousWeaponPerkName(englishName)) return weaponHash;
   const raw = englishName.toLowerCase().trim();
   if (CANONICAL_PERK_HASHES[raw]) return CANONICAL_PERK_HASHES[raw];
 

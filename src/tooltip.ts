@@ -4,7 +4,7 @@ import { scorePresentation, scoreDetailsHtml, bindScoreDetails } from './score-p
 import { ScoringResult, AegisSheetWeapon, TooltipPerk, AegisArmorSet, SheetPerksGroup, AegisShoppingItem, DualSheetInfo } from './types';
 import { t, getLocalizedElement, getLocalizedRole } from './i18n';
 import { getOriginalEvaluationText, getLocalizedSource } from './evaluation-i18n';
-import { getLocalizedPerkName, getPerkIcon } from './hash-translator';
+import { getLocalizedPerkName, getPerkIcon, getPerkHashFromEnglish } from './hash-translator';
 import { renderLocalizedName, renderLocalizedWeaponReference } from './localized-display';
 import { safeSetInnerHTML } from './dom-utils';
 import { masterworkMatches } from './masterwork';
@@ -226,7 +226,7 @@ function renderSheetWeaponSection(
   `;
 
   // Helper to render a category's perk chips
-  const renderCategoryRow = (item: { label: string; type: string; rawVal?: string }) => {
+  const renderCategoryRow = (item: { label: string; type: 'barrel' | 'mag' | 'perk1' | 'perk2' | 'origin'; rawVal?: string }) => {
     if (!item.rawVal) return '';
     let chipsHtml = '';
     if (sheetPerks) {
@@ -259,7 +259,7 @@ function renderSheetWeaponSection(
     if (!chipsHtml) {
       const cleanTokens = tokenizeRecommendationPerks(item.rawVal);
       if (cleanTokens.length === 0) return '';
-      chipsHtml = `<span class="aegis-details-value-text" style="font-size: 11px; color: #e5e9f0;">${cleanTokens.map(name => renderLocalizedName('perk', name)).join(' / ')}</span>`;
+      chipsHtml = `<span class="aegis-details-value-text" style="font-size: 11px; color: #e5e9f0;">${cleanTokens.map(name => renderLocalizedName('perk', getPerkHashFromEnglish(name, item.type) || name, name)).join(' / ')}</span>`;
     }
 
     return `
