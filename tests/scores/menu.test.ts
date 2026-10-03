@@ -43,6 +43,10 @@ it('split presentation retains activity, colors each activity, and distinguishes
   expect(presentation.html).not.toContain('aegis-badge-s');
   expect(presentation.parts.map(p => p.color)).toEqual(['hsl(0, 75%, 65%)', 'rgba(218, 232, 242, 0.4)']);
   expect(presentation.html).toContain('aegis-score-unavailable');
+  const badge = document.createElement('div'); badge.innerHTML = presentation.html;
+  expect(badge.textContent).toBe('0%—');
+  expect(badge.querySelectorAll('.aegis-score-percent')).toHaveLength(1);
+  expect(badge.querySelector('.aegis-score-unavailable .aegis-score-percent')).toBeNull();
   const details=scoreDetailsHtml(scores,'pve',{...settings,aegisScoreProfile:'omni'});
   expect(details).toContain('not yet verified');expect(details).toContain('aegis-copy-score-details');
 });

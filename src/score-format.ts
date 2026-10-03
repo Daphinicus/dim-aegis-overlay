@@ -17,7 +17,8 @@ export function scoreColor(score: ScoreValue | undefined): string {
 
 export function scoreValueHtml(score: ScoreValue | undefined, precision: ScorePrecision = 0): string {
   const text = formatScore(score, precision);
-  return `<span class="aegis-score-value${text === '—' ? ' aegis-score-unavailable' : ''}" style="color: ${scoreColor(score)}">${text}</span>`;
+  const html = text === '—' ? text : `${text.slice(0, -1)}<span class="aegis-score-percent">%</span>`;
+  return `<span class="aegis-score-value${text === '—' ? ' aegis-score-unavailable' : ''}" style="color: ${scoreColor(score)}">${html}</span>`;
 }
 
 /** Descending; unknown values always follow rated values, including a real zero. */
