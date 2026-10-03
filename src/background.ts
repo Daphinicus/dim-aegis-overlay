@@ -1,6 +1,8 @@
+import { scoreRowMetadata } from '../scripts/score-sync.mjs';
 import { parseWishlist } from './parser';
 import { AegisSheetDatabase, AegisSheetWeapon, AegisArmorSet, AegisShoppingDatabase, AegisShoppingItem } from './types';
 import { fetchEvaluationLocale } from './evaluation-i18n';
+import { parsePerkRatings, type PerkRatingTab, type PerkRatingsCache } from './perk-ratings';
 
 const DEFAULT_URL =
   'https://raw.githubusercontent.com/charlesxcaliber/DIMAegisWeaponWishlist/main/MrCharlesWishlist_MRB_PPC2.txt';
@@ -276,6 +278,7 @@ async function fetchSpreadsheetDatabase(sheetId: string, tabs: string[]): Promis
 
         const weaponData: AegisSheetWeapon = {
           name: weaponName,
+          ...scoreRowMetadata(getVal, row, tab, r),
           energy: getVal(row, ['Energy', 'INFO Energy', 'Slot', 'Affinity', 'Type']),
           frame: getVal(row, ['Frame', 'Tags']),
           barrel: getVal(row, ['PERKS Barrel', 'Barrel']),
@@ -465,7 +468,7 @@ async function fetchSpreadsheetDatabase(sheetId: string, tabs: string[]): Promis
     }
   }
 
-  return { weapons, variants, categories, armor, armorAegis };
+  return { scoreSchemaVersion: 1, weapons, variants, categories, armor, armorAegis };
 }
 
 /**
@@ -600,7 +603,34 @@ async function fetchWithTimeout(url: string, ms = 8000): Promise<Response> {
  * Fetches Aegis (PvE) and Finnald (PvP) spreadsheet databases, prioritizing the fast GitHub CDN mirror,
  * with graceful fallback to live spreadsheet extraction if CDN is unavailable.
  */
+let perkRatingsSync: Promise<void> | undefined;
+function fetchAndCachePerkRatings(force = false): Promise<void> {
+  if (perkRatingsSync) return perkRatingsSync;
+  perkRatingsSync = (async () => {
+    const saved = await chrome.storage.local.get('aegisPerkRatings');
+    const cache: PerkRatingsCache = saved.aegisPerkRatings || { tabs: {} };
+    const tabs: PerkRatingTab[] = ['Perks', 'Origin Traits'];
+    let changed = false;
+    await Promise.all(tabs.map(async tab => {
+      if (!force && cache.tabs[tab] && Date.now() - cache.tabs[tab]!.updatedAt < 86400000) return;
+      try {
+        const response = await fetchWithTimeout(`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(tab)}`);
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const ratings = parsePerkRatings(parseCSV(await response.text()), tab);
+        cache.tabs[tab] = { updatedAt: Date.now(), ratings }; changed = true;
+      } catch (error) {
+        // Keep the last successful tab, including when only one tab fails.
+        console.warn(`Aegis ${tab} ratings sync failed; retaining cache`, error);
+      }
+    }));
+    if (changed) await chrome.storage.local.set({ aegisPerkRatings: cache });
+  })().catch(error => console.warn('Aegis perk ratings cache unavailable', error))
+    .finally(() => { perkRatingsSync = undefined; });
+  return perkRatingsSync;
+}
+
 async function fetchAndCacheAegisSheet(): Promise<{ success: boolean; error?: string }> {
+  await fetchAndCachePerkRatings(true);
   try {
     let aegisSheetDbPvE: AegisSheetDatabase | null = null;
     let aegisSheetDbPvP: AegisSheetDatabase | null = null;
@@ -781,6 +811,7 @@ async function syncLightGGInBackground(): Promise<{ success: boolean; count?: nu
 
 // Helper to handle auto-resync when DIM is launched
 async function handleDimLaunched() {
+  void fetchAndCachePerkRatings();
   const data = await chrome.storage.local.get(['lastUpdated']);
   const dayInMs = 24 * 60 * 60 * 1000;
   const now = Date.now();

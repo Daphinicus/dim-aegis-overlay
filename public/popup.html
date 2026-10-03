@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>DIM Aegis Overlay Settings</title>
   <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="compact-options.css">
 </head>
 <body class="popup-body">
   <div class="popup-container">
@@ -30,7 +31,7 @@
             <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
           </svg>
         </a>
-        <button type="button" id="open-changelog-btn" class="github-link-btn" title="View v1.9.0 Changelog" style="background: rgba(255, 255, 255, 0.05); border-color: rgba(255, 255, 255, 0.15); color: #d8dee9;">
+        <button type="button" id="open-changelog-btn" class="github-link-btn" title="View v1.9.5 Changelog" style="background: rgba(255, 255, 255, 0.05); border-color: rgba(255, 255, 255, 0.15); color: #d8dee9;">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
             <polyline points="14 2 14 8 20 8"></polyline>
@@ -39,8 +40,9 @@
             <polyline points="10 9 9 9 8 9"></polyline>
           </svg>
         </button>
+
         <div class="aegis-help-container">
-          <button type="button" class="aegis-help-icon-btn">
+          <button type="button" class="aegis-help-icon-btn" data-i18n-aria-label="scoringGuides" aria-label="Scoring & Guides" data-i18n-title="scoringGuides" title="Scoring & Guides">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
               <circle cx="12" cy="12" r="10"></circle>
               <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
@@ -49,33 +51,25 @@
           </button>
           
           <div class="aegis-help-tooltip">
-            <h3 class="tooltip-title">Scoring & Guides</h3>
+            <h3 class="tooltip-title" data-i18n="scoringGuides">Scoring & Guides</h3>
             <div class="tooltip-section">
-              <span class="tooltip-section-header">1. Standard Grading (Match Accuracy)</span>
-              <div class="tooltip-grid">
-                <span class="grade-pill grade-s-pill">S+</span><span>Traits 1 & 2 + Mag + Barrel + Origin</span>
-                <span class="grade-pill grade-s-pill">S</span><span>Traits 1 & 2 + Magazine matched</span>
-                <span class="grade-pill grade-a-pill">A+</span><span>Traits 1 & 2 + Barrel matched</span>
-                <span class="grade-pill grade-a-pill">A</span><span>Traits 1 & 2 both matched</span>
-                <span class="grade-pill grade-b-pill">B+</span><span>1 Trait active + 1 selectable + Mag/Barrel</span>
-                <span class="grade-pill grade-b-pill">B</span><span>1 Trait active + 1 selectable Trait</span>
-                <span class="grade-pill grade-c-pill">C</span><span>1 Trait matched + Magazine or Barrel</span>
-                <span class="grade-pill grade-d-pill">D</span><span>Only 1 Trait matched</span>
-                <span class="grade-pill grade-f-pill">F</span><span>Underperforming (no Traits matched)</span>
-              </div>
-              <span class="tooltip-note">*Main Traits 1 & 2 must match to score A or higher.</span>
+              <div class="grade-guide-heading"><span class="tooltip-section-header" data-i18n="standardGrading">1. Standard Grading (Match Accuracy)</span></div>
+              <div id="grade-scoring-guide"></div>
             </div>
             
             <div class="tooltip-divider"></div>
             
             <div class="tooltip-section">
-              <span class="tooltip-section-header">2. 2-Tier System (e.g. BS+, SF)</span>
-              <p class="tooltip-desc">Combines weapon meta tier with roll accuracy:</p>
+              <span class="tooltip-section-header" data-i18n="twoTierGuideTitle">2. 2-Tier System (e.g. BS+, SF)</span>
+              <p class="tooltip-desc" data-i18n="twoTierGuideIntro">Combines weapon meta tier with roll accuracy:</p>
               <div class="two-tier-demo-wrapper">
-                <img src="two-tier-demo.png" class="two-tier-demo-img" alt="2-tier grade badge demo" />
+                <div class="two-tier-demo-tile">
+                  <img src="weapon-mockup.png" class="two-tier-demo-img" data-i18n-alt="exampleWeapon" alt="Example weapon" />
+                  <span class="grade-pill grade-s-pill grade-guide-demo" data-aegis-grade="S+">BS+</span>
+                </div>
                 <div class="two-tier-demo-text">
-                  <div class="tooltip-formula">[Archetype Tier] [Roll Grade]</div>
-                  <span class="tooltip-note">Example: <b>BS+</b> means archetype is <b>B-Tier</b>, but your roll is a perfect <b>S+</b>.</span>
+                  <div class="tooltip-formula" data-i18n="twoTierFormula">[Archetype Tier] [Roll Grade]</div>
+                  <span class="tooltip-note" data-i18n-html="twoTierExample">Example: <b>BS+</b> means archetype is <b>B-Tier</b>, and its perk roll meets the <b>S+</b> criteria above.</span>
                 </div>
               </div>
             </div>
@@ -154,9 +148,11 @@
             </div>
           </div>
         </div>
-        <div style="display: flex; align-items: center; gap: 6px;">
-          <span id="update-check-status" style="font-size: 9px; font-weight: 600; text-transform: uppercase;"></span>
-          <span class="version" id="version-text" title="Click to check for updates">v1.9.0</span>
+        <div class="version-slot">
+          <span class="version-anchor" aria-hidden="true">v1.9.5</span>
+          <button type="button" class="version" id="version-text" data-state="idle" data-i18n-title="versionCheckHint" title="Click to check for updates">
+            <span class="version-label" aria-live="polite" aria-atomic="true">v1.9.5</span>
+          </button>
         </div>
       </div>
     </header>
@@ -164,7 +160,7 @@
     <main class="popup-main">
       <div id="extension-update-banner" class="update-banner hidden">
         <div class="update-banner-content">
-          <span>Update available: Version <strong id="new-version-text">v1.9.0</strong> is ready on GitHub.</span>
+          <span>Update available: Version <strong id="new-version-text">v1.9.5</strong> is ready on GitHub.</span>
           <button id="update-banner-dismiss" type="button" class="dismiss-btn">&times;</button>
         </div>
       </div>
@@ -227,6 +223,46 @@
             <button type="button" data-value="wishlist" data-i18n="sourceWishlist">Wishlist txt</button>
           </div>
         </div>
+        <div class="input-group input-group-compact">
+          <label data-i18n="ratingDisplay">Rating display</label>
+          <div class="segmented-control" id="aegis-rating-display-segmented">
+            <button type="button" data-value="grades" class="active" data-i18n="ratingGrades">Grades</button>
+            <button type="button" data-value="scores" data-i18n="ratingScores">Scores</button>
+          </div>
+          <p id="aegis-score-source-help" class="description hidden" data-i18n="scoreRequiresSpreadsheet">Scores require the Aegis/Finnald spreadsheet source.</p>
+        </div>
+        <div id="aegis-score-controls" class="hidden">
+          <div class="input-group input-group-compact">
+            <label data-i18n="scoreBasis">Score basis</label>
+            <div class="segmented-control" id="aegis-score-profile-segmented">
+              <button type="button" data-value="best" class="active" data-i18n="scoreBest">Best selections</button>
+              <button type="button" data-value="omni" data-i18n="scoreOmni">Omni coverage</button>
+            </div>
+          </div>
+          <div class="input-group input-group-compact">
+            <label data-i18n="scorePrecision">Decimal places</label>
+            <div class="segmented-control" id="aegis-score-precision-segmented">
+              <button type="button" data-value="0" class="active">0</button>
+              <button type="button" data-value="1">1</button>
+              <button type="button" data-value="2">2</button>
+            </div>
+          </div>
+          <div class="input-group input-group-compact">
+            <label data-i18n="scorePercentSymbols">Percent symbols</label>
+            <div class="segmented-control" id="aegis-score-percent-segmented">
+              <button type="button" data-value="true" class="active" data-i18n="inlineOn">On</button>
+              <button type="button" data-value="false" data-i18n="inlineOff">Off</button>
+            </div>
+          </div>
+          <div id="aegis-score-comparison-group" class="input-group input-group-compact">
+            <label data-i18n="scoreComparisonActivity">Compare drops by</label>
+            <div class="segmented-control" id="aegis-score-comparison-segmented">
+              <button type="button" data-value="pve" class="active">PvE</button>
+              <button type="button" data-value="pvp">PvP</button>
+            </div>
+          </div>
+          <p class="description" data-i18n="scoreCategoryHelp">Compare scores within the same spreadsheet weapon category. Extra options count only in Omni coverage.</p>
+        </div>
         <div id="aegis-mode-toggle-group" class="input-group input-group-compact">
           <label data-i18n="spreadsheetMode">Spreadsheet Mode</label>
           <div class="segmented-control" id="aegis-mode-segmented">
@@ -242,6 +278,17 @@
             <button type="button" data-value="true" data-i18n="badgeTwoTier">2-Tier (BS+, SF...)</button>
           </div>
         </div>
+        <div class="input-group input-group-compact" id="aegis-two-tier-options" hidden>
+          <div class="input-group input-group-compact">
+            <label id="aegis-badge-color-label" data-i18n="badgeColor">Color Basis</label>
+            <div class="segmented-control" id="aegis-badge-color-segmented" role="group" aria-labelledby="aegis-badge-color-label">
+              <button type="button" data-value="perk" class="active" aria-pressed="true" data-i18n="badgeColorPerk">Perk (Classic)</button>
+              <button type="button" data-value="archetype" aria-pressed="false" data-i18n="badgeColorArchetype">Archetype</button>
+              <button type="button" data-value="gradient" aria-pressed="false" data-i18n="badgeColorGradient">Gradient (Both)</button>
+            </div>
+          </div>
+        </div>
+        <div class="input-group"><label for="aegis-tile-glow" data-i18n="tileGlow">Tile Glow</label><select id="aegis-tile-glow"><option value="off" data-i18n="inlineOff">Off</option><option value="archetype" data-i18n="tileGlowArchetype">S-tier archetypes (default)</option><option value="perk" data-i18n="tileGlowPerk">S+ perks (god rolls)</option><option value="max" data-i18n="tileGlowMax">SS+ only</option></select></div>
         <div class="input-group">
           <label data-i18n="perkEvaluation">Perk Evaluation Basis</label>
           <div class="segmented-control" id="aegis-grade-display-segmented">
@@ -302,11 +349,29 @@
           </div>
         </div>
         <div class="input-group">
-          <label data-i18n="inlineHeaderTitle">Inline Tooltip Header</label>
-          <div class="segmented-control" id="aegis-inline-header-segmented">
-            <button type="button" data-value="true" class="active" data-i18n="inlineHeaderEnabled">Compact Inline</button>
-            <button type="button" data-value="false" data-i18n="inlineHeaderClassic">Classic Stacked</button>
+          <label data-i18n="armoryCardTitle">DIM Armory Recommendations</label>
+          <div class="segmented-control" id="aegis-armory-enabled-segmented">
+            <button type="button" data-value="true" class="active" data-i18n="armoryEnabled">Enabled</button>
+            <button type="button" data-value="false" data-i18n="armoryDisabled">Disabled</button>
           </div>
+        </div>
+        <div class="input-group">
+          <label class="checkbox-label" for="aegis-perk-analysis-enabled">
+            <input type="checkbox" id="aegis-perk-analysis-enabled" checked>
+            <span data-i18n="showPerkAnalysis">Show Aegis PvE analysis in Perk tooltip</span>
+          </label>
+        </div>
+        <div class="input-group">
+          <label class="checkbox-label" for="aegis-compare-recommendations">
+            <input type="checkbox" id="aegis-compare-recommendations" checked>
+            <span data-i18n="showCompareRecommendations">Show recommendations in Compare view</span>
+          </label>
+        </div>
+        <div class="input-group">
+          <label class="checkbox-label" for="aegis-overview-recommendations">
+            <input type="checkbox" id="aegis-overview-recommendations">
+            <span data-i18n="showOverviewRecommendations">Show recommendations in Overview selector</span>
+          </label>
         </div>
         <div class="input-group">
           <label data-i18n="autoMaxHeightTitle">Screen-Aware Auto Height</label>
@@ -335,15 +400,84 @@
             <button type="button" data-value="classic" class="active" data-i18n="styleClassic">Original</button>
             <button type="button" data-value="pill" data-i18n="stylePill">Slim Pill</button>
             <button type="button" data-value="notch" data-i18n="styleNotch">Top Notch</button>
+            <button type="button" data-value="footer" data-i18n="styleFooter">Bottom Strip</button>
+            <button type="button" data-value="stat" data-i18n="styleStat">Letter</button>
+          </div>
+        </div>
+        <div class="input-group" id="aegis-stat-grade-options" hidden>
+          <label id="aegis-stat-grade-mode-label" data-i18n="statGradeActivity">Activity</label>
+          <div class="segmented-control" id="aegis-stat-grade-mode" role="group" aria-labelledby="aegis-stat-grade-mode-label">
+            <button type="button" data-value="pve">PvE</button>
+            <button type="button" data-value="pvp">PvP</button>
+          </div>
+          <label id="aegis-stat-grade-basis-label" data-i18n="statGradeBasis">Grade</label>
+          <div class="segmented-control" id="aegis-stat-grade-basis" role="group" aria-labelledby="aegis-stat-grade-basis-label">
+            <button type="button" data-value="perk" data-i18n="statGradePerk">Perk</button>
+            <button type="button" data-value="weapon" data-i18n="statGradeWeapon">Weapon</button>
+          </div>
+          <p class="description" data-i18n-html="statGradeDesc">Simplified, single-grade view. Replaces the Wishlist <svg class="aegis-wishlist-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 10h4v11H2zm6 11V10l5-8c2 0 3 2 2 5l-1 3h6c2 0 3 2 2 4l-2 6-2 1z"/></svg> icon.</p>
+        </div>
+        <div class="input-group" id="aegis-roll-stars-group">
+          <label class="checkbox-label" for="aegis-show-perfect-star">
+            <input type="checkbox" id="aegis-show-perfect-star" checked>
+            <span data-i18n="showPerfectStar">5/5 roll star (★)</span>
+          </label>
+          <label class="checkbox-label" for="aegis-show-omni-star">
+            <input type="checkbox" id="aegis-show-omni-star" checked>
+            <span data-i18n="showOmniStar">Omni roll star (✦)</span>
+          </label>
+          <p class="description" data-i18n="rollStarsDesc">Show stars on all badge styles. When both apply, the omni star takes priority.</p>
+        </div>
+        <div class="input-group" id="aegis-upgrade-style-group">
+          <label data-i18n="upgradeIndicatorStyle">Upgrade Indicator Style</label>
+          <div class="segmented-control" id="aegis-upgrade-style-segmented">
+            <button type="button" data-value="circle" class="active" data-i18n="upgradeStyleCircle">Classic Circle</button>
+            <button type="button" data-value="triangle" data-i18n="upgradeStyleTriangle">Green Triangle</button>
+            <button type="button" data-value="chevron" data-i18n="upgradeStyleChevron">Chevron</button>
+            <button type="button" data-value="none" data-i18n="upgradeStyleNone">None</button>
           </div>
         </div>
         <div class="input-group">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-            <label data-i18n="badgeTextScale">Badge Text Size</label>
+            <label data-i18n="badgeTextScale">Text Size</label>
             <span id="badge-scale-value" style="font-size: 11px; font-weight: 700; color: #ffd700;">100%</span>
           </div>
           <input type="range" id="aegis-badge-scale-slider" min="70" max="130" step="5" value="100" style="width: 100%; accent-color: #ffd700; cursor: pointer; height: 6px;" />
         </div>
+        <div class="input-group">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+            <label data-i18n="badgeSize">Badge Scale</label>
+            <span id="badge-size-value">100%</span>
+          </div>
+          <input type="range" id="aegis-badge-size-slider" min="70" max="150" step="5" value="100" />
+        </div>
+        <section id="aegis-visibility-options" aria-labelledby="badge-visibility-title">
+          <h2 id="badge-visibility-title" data-i18n="badgeVisibility">Visibility</h2>
+          <div class="input-group">
+            <label id="badge-armor-label" data-i18n="badgeArmor">Armor</label>
+            <div class="segmented-control" data-badge-category="armor" role="group" aria-labelledby="badge-armor-label">
+              <button type="button" data-value="grade" data-i18n="badgeWithGrade">Grade</button>
+              <button type="button" data-value="color" data-i18n="badgeColorOnly">Color Only</button>
+              <button type="button" data-value="off" data-i18n="badgeOff">Off</button>
+            </div>
+          </div>
+          <div class="input-group">
+            <label id="badge-exotic-label" data-i18n="badgeExoticWeapons">Exotic Weapons</label>
+            <div class="segmented-control" data-badge-category="exotic" role="group" aria-labelledby="badge-exotic-label">
+              <button type="button" data-value="grade" data-i18n="badgeWithGrade">Grade</button>
+              <button type="button" data-value="color" data-i18n="badgeColorOnly">Color Only</button>
+              <button type="button" data-value="off" data-i18n="badgeOff">Off</button>
+            </div>
+          </div>
+          <div class="input-group">
+            <label id="badge-weapon-label" data-i18n="badgeOtherWeapons">Other Weapons</label>
+            <div class="segmented-control" data-badge-category="weapon" role="group" aria-labelledby="badge-weapon-label">
+              <button type="button" data-value="grade" data-i18n="badgeWithGrade">Grade</button>
+              <button type="button" data-value="color" data-i18n="badgeColorOnly">Color Only</button>
+              <button type="button" data-value="off" data-i18n="badgeOff">Off</button>
+            </div>
+          </div>
+        </section>
         <div class="input-group">
           <label data-i18n="badgePosition">Badge Position (Click a corner on the weapon tile)</label>
           <div class="interactive-portrait-container">
@@ -356,6 +490,13 @@
               <div class="corner-target target-bl" data-pos="bottom-left" title="Bottom-Left"></div>
               <div class="corner-target target-br" data-pos="bottom-right" title="Bottom-Right"></div>
 
+              <!-- Fixed mock data: this row never reads DIM classes, assets, or account data. -->
+              <div class="aegis-stat-preview">
+                <svg class="aegis-wishlist-icon fa-thumbs-up" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 10h4v11H2zm6 11V10l5-8c2 0 3 2 2 5l-1 3h6c2 0 3 2 2 4l-2 6-2 1z"/></svg>
+                <svg class="aegis-preview-ammo" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 2 16 22H8L0 8zm16 20L8 2h8l8 14z"/></svg>
+                <svg class="aegis-preview-damage" viewBox="0 0 24 24" aria-hidden="true"><path d="m8 1 5 11-5 11-7-11zm9 0 6 11-6 11V1z"/></svg>
+                <span>550</span>
+              </div>
               <!-- Live Preview Badge -->
               <div class="aegis-badge aegis-badge-s aegis-badge-wide aegis-pos-bl aegis-style-classic" id="mock-aegis-badge">★ S+</div>
             </div>
@@ -378,6 +519,8 @@
           </div>
         </div>
       </section>
+
+
 
       <section class="settings-card">
         <h2 data-i18n="dataSourceTitle">Custom Wishlist</h2>
@@ -460,14 +603,15 @@
   </div>
 
   <!-- Changelog Modal Popup -->
+  <div id="aegis-grade-settings"></div>
   <div id="changelog-modal" class="changelog-modal-overlay hidden">
     <div class="changelog-modal-card">
       <div class="changelog-modal-header">
         <div class="changelog-badge-row">
-          <span class="changelog-version-tag">v1.9.0</span>
+          <span class="changelog-version-tag">v1.9.5</span>
           <span class="changelog-date-tag">Changelog</span>
         </div>
-        <h2 class="changelog-title">v1.9.0 Release Notes</h2>
+        <h2 class="changelog-title">v1.9.5 Release Notes</h2>
         <button type="button" id="changelog-close-btn" class="changelog-close-x">&times;</button>
       </div>
 
@@ -475,46 +619,46 @@
         
         <div class="changelog-feature-card">
           <div class="changelog-feature-header">
-            <span class="changelog-feature-name">Simultaneous Dual Mode (PvE + PvP)</span>
+            <span class="changelog-feature-name">Redesigned Options Menu & Custom Grade Colors</span>
           </div>
           <p class="changelog-feature-desc">
-            Evaluate weapons simultaneously against both Aegis and Finnald spreadsheets with native two-tone fused split badges (<code>S+ / A</code>), side-by-side dual tooltips, and dual upgrade arrows.
+            Sleek tabbed layout with live preview cards, custom grading threshold rules, and hex color pickers for every grade tier with custom gradient support.
           </p>
         </div>
 
         <div class="changelog-feature-card">
           <div class="changelog-feature-header">
-            <span class="changelog-feature-name">DIM Armory Weapon Card Integration</span>
+            <span class="changelog-feature-name">Bottom Strip Badge Style & S-Tier Frames</span>
           </div>
           <p class="changelog-feature-desc">
-            Injected Meta Category Rank banners and embedded a side-by-side Recommended Perks & Strategic Analysis card right next to DIM's interactive Armory perk grid.
+            Clean horizontal footer badge running along the bottom of item tiles without covering weapon icons, plus external S-tier gold frame alignment.
           </p>
         </div>
 
         <div class="changelog-feature-card">
           <div class="changelog-feature-header">
-            <span class="changelog-feature-name">Popup Summary Modes & Wishlist Reset</span>
+            <span class="changelog-feature-name">Custom Upgrade Indicators (Circle, Triangle, Chevron)</span>
           </div>
           <p class="changelog-feature-desc">
-            Customizable popup header modes (<code>Full Details</code>, <code>Badge Only</code>, <code>Hidden</code>), wishlist reset button, top-aligned sidepanel, custom gold scrollbar, and selectable text.
+            Choose between Classic Circle, Triangle (▲), or Chevron (❯) icons to spot rolls with higher potential perks in your vault at a glance.
           </p>
         </div>
 
         <div class="changelog-feature-card">
           <div class="changelog-feature-header">
-            <span class="changelog-feature-name">Bungie Manifest & Chase List Overhaul</span>
+            <span class="changelog-feature-name">DIM Armory Recommendations Toggle</span>
           </div>
           <p class="changelog-feature-desc">
-            Search and chase any weapon in Destiny 2 via Bungie Manifest integration, with custom god roll overrides, instant progressive rendering, and Finnald PvP armor ratings.
+            Added an on/off switch in settings to enable or disable the Aegis recommendation card inside DIM's Armory view.
           </p>
         </div>
 
         <div class="changelog-feature-card">
           <div class="changelog-feature-header">
-            <span class="changelog-feature-name">Remote Evaluation Locales & Full Korean Suite</span>
+            <span class="changelog-feature-name">Major Vault Performance & 60 FPS Scrolling</span>
           </div>
           <p class="changelog-feature-desc">
-            Remotely updatable evaluation translations via cloud mirror with offline fallback, complete Korean localization suite, and enhanced security and memory hardening.
+            Optimized queue slicing, deferred badge dimming during height animations, batched opacity updates, and fixed evaluation caching mutations.
           </p>
         </div>
 

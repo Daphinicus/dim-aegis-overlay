@@ -1,0 +1,974 @@
+{
+  "version": "244213.26.06.29.2000-1-bnet.65864",
+  "source": "https://www.bungie.net/common/destiny2_content/json/en/DestinyInventoryItemDefinition-a8ba855a-93c7-4014-8f2e-d92357fdfb42.json",
+  "definitions": {
+    "257592559": {
+      "hash": 257592559,
+      "displayProperties": {
+        "description": "Snowballs instantly freeze targets damaged by them.\n\nNot active in the Crucible.",
+        "name": "Longest Winter",
+        "icon": "/common/destiny2_content/icons/f2108ce7ad980da3b581aca8d5193264.jpg",
+        "iconHash": 4147596341,
+        "hasIcon": true
+      },
+      "itemTypeDisplayName": "Snowball Upgrade"
+    },
+    "1840239774": {
+      "hash": 1840239774,
+      "displayProperties": {
+        "description": "Ultra-light barrel. \n  \u2022  Greatly increases handling speed\n  \u2022  Slightly increases stability",
+        "name": "Fluted Barrel",
+        "icon": "/common/destiny2_content/icons/260eba9dd149dbb94b1306c9ed4dd8db.png",
+        "iconHash": 3749654844,
+        "iconSequences": [
+          {
+            "frames": [
+              "/common/destiny2_content/icons/260eba9dd149dbb94b1306c9ed4dd8db.png"
+            ]
+          },
+          {
+            "frames": [
+              "/common/destiny2_content/icons/7216661f9bb04c535098c61e0a683acf.png"
+            ]
+          }
+        ],
+        "hasIcon": true
+      },
+      "itemTypeDisplayName": "Barrel",
+      "plug": {
+        "insertionRules": [],
+        "plugCategoryIdentifier": "barrels",
+        "plugCategoryHash": 2833605196,
+        "onActionRecreateSelf": false,
+        "actionRewardSiteHash": 0,
+        "actionRewardItemOverrideHash": 0,
+        "insertionMaterialRequirementHash": 0,
+        "previewItemOverrideHash": 0,
+        "enabledMaterialRequirementHash": 0,
+        "enabledRules": [],
+        "uiPlugLabel": "",
+        "plugStyle": 0,
+        "plugAvailability": 0,
+        "alternateUiPlugLabel": "",
+        "alternatePlugStyle": 0,
+        "isDummyPlug": false,
+        "parentItemOverride": {
+          "additionalEquipRequirementsDisplayStrings": []
+        },
+        "applyStatsToSocketOwnerItem": false
+      }
+    },
+    "1124871858": {
+      "hash": 1124871858,
+      "displayProperties": {
+        "description": "Ultra-light barrel. \n  \u2022  Greatly increases handling speed\n  \u2022  Slightly increases stability",
+        "name": "Fluted Barrel",
+        "icon": "/common/destiny2_content/icons/260eba9dd149dbb94b1306c9ed4dd8db.png",
+        "iconHash": 3749654844,
+        "iconSequences": [
+          {
+            "frames": [
+              "/common/destiny2_content/icons/260eba9dd149dbb94b1306c9ed4dd8db.png"
+            ]
+          },
+          {
+            "frames": [
+              "/common/destiny2_content/icons/7216661f9bb04c535098c61e0a683acf.png"
+            ]
+          }
+        ],
+        "hasIcon": true
+      },
+      "itemTypeDisplayName": "Enhanced Barrel",
+      "plug": {
+        "insertionRules": [],
+        "plugCategoryIdentifier": "barrels",
+        "plugCategoryHash": 2833605196,
+        "onActionRecreateSelf": false,
+        "actionRewardSiteHash": 0,
+        "actionRewardItemOverrideHash": 0,
+        "insertionMaterialRequirementHash": 0,
+        "previewItemOverrideHash": 0,
+        "enabledMaterialRequirementHash": 0,
+        "enabledRules": [],
+        "uiPlugLabel": "",
+        "plugStyle": 0,
+        "plugAvailability": 0,
+        "alternateUiPlugLabel": "",
+        "alternatePlugStyle": 0,
+        "isDummyPlug": false,
+        "parentItemOverride": {
+          "additionalEquipRequirementsDisplayStrings": []
+        },
+        "applyStatsToSocketOwnerItem": false
+      }
+    },
+    "1080094173": {
+      "hash": 1080094173,
+      "displayProperties": {
+        "description": "Strong battery life. Reduces heat generation.",
+        "name": "Enhanced Heatsink",
+        "icon": "/common/destiny2_content/icons/0ee59b61e99c52c85c2ea18ab705f700.png",
+        "iconHash": 2236079816,
+        "iconSequences": [
+          {
+            "frames": [
+              "/common/destiny2_content/icons/0ee59b61e99c52c85c2ea18ab705f700.png"
+            ]
+          },
+          {
+            "frames": [
+              "/common/destiny2_content/icons/a5b230d5f746bfc6752be6c73b1dbade.png"
+            ]
+          }
+        ],
+        "hasIcon": true
+      },
+      "itemTypeDisplayName": "Battery",
+      "plug": {
+        "insertionRules": [],
+        "plugCategoryIdentifier": "batteries",
+        "plugCategoryHash": 1757026848,
+        "onActionRecreateSelf": false,
+        "actionRewardSiteHash": 0,
+        "actionRewardItemOverrideHash": 0,
+        "insertionMaterialRequirementHash": 0,
+        "previewItemOverrideHash": 0,
+        "enabledMaterialRequirementHash": 0,
+        "enabledRules": [],
+        "uiPlugLabel": "",
+        "plugStyle": 0,
+        "plugAvailability": 0,
+        "alternateUiPlugLabel": "",
+        "alternatePlugStyle": 0,
+        "isDummyPlug": false,
+        "parentItemOverride": {
+          "additionalEquipRequirementsDisplayStrings": []
+        },
+        "applyStatsToSocketOwnerItem": false
+      }
+    },
+    "2126519017": {
+      "hash": 2126519017,
+      "displayProperties": {
+        "description": "Strong battery life. Reduces heat generation.",
+        "name": "Enhanced Heatsink",
+        "icon": "/common/destiny2_content/icons/0ee59b61e99c52c85c2ea18ab705f700.png",
+        "iconHash": 2236079816,
+        "iconSequences": [
+          {
+            "frames": [
+              "/common/destiny2_content/icons/0ee59b61e99c52c85c2ea18ab705f700.png"
+            ]
+          },
+          {
+            "frames": [
+              "/common/destiny2_content/icons/a5b230d5f746bfc6752be6c73b1dbade.png"
+            ]
+          }
+        ],
+        "hasIcon": true
+      },
+      "itemTypeDisplayName": "Enhanced Battery",
+      "plug": {
+        "insertionRules": [],
+        "plugCategoryIdentifier": "batteries",
+        "plugCategoryHash": 1757026848,
+        "onActionRecreateSelf": false,
+        "actionRewardSiteHash": 0,
+        "actionRewardItemOverrideHash": 0,
+        "insertionMaterialRequirementHash": 0,
+        "previewItemOverrideHash": 0,
+        "enabledMaterialRequirementHash": 0,
+        "enabledRules": [],
+        "uiPlugLabel": "",
+        "plugStyle": 0,
+        "plugAvailability": 0,
+        "alternateUiPlugLabel": "",
+        "alternatePlugStyle": 0,
+        "isDummyPlug": false,
+        "parentItemOverride": {
+          "additionalEquipRequirementsDisplayStrings": []
+        },
+        "applyStatsToSocketOwnerItem": false
+      }
+    },
+    "2482418662": {
+      "hash": 2482418662,
+      "displayProperties": {
+        "description": "Periodically generates Ionic Traces while in its high-damage state.",
+        "name": "Longest Winter",
+        "icon": "/common/destiny2_content/icons/dc14d2cc3f34c60b114955332a733d56.png",
+        "iconHash": 3916179682,
+        "iconSequences": [
+          {
+            "frames": [
+              "/common/destiny2_content/icons/dc14d2cc3f34c60b114955332a733d56.png"
+            ]
+          },
+          {
+            "frames": [
+              "/common/destiny2_content/icons/0bc3c05263e6c135e1178509a702de31.png"
+            ]
+          }
+        ],
+        "hasIcon": true
+      },
+      "itemTypeDisplayName": "Trait",
+      "plug": {
+        "insertionRules": [],
+        "plugCategoryIdentifier": "frames",
+        "plugCategoryHash": 7906839,
+        "onActionRecreateSelf": false,
+        "actionRewardSiteHash": 0,
+        "actionRewardItemOverrideHash": 0,
+        "insertionMaterialRequirementHash": 0,
+        "previewItemOverrideHash": 0,
+        "enabledMaterialRequirementHash": 0,
+        "enabledRules": [],
+        "uiPlugLabel": "",
+        "plugStyle": 0,
+        "plugAvailability": 0,
+        "alternateUiPlugLabel": "",
+        "alternatePlugStyle": 0,
+        "isDummyPlug": false,
+        "parentItemOverride": {
+          "additionalEquipRequirementsDisplayStrings": []
+        },
+        "applyStatsToSocketOwnerItem": false
+      }
+    },
+    "806159697": {
+      "hash": 806159697,
+      "displayProperties": {
+        "description": "After a successful melee hit, this weapon gains increased damage, handling, and reload speed for a short duration\u2014or until three shots are fired.",
+        "name": "Trench Barrel",
+        "icon": "/common/destiny2_content/icons/44f1e50b0d6629fc2f08bc7067ce011b.png",
+        "iconHash": 1090321748,
+        "iconSequences": [
+          {
+            "frames": [
+              "/common/destiny2_content/icons/44f1e50b0d6629fc2f08bc7067ce011b.png"
+            ]
+          },
+          {
+            "frames": [
+              "/common/destiny2_content/icons/2200fbb108dbc1b619982c70f31c11e6.png"
+            ]
+          }
+        ],
+        "hasIcon": true
+      },
+      "itemTypeDisplayName": "Barrel",
+      "plug": {
+        "insertionRules": [],
+        "plugCategoryIdentifier": "barrels",
+        "plugCategoryHash": 2833605196,
+        "onActionRecreateSelf": false,
+        "actionRewardSiteHash": 0,
+        "actionRewardItemOverrideHash": 0,
+        "insertionMaterialRequirementHash": 0,
+        "previewItemOverrideHash": 0,
+        "enabledMaterialRequirementHash": 0,
+        "enabledRules": [],
+        "uiPlugLabel": "",
+        "plugStyle": 0,
+        "plugAvailability": 0,
+        "alternateUiPlugLabel": "",
+        "alternatePlugStyle": 0,
+        "isDummyPlug": false,
+        "parentItemOverride": {
+          "additionalEquipRequirementsDisplayStrings": []
+        },
+        "applyStatsToSocketOwnerItem": false
+      }
+    },
+    "896553940": {
+      "hash": 896553940,
+      "displayProperties": {
+        "description": "",
+        "name": "Lucky Shot",
+        "icon": "/common/destiny2_content/icons/d73f361e83683088ccf53a9712d51300.jpg",
+        "iconHash": 1136878112,
+        "hasIcon": true
+      },
+      "itemTypeDisplayName": "Emote",
+      "plug": {
+        "insertionRules": [
+          {
+            "failureMessage": "You do not own this emote"
+          }
+        ],
+        "plugCategoryIdentifier": "emote",
+        "plugCategoryHash": 3054419239,
+        "onActionRecreateSelf": false,
+        "actionRewardSiteHash": 0,
+        "actionRewardItemOverrideHash": 0,
+        "insertionMaterialRequirementHash": 0,
+        "previewItemOverrideHash": 0,
+        "enabledMaterialRequirementHash": 0,
+        "enabledRules": [
+          {
+            "failureMessage": "You do not own this emote"
+          }
+        ],
+        "uiPlugLabel": "",
+        "plugStyle": 0,
+        "plugAvailability": 0,
+        "alternateUiPlugLabel": "",
+        "alternatePlugStyle": 0,
+        "isDummyPlug": false,
+        "parentItemOverride": {
+          "additionalEquipRequirementsDisplayStrings": []
+        },
+        "applyStatsToSocketOwnerItem": false
+      }
+    },
+    "2360754333": {
+      "hash": 2360754333,
+      "displayProperties": {
+        "description": "After a successful melee hit, this weapon gains increased damage, handling, and reload speed for a short duration\u2014or until three shots are fired.",
+        "name": "Trench Barrel",
+        "icon": "/common/destiny2_content/icons/44f1e50b0d6629fc2f08bc7067ce011b.png",
+        "iconHash": 1090321748,
+        "iconSequences": [
+          {
+            "frames": [
+              "/common/destiny2_content/icons/44f1e50b0d6629fc2f08bc7067ce011b.png"
+            ]
+          },
+          {
+            "frames": [
+              "/common/destiny2_content/icons/2200fbb108dbc1b619982c70f31c11e6.png"
+            ]
+          }
+        ],
+        "hasIcon": true
+      },
+      "itemTypeDisplayName": "Trait",
+      "plug": {
+        "insertionRules": [],
+        "plugCategoryIdentifier": "frames",
+        "plugCategoryHash": 7906839,
+        "onActionRecreateSelf": false,
+        "actionRewardSiteHash": 0,
+        "actionRewardItemOverrideHash": 0,
+        "insertionMaterialRequirementHash": 0,
+        "previewItemOverrideHash": 0,
+        "enabledMaterialRequirementHash": 0,
+        "enabledRules": [],
+        "uiPlugLabel": "",
+        "plugStyle": 0,
+        "plugAvailability": 0,
+        "alternateUiPlugLabel": "",
+        "alternatePlugStyle": 0,
+        "isDummyPlug": false,
+        "parentItemOverride": {
+          "additionalEquipRequirementsDisplayStrings": []
+        },
+        "applyStatsToSocketOwnerItem": false
+      }
+    },
+    "2459015849": {
+      "hash": 2459015849,
+      "displayProperties": {
+        "description": "After a successful melee hit, this weapon gains increased damage, improved handling, and improved reload speed for a short duration\u2014or until three shots are fired.",
+        "name": "Trench Barrel",
+        "icon": "/common/destiny2_content/icons/44f1e50b0d6629fc2f08bc7067ce011b.png",
+        "iconHash": 1090321748,
+        "iconSequences": [
+          {
+            "frames": [
+              "/common/destiny2_content/icons/44f1e50b0d6629fc2f08bc7067ce011b.png"
+            ]
+          },
+          {
+            "frames": [
+              "/common/destiny2_content/icons/2200fbb108dbc1b619982c70f31c11e6.png"
+            ]
+          }
+        ],
+        "hasIcon": true
+      },
+      "itemTypeDisplayName": "Enhanced Trait",
+      "plug": {
+        "insertionRules": [],
+        "plugCategoryIdentifier": "frames",
+        "plugCategoryHash": 7906839,
+        "onActionRecreateSelf": false,
+        "actionRewardSiteHash": 0,
+        "actionRewardItemOverrideHash": 0,
+        "insertionMaterialRequirementHash": 0,
+        "previewItemOverrideHash": 0,
+        "enabledMaterialRequirementHash": 0,
+        "enabledRules": [],
+        "uiPlugLabel": "",
+        "plugStyle": 0,
+        "plugAvailability": 0,
+        "alternateUiPlugLabel": "",
+        "alternatePlugStyle": 0,
+        "isDummyPlug": false,
+        "parentItemOverride": {
+          "additionalEquipRequirementsDisplayStrings": []
+        },
+        "applyStatsToSocketOwnerItem": false
+      }
+    },
+    "2129059110": {
+      "hash": 2129059110,
+      "displayProperties": {
+        "description": "Reloading increases this weapon's damage if you hit with at least half the rounds in the magazine, but fail to defeat anything.",
+        "name": "Once More",
+        "iconHash": 3254754821,
+        "hasIcon": false
+      },
+      "itemTypeDisplayName": "Trait",
+      "plug": {
+        "insertionRules": [],
+        "plugCategoryIdentifier": "frames",
+        "plugCategoryHash": 7906839,
+        "onActionRecreateSelf": false,
+        "actionRewardSiteHash": 0,
+        "actionRewardItemOverrideHash": 0,
+        "insertionMaterialRequirementHash": 0,
+        "previewItemOverrideHash": 0,
+        "enabledMaterialRequirementHash": 0,
+        "enabledRules": [],
+        "uiPlugLabel": "",
+        "plugStyle": 0,
+        "plugAvailability": 0,
+        "alternateUiPlugLabel": "",
+        "alternatePlugStyle": 0,
+        "isDummyPlug": false,
+        "parentItemOverride": {
+          "additionalEquipRequirementsDisplayStrings": []
+        },
+        "applyStatsToSocketOwnerItem": false
+      }
+    },
+    "3772485195": {
+      "hash": 3772485195,
+      "displayProperties": {
+        "description": "Overheat damage is reduced while not aiming down sights.",
+        "name": "Heat Sink",
+        "icon": "/common/destiny2_content/icons/ec9620bac4391e2b325184fbd2b49b91.png",
+        "iconHash": 2442503390,
+        "iconSequences": [
+          {
+            "frames": [
+              "/common/destiny2_content/icons/ec9620bac4391e2b325184fbd2b49b91.png"
+            ]
+          },
+          {
+            "frames": [
+              "/common/destiny2_content/icons/960ad9922715b046c8e0edeb3a8e95e3.png"
+            ]
+          }
+        ],
+        "hasIcon": true
+      },
+      "itemTypeDisplayName": "Trait",
+      "plug": {
+        "insertionRules": [],
+        "plugCategoryIdentifier": "frames",
+        "plugCategoryHash": 7906839,
+        "onActionRecreateSelf": false,
+        "actionRewardSiteHash": 0,
+        "actionRewardItemOverrideHash": 0,
+        "insertionMaterialRequirementHash": 0,
+        "previewItemOverrideHash": 0,
+        "enabledMaterialRequirementHash": 0,
+        "enabledRules": [],
+        "uiPlugLabel": "",
+        "plugStyle": 0,
+        "plugAvailability": 0,
+        "alternateUiPlugLabel": "",
+        "alternatePlugStyle": 0,
+        "isDummyPlug": false,
+        "parentItemOverride": {
+          "additionalEquipRequirementsDisplayStrings": []
+        },
+        "applyStatsToSocketOwnerItem": false
+      }
+    },
+    "1964414318": {
+      "hash": 1964414318,
+      "displayProperties": {
+        "description": "While holding down the trigger, every fourth bullet becomes a heavy projectile that makes targets volatile on impact.",
+        "name": "Heavy Metal",
+        "icon": "/common/destiny2_content/icons/70a2e927e05cf9c3a971fa393c1d3cc3.png",
+        "iconHash": 1964414318,
+        "iconSequences": [
+          {
+            "frames": [
+              "/common/destiny2_content/icons/70a2e927e05cf9c3a971fa393c1d3cc3.png"
+            ]
+          },
+          {
+            "frames": [
+              "/common/destiny2_content/icons/e0d5e0bd3ec2af330cb0717dc9038acb.png"
+            ]
+          }
+        ],
+        "hasIcon": true
+      },
+      "itemTypeDisplayName": "Trait",
+      "plug": {
+        "insertionRules": [],
+        "plugCategoryIdentifier": "frames",
+        "plugCategoryHash": 7906839,
+        "onActionRecreateSelf": false,
+        "actionRewardSiteHash": 0,
+        "actionRewardItemOverrideHash": 0,
+        "insertionMaterialRequirementHash": 0,
+        "previewItemOverrideHash": 0,
+        "enabledMaterialRequirementHash": 0,
+        "enabledRules": [],
+        "uiPlugLabel": "",
+        "plugStyle": 0,
+        "plugAvailability": 0,
+        "alternateUiPlugLabel": "",
+        "alternatePlugStyle": 0,
+        "isDummyPlug": false,
+        "parentItemOverride": {
+          "additionalEquipRequirementsDisplayStrings": []
+        },
+        "applyStatsToSocketOwnerItem": false
+      }
+    },
+    "1465571843": {
+      "hash": 1465571843,
+      "displayProperties": {
+        "description": "Equip this weapon ornament to change the appearance of Eriana's Vow. Once you get an ornament, it's unlocked for all characters on your account.",
+        "name": "Heat Sink",
+        "icon": "/common/destiny2_content/icons/babfd37dcede584106f0a0839fa6d278.jpg",
+        "iconHash": 1465571843,
+        "highResIcon": "/common/destiny2_content/icons/1031a6747746036e0160d1f77e14fdaa.jpg",
+        "hasIcon": true
+      },
+      "itemTypeDisplayName": "Weapon Ornament",
+      "plug": {
+        "insertionRules": [
+          {
+            "failureMessage": "Requires Mod Item"
+          }
+        ],
+        "plugCategoryIdentifier": "v460_new_hand_cannon0_skins",
+        "plugCategoryHash": 2786376477,
+        "onActionRecreateSelf": false,
+        "actionRewardSiteHash": 0,
+        "actionRewardItemOverrideHash": 0,
+        "insertionMaterialRequirementHash": 0,
+        "previewItemOverrideHash": 0,
+        "enabledMaterialRequirementHash": 0,
+        "enabledRules": [],
+        "uiPlugLabel": "",
+        "plugStyle": 0,
+        "plugAvailability": 0,
+        "alternateUiPlugLabel": "",
+        "alternatePlugStyle": 0,
+        "isDummyPlug": false,
+        "parentItemOverride": {
+          "additionalEquipRequirementsDisplayStrings": []
+        },
+        "applyStatsToSocketOwnerItem": false
+      }
+    },
+    "1042964491": {
+      "hash": 1042964491,
+      "displayProperties": {
+        "description": "",
+        "name": "Heavy Metal",
+        "icon": "/common/destiny2_content/icons/8de6523e8e30e8086b6963909e393e13.jpg",
+        "iconHash": 1231401125,
+        "hasIcon": true
+      },
+      "itemTypeDisplayName": "Incoming event!"
+    },
+    "167605063": {
+      "hash": 167605063,
+      "displayProperties": {
+        "description": "Equip this weapon ornament to change the appearance of Third Iteration. Once you get an ornament, it's unlocked for all characters on your account.",
+        "name": "Once More",
+        "icon": "/common/destiny2_content/icons/5d0c95548c05abe4a50f12fb5b46c4cb.jpg",
+        "iconHash": 167605063,
+        "highResIcon": "/common/destiny2_content/icons/b17759ed9fc9725ae7df389866eda77b.jpg",
+        "hasIcon": true
+      },
+      "itemTypeDisplayName": "Weapon Ornament",
+      "plug": {
+        "insertionRules": [
+          {
+            "failureMessage": "Requires Mod Item"
+          }
+        ],
+        "plugCategoryIdentifier": "v900_new_scout_rifle0_skins",
+        "plugCategoryHash": 752486508,
+        "onActionRecreateSelf": false,
+        "actionRewardSiteHash": 0,
+        "actionRewardItemOverrideHash": 0,
+        "insertionMaterialRequirementHash": 0,
+        "previewItemOverrideHash": 0,
+        "enabledMaterialRequirementHash": 0,
+        "enabledRules": [],
+        "uiPlugLabel": "",
+        "plugStyle": 0,
+        "plugAvailability": 0,
+        "alternateUiPlugLabel": "",
+        "alternatePlugStyle": 0,
+        "isDummyPlug": false,
+        "parentItemOverride": {
+          "additionalEquipRequirementsDisplayStrings": []
+        },
+        "applyStatsToSocketOwnerItem": false
+      }
+    },
+    "2152442764": {
+      "hash": 2152442764,
+      "displayProperties": {
+        "description": "This weapon is more effective against combatant shields. Destroying a shield with this weapon grants bonus Special ammo progress if it uses Primary or Heavy ammo, or Heavy ammo progress if it uses Special ammo.",
+        "name": "Nail, Meet Hammer",
+        "icon": "/common/destiny2_content/icons/fe4d392f2ea7de3697ce7732306dc295.png",
+        "iconHash": 1788219713,
+        "iconSequences": [
+          {
+            "frames": [
+              "/common/destiny2_content/icons/fe4d392f2ea7de3697ce7732306dc295.png"
+            ]
+          },
+          {
+            "frames": [
+              "/common/destiny2_content/icons/68ff457ddd96d7f8e54d4a6e6b356d00.png"
+            ]
+          }
+        ],
+        "hasIcon": true
+      },
+      "itemTypeDisplayName": "Origin Trait",
+      "plug": {
+        "insertionRules": [],
+        "plugCategoryIdentifier": "origins",
+        "plugCategoryHash": 164955586,
+        "onActionRecreateSelf": false,
+        "actionRewardSiteHash": 0,
+        "actionRewardItemOverrideHash": 0,
+        "insertionMaterialRequirementHash": 0,
+        "previewItemOverrideHash": 0,
+        "enabledMaterialRequirementHash": 0,
+        "enabledRules": [],
+        "uiPlugLabel": "",
+        "plugStyle": 0,
+        "plugAvailability": 0,
+        "alternateUiPlugLabel": "",
+        "alternatePlugStyle": 0,
+        "isDummyPlug": false,
+        "parentItemOverride": {
+          "additionalEquipRequirementsDisplayStrings": []
+        },
+        "applyStatsToSocketOwnerItem": false
+      }
+    },
+    "1209885908": {
+      "hash": 1209885908,
+      "displayProperties": {
+        "description": "This weapon is more effective against combatant shields. Destroying a shield with this weapon grants improved Special ammo progress if it uses Primary or Heavy ammo , or improved Heavy ammo progress if it uses Special ammo.",
+        "name": "Nail, Meet Hammer",
+        "icon": "/common/destiny2_content/icons/fe4d392f2ea7de3697ce7732306dc295.png",
+        "iconHash": 1788219713,
+        "iconSequences": [
+          {
+            "frames": [
+              "/common/destiny2_content/icons/fe4d392f2ea7de3697ce7732306dc295.png"
+            ]
+          },
+          {
+            "frames": [
+              "/common/destiny2_content/icons/68ff457ddd96d7f8e54d4a6e6b356d00.png"
+            ]
+          }
+        ],
+        "hasIcon": true
+      },
+      "itemTypeDisplayName": "Enhanced Origin Trait",
+      "plug": {
+        "insertionRules": [],
+        "plugCategoryIdentifier": "origins",
+        "plugCategoryHash": 164955586,
+        "onActionRecreateSelf": false,
+        "actionRewardSiteHash": 0,
+        "actionRewardItemOverrideHash": 0,
+        "insertionMaterialRequirementHash": 0,
+        "previewItemOverrideHash": 0,
+        "enabledMaterialRequirementHash": 0,
+        "enabledRules": [],
+        "uiPlugLabel": "",
+        "plugStyle": 0,
+        "plugAvailability": 0,
+        "alternateUiPlugLabel": "",
+        "alternatePlugStyle": 0,
+        "isDummyPlug": false,
+        "parentItemOverride": {
+          "additionalEquipRequirementsDisplayStrings": []
+        },
+        "applyStatsToSocketOwnerItem": false
+      }
+    },
+    "2054520291": {
+      "hash": 2054520291,
+      "displayProperties": {
+        "description": "Reloading after a precision final blow causes precision hits to refill a round from reserves.",
+        "name": "Lucky Shot",
+        "icon": "/common/destiny2_content/icons/05ff3c3914a333ff12abdea5782ceed9.png",
+        "iconHash": 2054520291,
+        "iconSequences": [
+          {
+            "frames": [
+              "/common/destiny2_content/icons/05ff3c3914a333ff12abdea5782ceed9.png"
+            ]
+          },
+          {
+            "frames": [
+              "/common/destiny2_content/icons/f00e2bdf1b848a7c02fcb5d89f5327ba.png"
+            ]
+          }
+        ],
+        "hasIcon": true
+      },
+      "itemTypeDisplayName": "Trait",
+      "plug": {
+        "insertionRules": [],
+        "plugCategoryIdentifier": "frames",
+        "plugCategoryHash": 7906839,
+        "onActionRecreateSelf": false,
+        "actionRewardSiteHash": 0,
+        "actionRewardItemOverrideHash": 0,
+        "insertionMaterialRequirementHash": 0,
+        "previewItemOverrideHash": 0,
+        "enabledMaterialRequirementHash": 0,
+        "enabledRules": [],
+        "uiPlugLabel": "",
+        "plugStyle": 0,
+        "plugAvailability": 0,
+        "alternateUiPlugLabel": "",
+        "alternatePlugStyle": 0,
+        "isDummyPlug": false,
+        "parentItemOverride": {
+          "additionalEquipRequirementsDisplayStrings": []
+        },
+        "applyStatsToSocketOwnerItem": false
+      }
+    },
+    "4170193963": {
+      "hash": 4170193963,
+      "displayProperties": {
+        "description": "Reloading after a precision final blow causes precision hits to refill a round from reserves for an improved duration.",
+        "name": "Lucky Shot",
+        "icon": "/common/destiny2_content/icons/05ff3c3914a333ff12abdea5782ceed9.png",
+        "iconHash": 2054520291,
+        "iconSequences": [
+          {
+            "frames": [
+              "/common/destiny2_content/icons/05ff3c3914a333ff12abdea5782ceed9.png"
+            ]
+          },
+          {
+            "frames": [
+              "/common/destiny2_content/icons/f00e2bdf1b848a7c02fcb5d89f5327ba.png"
+            ]
+          }
+        ],
+        "hasIcon": true
+      },
+      "itemTypeDisplayName": "Enhanced Trait",
+      "plug": {
+        "insertionRules": [],
+        "plugCategoryIdentifier": "frames",
+        "plugCategoryHash": 7906839,
+        "onActionRecreateSelf": false,
+        "actionRewardSiteHash": 0,
+        "actionRewardItemOverrideHash": 0,
+        "insertionMaterialRequirementHash": 0,
+        "previewItemOverrideHash": 0,
+        "enabledMaterialRequirementHash": 0,
+        "enabledRules": [],
+        "uiPlugLabel": "",
+        "plugStyle": 0,
+        "plugAvailability": 0,
+        "alternateUiPlugLabel": "",
+        "alternatePlugStyle": 0,
+        "isDummyPlug": false,
+        "parentItemOverride": {
+          "additionalEquipRequirementsDisplayStrings": []
+        },
+        "applyStatsToSocketOwnerItem": false
+      }
+    },
+    "2041229079": {
+      "hash": 2041229079,
+      "displayProperties": {
+        "description": "Kills increase this weapon's damage and begin to steadily reload the magazine from reserves until you stop firing.",
+        "name": "Hailstorm",
+        "iconHash": 3186752260,
+        "hasIcon": false
+      },
+      "itemTypeDisplayName": "Trait",
+      "plug": {
+        "insertionRules": [],
+        "plugCategoryIdentifier": "frames",
+        "plugCategoryHash": 7906839,
+        "onActionRecreateSelf": false,
+        "actionRewardSiteHash": 0,
+        "actionRewardItemOverrideHash": 0,
+        "insertionMaterialRequirementHash": 0,
+        "previewItemOverrideHash": 0,
+        "enabledMaterialRequirementHash": 0,
+        "enabledRules": [],
+        "uiPlugLabel": "",
+        "plugStyle": 0,
+        "plugAvailability": 0,
+        "alternateUiPlugLabel": "",
+        "alternatePlugStyle": 0,
+        "isDummyPlug": false,
+        "parentItemOverride": {
+          "additionalEquipRequirementsDisplayStrings": []
+        },
+        "applyStatsToSocketOwnerItem": false
+      }
+    },
+    "2000464223": {
+      "hash": 2000464223,
+      "displayProperties": {
+        "description": "Direct hits with Stasis arrows freeze combatants and slow opposing Guardians. Stasis arrows that impact the environment create Stasis crystals.",
+        "name": "Hail Storm",
+        "icon": "/common/destiny2_content/icons/8148975b0c706f0df71cfe921d29b340.png",
+        "iconHash": 2000464223,
+        "iconSequences": [
+          {
+            "frames": [
+              "/common/destiny2_content/icons/8148975b0c706f0df71cfe921d29b340.png"
+            ]
+          },
+          {
+            "frames": [
+              "/common/destiny2_content/icons/cbbe5d41c76869f19dc7df0dfe35b86a.png"
+            ]
+          }
+        ],
+        "hasIcon": true
+      },
+      "itemTypeDisplayName": "Trait",
+      "plug": {
+        "insertionRules": [],
+        "plugCategoryIdentifier": "frames",
+        "plugCategoryHash": 7906839,
+        "onActionRecreateSelf": false,
+        "actionRewardSiteHash": 0,
+        "actionRewardItemOverrideHash": 0,
+        "insertionMaterialRequirementHash": 0,
+        "previewItemOverrideHash": 0,
+        "enabledMaterialRequirementHash": 0,
+        "enabledRules": [],
+        "uiPlugLabel": "",
+        "plugStyle": 0,
+        "plugAvailability": 0,
+        "alternateUiPlugLabel": "",
+        "alternatePlugStyle": 0,
+        "isDummyPlug": false,
+        "parentItemOverride": {
+          "additionalEquipRequirementsDisplayStrings": []
+        },
+        "applyStatsToSocketOwnerItem": false
+      }
+    },
+    "2680121939": {
+      "hash": 2680121939,
+      "displayProperties": {
+        "description": "Strong battery life.\n  \u2022  Increases magazine size",
+        "name": "Enhanced Battery",
+        "icon": "/common/destiny2_content/icons/0ee59b61e99c52c85c2ea18ab705f700.png",
+        "iconHash": 2236079816,
+        "iconSequences": [
+          {
+            "frames": [
+              "/common/destiny2_content/icons/0ee59b61e99c52c85c2ea18ab705f700.png"
+            ]
+          },
+          {
+            "frames": [
+              "/common/destiny2_content/icons/a5b230d5f746bfc6752be6c73b1dbade.png"
+            ]
+          }
+        ],
+        "hasIcon": true
+      },
+      "itemTypeDisplayName": "Battery",
+      "plug": {
+        "insertionRules": [],
+        "plugCategoryIdentifier": "batteries",
+        "plugCategoryHash": 1757026848,
+        "onActionRecreateSelf": false,
+        "actionRewardSiteHash": 0,
+        "actionRewardItemOverrideHash": 0,
+        "insertionMaterialRequirementHash": 0,
+        "previewItemOverrideHash": 0,
+        "enabledMaterialRequirementHash": 0,
+        "enabledRules": [],
+        "uiPlugLabel": "",
+        "plugStyle": 0,
+        "plugAvailability": 0,
+        "alternateUiPlugLabel": "",
+        "alternatePlugStyle": 0,
+        "isDummyPlug": false,
+        "parentItemOverride": {
+          "additionalEquipRequirementsDisplayStrings": []
+        },
+        "applyStatsToSocketOwnerItem": false
+      }
+    },
+    "3839493627": {
+      "hash": 3839493627,
+      "displayProperties": {
+        "description": "Strong battery life.\n  \u2022  Increases magazine size",
+        "name": "Enhanced Battery",
+        "icon": "/common/destiny2_content/icons/0ee59b61e99c52c85c2ea18ab705f700.png",
+        "iconHash": 2236079816,
+        "iconSequences": [
+          {
+            "frames": [
+              "/common/destiny2_content/icons/0ee59b61e99c52c85c2ea18ab705f700.png"
+            ]
+          },
+          {
+            "frames": [
+              "/common/destiny2_content/icons/a5b230d5f746bfc6752be6c73b1dbade.png"
+            ]
+          }
+        ],
+        "hasIcon": true
+      },
+      "itemTypeDisplayName": "Enhanced Battery",
+      "plug": {
+        "insertionRules": [],
+        "plugCategoryIdentifier": "batteries",
+        "plugCategoryHash": 1757026848,
+        "onActionRecreateSelf": false,
+        "actionRewardSiteHash": 0,
+        "actionRewardItemOverrideHash": 0,
+        "insertionMaterialRequirementHash": 0,
+        "previewItemOverrideHash": 0,
+        "enabledMaterialRequirementHash": 0,
+        "enabledRules": [],
+        "uiPlugLabel": "",
+        "plugStyle": 0,
+        "plugAvailability": 0,
+        "alternateUiPlugLabel": "",
+        "alternatePlugStyle": 0,
+        "isDummyPlug": false,
+        "parentItemOverride": {
+          "additionalEquipRequirementsDisplayStrings": []
+        },
+        "applyStatsToSocketOwnerItem": false
+      }
+    }
+  }
+}

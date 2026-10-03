@@ -1,3 +1,9 @@
+import { initDimSearch } from './dim-search-adapter';
+import { initInlineSearchEditor } from './inline-search-editor';
+import { interceptDimPopupModules } from './native-popup-positioning';
+import { readDimMasterwork, readDimPerks, type PerkInfo } from './dim-item-input';
+import { createItemQueue } from './item-queue';
+import { outermostElements } from './dom-utils';
 /**
  * DIM Aegis Overlay - MAIN World Content Script
  *
@@ -12,10 +18,22 @@
  * wishlist calculations and UI injections without needing direct React Fiber access.
  */
 
-interface PerkInfo {
-  name: string;
-  icon: string;
-}
+import { extractRawOwnedSnapshot } from './score-owned';
+import { WEAPON_STAT_HASHES } from './weapon-stats';
+import { masterworkStatName } from './masterwork';
+import { COMPARE_BUCKET_SELECTOR } from './compare-selectors';
+import { getCompareItem } from './compare-item';
+import { annotateOverviewPerks } from './overview-perks';
+import { initCompareNativeTooltips } from './compare-native-tooltips';
+import { initPerkRatingTooltips } from './perk-rating-tooltips';
+
+initCompareNativeTooltips();
+initPerkRatingTooltips();
+interceptDimPopupModules(window as unknown as Record<string, any>, popup => {
+  processElement(popup);
+  annotateOverviewPerks(popup);
+  popup.dispatchEvent(new Event('aegis-popup-prepare', { bubbles: true }));
+});
 
 // Global registry of all seen perks, shared via a hidden DOM element
 const globalRegistry: Record<number, PerkInfo> = {};
@@ -26,12 +44,38 @@ function sendDiagnosticLog(msg: string) {
 }
 
 // Global cache for weapon instances to store full perk sets (e.g. from popups)
-const instanceCache: Record<string, { perkHashes: number[]; perksDataMap: Record<number, PerkInfo>; equippedMasterwork?: string }> = {};
+const instanceCache: Record<string, { perkHashes: number[]; activePerkHashes: number[]; perksDataMap: Record<number, PerkInfo>; equippedMasterwork?: string }> = {};
+const weaponReadCache = new WeakMap<object, { inputs: unknown[]; attributes: [string, string | null][] }>();
+
+function weaponReadInputs(item: any): unknown[] {
+  const mw = item.masterworkInfo;
+  const inputs: unknown[] = [instanceCache[item.id], item.id, item.hash, item.name,
+    item.crafted, item.sockets?.fromDefinitions, mw === null, masterworkStatName(mw?.stats), mw?.statName, mw?.stat?.displayProperties?.name, mw?.name, mw?.typeName];
+  const addPlug = (def: any, stats?: unknown) => {
+    inputs.push(!!def, def?.hash, def?.displayProperties?.name,
+      def?.displayProperties?.icon, def?.plug?.plugCategoryIdentifier, def?.itemTypeDisplayName);
+    if (/intrinsics|masterwork/.test(def?.plug?.plugCategoryIdentifier ?? '')) {
+      inputs.push(Array.isArray(def?.investmentStats), def?.investmentStats?.length,
+        ...(def?.investmentStats ?? []).map((stat: any) => stat.statTypeHash),
+        stats != null && typeof stats === 'object' && !Array.isArray(stats),
+        stats != null && typeof stats === 'object' ? Object.keys(stats).length : undefined);
+    }
+  };
+  for (const socket of item.sockets?.allSockets || []) {
+    inputs.push(!!socket, socket?.socketIndex, socket?.hasRandomizedPlugItems, !!socket?.plugSet?.craftingData, socket?.reusablePlugItems?.length, ...(socket?.reusablePlugItems || []).map((plug: any) => plug.plugItemHash), socket?.plugOptions?.length);
+    addPlug(socket?.actuallyPlugged?.plugDef, socket?.actuallyPlugged?.stats);
+    addPlug(socket?.plugged?.plugDef, socket?.plugged?.stats);
+    for (const option of socket?.plugOptions || []) addPlug(option.plugDef, option.stats);
+  }
+  return inputs;
+}
 
 // Manifest database state variables for fast offline lookups
 let manifestDbName: string | null = null;
 let itemStoreName: string | null = null;
 let plugSetStoreName: string | null = null;
+let statStoreName: string | null = null;
+let manifestKeyvalStoreName = 'keyval';
 const weaponNameToHash: Record<string, number> = {};
 const itemSocketsCount: Record<number, number> = {};
 
@@ -47,6 +91,11 @@ let indexBuilt = false;
  * Traverses all stores and handles both key-lookup and nested dictionary formats.
  */
 async function getPerkFromDB(hash: number): Promise<PerkInfo | null> {
+  await indexReadyPromise;
+  const definition = await getDefinitionByHash(hash, 'DestinyInventoryItemDefinition');
+  if (definition?.displayProperties?.name) {
+    return { name: definition.displayProperties.name, icon: definition.displayProperties.icon || '' };
+  }
   try {
     const dbs = await indexedDB.databases();
     for (const dbInfo of dbs) {
@@ -130,8 +179,8 @@ async function getManifestDictionaryByKey(keyName: string): Promise<any | null> 
   if (!db) return null;
 
   try {
-    const tx = db.transaction('keyval', 'readonly');
-    const store = tx.objectStore('keyval');
+    const tx = db.transaction(manifestKeyvalStoreName, 'readonly');
+    const store = tx.objectStore(manifestKeyvalStoreName);
     const val = await new Promise<any>((resolve) => {
       const req = store.get(keyName);
       req.onsuccess = () => resolve(req.result);
@@ -155,18 +204,21 @@ async function getManifestDictionaryByKey(keyName: string): Promise<any | null> 
  */
 async function getDefinitionByHash(hash: number, storeName: string): Promise<any | null> {
   // If we are using keyval store, resolve key name and look up in memory cache
-  if (itemStoreName && itemStoreName.startsWith('keyval:')) {
+  if (itemStoreName && itemStoreName.includes(':')) {
     let targetKey: string | null = null;
     if (storeName === 'DestinyInventoryItemDefinition') {
-      targetKey = itemStoreName.split(':')[1];
+      targetKey = itemStoreName.slice(itemStoreName.indexOf(':') + 1);
     } else if (storeName === 'DestinyPlugSetDefinition' && plugSetStoreName) {
-      targetKey = plugSetStoreName.split(':')[1];
+      targetKey = plugSetStoreName.slice(plugSetStoreName.indexOf(':') + 1);
+    } else if (storeName === 'DestinyStatDefinition' && statStoreName) {
+      targetKey = statStoreName.slice(statStoreName.indexOf(':') + 1);
     }
 
     if (targetKey) {
       const dict = await getManifestDictionaryByKey(targetKey);
       if (dict) {
-        return dict[hash] || dict[String(hash)] || null;
+        const table = dict[storeName] || dict[storeName.replace(/^Destiny|Definition$/g, '')] || dict;
+        return table[hash] || table[String(hash)] || null;
       }
     }
     return null;
@@ -178,8 +230,11 @@ async function getDefinitionByHash(hash: number, storeName: string): Promise<any
   if (!db) return null;
 
   try {
-    const tx = db.transaction(storeName, 'readonly');
-    const store = tx.objectStore(storeName);
+    const resolvedStore = storeName === 'DestinyInventoryItemDefinition' ? itemStoreName
+      : storeName === 'DestinyPlugSetDefinition' ? plugSetStoreName : statStoreName;
+    if (!resolvedStore) return null;
+    const tx = db.transaction(resolvedStore, 'readonly');
+    const store = tx.objectStore(resolvedStore);
 
     const val = await new Promise<any>((resolve) => {
       const req1 = store.get(hash);
@@ -402,7 +457,11 @@ async function getWeaponPossiblePerksByName(weaponName: string): Promise<{
  * Attaches a MutationObserver to the registry element to listen for on-demand perk name requests
  * and weapon-specific perk list requests.
  */
+const observedRegistries = new WeakSet<HTMLElement>();
+
 function setupRegistryObserver(registryEl: HTMLElement) {
+  if (observedRegistries.has(registryEl)) return;
+  observedRegistries.add(registryEl);
   const regObserver = new MutationObserver(async (mutations) => {
     for (const mutation of mutations) {
       if (mutation.type === 'attributes' && mutation.attributeName === 'data-request-hashes') {
@@ -435,6 +494,24 @@ function setupRegistryObserver(registryEl: HTMLElement) {
         }
       }
 
+      if (mutation.type === 'attributes' && mutation.attributeName === 'data-request-weapon-hashes') {
+        const requestStr = registryEl.getAttribute('data-request-weapon-hashes');
+        if (requestStr) {
+          registryEl.removeAttribute('data-request-weapon-hashes');
+          await indexReadyPromise;
+          let updated = false;
+          for (const hash of new Set(requestStr.split(',').map(Number).filter(Number.isFinite))) {
+            if (globalWeaponRegistry[hash]) continue;
+            const definition = await getDefinitionByHash(hash, 'DestinyInventoryItemDefinition');
+            if (definition?.displayProperties?.name) {
+              globalWeaponRegistry[hash] = definition.displayProperties.name;
+              updated = true;
+            }
+          }
+          if (updated) flushWeaponRegistry();
+        }
+      }
+
       if (mutation.type === 'attributes' && mutation.attributeName === 'data-request-weapon-perks') {
         const requestStr = registryEl.getAttribute('data-request-weapon-perks');
         if (requestStr) {
@@ -454,8 +531,12 @@ function setupRegistryObserver(registryEl: HTMLElement) {
 
   regObserver.observe(registryEl, {
     attributes: true,
-    attributeFilter: ['data-request-hashes', 'data-request-weapon-perks'],
+    attributeFilter: ['data-request-hashes', 'data-request-weapon-hashes', 'data-request-weapon-perks'],
   });
+  for (const attribute of ['data-request-hashes', 'data-request-weapon-hashes', 'data-request-weapon-perks']) {
+    const pending = registryEl.getAttribute(attribute);
+    if (pending) registryEl.setAttribute(attribute, pending);
+  }
 }
 
 
@@ -680,6 +761,12 @@ const detectPlugCategory = (def: any): string => {
   return ''; // Unknown — will be skipped for Chase List, but still tracked for scoring
 };
 
+function setItemAttribute(el: HTMLElement, name: string, value: string | null) {
+  if (el.getAttribute(name) === value) return;
+  if (value === null) el.removeAttribute(name);
+  else el.setAttribute(name, value);
+}
+
 /**
  * Scans a DOM element for item properties in its React Fiber and writes them to attributes.
  */
@@ -715,13 +802,17 @@ function processElement(el: HTMLElement) {
     const fiber = findReactFiber(el);
     if (!fiber) return;
 
-    const item = findItemInFiber(fiber);
+    let item = findItemInFiber(fiber);
     if (!item || !item.hash) return;
+    item = getCompareItem(el, item);
+    if (isPopupContainer) annotateOverviewPerks(el);
 
     // Verify that this element actually represents the item by matching the icon image src.
     // This prevents annotating mod/socket slots that climb up to the parent item in the fiber tree.
-    // Skip this check for main popup containers, which contain various sub-images (emblems, stats, class icons).
-    if (!isPopupContainer) {
+    // Native .item tiles use a CSS background for the weapon. Their first img
+    // can be a champion/status icon, including in Compare outside drag wrappers.
+    // Popups also contain unrelated images; neither is a reliable icon check.
+    if (!isPopupContainer && !el.matches('.item')) {
       const imgEl = el.querySelector('img');
       if (imgEl && item.icon) {
         const imgPath = imgEl.getAttribute('src') || '';
@@ -748,14 +839,16 @@ function processElement(el: HTMLElement) {
 
     if (!isWeapon && !isArmor) return;
 
+    setItemAttribute(el, 'data-aegis-item-exotic', item.isExotic === true ? 'true' : null);
+
     if (isArmor) {
       const newHash = String(item.hash);
-      el.setAttribute('data-aegis-item-hash', newHash);
-      el.setAttribute('data-aegis-item-name', item.name || 'Unknown Armor');
-      el.setAttribute('data-aegis-item-type', 'armor');
+      setItemAttribute(el, 'data-aegis-item-hash', newHash);
+      setItemAttribute(el, 'data-aegis-item-name', item.name || 'Unknown Armor');
+      setItemAttribute(el, 'data-aegis-item-type', 'armor');
       const instanceId = item.id;
       if (instanceId) {
-        el.setAttribute('data-aegis-instance-id', String(instanceId));
+        setItemAttribute(el, 'data-aegis-instance-id', String(instanceId));
       }
 
       // Extract armor socketed perks / intrinsic archetype
@@ -769,7 +862,7 @@ function processElement(el: HTMLElement) {
         }
       }
       if (armorPerks.length > 0) {
-        el.setAttribute('data-aegis-armor-perks', JSON.stringify(armorPerks));
+        setItemAttribute(el, 'data-aegis-armor-perks', JSON.stringify(armorPerks));
       }
 
       // Extract base stats if available
@@ -781,19 +874,26 @@ function processElement(el: HTMLElement) {
             statsMap[statName.toLowerCase().trim()] = st.base ?? st.value ?? 0;
           }
         }
-        el.setAttribute('data-aegis-armor-stats', JSON.stringify(statsMap));
+        setItemAttribute(el, 'data-aegis-armor-stats', JSON.stringify(statsMap));
       }
 
       // Clear weapon-specific attributes
-      el.removeAttribute('data-aegis-perk-hashes');
-      el.removeAttribute('data-aegis-perks-data');
-      el.removeAttribute('data-aegis-active-perk-hashes');
+      setItemAttribute(el, 'data-aegis-perk-hashes', null);
+      setItemAttribute(el, 'data-aegis-perks-data', null);
+      setItemAttribute(el, 'data-aegis-active-perk-hashes', null);
+      setItemAttribute(el, 'data-aegis-score-owned', null);
       return;
     }
 
-    let perkHashes: number[] = [];
-    let activePerkHashes: number[] = []; // Only currently plugged perks
-    let perksDataMap: Record<number, PerkInfo> = {};
+    // Compare consumed values, since socket data can change on the same item object.
+    const inputs = weaponReadInputs(item);
+    const saved = weaponReadCache.get(item);
+    if (saved && inputs.length === saved.inputs.length && inputs.every((value, i) => value === saved.inputs[i])) {
+      for (const [name, value] of saved.attributes) setItemAttribute(el, name, value);
+      return;
+    }
+
+    let { perkHashes, activeHashes: activePerkHashes, perksMap: perksDataMap } = readDimPerks(item);
 
     // Equipped Masterwork stat name (e.g. "Range", "Handling")
     let equippedMasterwork: string = '';
@@ -831,12 +931,6 @@ function processElement(el: HTMLElement) {
         if (socket.plugged && socket.plugged.plugDef) {
           const def = socket.plugged.plugDef;
           if (def.hash) {
-            perkHashes.push(def.hash);
-            activePerkHashes.push(def.hash);
-            perksDataMap[def.hash] = {
-              name: def.displayProperties?.name || 'Unknown Perk',
-              icon: def.displayProperties?.icon || '',
-            };
             const plugName = def.displayProperties?.name || '';
             if (plugName && slotCategory && slotCategory !== 'skip' && slotCategory !== 'intrinsic') {
               slotNames.push(plugName);
@@ -849,13 +943,6 @@ function processElement(el: HTMLElement) {
           for (const opt of socket.plugOptions) {
             if (opt.plugDef && opt.plugDef.hash) {
               const def = opt.plugDef;
-              if (!perkHashes.includes(def.hash)) {
-                perkHashes.push(def.hash);
-              }
-              perksDataMap[def.hash] = {
-                name: def.displayProperties?.name || 'Unknown Perk',
-                icon: def.displayProperties?.icon || '',
-              };
               const plugName = def.displayProperties?.name || '';
               if (plugName && slotCategory && slotCategory !== 'skip' && slotCategory !== 'intrinsic') {
                 if (!slotNames.includes(plugName)) slotNames.push(plugName);
@@ -881,95 +968,25 @@ function processElement(el: HTMLElement) {
       }
     }
 
-    // === Strategy 1: item.masterworkInfo — DIM surfaces this directly on the item object ===
-    // DIM stores masterwork info in item.masterworkInfo.statName (e.g. "Range", "Handling")
-    if (item.masterworkInfo) {
-      // statName is the clean stat name (e.g. "Reload Speed", "Range", "Handling")
-      // — use it directly without stripping since it won't contain "masterwork"
-      const mwStatName =
-        item.masterworkInfo.statName ||
-        item.masterworkInfo.stat?.displayProperties?.name ||
-        item.masterworkInfo.name ||
-        item.masterworkInfo.typeName ||
-        '';
-      if (mwStatName) {
-        // Strip "masterwork(ed)" as a whole word only (word boundary prevents mid-word cuts)
-        equippedMasterwork = mwStatName
-          .replace(/\bmasterwork(?:ed|s)?\b\s*:?\s*/gi, '')
-          .replace(/:\s*/g, '')
-          .trim();
-      }
-    }
-
-    // === Strategy 2: Socket scan — look for weapon_masterwork* category ===
-    if (!equippedMasterwork && item.sockets && item.sockets.allSockets) {
-      for (const socket of item.sockets.allSockets) {
-        if (!socket || !socket.plugged?.plugDef) continue;
-        const def = socket.plugged.plugDef;
-        const catId = (def.plug?.plugCategoryIdentifier || '').toLowerCase();
-        const typeName = (def.itemTypeDisplayName || '').toLowerCase();
-        // Match weapon masterwork or generic masterwork sockets
-        if (catId.startsWith('weapon_masterwork') ||
-            catId.includes('masterwork') ||
-            typeName.includes('masterwork')) {
-          const mwName = (def.displayProperties?.name || '').trim();
-          if (mwName) {
-            equippedMasterwork = mwName
-              .replace(/\bmasterwork(?:ed|s)?\b\s*:?\s*/gi, '')
-              .replace(/:\s*/g, '')
-              .trim();
-          }
-          if (equippedMasterwork) break;
-        }
-      }
-    }
-
-    // === Normalize full D2 stat names to match sheet abbreviations ===
-    // DIM uses "Reload Speed" but sheets typically say "Reload"; "Blast Radius" → stays, etc.
-
-    // First: strip any "Tier N" prefix (present when statName is null for partial MW)
-    // e.g. "tier 1stability" → "stability", "Tier 10Reload Speed" → "Reload Speed"
-    equippedMasterwork = equippedMasterwork
-      .replace(/\btier\s*\d+\s*/gi, '')
-      .trim();
-
-    const mwNormMap: Record<string, string> = {
-      'reload speed': 'Reload',
-      'reload': 'Reload',
-      'charge time': 'Charge Time',
-      'draw time': 'Draw Time',
-      'blast radius': 'Blast Radius',
-      'projectile speed': 'Velocity',
-      'swing speed': 'Swing Speed',
-      'range': 'Range',
-      'handling': 'Handling',
-      'stability': 'Stability',
-      'velocity': 'Velocity',
-      'impact': 'Impact',
-    };
-    const mwLower = equippedMasterwork.toLowerCase();
-    if (mwNormMap[mwLower]) {
-      equippedMasterwork = mwNormMap[mwLower];
-    }
-
-    console.debug(
-      `[Aegis MW] ${item.name}: equipped="${equippedMasterwork}"`,
-      'masterworkInfo:', item.masterworkInfo
-    );
+    equippedMasterwork = readDimMasterwork(item);
 
     // Instance ID cache logic (handles async loading and popup-to-grid sync)
     const instanceId = item.id;
-    if (instanceId) {
+    if (instanceId && !el.closest(COMPARE_BUCKET_SELECTOR)) {
+      const cached = instanceCache[instanceId];
+      if (activePerkHashes.length === 0 && cached) {
+        activePerkHashes = [...cached.activePerkHashes];
+      }
       // If we scanned a complete perk list (>3 perks indicates full perks loaded)
       if (perkHashes.length > 3) {
         instanceCache[instanceId] = {
           perkHashes: [...perkHashes],
+          activePerkHashes: [...activePerkHashes],
           perksDataMap: { ...perksDataMap },
           equippedMasterwork,
         };
-      } else if (instanceCache[instanceId]) {
+      } else if (cached) {
         // If current element lacks perks but we have it in cache, populate it!
-        const cached = instanceCache[instanceId];
         for (const hash of cached.perkHashes) {
           if (!perkHashes.includes(hash)) {
             perkHashes.push(hash);
@@ -988,13 +1005,12 @@ function processElement(el: HTMLElement) {
 
     const newHash = String(item.hash);
     const newPerks = perkHashes.join(',');
+    const attributes: [string, string | null][] = [];
+    const writeAttribute = (name: string, value: string | null) => {
+      attributes.push([name, value]);
+      setItemAttribute(el, name, value);
+    };
 
-    const existingHash = el.getAttribute('data-aegis-item-hash');
-    const existingPerks = el.getAttribute('data-aegis-perk-hashes');
-
-    // Write categorized possible perks for the Chase List BEFORE the early-return check.
-    // We always update this when we have meaningful data, regardless of whether the
-    // perkHashes have changed (e.g. popup has more categorized data than a tile).
     if (possiblePerk1s.length > 0 || possiblePerk2s.length > 0 || possibleBarrels.length > 0) {
       const possiblePerksData = {
         barrels: possibleBarrels.sort(),
@@ -1003,31 +1019,25 @@ function processElement(el: HTMLElement) {
         perk2s: possiblePerk2s.sort(),
         origins: possibleOrigins.sort(),
       };
-      el.setAttribute('data-aegis-weapon-possible-perks', JSON.stringify(possiblePerksData));
+      writeAttribute('data-aegis-weapon-possible-perks', JSON.stringify(possiblePerksData));
     }
 
-    // Always write the MW attribute before the early-return check so it's
-    // never skipped on re-scans where only the hash/perks are unchanged.
     if (equippedMasterwork) {
-      el.setAttribute('data-aegis-masterwork', equippedMasterwork);
+      writeAttribute('data-aegis-masterwork', equippedMasterwork);
     } else {
-      el.removeAttribute('data-aegis-masterwork');
+      writeAttribute('data-aegis-masterwork', null);
     }
 
-    // Optimization: Avoid re-triggering content.ts if no scoring-relevant data changed
-    if (existingHash === newHash && existingPerks === newPerks) {
-      return;
-    }
-
-    // Set attributes for the isolated world content script to read
-    el.setAttribute('data-aegis-item-hash', newHash);
-    el.setAttribute('data-aegis-item-name', item.name || 'Unknown Weapon');
-    el.setAttribute('data-aegis-perk-hashes', newPerks);
-    el.setAttribute('data-aegis-perks-data', JSON.stringify(perksDataMap));
-    el.setAttribute('data-aegis-active-perk-hashes', activePerkHashes.join(','));
-    if (instanceId) {
-      el.setAttribute('data-aegis-instance-id', String(instanceId));
-    }
+    writeAttribute('data-aegis-score-owned', JSON.stringify(extractRawOwnedSnapshot(item)));
+    writeAttribute('data-aegis-item-hash', newHash);
+    writeAttribute('data-aegis-item-name', item.name || 'Unknown Weapon');
+    writeAttribute('data-aegis-perk-hashes', newPerks);
+    writeAttribute('data-aegis-perks-data', JSON.stringify(perksDataMap));
+    writeAttribute('data-aegis-active-perk-hashes', activePerkHashes.join(','));
+    writeAttribute('data-aegis-instance-id', instanceId ? String(instanceId) : null);
+    writeAttribute('data-aegis-item-type', null);
+    inputs[0] = instanceCache[item.id];
+    weaponReadCache.set(item, { inputs, attributes });
 
   } catch (e) {
     console.debug('Aegis Overlay: Element scan failed', e);
@@ -1054,7 +1064,7 @@ const SELECTORS = [
 function scanPage() {
   const candidates = document.querySelectorAll<HTMLElement>(SELECTORS);
   for (let i = 0; i < candidates.length; i++) {
-    processElement(candidates[i]);
+    queueItem(candidates[i]);
   }
 }
 
@@ -1065,35 +1075,66 @@ setInterval(scanPage, 10000);
 // 2. Immediate scan on DOM modifications using MutationObserver.
 // Mutations are batched and processed once per animation frame to avoid
 // running selector queries + fiber walks for every single mutation record.
-const pendingNodes: HTMLElement[] = [];
+const itemQueue = createItemQueue(item => {
+  if (item.matches(SELECTORS)) processElement(item);
+  if (!item.matches('.item-drag-container > .item')) {
+    item.querySelectorAll<HTMLElement>(SELECTORS).forEach(processElement);
+  }
+});
+function queueItem(item: HTMLElement) {
+  const tile = item.closest('.item-drag-container')?.querySelector<HTMLElement>(':scope > .item');
+  itemQueue.add(tile || item);
+}
+const pendingNodes = new Set<HTMLElement>();
 let scanScheduled = false;
+
+// A simulated socket change may only update React state or an unobserved DOM property.
+function scheduleCompareScan(event: Event) {
+  const bucket = event.target instanceof Element && event.target.closest<HTMLElement>(COMPARE_BUCKET_SELECTOR);
+  if (!bucket) return;
+  pendingNodes.add(bucket);
+  if (!scanScheduled) {
+    scanScheduled = true;
+    requestAnimationFrame(flushPendingNodes);
+  }
+}
+document.addEventListener('click', scheduleCompareScan, true);
+document.addEventListener('change', scheduleCompareScan, true);
 
 function flushPendingNodes() {
   scanScheduled = false;
-  const nodes = pendingNodes.splice(0, pendingNodes.length);
+  const nodes = outermostElements(pendingNodes);
+  pendingNodes.clear();
   for (let i = 0; i < nodes.length; i++) {
     const node = nodes[i];
     if (!node.isConnected) continue;
     if (node.matches && node.matches(SELECTORS)) {
-      processElement(node);
+      queueItem(node);
     }
     const children = node.querySelectorAll<HTMLElement>(SELECTORS);
-    children.forEach(processElement);
+    children.forEach(queueItem);
   }
 }
 
+const OVERLAY_SELECTOR = '.aegis-badge, .aegis-stat-grade, .dimsum-tile-decoration, .aegis-title-badge, .aegis-popup-summary, .aegis-compare-panel, .aegis-perk-label, .aegis-perk-name-sizer, .aegis-inline-search, [data-aegis-compare-generated], [data-aegis-details], #aegis-tooltip';
+
 const observer = new MutationObserver((mutations) => {
-  for (let i = 0; i < mutations.length; i++) {
-    const mutation = mutations[i];
-    if (mutation.addedNodes.length > 0) {
-      mutation.addedNodes.forEach((node) => {
-        if (node instanceof HTMLElement) {
-          pendingNodes.push(node);
-        }
+  for (const mutation of mutations) {
+    const target = mutation.target instanceof Element ? mutation.target : mutation.target.parentElement;
+    if (!target || target.closest(OVERLAY_SELECTOR)) continue;
+    if (mutation.type === 'childList') {
+      const changedNodes = [...mutation.addedNodes, ...mutation.removedNodes];
+      if (changedNodes.every(node => node instanceof Element && node.matches(OVERLAY_SELECTOR))) continue;
+      mutation.addedNodes.forEach(node => {
+        if (node instanceof HTMLElement && !node.matches(OVERLAY_SELECTOR)) pendingNodes.add(node);
       });
     }
+    const compare = target.closest<HTMLElement>(COMPARE_BUCKET_SELECTOR);
+    if (compare) pendingNodes.add(compare);
+    const item = target.closest<HTMLElement>('[data-aegis-item-hash]') || target.closest<HTMLElement>(SELECTORS);
+    if (item) pendingNodes.add(item);
   }
-  if (pendingNodes.length > 0 && !scanScheduled) {
+  if (pendingNodes.size > 0 && !scanScheduled) {
     scanScheduled = true;
     requestAnimationFrame(flushPendingNodes);
   }
@@ -1153,6 +1194,7 @@ async function initManifestDatabase() {
           manifestDbName = name;
           itemStoreName = itemStore;
           plugSetStoreName = storeNames.find(s => s.includes('DestinyPlugSetDefinition')) || null;
+          statStoreName = storeNames.find(s => s.includes('DestinyStatDefinition')) || null;
           db.close();
           sendDiagnosticLog(`Bound separate-stores manifest database "${manifestDbName}". Item: ${itemStoreName}, PlugSet: ${plugSetStoreName}`);
           return true;
@@ -1176,13 +1218,16 @@ async function initManifestDatabase() {
 
           sendDiagnosticLog(`Keys in "${keyvalStore}": ${keys.slice(0, 15).join(', ')} (total: ${keys.length})`);
           
-          const itemKey = keys.find(k => k.includes('InventoryItem'));
-          const plugSetKey = keys.find(k => k.includes('PlugSet'));
+          const itemKey = keys.find(k => k === 'd2-manifest-InventoryItem') || keys.find(k => k.includes('InventoryItem'));
+          const plugSetKey = keys.find(k => k === 'd2-manifest-PlugSet') || keys.find(k => k.includes('PlugSet'));
+          const statKey = keys.find(k => k === 'd2-manifest-Stat') || keys.find(k => /(?:^|[-.])(?:Destiny)?Stat(?:Definition)?$/.test(k));
 
           if (itemKey) {
             manifestDbName = name;
             itemStoreName = `${keyvalStore}:${itemKey}`;
             plugSetStoreName = plugSetKey ? `${keyvalStore}:${plugSetKey}` : null;
+            statStoreName = statKey ? `${keyvalStore}:${statKey}` : null;
+            manifestKeyvalStoreName = keyvalStore;
             db.close();
             sendDiagnosticLog(`Bound keyval manifest database "${manifestDbName}" with itemKey "${itemKey}" and plugSetKey "${plugSetKey}".`);
             return true;
@@ -1200,7 +1245,18 @@ async function initManifestDatabase() {
   const scan = async () => {
     const success = await tryConnect();
     if (success) {
-      await buildWeaponIndex();
+      try {
+        await buildWeaponIndex();
+        const stats: Record<number, string> = {};
+        for (const hash of new Set(Object.values(WEAPON_STAT_HASHES))) {
+          const definition = await getDefinitionByHash(hash, 'DestinyStatDefinition');
+          if (definition?.displayProperties?.name) stats[hash] = definition.displayProperties.name;
+        }
+        initRegistryEl().setAttribute('data-stats', JSON.stringify(stats));
+      } finally {
+        indexBuilt = true;
+        if (indexReadyResolve) indexReadyResolve();
+      }
     } else if (retries < maxRetries) {
       retries++;
       sendDiagnosticLog(`Retrying manifest database connection (attempt ${retries}/${maxRetries})...`);
@@ -1234,8 +1290,8 @@ async function buildWeaponIndex() {
   sendDiagnosticLog(`Starting weapon & perk indexing. itemStoreName: "${itemStoreName}"...`);
 
   // 1. If it's a key-value store, load the entire manifest dictionary into memory first
-  if (itemStoreName.startsWith('keyval:')) {
-    const itemKeyName = itemStoreName.split(':')[1];
+  if (itemStoreName.includes(':')) {
+    const itemKeyName = itemStoreName.slice(itemStoreName.indexOf(':') + 1);
     const dict = await getManifestDictionaryByKey(itemKeyName);
     if (dict) {
       sendDiagnosticLog('Loaded cached manifest dictionary from keyval store. Building weapon & perk indexes...');
@@ -1374,11 +1430,13 @@ async function buildWeaponIndex() {
 function initRegistryEl() {
   let registryEl = document.getElementById('aegis-global-perk-registry');
   if (!registryEl) {
-registryEl = document.createElement('div');
+    registryEl = document.createElement('div');
     registryEl.id = 'aegis-global-perk-registry';
     registryEl.style.display = 'none';
     document.body.appendChild(registryEl);
   }
+  setupRegistryObserver(registryEl);
+  if (!document.getElementById('aegis-global-weapon-registry')) flushWeaponRegistry();
   return registryEl;
 }
 
@@ -1705,6 +1763,9 @@ function startObserver() {
   observer.observe(document.body, {
     childList: true,
     subtree: true,
+    characterData: true,
+    attributes: true,
+    attributeFilter: ['src', 'class', 'id'],
   });
   scanPage();
   
@@ -1713,3 +1774,5 @@ function startObserver() {
 }
 startObserver();
 
+initDimSearch();
+initInlineSearchEditor();

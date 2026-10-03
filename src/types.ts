@@ -1,6 +1,12 @@
+import type { GradeSettings } from './grading';
+import type { PerkInfo } from './dim-item-input';
+import type { BadgeRollQuality, BadgeVisibilitySettings } from './badge-presentation';
+
 /**
  * Represents a single parsed wishlist entry.
  */
+import type { OwnedScoreSnapshot, ScoreEvaluations, ScoreSettings } from './score-types';
+
 export interface WishlistRoll {
   itemHash: number;
   perks: number[];
@@ -17,7 +23,10 @@ export type WishlistDatabase = Record<number, WishlistRoll[]>;
 /**
  * Result of scoring a weapon roll against a wishlist entry.
  */
-export interface ScoringResult {
+export interface ScoringResult extends BadgeRollQuality {
+  /** Active spreadsheet weapon tier, independent of the two-tier display setting. */
+  weaponGrade?: string;
+  customGrading?: boolean;
   grade: string | null;
   matchPercentage: number;
   matchedPerks: number[];
@@ -28,19 +37,32 @@ export interface ScoringResult {
   potentialGrade?: string;
   wishlistNotes?: string;
   upgradeAvailable?: boolean;
-  isPerfect5of5?: boolean;
-  isOmniRoll?: boolean;
   matchedSlotsCount?: number;
   pveGrade?: string;
   pvpGrade?: string;
+  pveRollQuality?: BadgeRollQuality;
+  pvpRollQuality?: BadgeRollQuality;
 }
+
+export type BadgeColor = 'perk' | 'archetype' | 'gradient';
+export type TileGlow = 'off' | 'archetype' | 'perk' | 'max';
 
 export type AegisMode = 'pve' | 'pvp' | 'both';
 
 /**
  * Storage schema for chrome.storage.local
  */
-export interface LocalStorageSchema {
+export interface LocalStorageSchema extends Partial<ScoreSettings> {
+  aegisTwoTierColors?: boolean;
+  aegisBadgeColor?: BadgeColor;
+  aegisMaxTierGlow?: boolean;
+  aegisTileGlow?: TileGlow;
+  aegisBadgeSize?: number;
+  aegisBadgeVisibility?: BadgeVisibilitySettings;
+  aegisShowPerfectStar?: boolean;
+  aegisShowOmniStar?: boolean;
+  aegisGradeSettings?: GradeSettings;
+  aegisGradeColors?: Pick<GradeSettings, 'version' | 'colorsEnabled' | 'colors'>;
   wishlistUrl?: string;
   wishlistData?: WishlistDatabase;
   lastUpdated?: number;
@@ -56,11 +78,15 @@ export interface LocalStorageSchema {
   aegisShoppingDbPvP?: AegisShoppingDatabase;
   aegisMode?: AegisMode;
   aegisCompactPerksMatrix?: boolean;
-  aegisInlineHeader?: boolean;
   aegisPopupSummaryMode?: 'full' | 'badge' | 'hidden';
   aegisAutoMaxHeight?: boolean;
   aegisTooltipWidthMode?: 'auto' | 'fixed';
   aegisTooltipWidth?: number;
+  aegisArmoryEnabled?: boolean;
+  aegisPerkAnalysisEnabled?: boolean;
+  aegisCompareRecommendations?: boolean;
+  aegisOverviewRecommendations?: boolean;
+  aegisRecommendationLayout?: 'grid' | 'list';
   aegisSheetLastSync?: number;
   aegisChaseList?: Record<string, AegisChaseItem>;
 }
@@ -123,6 +149,11 @@ export interface ManifestWeapon {
  */
 export interface AegisSheetWeapon {
   name: string;
+  categoryKey?: string;
+  weaponType?: string;
+  weaponSlot?: string;
+  affinity?: string;
+  sourceRowId?: string;
   energy: string;
   frame: string;
   barrel: string;
@@ -175,6 +206,8 @@ export interface AegisArmorSet {
  * containing a flat map of weapons by normalized name and lists grouped by category.
  */
 export interface AegisSheetDatabase {
+  scoreSchemaVersion?: number;
+  scoreRevision?: string;
   weapons: Record<string, AegisSheetWeapon>;
   variants?: Record<string, AegisSheetWeapon[]>;
   categories: Record<string, AegisSheetWeapon[]>;
@@ -187,6 +220,7 @@ export interface AegisSheetDatabase {
  */
 export interface TooltipPerk {
   name: string;
+  hash?: number;
   icon?: string;
   matched: boolean;
   type: 'barrel' | 'mag' | 'perk1' | 'perk2' | 'origin';
@@ -247,9 +281,11 @@ export interface AegisShoppingDatabase {
  * Universal, strongly-typed evaluation payload attached to a weapon/armor DOM tile via WeakMap.
  */
 export interface WeaponEvaluationPayload {
+  scoreEvaluations?: ScoreEvaluations;
+  scoreOwned?: OwnedScoreSnapshot;
   result: ScoringResult;
   name: string;
-  perksMap: Record<number, { name: string; icon: string }>;
+  perksMap: Record<number, PerkInfo>;
   activeHashes?: number[];
   sheetWeapon?: AegisSheetWeapon | null;
   sheetPerks?: SheetPerksGroup | null;
@@ -275,6 +311,4 @@ export interface WeaponEvaluationPayload {
   isBestInClassPvE?: boolean;
   isBestInClassPvP?: boolean;
 }
-
-
 

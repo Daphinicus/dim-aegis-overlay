@@ -1,0 +1,3182 @@
+{
+  "schemaVersion": 1,
+  "modelVersion": "aegis-score-v1",
+  "rawTolerance": 1e-09,
+  "contract": {
+    "sources": "Normalized engine inputs. Strings in recommendations and owned arrays are opaque canonical IDs, not text for fuzzy matching.",
+    "recommendations": "Ordered array = ranked; [] = explicit not-applicable; null = unknown source. Every slot key is present.",
+    "owned": "Array = known actual available options; [] = known no matches; null = unreadable. Unknown owned data only matters for applicable slots.",
+    "rankBounds": "Inclusive min/max numeric rank among the same activity/category/tier population, or null when unranked. rankCases assume category is resolved.",
+    "originLegalSets": "Verified legal coexisting sets for this math case; null = unknown maximum. Synthetic sets are not evidence about real weapons.",
+    "expected": "Null numeric fields mean unrated/unknown. Booleans are exact. Compare other numbers at rawTolerance. Map bestPerfectOverall and omniPerfectOverall into the corresponding ScoreValue flags.",
+    "provenance": "Source-derived means source recommendations and rank data with constructed ownership. These are not live DIM socket fixtures.",
+    "formatCases": "Exact display assertions; inputs with value 100 and perfectOverall false deliberately test defensive false-perfection capping.",
+    "orderingCases": "Look up cases by ID and assert strict raw ordering independently for every named profile."
+  },
+  "sources": {
+    "no-hesitation": {
+      "activity": "pve",
+      "categoryKey": "Autos",
+      "tier": "S",
+      "rank": 1,
+      "rankBounds": [
+        1,
+        10
+      ],
+      "recommendations": {
+        "barrel": [
+          "Full Bore"
+        ],
+        "mag": [
+          "Accurized Rounds"
+        ],
+        "perk1": [
+          "Physic",
+          "Burning Ambition"
+        ],
+        "perk2": [
+          "Chaos Reshaped",
+          "Attrition Orbs",
+          "Incandescent"
+        ],
+        "masterwork": [
+          "Range"
+        ],
+        "origin": [
+          "Dealer's Choice"
+        ]
+      },
+      "provenance": {
+        "kind": "source-derived",
+        "weapon": "No Hesitation",
+        "snapshotSha256": "518e69612bf45b6b5c0cac0af2023e2b8b79d22e418b7d293a7445321c70d5e3",
+        "note": "Constructed ownership; recommendation strings serve as opaque canonical IDs. Snapshot category retained, including legacy Finnald grouping; adapter tests must separately restore Finnald Type."
+      }
+    },
+    "abyss-defiant": {
+      "activity": "pvp",
+      "categoryKey": "Legendary Weapons",
+      "tier": "S",
+      "rank": null,
+      "rankBounds": null,
+      "recommendations": {
+        "barrel": [
+          "Arrowhead Brake",
+          "Chambered Compensator",
+          "Corkscrew Rifling"
+        ],
+        "mag": [
+          "Ricochet Rounds",
+          "High-Caliber Rounds",
+          "Armor-Piercing Rounds"
+        ],
+        "perk1": [
+          "Zen Moment",
+          "Heal Clip"
+        ],
+        "perk2": [
+          "Kill Clip",
+          "Swashbuckler",
+          "Binary Orbit"
+        ],
+        "masterwork": [
+          "Stability",
+          "Range"
+        ],
+        "origin": [
+          "Cursed Thrall"
+        ]
+      },
+      "provenance": {
+        "kind": "source-derived",
+        "weapon": "Abyss Defiant",
+        "snapshotSha256": "db79f35eb61f5f8434bbadc6a30162610c952e1a96483acab70872df7bd2c674",
+        "note": "Constructed ownership; recommendation strings serve as opaque canonical IDs. Snapshot category retained, including legacy Finnald grouping; adapter tests must separately restore Finnald Type."
+      }
+    },
+    "age-old-bond": {
+      "activity": "pve",
+      "categoryKey": "Autos",
+      "tier": "S",
+      "rank": 8,
+      "rankBounds": [
+        1,
+        10
+      ],
+      "recommendations": {
+        "barrel": [
+          "Fluted Barrel",
+          "Arrowhead Brake"
+        ],
+        "mag": [
+          "Alloy Magazine"
+        ],
+        "perk1": [
+          "Repulsor Brace",
+          "Meganeura"
+        ],
+        "perk2": [
+          "Destabilizing Rounds",
+          "Collective Action"
+        ],
+        "masterwork": [
+          "Reload"
+        ],
+        "origin": [
+          "Explosive Pact"
+        ]
+      },
+      "provenance": {
+        "kind": "source-derived",
+        "weapon": "Age-Old Bond",
+        "snapshotSha256": "518e69612bf45b6b5c0cac0af2023e2b8b79d22e418b7d293a7445321c70d5e3",
+        "note": "Constructed ownership; recommendation strings serve as opaque canonical IDs. Snapshot category retained, including legacy Finnald grouping; adapter tests must separately restore Finnald Type."
+      }
+    },
+    "toil-and-trouble": {
+      "activity": "pve",
+      "categoryKey": "Shotguns",
+      "tier": "F",
+      "rank": 59,
+      "rankBounds": [
+        59,
+        60
+      ],
+      "recommendations": {
+        "barrel": [
+          "Barrel Shroud"
+        ],
+        "mag": [
+          "Assault Mag"
+        ],
+        "perk1": [
+          "Auto-Loading Holster"
+        ],
+        "perk2": [
+          "Full Auto Trigger System"
+        ],
+        "masterwork": [
+          "Handling",
+          "Reload"
+        ],
+        "origin": []
+      },
+      "provenance": {
+        "kind": "source-derived",
+        "weapon": "Toil and Trouble",
+        "snapshotSha256": "518e69612bf45b6b5c0cac0af2023e2b8b79d22e418b7d293a7445321c70d5e3",
+        "note": "Constructed ownership; recommendation strings serve as opaque canonical IDs. Snapshot category retained, including legacy Finnald grouping; adapter tests must separately restore Finnald Type."
+      }
+    },
+    "ahab-char": {
+      "activity": "pvp",
+      "categoryKey": "Legendary Weapons",
+      "tier": "B",
+      "rank": null,
+      "rankBounds": null,
+      "recommendations": {
+        "barrel": [
+          "Arrowhead Brake",
+          "Hammer-forged Rifling",
+          "Smallbore"
+        ],
+        "mag": [
+          "Ricochet Rounds",
+          "High-Caliber Rounds",
+          "Armor-Piercing Rounds"
+        ],
+        "perk1": [
+          "Perpetual Motion",
+          "Heal Clip",
+          "Transcendent Moment"
+        ],
+        "perk2": [
+          "Kill Clip",
+          "Swashbuckler",
+          "Adagio"
+        ],
+        "masterwork": [
+          "Range",
+          "Stability"
+        ],
+        "origin": [
+          "Bray Legacy"
+        ]
+      },
+      "provenance": {
+        "kind": "source-derived",
+        "weapon": "Ahab Char",
+        "snapshotSha256": "db79f35eb61f5f8434bbadc6a30162610c952e1a96483acab70872df7bd2c674",
+        "note": "Constructed ownership; recommendation strings serve as opaque canonical IDs. Snapshot category retained, including legacy Finnald grouping; adapter tests must separately restore Finnald Type."
+      }
+    },
+    "synthetic-single": {
+      "activity": "pve",
+      "categoryKey": "synthetic-category",
+      "tier": "S",
+      "rank": 1,
+      "rankBounds": [
+        1,
+        1
+      ],
+      "recommendations": {
+        "barrel": [
+          "barrel:1"
+        ],
+        "mag": [
+          "mag:1"
+        ],
+        "perk1": [
+          "perk1:1"
+        ],
+        "perk2": [
+          "perk2:1"
+        ],
+        "masterwork": [
+          "masterwork:1"
+        ],
+        "origin": [
+          "origin:1"
+        ]
+      },
+      "provenance": {
+        "kind": "synthetic",
+        "note": "Math fixture only; does not certify any real weapon capacity."
+      }
+    },
+    "synthetic-explicit-none": {
+      "activity": "pve",
+      "categoryKey": "synthetic-category",
+      "tier": "S",
+      "rank": 1,
+      "rankBounds": [
+        1,
+        1
+      ],
+      "recommendations": {
+        "barrel": [
+          "barrel:1"
+        ],
+        "mag": [
+          "mag:1"
+        ],
+        "perk1": [
+          "perk1:1"
+        ],
+        "perk2": [
+          "perk2:1"
+        ],
+        "masterwork": [
+          "masterwork:1"
+        ],
+        "origin": []
+      },
+      "provenance": {
+        "kind": "synthetic",
+        "note": "Math fixture only; does not certify any real weapon capacity."
+      }
+    },
+    "synthetic-unknown-source": {
+      "activity": "pve",
+      "categoryKey": "synthetic-category",
+      "tier": "S",
+      "rank": 1,
+      "rankBounds": [
+        1,
+        1
+      ],
+      "recommendations": {
+        "barrel": [
+          "barrel:1"
+        ],
+        "mag": [
+          "mag:1"
+        ],
+        "perk1": [
+          "perk1:1"
+        ],
+        "perk2": [
+          "perk2:1"
+        ],
+        "masterwork": [
+          "masterwork:1"
+        ],
+        "origin": null
+      },
+      "provenance": {
+        "kind": "synthetic",
+        "note": "Math fixture only; does not certify any real weapon capacity."
+      }
+    },
+    "synthetic-trait2-2": {
+      "activity": "pve",
+      "categoryKey": "synthetic-category",
+      "tier": "S",
+      "rank": 1,
+      "rankBounds": [
+        1,
+        1
+      ],
+      "recommendations": {
+        "barrel": [
+          "barrel:1"
+        ],
+        "mag": [
+          "mag:1"
+        ],
+        "perk1": [
+          "perk1:1"
+        ],
+        "perk2": [
+          "perk2:1",
+          "perk2:2"
+        ],
+        "masterwork": [
+          "masterwork:1"
+        ],
+        "origin": [
+          "origin:1"
+        ]
+      },
+      "provenance": {
+        "kind": "synthetic",
+        "note": "Math fixture only; does not certify any real weapon capacity."
+      }
+    },
+    "synthetic-trait2-3": {
+      "activity": "pve",
+      "categoryKey": "synthetic-category",
+      "tier": "S",
+      "rank": 1,
+      "rankBounds": [
+        1,
+        1
+      ],
+      "recommendations": {
+        "barrel": [
+          "barrel:1"
+        ],
+        "mag": [
+          "mag:1"
+        ],
+        "perk1": [
+          "perk1:1"
+        ],
+        "perk2": [
+          "perk2:1",
+          "perk2:2",
+          "perk2:3"
+        ],
+        "masterwork": [
+          "masterwork:1"
+        ],
+        "origin": [
+          "origin:1"
+        ]
+      },
+      "provenance": {
+        "kind": "synthetic",
+        "note": "Math fixture only; does not certify any real weapon capacity."
+      }
+    },
+    "synthetic-trait2-4": {
+      "activity": "pve",
+      "categoryKey": "synthetic-category",
+      "tier": "S",
+      "rank": 1,
+      "rankBounds": [
+        1,
+        1
+      ],
+      "recommendations": {
+        "barrel": [
+          "barrel:1"
+        ],
+        "mag": [
+          "mag:1"
+        ],
+        "perk1": [
+          "perk1:1"
+        ],
+        "perk2": [
+          "perk2:1",
+          "perk2:2",
+          "perk2:3",
+          "perk2:4"
+        ],
+        "masterwork": [
+          "masterwork:1"
+        ],
+        "origin": [
+          "origin:1"
+        ]
+      },
+      "provenance": {
+        "kind": "synthetic",
+        "note": "Math fixture only; does not certify any real weapon capacity."
+      }
+    },
+    "synthetic-origins-four": {
+      "activity": "pve",
+      "categoryKey": "synthetic-category",
+      "tier": "S",
+      "rank": 1,
+      "rankBounds": [
+        1,
+        1
+      ],
+      "recommendations": {
+        "barrel": [
+          "barrel:1"
+        ],
+        "mag": [
+          "mag:1"
+        ],
+        "perk1": [
+          "perk1:1"
+        ],
+        "perk2": [
+          "perk2:1"
+        ],
+        "masterwork": [
+          "masterwork:1"
+        ],
+        "origin": [
+          "origin:1",
+          "origin:2",
+          "origin:3",
+          "Accelerated Assault"
+        ]
+      },
+      "provenance": {
+        "kind": "synthetic",
+        "note": "Math fixture only; does not certify any real weapon capacity."
+      }
+    },
+    "pve-ordering-perfect-f": {
+      "activity": "pve",
+      "categoryKey": "synthetic-category",
+      "tier": "F",
+      "rank": 1,
+      "rankBounds": [
+        1,
+        9
+      ],
+      "recommendations": {
+        "barrel": [
+          "barrel:1"
+        ],
+        "mag": [
+          "mag:1"
+        ],
+        "perk1": [
+          "perk1:1"
+        ],
+        "perk2": [
+          "perk2:1"
+        ],
+        "masterwork": [
+          "masterwork:1"
+        ],
+        "origin": [
+          "origin:1"
+        ]
+      },
+      "provenance": {
+        "kind": "synthetic",
+        "note": "Math fixture only; does not certify any real weapon capacity."
+      }
+    },
+    "pve-ordering-weak-c-roll-s": {
+      "activity": "pve",
+      "categoryKey": "synthetic-category",
+      "tier": "S",
+      "rank": 9,
+      "rankBounds": [
+        1,
+        9
+      ],
+      "recommendations": {
+        "barrel": [
+          "barrel:0",
+          "barrel:1",
+          "barrel:2",
+          "barrel:3",
+          "barrel:4",
+          "barrel:5",
+          "barrel:6",
+          "barrel:7",
+          "barrel:8",
+          "barrel:9",
+          "barrel:10",
+          "barrel:11",
+          "barrel:12",
+          "barrel:13",
+          "barrel:14",
+          "barrel:15"
+        ],
+        "mag": [
+          "mag:0",
+          "mag:1",
+          "mag:2",
+          "mag:3",
+          "mag:4",
+          "mag:5",
+          "mag:6",
+          "mag:7",
+          "mag:8",
+          "mag:9",
+          "mag:10",
+          "mag:11",
+          "mag:12",
+          "mag:13",
+          "mag:14",
+          "mag:15"
+        ],
+        "perk1": [
+          "perk1:0",
+          "perk1:1",
+          "perk1:2",
+          "perk1:3",
+          "perk1:4",
+          "perk1:5",
+          "perk1:6",
+          "perk1:7",
+          "perk1:8",
+          "perk1:9",
+          "perk1:10",
+          "perk1:11",
+          "perk1:12",
+          "perk1:13",
+          "perk1:14",
+          "perk1:15"
+        ],
+        "perk2": [
+          "perk2:0",
+          "perk2:1",
+          "perk2:2",
+          "perk2:3",
+          "perk2:4",
+          "perk2:5",
+          "perk2:6",
+          "perk2:7",
+          "perk2:8",
+          "perk2:9",
+          "perk2:10",
+          "perk2:11",
+          "perk2:12",
+          "perk2:13",
+          "perk2:14",
+          "perk2:15"
+        ],
+        "masterwork": [
+          "masterwork:0",
+          "masterwork:1",
+          "masterwork:2",
+          "masterwork:3",
+          "masterwork:4",
+          "masterwork:5",
+          "masterwork:6",
+          "masterwork:7",
+          "masterwork:8",
+          "masterwork:9",
+          "masterwork:10",
+          "masterwork:11",
+          "masterwork:12",
+          "masterwork:13",
+          "masterwork:14",
+          "masterwork:15"
+        ],
+        "origin": [
+          "origin:0"
+        ]
+      },
+      "provenance": {
+        "kind": "synthetic",
+        "note": "Math fixture only; does not certify any real weapon capacity."
+      }
+    },
+    "pve-ordering-good-s-roll-c": {
+      "activity": "pve",
+      "categoryKey": "synthetic-category",
+      "tier": "C",
+      "rank": 9,
+      "rankBounds": [
+        1,
+        9
+      ],
+      "recommendations": {
+        "barrel": [
+          "barrel:0",
+          "barrel:1",
+          "barrel:2",
+          "barrel:3",
+          "barrel:4",
+          "barrel:5",
+          "barrel:6",
+          "barrel:7",
+          "barrel:8",
+          "barrel:9",
+          "barrel:10",
+          "barrel:11",
+          "barrel:12",
+          "barrel:13",
+          "barrel:14",
+          "barrel:15"
+        ],
+        "mag": [
+          "mag:0",
+          "mag:1",
+          "mag:2",
+          "mag:3",
+          "mag:4",
+          "mag:5",
+          "mag:6",
+          "mag:7",
+          "mag:8",
+          "mag:9",
+          "mag:10",
+          "mag:11",
+          "mag:12",
+          "mag:13",
+          "mag:14",
+          "mag:15"
+        ],
+        "perk1": [
+          "perk1:0",
+          "perk1:1",
+          "perk1:2",
+          "perk1:3",
+          "perk1:4",
+          "perk1:5",
+          "perk1:6",
+          "perk1:7",
+          "perk1:8",
+          "perk1:9",
+          "perk1:10",
+          "perk1:11",
+          "perk1:12",
+          "perk1:13",
+          "perk1:14",
+          "perk1:15"
+        ],
+        "perk2": [
+          "perk2:0",
+          "perk2:1",
+          "perk2:2",
+          "perk2:3",
+          "perk2:4",
+          "perk2:5",
+          "perk2:6",
+          "perk2:7",
+          "perk2:8",
+          "perk2:9",
+          "perk2:10",
+          "perk2:11",
+          "perk2:12",
+          "perk2:13",
+          "perk2:14",
+          "perk2:15"
+        ],
+        "masterwork": [
+          "masterwork:0",
+          "masterwork:1",
+          "masterwork:2",
+          "masterwork:3",
+          "masterwork:4",
+          "masterwork:5",
+          "masterwork:6",
+          "masterwork:7",
+          "masterwork:8",
+          "masterwork:9",
+          "masterwork:10",
+          "masterwork:11",
+          "masterwork:12",
+          "masterwork:13",
+          "masterwork:14",
+          "masterwork:15"
+        ],
+        "origin": [
+          "origin:0"
+        ]
+      },
+      "provenance": {
+        "kind": "synthetic",
+        "note": "Math fixture only; does not certify any real weapon capacity."
+      }
+    },
+    "pve-ordering-bad-f-roll-s": {
+      "activity": "pve",
+      "categoryKey": "synthetic-category",
+      "tier": "S",
+      "rank": 1,
+      "rankBounds": [
+        1,
+        9
+      ],
+      "recommendations": {
+        "barrel": [
+          "barrel:1"
+        ],
+        "mag": [
+          "mag:1"
+        ],
+        "perk1": [
+          "perk1:1"
+        ],
+        "perk2": [
+          "perk2:1"
+        ],
+        "masterwork": [
+          "masterwork:1"
+        ],
+        "origin": [
+          "origin:1"
+        ]
+      },
+      "provenance": {
+        "kind": "synthetic",
+        "note": "Math fixture only; does not certify any real weapon capacity."
+      }
+    },
+    "pvp-ordering-perfect-f": {
+      "activity": "pvp",
+      "categoryKey": "synthetic-category",
+      "tier": "F",
+      "rank": 1,
+      "rankBounds": [
+        1,
+        9
+      ],
+      "recommendations": {
+        "barrel": [
+          "barrel:1"
+        ],
+        "mag": [
+          "mag:1"
+        ],
+        "perk1": [
+          "perk1:1"
+        ],
+        "perk2": [
+          "perk2:1"
+        ],
+        "masterwork": [
+          "masterwork:1"
+        ],
+        "origin": [
+          "origin:1"
+        ]
+      },
+      "provenance": {
+        "kind": "synthetic",
+        "note": "Math fixture only; does not certify any real weapon capacity."
+      }
+    },
+    "pvp-ordering-weak-c-roll-s": {
+      "activity": "pvp",
+      "categoryKey": "synthetic-category",
+      "tier": "S",
+      "rank": 9,
+      "rankBounds": [
+        1,
+        9
+      ],
+      "recommendations": {
+        "barrel": [
+          "barrel:0",
+          "barrel:1",
+          "barrel:2",
+          "barrel:3",
+          "barrel:4",
+          "barrel:5",
+          "barrel:6",
+          "barrel:7",
+          "barrel:8",
+          "barrel:9",
+          "barrel:10",
+          "barrel:11",
+          "barrel:12",
+          "barrel:13",
+          "barrel:14",
+          "barrel:15"
+        ],
+        "mag": [
+          "mag:0",
+          "mag:1",
+          "mag:2",
+          "mag:3",
+          "mag:4",
+          "mag:5",
+          "mag:6",
+          "mag:7",
+          "mag:8",
+          "mag:9",
+          "mag:10",
+          "mag:11",
+          "mag:12",
+          "mag:13",
+          "mag:14",
+          "mag:15"
+        ],
+        "perk1": [
+          "perk1:0",
+          "perk1:1",
+          "perk1:2",
+          "perk1:3",
+          "perk1:4",
+          "perk1:5",
+          "perk1:6",
+          "perk1:7",
+          "perk1:8",
+          "perk1:9",
+          "perk1:10",
+          "perk1:11",
+          "perk1:12",
+          "perk1:13",
+          "perk1:14",
+          "perk1:15"
+        ],
+        "perk2": [
+          "perk2:0",
+          "perk2:1",
+          "perk2:2",
+          "perk2:3",
+          "perk2:4",
+          "perk2:5",
+          "perk2:6",
+          "perk2:7",
+          "perk2:8",
+          "perk2:9",
+          "perk2:10",
+          "perk2:11",
+          "perk2:12",
+          "perk2:13",
+          "perk2:14",
+          "perk2:15"
+        ],
+        "masterwork": [
+          "masterwork:0",
+          "masterwork:1",
+          "masterwork:2",
+          "masterwork:3",
+          "masterwork:4",
+          "masterwork:5",
+          "masterwork:6",
+          "masterwork:7",
+          "masterwork:8",
+          "masterwork:9",
+          "masterwork:10",
+          "masterwork:11",
+          "masterwork:12",
+          "masterwork:13",
+          "masterwork:14",
+          "masterwork:15"
+        ],
+        "origin": [
+          "origin:0"
+        ]
+      },
+      "provenance": {
+        "kind": "synthetic",
+        "note": "Math fixture only; does not certify any real weapon capacity."
+      }
+    },
+    "pvp-ordering-good-s-roll-c": {
+      "activity": "pvp",
+      "categoryKey": "synthetic-category",
+      "tier": "C",
+      "rank": 9,
+      "rankBounds": [
+        1,
+        9
+      ],
+      "recommendations": {
+        "barrel": [
+          "barrel:0",
+          "barrel:1",
+          "barrel:2",
+          "barrel:3",
+          "barrel:4",
+          "barrel:5",
+          "barrel:6",
+          "barrel:7",
+          "barrel:8",
+          "barrel:9",
+          "barrel:10",
+          "barrel:11",
+          "barrel:12",
+          "barrel:13",
+          "barrel:14",
+          "barrel:15"
+        ],
+        "mag": [
+          "mag:0",
+          "mag:1",
+          "mag:2",
+          "mag:3",
+          "mag:4",
+          "mag:5",
+          "mag:6",
+          "mag:7",
+          "mag:8",
+          "mag:9",
+          "mag:10",
+          "mag:11",
+          "mag:12",
+          "mag:13",
+          "mag:14",
+          "mag:15"
+        ],
+        "perk1": [
+          "perk1:0",
+          "perk1:1",
+          "perk1:2",
+          "perk1:3",
+          "perk1:4",
+          "perk1:5",
+          "perk1:6",
+          "perk1:7",
+          "perk1:8",
+          "perk1:9",
+          "perk1:10",
+          "perk1:11",
+          "perk1:12",
+          "perk1:13",
+          "perk1:14",
+          "perk1:15"
+        ],
+        "perk2": [
+          "perk2:0",
+          "perk2:1",
+          "perk2:2",
+          "perk2:3",
+          "perk2:4",
+          "perk2:5",
+          "perk2:6",
+          "perk2:7",
+          "perk2:8",
+          "perk2:9",
+          "perk2:10",
+          "perk2:11",
+          "perk2:12",
+          "perk2:13",
+          "perk2:14",
+          "perk2:15"
+        ],
+        "masterwork": [
+          "masterwork:0",
+          "masterwork:1",
+          "masterwork:2",
+          "masterwork:3",
+          "masterwork:4",
+          "masterwork:5",
+          "masterwork:6",
+          "masterwork:7",
+          "masterwork:8",
+          "masterwork:9",
+          "masterwork:10",
+          "masterwork:11",
+          "masterwork:12",
+          "masterwork:13",
+          "masterwork:14",
+          "masterwork:15"
+        ],
+        "origin": [
+          "origin:0"
+        ]
+      },
+      "provenance": {
+        "kind": "synthetic",
+        "note": "Math fixture only; does not certify any real weapon capacity."
+      }
+    },
+    "pvp-ordering-bad-f-roll-s": {
+      "activity": "pvp",
+      "categoryKey": "synthetic-category",
+      "tier": "S",
+      "rank": 1,
+      "rankBounds": [
+        1,
+        9
+      ],
+      "recommendations": {
+        "barrel": [
+          "barrel:1"
+        ],
+        "mag": [
+          "mag:1"
+        ],
+        "perk1": [
+          "perk1:1"
+        ],
+        "perk2": [
+          "perk2:1"
+        ],
+        "masterwork": [
+          "masterwork:1"
+        ],
+        "origin": [
+          "origin:1"
+        ]
+      },
+      "provenance": {
+        "kind": "synthetic",
+        "note": "Math fixture only; does not certify any real weapon capacity."
+      }
+    }
+  },
+  "scoreCases": [
+    {
+      "id": "no-hesitation-first",
+      "source": "no-hesitation",
+      "owned": {
+        "barrel": [
+          "Full Bore"
+        ],
+        "mag": [
+          "Accurized Rounds"
+        ],
+        "perk1": [
+          "Physic"
+        ],
+        "perk2": [
+          "Chaos Reshaped"
+        ],
+        "masterwork": [
+          "Range"
+        ],
+        "origin": [
+          "Dealer's Choice"
+        ]
+      },
+      "originLegalSets": null,
+      "expected": {
+        "ceiling": 100.0,
+        "best": 100.0,
+        "omni": 95.9942778216259,
+        "quality": 1.0,
+        "coverage": 0.5994277821625889,
+        "allFirstChoices": true,
+        "fullCoverage": false,
+        "bestPerfectOverall": true,
+        "omniPerfectOverall": false
+      }
+    },
+    {
+      "id": "abyss-defiant-first",
+      "source": "abyss-defiant",
+      "owned": {
+        "barrel": [
+          "Arrowhead Brake"
+        ],
+        "mag": [
+          "Ricochet Rounds"
+        ],
+        "perk1": [
+          "Zen Moment"
+        ],
+        "perk2": [
+          "Kill Clip"
+        ],
+        "masterwork": [
+          "Stability"
+        ],
+        "origin": [
+          "Cursed Thrall"
+        ]
+      },
+      "originLegalSets": null,
+      "expected": {
+        "ceiling": 100,
+        "best": 100.0,
+        "omni": 94.93321682264069,
+        "quality": 1.0000000000000002,
+        "coverage": 0.4933216822640659,
+        "allFirstChoices": true,
+        "fullCoverage": false,
+        "bestPerfectOverall": true,
+        "omniPerfectOverall": false
+      }
+    },
+    {
+      "id": "age-old-bond-first",
+      "source": "age-old-bond",
+      "owned": {
+        "barrel": [
+          "Fluted Barrel"
+        ],
+        "mag": [
+          "Alloy Magazine"
+        ],
+        "perk1": [
+          "Repulsor Brace"
+        ],
+        "perk2": [
+          "Destabilizing Rounds"
+        ],
+        "masterwork": [
+          "Reload"
+        ],
+        "origin": [
+          "Explosive Pact"
+        ]
+      },
+      "originLegalSets": null,
+      "expected": {
+        "ceiling": 96.88888888888889,
+        "best": 96.88888888888889,
+        "omni": 93.18733786848072,
+        "quality": 1.0,
+        "coverage": 0.6179591836734695,
+        "allFirstChoices": true,
+        "fullCoverage": false,
+        "bestPerfectOverall": false,
+        "omniPerfectOverall": false
+      }
+    },
+    {
+      "id": "toil-and-trouble-first",
+      "source": "toil-and-trouble",
+      "owned": {
+        "barrel": [
+          "Barrel Shroud"
+        ],
+        "mag": [
+          "Assault Mag"
+        ],
+        "perk1": [
+          "Auto-Loading Holster"
+        ],
+        "perk2": [
+          "Full Auto Trigger System"
+        ],
+        "masterwork": [
+          "Handling"
+        ],
+        "origin": []
+      },
+      "originLegalSets": null,
+      "expected": {
+        "ceiling": 25.0,
+        "best": 25.0,
+        "omni": 25.0,
+        "quality": 1.0,
+        "coverage": 1.0,
+        "allFirstChoices": true,
+        "fullCoverage": true,
+        "bestPerfectOverall": false,
+        "omniPerfectOverall": false
+      }
+    },
+    {
+      "id": "ahab-char-first",
+      "source": "ahab-char",
+      "owned": {
+        "barrel": [
+          "Arrowhead Brake"
+        ],
+        "mag": [
+          "Ricochet Rounds"
+        ],
+        "perk1": [
+          "Perpetual Motion"
+        ],
+        "perk2": [
+          "Kill Clip"
+        ],
+        "masterwork": [
+          "Range"
+        ],
+        "origin": [
+          "Bray Legacy"
+        ]
+      },
+      "originLegalSets": null,
+      "expected": {
+        "ceiling": 78,
+        "best": 78.00000000000001,
+        "omni": 73.61059375352353,
+        "quality": 1.0000000000000002,
+        "coverage": 0.43725560942609093,
+        "allFirstChoices": true,
+        "fullCoverage": false,
+        "bestPerfectOverall": false,
+        "omniPerfectOverall": false
+      }
+    },
+    {
+      "id": "no-hesitation-second-traits",
+      "source": "no-hesitation",
+      "owned": {
+        "barrel": [
+          "Full Bore"
+        ],
+        "mag": [
+          "Accurized Rounds"
+        ],
+        "perk1": [
+          "Burning Ambition"
+        ],
+        "perk2": [
+          "Attrition Orbs"
+        ],
+        "masterwork": [
+          "Range"
+        ],
+        "origin": [
+          "Dealer's Choice"
+        ]
+      },
+      "originLegalSets": null,
+      "expected": {
+        "ceiling": 100.0,
+        "best": 97.2,
+        "omni": 93.35450670876085,
+        "quality": 0.972,
+        "coverage": 0.5874506708760853,
+        "allFirstChoices": false,
+        "fullCoverage": false,
+        "bestPerfectOverall": false,
+        "omniPerfectOverall": false
+      }
+    },
+    {
+      "id": "no-hesitation-no-mag",
+      "source": "no-hesitation",
+      "owned": {
+        "barrel": [
+          "Full Bore"
+        ],
+        "mag": [
+          "unlisted:mag"
+        ],
+        "perk1": [
+          "Physic"
+        ],
+        "perk2": [
+          "Chaos Reshaped"
+        ],
+        "masterwork": [
+          "Range"
+        ],
+        "origin": [
+          "Dealer's Choice"
+        ]
+      },
+      "originLegalSets": null,
+      "expected": {
+        "ceiling": 100.0,
+        "best": 88.00000000000001,
+        "omni": 83.9942778216259,
+        "quality": 0.8800000000000001,
+        "coverage": 0.47942778216258874,
+        "allFirstChoices": false,
+        "fullCoverage": false,
+        "bestPerfectOverall": false,
+        "omniPerfectOverall": false
+      }
+    },
+    {
+      "id": "no-hesitation-no-trait2",
+      "source": "no-hesitation",
+      "owned": {
+        "barrel": [
+          "Full Bore"
+        ],
+        "mag": [
+          "Accurized Rounds"
+        ],
+        "perk1": [
+          "Physic"
+        ],
+        "perk2": [
+          "unlisted:perk2"
+        ],
+        "masterwork": [
+          "Range"
+        ],
+        "origin": [
+          "Dealer's Choice"
+        ]
+      },
+      "originLegalSets": null,
+      "expected": {
+        "ceiling": 100.0,
+        "best": 65.00000000000001,
+        "omni": 63.2857142857143,
+        "quality": 0.6500000000000001,
+        "coverage": 0.47857142857142854,
+        "allFirstChoices": false,
+        "fullCoverage": false,
+        "bestPerfectOverall": false,
+        "omniPerfectOverall": false
+      }
+    },
+    {
+      "id": "no-hesitation-no-main-traits",
+      "source": "no-hesitation",
+      "owned": {
+        "barrel": [
+          "Full Bore"
+        ],
+        "mag": [
+          "Accurized Rounds"
+        ],
+        "perk1": [
+          "unlisted:perk1"
+        ],
+        "perk2": [
+          "unlisted:perk2"
+        ],
+        "masterwork": [
+          "Range"
+        ],
+        "origin": [
+          "Dealer's Choice"
+        ]
+      },
+      "originLegalSets": null,
+      "expected": {
+        "ceiling": 100.0,
+        "best": 30.0,
+        "omni": 30.000000000000004,
+        "quality": 0.3,
+        "coverage": 0.3,
+        "allFirstChoices": false,
+        "fullCoverage": false,
+        "bestPerfectOverall": false,
+        "omniPerfectOverall": false
+      }
+    },
+    {
+      "id": "no-hesitation-known-unlisted-masterwork",
+      "source": "no-hesitation",
+      "owned": {
+        "barrel": [
+          "Full Bore"
+        ],
+        "mag": [
+          "Accurized Rounds"
+        ],
+        "perk1": [
+          "Physic"
+        ],
+        "perk2": [
+          "Chaos Reshaped"
+        ],
+        "masterwork": [
+          "unlisted:masterwork"
+        ],
+        "origin": [
+          "Dealer's Choice"
+        ]
+      },
+      "originLegalSets": null,
+      "expected": {
+        "ceiling": 100.0,
+        "best": 94.0,
+        "omni": 89.9942778216259,
+        "quality": 0.9400000000000001,
+        "coverage": 0.5394277821625888,
+        "allFirstChoices": false,
+        "fullCoverage": false,
+        "bestPerfectOverall": false,
+        "omniPerfectOverall": false
+      }
+    },
+    {
+      "id": "no-hesitation-full-fixed-benchmark",
+      "source": "no-hesitation",
+      "owned": {
+        "barrel": [
+          "Full Bore"
+        ],
+        "mag": [
+          "Accurized Rounds"
+        ],
+        "perk1": [
+          "Physic",
+          "Burning Ambition"
+        ],
+        "perk2": [
+          "Chaos Reshaped",
+          "Attrition Orbs",
+          "Incandescent"
+        ],
+        "masterwork": [
+          "Range"
+        ],
+        "origin": [
+          "Dealer's Choice"
+        ]
+      },
+      "originLegalSets": null,
+      "expected": {
+        "ceiling": 100.0,
+        "best": 100.0,
+        "omni": 100.0,
+        "quality": 1.0,
+        "coverage": 1.0,
+        "allFirstChoices": true,
+        "fullCoverage": true,
+        "bestPerfectOverall": true,
+        "omniPerfectOverall": true
+      }
+    },
+    {
+      "id": "no-hesitation-only-two-trait2",
+      "source": "no-hesitation",
+      "owned": {
+        "barrel": [
+          "Full Bore"
+        ],
+        "mag": [
+          "Accurized Rounds"
+        ],
+        "perk1": [
+          "Physic",
+          "Burning Ambition"
+        ],
+        "perk2": [
+          "Chaos Reshaped",
+          "Attrition Orbs"
+        ],
+        "masterwork": [
+          "Range"
+        ],
+        "origin": [
+          "Dealer's Choice"
+        ]
+      },
+      "originLegalSets": null,
+      "expected": {
+        "ceiling": 100.0,
+        "best": 100.0,
+        "omni": 98.86878453038675,
+        "quality": 1.0,
+        "coverage": 0.8868784530386742,
+        "allFirstChoices": true,
+        "fullCoverage": false,
+        "bestPerfectOverall": true,
+        "omniPerfectOverall": false
+      },
+      "note": "Tier-5 target remains three when three are recommended; actual drop capacity does not lower it."
+    },
+    {
+      "id": "abyss-defiant-second-traits",
+      "source": "abyss-defiant",
+      "owned": {
+        "barrel": [
+          "Arrowhead Brake"
+        ],
+        "mag": [
+          "Ricochet Rounds"
+        ],
+        "perk1": [
+          "Heal Clip"
+        ],
+        "perk2": [
+          "Swashbuckler"
+        ],
+        "masterwork": [
+          "Stability"
+        ],
+        "origin": [
+          "Cursed Thrall"
+        ]
+      },
+      "originLegalSets": null,
+      "expected": {
+        "ceiling": 100,
+        "best": 97.28000000000002,
+        "omni": 92.36886774157178,
+        "quality": 0.9728000000000001,
+        "coverage": 0.4816867741571767,
+        "allFirstChoices": false,
+        "fullCoverage": false,
+        "bestPerfectOverall": false,
+        "omniPerfectOverall": false
+      }
+    },
+    {
+      "id": "abyss-defiant-no-mag",
+      "source": "abyss-defiant",
+      "owned": {
+        "barrel": [
+          "Arrowhead Brake"
+        ],
+        "mag": [
+          "unlisted:mag"
+        ],
+        "perk1": [
+          "Zen Moment"
+        ],
+        "perk2": [
+          "Kill Clip"
+        ],
+        "masterwork": [
+          "Stability"
+        ],
+        "origin": [
+          "Cursed Thrall"
+        ]
+      },
+      "originLegalSets": null,
+      "expected": {
+        "ceiling": 100,
+        "best": 86.00000000000001,
+        "omni": 81.61893110835496,
+        "quality": 0.8600000000000001,
+        "coverage": 0.42189311083549447,
+        "allFirstChoices": false,
+        "fullCoverage": false,
+        "bestPerfectOverall": false,
+        "omniPerfectOverall": false
+      }
+    },
+    {
+      "id": "abyss-defiant-no-trait2",
+      "source": "abyss-defiant",
+      "owned": {
+        "barrel": [
+          "Arrowhead Brake"
+        ],
+        "mag": [
+          "Ricochet Rounds"
+        ],
+        "perk1": [
+          "Zen Moment"
+        ],
+        "perk2": [
+          "unlisted:perk2"
+        ],
+        "masterwork": [
+          "Stability"
+        ],
+        "origin": [
+          "Cursed Thrall"
+        ]
+      },
+      "originLegalSets": null,
+      "expected": {
+        "ceiling": 100,
+        "best": 66.00000000000001,
+        "omni": 63.15918367346941,
+        "quality": 0.6600000000000001,
+        "coverage": 0.37591836734693884,
+        "allFirstChoices": false,
+        "fullCoverage": false,
+        "bestPerfectOverall": false,
+        "omniPerfectOverall": false
+      }
+    },
+    {
+      "id": "abyss-defiant-no-main-traits",
+      "source": "abyss-defiant",
+      "owned": {
+        "barrel": [
+          "Arrowhead Brake"
+        ],
+        "mag": [
+          "Ricochet Rounds"
+        ],
+        "perk1": [
+          "unlisted:perk1"
+        ],
+        "perk2": [
+          "unlisted:perk2"
+        ],
+        "masterwork": [
+          "Stability"
+        ],
+        "origin": [
+          "Cursed Thrall"
+        ]
+      },
+      "originLegalSets": null,
+      "expected": {
+        "ceiling": 100,
+        "best": 32.00000000000001,
+        "omni": 30.824489795918375,
+        "quality": 0.32000000000000006,
+        "coverage": 0.20244897959183675,
+        "allFirstChoices": false,
+        "fullCoverage": false,
+        "bestPerfectOverall": false,
+        "omniPerfectOverall": false
+      }
+    },
+    {
+      "id": "abyss-defiant-known-unlisted-masterwork",
+      "source": "abyss-defiant",
+      "owned": {
+        "barrel": [
+          "Arrowhead Brake"
+        ],
+        "mag": [
+          "Ricochet Rounds"
+        ],
+        "perk1": [
+          "Zen Moment"
+        ],
+        "perk2": [
+          "Kill Clip"
+        ],
+        "masterwork": [
+          "unlisted:masterwork"
+        ],
+        "origin": [
+          "Cursed Thrall"
+        ]
+      },
+      "originLegalSets": null,
+      "expected": {
+        "ceiling": 100,
+        "best": 94.00000000000001,
+        "omni": 88.93321682264069,
+        "quality": 0.9400000000000002,
+        "coverage": 0.4333216822640659,
+        "allFirstChoices": false,
+        "fullCoverage": false,
+        "bestPerfectOverall": false,
+        "omniPerfectOverall": false
+      }
+    },
+    {
+      "id": "abyss-defiant-full-fixed-benchmark",
+      "source": "abyss-defiant",
+      "owned": {
+        "barrel": [
+          "Arrowhead Brake",
+          "Chambered Compensator"
+        ],
+        "mag": [
+          "Ricochet Rounds",
+          "High-Caliber Rounds"
+        ],
+        "perk1": [
+          "Zen Moment",
+          "Heal Clip"
+        ],
+        "perk2": [
+          "Kill Clip",
+          "Swashbuckler",
+          "Binary Orbit"
+        ],
+        "masterwork": [
+          "Stability"
+        ],
+        "origin": [
+          "Cursed Thrall"
+        ]
+      },
+      "originLegalSets": null,
+      "expected": {
+        "ceiling": 100,
+        "best": 100.0,
+        "omni": 100.0,
+        "quality": 1.0000000000000002,
+        "coverage": 1.0000000000000002,
+        "allFirstChoices": true,
+        "fullCoverage": true,
+        "bestPerfectOverall": true,
+        "omniPerfectOverall": true
+      }
+    },
+    {
+      "id": "abyss-defiant-only-two-trait2",
+      "source": "abyss-defiant",
+      "owned": {
+        "barrel": [
+          "Arrowhead Brake",
+          "Chambered Compensator"
+        ],
+        "mag": [
+          "Ricochet Rounds",
+          "High-Caliber Rounds"
+        ],
+        "perk1": [
+          "Zen Moment",
+          "Heal Clip"
+        ],
+        "perk2": [
+          "Kill Clip",
+          "Swashbuckler"
+        ],
+        "masterwork": [
+          "Stability"
+        ],
+        "origin": [
+          "Cursed Thrall"
+        ]
+      },
+      "originLegalSets": null,
+      "expected": {
+        "ceiling": 100,
+        "best": 100.0,
+        "omni": 98.90110497237572,
+        "quality": 1.0000000000000002,
+        "coverage": 0.8901104972375691,
+        "allFirstChoices": true,
+        "fullCoverage": false,
+        "bestPerfectOverall": true,
+        "omniPerfectOverall": false
+      },
+      "note": "Tier-5 target remains three when three are recommended; actual drop capacity does not lower it."
+    },
+    {
+      "id": "synthetic-perfect",
+      "source": "synthetic-single",
+      "owned": {
+        "barrel": [
+          "barrel:1"
+        ],
+        "mag": [
+          "mag:1"
+        ],
+        "perk1": [
+          "perk1:1"
+        ],
+        "perk2": [
+          "perk2:1"
+        ],
+        "masterwork": [
+          "masterwork:1"
+        ],
+        "origin": [
+          "origin:1"
+        ]
+      },
+      "originLegalSets": null,
+      "expected": {
+        "ceiling": 100,
+        "best": 100.0,
+        "omni": 100.0,
+        "quality": 1.0,
+        "coverage": 1.0,
+        "allFirstChoices": true,
+        "fullCoverage": true,
+        "bestPerfectOverall": true,
+        "omniPerfectOverall": true
+      }
+    },
+    {
+      "id": "all-known-unlisted-is-zero",
+      "source": "synthetic-single",
+      "owned": {
+        "barrel": [
+          "unlisted:barrel"
+        ],
+        "mag": [
+          "unlisted:mag"
+        ],
+        "perk1": [
+          "unlisted:perk1"
+        ],
+        "perk2": [
+          "unlisted:perk2"
+        ],
+        "masterwork": [
+          "unlisted:masterwork"
+        ],
+        "origin": [
+          "unlisted:origin"
+        ]
+      },
+      "originLegalSets": null,
+      "expected": {
+        "ceiling": 100,
+        "best": 0.0,
+        "omni": 0.0,
+        "quality": 0.0,
+        "coverage": 0.0,
+        "allFirstChoices": false,
+        "fullCoverage": false,
+        "bestPerfectOverall": false,
+        "omniPerfectOverall": false
+      }
+    },
+    {
+      "id": "unknown-owned-masterwork",
+      "source": "synthetic-single",
+      "owned": {
+        "barrel": [
+          "barrel:1"
+        ],
+        "mag": [
+          "mag:1"
+        ],
+        "perk1": [
+          "perk1:1"
+        ],
+        "perk2": [
+          "perk2:1"
+        ],
+        "masterwork": null,
+        "origin": [
+          "origin:1"
+        ]
+      },
+      "originLegalSets": null,
+      "expected": {
+        "ceiling": 100,
+        "best": null,
+        "omni": null,
+        "quality": null,
+        "coverage": null,
+        "allFirstChoices": false,
+        "fullCoverage": false,
+        "bestPerfectOverall": false,
+        "omniPerfectOverall": false
+      }
+    },
+    {
+      "id": "wrong-column-zero-credit",
+      "source": "synthetic-single",
+      "owned": {
+        "barrel": [
+          "barrel:1"
+        ],
+        "mag": [
+          "mag:1"
+        ],
+        "perk1": [
+          "perk2:1"
+        ],
+        "perk2": [],
+        "masterwork": [
+          "masterwork:1"
+        ],
+        "origin": [
+          "origin:1"
+        ]
+      },
+      "originLegalSets": null,
+      "expected": {
+        "ceiling": 100,
+        "best": 30.0,
+        "omni": 30.000000000000004,
+        "quality": 0.3,
+        "coverage": 0.3,
+        "allFirstChoices": false,
+        "fullCoverage": false,
+        "bestPerfectOverall": false,
+        "omniPerfectOverall": false
+      }
+    },
+    {
+      "id": "duplicate-canonical-id-no-bonus",
+      "source": "synthetic-single",
+      "owned": {
+        "barrel": [
+          "barrel:1"
+        ],
+        "mag": [
+          "mag:1"
+        ],
+        "perk1": [
+          "perk1:1",
+          "perk1:1"
+        ],
+        "perk2": [
+          "perk2:1"
+        ],
+        "masterwork": [
+          "masterwork:1"
+        ],
+        "origin": [
+          "origin:1"
+        ]
+      },
+      "originLegalSets": null,
+      "expected": {
+        "ceiling": 100,
+        "best": 100.0,
+        "omni": 100.0,
+        "quality": 1.0,
+        "coverage": 1.0,
+        "allFirstChoices": true,
+        "fullCoverage": true,
+        "bestPerfectOverall": true,
+        "omniPerfectOverall": true
+      },
+      "note": "Adapters must separately prove that base/enhanced hashes resolve to this same ID."
+    },
+    {
+      "id": "explicit-none-origin-with-unlisted-trait2",
+      "source": "synthetic-explicit-none",
+      "owned": {
+        "barrel": [
+          "barrel:1"
+        ],
+        "mag": [
+          "mag:1"
+        ],
+        "perk1": [
+          "perk1:1"
+        ],
+        "perk2": [],
+        "masterwork": [
+          "masterwork:1"
+        ],
+        "origin": []
+      },
+      "originLegalSets": null,
+      "expected": {
+        "ceiling": 100,
+        "best": 63.541666666666664,
+        "omni": 63.54166666666667,
+        "quality": 0.6354166666666666,
+        "coverage": 0.6354166666666666,
+        "allFirstChoices": false,
+        "fullCoverage": false,
+        "bestPerfectOverall": false,
+        "omniPerfectOverall": false
+      }
+    },
+    {
+      "id": "unknown-source-origin-with-unlisted-trait2",
+      "source": "synthetic-unknown-source",
+      "owned": {
+        "barrel": [
+          "barrel:1"
+        ],
+        "mag": [
+          "mag:1"
+        ],
+        "perk1": [
+          "perk1:1"
+        ],
+        "perk2": [],
+        "masterwork": [
+          "masterwork:1"
+        ],
+        "origin": []
+      },
+      "originLegalSets": null,
+      "expected": {
+        "ceiling": 100,
+        "best": null,
+        "omni": null,
+        "quality": null,
+        "coverage": null,
+        "allFirstChoices": false,
+        "fullCoverage": false,
+        "bestPerfectOverall": false,
+        "omniPerfectOverall": false
+      }
+    },
+    {
+      "id": "synthetic-trait2-2-two-owned",
+      "source": "synthetic-trait2-2",
+      "owned": {
+        "barrel": [
+          "barrel:1"
+        ],
+        "mag": [
+          "mag:1"
+        ],
+        "perk1": [
+          "perk1:1"
+        ],
+        "perk2": [
+          "perk2:1",
+          "perk2:2"
+        ],
+        "masterwork": [
+          "masterwork:1"
+        ],
+        "origin": [
+          "origin:1"
+        ]
+      },
+      "originLegalSets": null,
+      "expected": {
+        "ceiling": 100,
+        "best": 100.0,
+        "omni": 100.0,
+        "quality": 1.0,
+        "coverage": 1.0,
+        "allFirstChoices": true,
+        "fullCoverage": true,
+        "bestPerfectOverall": true,
+        "omniPerfectOverall": true
+      }
+    },
+    {
+      "id": "synthetic-trait2-2-benchmark-owned",
+      "source": "synthetic-trait2-2",
+      "owned": {
+        "barrel": [
+          "barrel:1"
+        ],
+        "mag": [
+          "mag:1"
+        ],
+        "perk1": [
+          "perk1:1"
+        ],
+        "perk2": [
+          "perk2:1",
+          "perk2:2"
+        ],
+        "masterwork": [
+          "masterwork:1"
+        ],
+        "origin": [
+          "origin:1"
+        ]
+      },
+      "originLegalSets": null,
+      "expected": {
+        "ceiling": 100,
+        "best": 100.0,
+        "omni": 100.0,
+        "quality": 1.0,
+        "coverage": 1.0,
+        "allFirstChoices": true,
+        "fullCoverage": true,
+        "bestPerfectOverall": true,
+        "omniPerfectOverall": true
+      }
+    },
+    {
+      "id": "synthetic-trait2-3-two-owned",
+      "source": "synthetic-trait2-3",
+      "owned": {
+        "barrel": [
+          "barrel:1"
+        ],
+        "mag": [
+          "mag:1"
+        ],
+        "perk1": [
+          "perk1:1"
+        ],
+        "perk2": [
+          "perk2:1",
+          "perk2:2"
+        ],
+        "masterwork": [
+          "masterwork:1"
+        ],
+        "origin": [
+          "origin:1"
+        ]
+      },
+      "originLegalSets": null,
+      "expected": {
+        "ceiling": 100,
+        "best": 100.0,
+        "omni": 98.86878453038675,
+        "quality": 1.0,
+        "coverage": 0.8868784530386742,
+        "allFirstChoices": true,
+        "fullCoverage": false,
+        "bestPerfectOverall": true,
+        "omniPerfectOverall": false
+      }
+    },
+    {
+      "id": "synthetic-trait2-3-benchmark-owned",
+      "source": "synthetic-trait2-3",
+      "owned": {
+        "barrel": [
+          "barrel:1"
+        ],
+        "mag": [
+          "mag:1"
+        ],
+        "perk1": [
+          "perk1:1"
+        ],
+        "perk2": [
+          "perk2:1",
+          "perk2:2",
+          "perk2:3"
+        ],
+        "masterwork": [
+          "masterwork:1"
+        ],
+        "origin": [
+          "origin:1"
+        ]
+      },
+      "originLegalSets": null,
+      "expected": {
+        "ceiling": 100,
+        "best": 100.0,
+        "omni": 100.0,
+        "quality": 1.0,
+        "coverage": 1.0,
+        "allFirstChoices": true,
+        "fullCoverage": true,
+        "bestPerfectOverall": true,
+        "omniPerfectOverall": true
+      }
+    },
+    {
+      "id": "synthetic-trait2-4-two-owned",
+      "source": "synthetic-trait2-4",
+      "owned": {
+        "barrel": [
+          "barrel:1"
+        ],
+        "mag": [
+          "mag:1"
+        ],
+        "perk1": [
+          "perk1:1"
+        ],
+        "perk2": [
+          "perk2:1",
+          "perk2:2"
+        ],
+        "masterwork": [
+          "masterwork:1"
+        ],
+        "origin": [
+          "origin:1"
+        ]
+      },
+      "originLegalSets": null,
+      "expected": {
+        "ceiling": 100,
+        "best": 100.0,
+        "omni": 98.86878453038675,
+        "quality": 1.0,
+        "coverage": 0.8868784530386742,
+        "allFirstChoices": true,
+        "fullCoverage": false,
+        "bestPerfectOverall": true,
+        "omniPerfectOverall": false
+      }
+    },
+    {
+      "id": "synthetic-trait2-4-benchmark-owned",
+      "source": "synthetic-trait2-4",
+      "owned": {
+        "barrel": [
+          "barrel:1"
+        ],
+        "mag": [
+          "mag:1"
+        ],
+        "perk1": [
+          "perk1:1"
+        ],
+        "perk2": [
+          "perk2:1",
+          "perk2:2",
+          "perk2:3"
+        ],
+        "masterwork": [
+          "masterwork:1"
+        ],
+        "origin": [
+          "origin:1"
+        ]
+      },
+      "originLegalSets": null,
+      "expected": {
+        "ceiling": 100,
+        "best": 100.0,
+        "omni": 100.0,
+        "quality": 1.0,
+        "coverage": 1.0,
+        "allFirstChoices": true,
+        "fullCoverage": true,
+        "bestPerfectOverall": true,
+        "omniPerfectOverall": true
+      }
+    },
+    {
+      "id": "four-origins-perfect",
+      "source": "synthetic-origins-four",
+      "owned": {
+        "barrel": [
+          "barrel:1"
+        ],
+        "mag": [
+          "mag:1"
+        ],
+        "perk1": [
+          "perk1:1"
+        ],
+        "perk2": [
+          "perk2:1"
+        ],
+        "masterwork": [
+          "masterwork:1"
+        ],
+        "origin": [
+          "origin:1",
+          "origin:2",
+          "origin:3",
+          "Accelerated Assault"
+        ]
+      },
+      "originLegalSets": [
+        [
+          "origin:1",
+          "origin:2",
+          "origin:3",
+          "Accelerated Assault"
+        ]
+      ],
+      "expected": {
+        "ceiling": 100,
+        "best": 100.0,
+        "omni": 100.0,
+        "quality": 1.0,
+        "coverage": 1.0,
+        "allFirstChoices": true,
+        "fullCoverage": true,
+        "bestPerfectOverall": true,
+        "omniPerfectOverall": true
+      }
+    },
+    {
+      "id": "four-origins-only-three",
+      "source": "synthetic-origins-four",
+      "owned": {
+        "barrel": [
+          "barrel:1"
+        ],
+        "mag": [
+          "mag:1"
+        ],
+        "perk1": [
+          "perk1:1"
+        ],
+        "perk2": [
+          "perk2:1"
+        ],
+        "masterwork": [
+          "masterwork:1"
+        ],
+        "origin": [
+          "origin:1",
+          "origin:2",
+          "origin:3"
+        ]
+      },
+      "originLegalSets": [
+        [
+          "origin:1",
+          "origin:2",
+          "origin:3",
+          "Accelerated Assault"
+        ]
+      ],
+      "expected": {
+        "ceiling": 100,
+        "best": 100.0,
+        "omni": 99.90343671416598,
+        "quality": 1.0,
+        "coverage": 0.9903436714165967,
+        "allFirstChoices": true,
+        "fullCoverage": false,
+        "bestPerfectOverall": true,
+        "omniPerfectOverall": false
+      }
+    },
+    {
+      "id": "unknown-origin-maximum-best-still-rated",
+      "source": "synthetic-origins-four",
+      "owned": {
+        "barrel": [
+          "barrel:1"
+        ],
+        "mag": [
+          "mag:1"
+        ],
+        "perk1": [
+          "perk1:1"
+        ],
+        "perk2": [
+          "perk2:1"
+        ],
+        "masterwork": [
+          "masterwork:1"
+        ],
+        "origin": [
+          "origin:1",
+          "origin:2",
+          "origin:3",
+          "Accelerated Assault"
+        ]
+      },
+      "originLegalSets": null,
+      "expected": {
+        "ceiling": 100,
+        "best": 100.0,
+        "omni": null,
+        "quality": 1.0,
+        "coverage": null,
+        "allFirstChoices": true,
+        "fullCoverage": false,
+        "bestPerfectOverall": true,
+        "omniPerfectOverall": false
+      }
+    },
+    {
+      "id": "incompatible-origin-sets-do-not-union",
+      "source": "synthetic-origins-four",
+      "owned": {
+        "barrel": [
+          "barrel:1"
+        ],
+        "mag": [
+          "mag:1"
+        ],
+        "perk1": [
+          "perk1:1"
+        ],
+        "perk2": [
+          "perk2:1"
+        ],
+        "masterwork": [
+          "masterwork:1"
+        ],
+        "origin": [
+          "origin:1",
+          "origin:2"
+        ]
+      },
+      "originLegalSets": [
+        [
+          "origin:1",
+          "origin:2"
+        ],
+        [
+          "origin:3",
+          "Accelerated Assault"
+        ]
+      ],
+      "expected": {
+        "ceiling": 100,
+        "best": 100.0,
+        "omni": 100.0,
+        "quality": 1.0,
+        "coverage": 1.0,
+        "allFirstChoices": true,
+        "fullCoverage": true,
+        "bestPerfectOverall": true,
+        "omniPerfectOverall": true
+      }
+    },
+    {
+      "id": "invalid-origin-union-omni-unrated",
+      "source": "synthetic-origins-four",
+      "owned": {
+        "barrel": [
+          "barrel:1"
+        ],
+        "mag": [
+          "mag:1"
+        ],
+        "perk1": [
+          "perk1:1"
+        ],
+        "perk2": [
+          "perk2:1"
+        ],
+        "masterwork": [
+          "masterwork:1"
+        ],
+        "origin": [
+          "origin:1",
+          "origin:2",
+          "origin:3",
+          "Accelerated Assault"
+        ]
+      },
+      "originLegalSets": [
+        [
+          "origin:1",
+          "origin:2"
+        ],
+        [
+          "origin:3",
+          "Accelerated Assault"
+        ]
+      ],
+      "expected": {
+        "ceiling": 100,
+        "best": 100.0,
+        "omni": null,
+        "quality": 1.0,
+        "coverage": null,
+        "allFirstChoices": true,
+        "fullCoverage": false,
+        "bestPerfectOverall": true,
+        "omniPerfectOverall": false
+      }
+    },
+    {
+      "id": "legal-lower-priority-origin-set",
+      "source": "synthetic-origins-four",
+      "owned": {
+        "barrel": [
+          "barrel:1"
+        ],
+        "mag": [
+          "mag:1"
+        ],
+        "perk1": [
+          "perk1:1"
+        ],
+        "perk2": [
+          "perk2:1"
+        ],
+        "masterwork": [
+          "masterwork:1"
+        ],
+        "origin": [
+          "origin:3",
+          "Accelerated Assault"
+        ]
+      },
+      "originLegalSets": [
+        [
+          "origin:1",
+          "origin:2"
+        ],
+        [
+          "origin:3",
+          "Accelerated Assault"
+        ]
+      ],
+      "expected": {
+        "ceiling": 100,
+        "best": 99.744,
+        "omni": 99.74870204081633,
+        "quality": 0.99744,
+        "coverage": 0.9979102040816327,
+        "allFirstChoices": false,
+        "fullCoverage": false,
+        "bestPerfectOverall": false,
+        "omniPerfectOverall": false
+      }
+    },
+    {
+      "id": "pve-ordering-perfect-f",
+      "source": "pve-ordering-perfect-f",
+      "owned": {
+        "barrel": [
+          "barrel:1"
+        ],
+        "mag": [
+          "mag:1"
+        ],
+        "perk1": [
+          "perk1:1"
+        ],
+        "perk2": [
+          "perk2:1"
+        ],
+        "masterwork": [
+          "masterwork:1"
+        ],
+        "origin": [
+          "origin:1"
+        ]
+      },
+      "originLegalSets": null,
+      "expected": {
+        "ceiling": 25.0,
+        "best": 25.0,
+        "omni": 25.0,
+        "quality": 1.0,
+        "coverage": 1.0,
+        "allFirstChoices": true,
+        "fullCoverage": true,
+        "bestPerfectOverall": false,
+        "omniPerfectOverall": false
+      }
+    },
+    {
+      "id": "pve-ordering-weak-c-roll-s",
+      "source": "pve-ordering-weak-c-roll-s",
+      "owned": {
+        "barrel": [
+          "barrel:15"
+        ],
+        "mag": [],
+        "perk1": [
+          "perk1:15"
+        ],
+        "perk2": [],
+        "masterwork": [],
+        "origin": []
+      },
+      "originLegalSets": null,
+      "expected": {
+        "ceiling": 96.0,
+        "best": 37.153940923616325,
+        "omni": 34.83547176293076,
+        "quality": 0.3870202179543367,
+        "coverage": 0.14551301371625616,
+        "allFirstChoices": false,
+        "fullCoverage": false,
+        "bestPerfectOverall": false,
+        "omniPerfectOverall": false
+      }
+    },
+    {
+      "id": "pve-ordering-good-s-roll-c",
+      "source": "pve-ordering-good-s-roll-c",
+      "owned": {
+        "barrel": [],
+        "mag": [
+          "mag:15"
+        ],
+        "perk1": [
+          "perk1:15"
+        ],
+        "perk2": [
+          "perk2:15"
+        ],
+        "masterwork": [],
+        "origin": []
+      },
+      "originLegalSets": null,
+      "expected": {
+        "ceiling": 61.0,
+        "best": 45.020351865292845,
+        "omni": 42.18152877645208,
+        "quality": 0.7380385551687352,
+        "coverage": 0.2726577209325438,
+        "allFirstChoices": false,
+        "fullCoverage": false,
+        "bestPerfectOverall": false,
+        "omniPerfectOverall": false
+      }
+    },
+    {
+      "id": "pve-ordering-bad-f-roll-s",
+      "source": "pve-ordering-bad-f-roll-s",
+      "owned": {
+        "barrel": [
+          "barrel:1"
+        ],
+        "mag": [
+          "mag:1"
+        ],
+        "perk1": [],
+        "perk2": [],
+        "masterwork": [
+          "masterwork:1"
+        ],
+        "origin": [
+          "origin:1"
+        ]
+      },
+      "originLegalSets": null,
+      "expected": {
+        "ceiling": 100.0,
+        "best": 30.0,
+        "omni": 30.000000000000004,
+        "quality": 0.3,
+        "coverage": 0.3,
+        "allFirstChoices": false,
+        "fullCoverage": false,
+        "bestPerfectOverall": false,
+        "omniPerfectOverall": false
+      }
+    },
+    {
+      "id": "pvp-ordering-perfect-f",
+      "source": "pvp-ordering-perfect-f",
+      "owned": {
+        "barrel": [
+          "barrel:1"
+        ],
+        "mag": [
+          "mag:1"
+        ],
+        "perk1": [
+          "perk1:1"
+        ],
+        "perk2": [
+          "perk2:1"
+        ],
+        "masterwork": [
+          "masterwork:1"
+        ],
+        "origin": [
+          "origin:1"
+        ]
+      },
+      "originLegalSets": null,
+      "expected": {
+        "ceiling": 25.0,
+        "best": 25.000000000000007,
+        "omni": 25.000000000000007,
+        "quality": 1.0000000000000002,
+        "coverage": 1.0000000000000002,
+        "allFirstChoices": true,
+        "fullCoverage": true,
+        "bestPerfectOverall": false,
+        "omniPerfectOverall": false
+      }
+    },
+    {
+      "id": "pvp-ordering-weak-c-roll-s",
+      "source": "pvp-ordering-weak-c-roll-s",
+      "owned": {
+        "barrel": [
+          "barrel:15"
+        ],
+        "mag": [],
+        "perk1": [
+          "perk1:15"
+        ],
+        "perk2": [],
+        "masterwork": [],
+        "origin": []
+      },
+      "originLegalSets": null,
+      "expected": {
+        "ceiling": 96.0,
+        "best": 38.017986061374856,
+        "omni": 35.67144444534537,
+        "quality": 0.3960206881393214,
+        "coverage": 0.15158926980291704,
+        "allFirstChoices": false,
+        "fullCoverage": false,
+        "bestPerfectOverall": false,
+        "omniPerfectOverall": false
+      }
+    },
+    {
+      "id": "pvp-ordering-good-s-roll-c",
+      "source": "pvp-ordering-good-s-roll-c",
+      "owned": {
+        "barrel": [],
+        "mag": [
+          "mag:15"
+        ],
+        "perk1": [
+          "perk1:15"
+        ],
+        "perk2": [
+          "perk2:15"
+        ],
+        "masterwork": [],
+        "origin": []
+      },
+      "originLegalSets": null,
+      "expected": {
+        "ceiling": 61.0,
+        "best": 45.02035186529286,
+        "omni": 42.199635765884445,
+        "quality": 0.7380385551687354,
+        "coverage": 0.2756260798558813,
+        "allFirstChoices": false,
+        "fullCoverage": false,
+        "bestPerfectOverall": false,
+        "omniPerfectOverall": false
+      }
+    },
+    {
+      "id": "pvp-ordering-bad-f-roll-s",
+      "source": "pvp-ordering-bad-f-roll-s",
+      "owned": {
+        "barrel": [
+          "barrel:1"
+        ],
+        "mag": [
+          "mag:1"
+        ],
+        "perk1": [],
+        "perk2": [],
+        "masterwork": [
+          "masterwork:1"
+        ],
+        "origin": [
+          "origin:1"
+        ]
+      },
+      "originLegalSets": null,
+      "expected": {
+        "ceiling": 100.0,
+        "best": 32.00000000000001,
+        "omni": 32.000000000000014,
+        "quality": 0.32000000000000006,
+        "coverage": 0.32000000000000006,
+        "allFirstChoices": false,
+        "fullCoverage": false,
+        "bestPerfectOverall": false,
+        "omniPerfectOverall": false
+      }
+    }
+  ],
+  "rankCases": [
+    {
+      "id": "S-rank-1",
+      "tier": "S",
+      "rank": 1,
+      "rankBounds": [
+        1,
+        9
+      ],
+      "expected": 100.0
+    },
+    {
+      "id": "S-rank-5",
+      "tier": "S",
+      "rank": 5,
+      "rankBounds": [
+        1,
+        9
+      ],
+      "expected": 98.0
+    },
+    {
+      "id": "S-rank-9",
+      "tier": "S",
+      "rank": 9,
+      "rankBounds": [
+        1,
+        9
+      ],
+      "expected": 96.0
+    },
+    {
+      "id": "A-rank-1",
+      "tier": "A",
+      "rank": 1,
+      "rankBounds": [
+        1,
+        9
+      ],
+      "expected": 90.0
+    },
+    {
+      "id": "A-rank-5",
+      "tier": "A",
+      "rank": 5,
+      "rankBounds": [
+        1,
+        9
+      ],
+      "expected": 88.0
+    },
+    {
+      "id": "A-rank-9",
+      "tier": "A",
+      "rank": 9,
+      "rankBounds": [
+        1,
+        9
+      ],
+      "expected": 86.0
+    },
+    {
+      "id": "B-rank-1",
+      "tier": "B",
+      "rank": 1,
+      "rankBounds": [
+        1,
+        9
+      ],
+      "expected": 78.0
+    },
+    {
+      "id": "B-rank-5",
+      "tier": "B",
+      "rank": 5,
+      "rankBounds": [
+        1,
+        9
+      ],
+      "expected": 76.0
+    },
+    {
+      "id": "B-rank-9",
+      "tier": "B",
+      "rank": 9,
+      "rankBounds": [
+        1,
+        9
+      ],
+      "expected": 74.0
+    },
+    {
+      "id": "C-rank-1",
+      "tier": "C",
+      "rank": 1,
+      "rankBounds": [
+        1,
+        9
+      ],
+      "expected": 65.0
+    },
+    {
+      "id": "C-rank-5",
+      "tier": "C",
+      "rank": 5,
+      "rankBounds": [
+        1,
+        9
+      ],
+      "expected": 63.0
+    },
+    {
+      "id": "C-rank-9",
+      "tier": "C",
+      "rank": 9,
+      "rankBounds": [
+        1,
+        9
+      ],
+      "expected": 61.0
+    },
+    {
+      "id": "D-rank-1",
+      "tier": "D",
+      "rank": 1,
+      "rankBounds": [
+        1,
+        9
+      ],
+      "expected": 50.0
+    },
+    {
+      "id": "D-rank-5",
+      "tier": "D",
+      "rank": 5,
+      "rankBounds": [
+        1,
+        9
+      ],
+      "expected": 48.0
+    },
+    {
+      "id": "D-rank-9",
+      "tier": "D",
+      "rank": 9,
+      "rankBounds": [
+        1,
+        9
+      ],
+      "expected": 46.0
+    },
+    {
+      "id": "E-rank-1",
+      "tier": "E",
+      "rank": 1,
+      "rankBounds": [
+        1,
+        9
+      ],
+      "expected": 37.0
+    },
+    {
+      "id": "E-rank-5",
+      "tier": "E",
+      "rank": 5,
+      "rankBounds": [
+        1,
+        9
+      ],
+      "expected": 35.0
+    },
+    {
+      "id": "E-rank-9",
+      "tier": "E",
+      "rank": 9,
+      "rankBounds": [
+        1,
+        9
+      ],
+      "expected": 33.0
+    },
+    {
+      "id": "F-rank-1",
+      "tier": "F",
+      "rank": 1,
+      "rankBounds": [
+        1,
+        9
+      ],
+      "expected": 25.0
+    },
+    {
+      "id": "F-rank-5",
+      "tier": "F",
+      "rank": 5,
+      "rankBounds": [
+        1,
+        9
+      ],
+      "expected": 23.0
+    },
+    {
+      "id": "F-rank-9",
+      "tier": "F",
+      "rank": 9,
+      "rankBounds": [
+        1,
+        9
+      ],
+      "expected": 21.0
+    },
+    {
+      "id": "single-member",
+      "tier": "S",
+      "rank": 7,
+      "rankBounds": [
+        7,
+        7
+      ],
+      "expected": 100
+    },
+    {
+      "id": "missing-rank",
+      "tier": "B",
+      "rank": null,
+      "rankBounds": null,
+      "expected": 78
+    },
+    {
+      "id": "invalid-rank",
+      "tier": "S",
+      "rank": 11,
+      "rankBounds": [
+        1,
+        10
+      ],
+      "expected": null
+    },
+    {
+      "id": "invalid-tier",
+      "tier": "X",
+      "rank": 1,
+      "rankBounds": [
+        1,
+        1
+      ],
+      "expected": null
+    }
+  ],
+  "formatCases": [
+    {
+      "value": null,
+      "perfectOverall": false,
+      "precision": 0,
+      "expected": "—"
+    },
+    {
+      "value": null,
+      "perfectOverall": false,
+      "precision": 1,
+      "expected": "—"
+    },
+    {
+      "value": null,
+      "perfectOverall": false,
+      "precision": 2,
+      "expected": "—"
+    },
+    {
+      "value": 0,
+      "perfectOverall": false,
+      "precision": 0,
+      "expected": "0%"
+    },
+    {
+      "value": 0,
+      "perfectOverall": false,
+      "precision": 1,
+      "expected": "0.0%"
+    },
+    {
+      "value": 0,
+      "perfectOverall": false,
+      "precision": 2,
+      "expected": "0.00%"
+    },
+    {
+      "value": 80,
+      "perfectOverall": false,
+      "precision": 0,
+      "expected": "80%"
+    },
+    {
+      "value": 80,
+      "perfectOverall": false,
+      "precision": 1,
+      "expected": "80.0%"
+    },
+    {
+      "value": 80,
+      "perfectOverall": false,
+      "precision": 2,
+      "expected": "80.00%"
+    },
+    {
+      "value": 97.234,
+      "perfectOverall": false,
+      "precision": 0,
+      "expected": "97%"
+    },
+    {
+      "value": 97.234,
+      "perfectOverall": false,
+      "precision": 1,
+      "expected": "97.2%"
+    },
+    {
+      "value": 97.234,
+      "perfectOverall": false,
+      "precision": 2,
+      "expected": "97.23%"
+    },
+    {
+      "value": 99.6,
+      "perfectOverall": false,
+      "precision": 0,
+      "expected": "99%"
+    },
+    {
+      "value": 99.6,
+      "perfectOverall": false,
+      "precision": 1,
+      "expected": "99.6%"
+    },
+    {
+      "value": 99.6,
+      "perfectOverall": false,
+      "precision": 2,
+      "expected": "99.60%"
+    },
+    {
+      "value": 99.96,
+      "perfectOverall": false,
+      "precision": 0,
+      "expected": "99%"
+    },
+    {
+      "value": 99.96,
+      "perfectOverall": false,
+      "precision": 1,
+      "expected": "99.9%"
+    },
+    {
+      "value": 99.96,
+      "perfectOverall": false,
+      "precision": 2,
+      "expected": "99.96%"
+    },
+    {
+      "value": 99.996,
+      "perfectOverall": false,
+      "precision": 0,
+      "expected": "99%"
+    },
+    {
+      "value": 99.996,
+      "perfectOverall": false,
+      "precision": 1,
+      "expected": "99.9%"
+    },
+    {
+      "value": 99.996,
+      "perfectOverall": false,
+      "precision": 2,
+      "expected": "99.99%"
+    },
+    {
+      "value": 100,
+      "perfectOverall": false,
+      "precision": 0,
+      "expected": "99%"
+    },
+    {
+      "value": 100,
+      "perfectOverall": false,
+      "precision": 1,
+      "expected": "99.9%"
+    },
+    {
+      "value": 100,
+      "perfectOverall": false,
+      "precision": 2,
+      "expected": "99.99%"
+    },
+    {
+      "value": 100,
+      "perfectOverall": true,
+      "precision": 0,
+      "expected": "100%"
+    },
+    {
+      "value": 100,
+      "perfectOverall": true,
+      "precision": 1,
+      "expected": "100.0%"
+    },
+    {
+      "value": 100,
+      "perfectOverall": true,
+      "precision": 2,
+      "expected": "100.00%"
+    },
+    {
+      "value": 87.5,
+      "perfectOverall": false,
+      "precision": 0,
+      "expected": "88%"
+    },
+    {
+      "value": 87.45,
+      "perfectOverall": false,
+      "precision": 1,
+      "expected": "87.5%"
+    },
+    {
+      "value": 87.445,
+      "perfectOverall": false,
+      "precision": 2,
+      "expected": "87.45%"
+    }
+  ],
+  "orderingCases": [
+    {
+      "lower": "pve-ordering-perfect-f",
+      "higher": "pve-ordering-weak-c-roll-s",
+      "profiles": [
+        "best",
+        "omni"
+      ]
+    },
+    {
+      "lower": "pve-ordering-bad-f-roll-s",
+      "higher": "pve-ordering-good-s-roll-c",
+      "profiles": [
+        "best",
+        "omni"
+      ]
+    },
+    {
+      "lower": "pvp-ordering-perfect-f",
+      "higher": "pvp-ordering-weak-c-roll-s",
+      "profiles": [
+        "best",
+        "omni"
+      ]
+    },
+    {
+      "lower": "pvp-ordering-bad-f-roll-s",
+      "higher": "pvp-ordering-good-s-roll-c",
+      "profiles": [
+        "best",
+        "omni"
+      ]
+    }
+  ]
+}

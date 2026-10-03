@@ -1,0 +1,86 @@
+"""Generate the offline weapon identity index from Bungie's English item manifest.
+
+No network requests are made. Regenerate alongside the canonical hash registry.
+Shared intrinsic and armor enhancement families are intentionally excluded.
+"""
+import argparse
+import json
+from pathlib import Path
+import re
+
+parser = argparse.ArgumentParser(description=__doc__)
+parser.add_argument("manifest", type=Path)
+parser.add_argument("--version", required=True, help="Bungie manifest version")
+args = parser.parse_args()
+root = Path(__file__).resolve().parents[1]
+definitions = json.loads(args.manifest.read_text(encoding="utf-8"))
+
+categories = {
+    "barrels": "barrel", "scopes": "barrel", "tubes": "barrel",
+    "blades": "barrel", "bowstrings": "barrel", "hafts": "barrel",
+    "rails": "barrel", "v950.new.sword0.blades": "barrel",
+    "magazines": "mag", "magazines_gl": "mag", "batteries": "mag",
+    "guards": "mag", "arrows": "mag", "bolts": "mag",
+    "frames": "trait", "origins": "origin",
+}
+canonical_source = (root / "src/canonical-hashes.ts").read_text(encoding="utf-8")
+canonical_match = re.search(r"CANONICAL_PERK_HASHES[^=]*= (\{[^\n]*\});", canonical_source)
+if canonical_match is None:
+    raise ValueError("Cannot find the canonical perk registry")
+canonical = json.loads(canonical_match.group(1))
+
+names = {}
+for definition in definitions.values():
+    category = categories.get(definition.get("plug", {}).get("plugCategoryIdentifier"))
+    name = definition.get("displayProperties", {}).get("name", "")
+    if not category or not name:
+        continue
+    key = re.sub(r"\s+", " ", name.lower().strip())
+    names.setdefault(key, {}).setdefault(category, []).append(definition)
+
+hashes = {}
+resolved = {}
+for key, groups in sorted(names.items()):
+    resolved[key] = {}
+    for category, candidates in groups.items():
+        normal = [candidate for candidate in candidates
+                  if "Enhanced" not in candidate.get("itemTypeDisplayName", "")] or candidates
+        # Retain a valid canonical normal definition; choose deterministically otherwise.
+        preferred = next(
+            (candidate for candidate in normal if candidate["hash"] == canonical.get(key)),
+            min(normal, key=lambda candidate: candidate["hash"]),
+        )["hash"]
+        resolved[key][category] = preferred
+        for definition in candidates:
+            hashes[definition["hash"]] = [category, preferred]
+
+alias_candidates = {}
+for name, families in resolved.items():
+    key = re.sub("[^a-z0-9]", "", name)
+    for family, identity in families.items():
+        alias_candidates.setdefault(key, {}).setdefault(family, set()).add(identity)
+aliases = {}
+ambiguous = {}
+for key, families in alias_candidates.items():
+    unique = {family: next(iter(identities)) for family, identities in families.items()
+              if len(identities) == 1}
+    if unique:
+        aliases[key] = unique
+    conflicts = [family for family, identities in families.items() if len(identities) > 1]
+    if conflicts:
+        ambiguous[key] = conflicts
+
+output = (
+    "// Generated from Bungie InventoryItem definitions; exact weapon plug families only.\n"
+    f"// Manifest {args.version}. See docs/weapon-perk-identity.md.\n"
+    "export const WEAPON_PERK_NAMES: Record<string, Partial<Record<string, number>>> = "
+    + json.dumps(resolved, separators=(",", ":")) + ";\n"
+    "export const WEAPON_PERK_HASHES: Record<number, readonly [string, number]> = "
+    + json.dumps(hashes, separators=(",", ":")) + ";\n"
+    "export const WEAPON_PERK_ALIASES: Record<string, Partial<Record<string, number>>> = "
+    + json.dumps(aliases, separators=(",", ":")) + ";\n"
+    "export const WEAPON_PERK_AMBIGUOUS: Record<string, readonly string[]> = "
+    + json.dumps(ambiguous, separators=(",", ":")) + ";\n"
+)
+(root / "src/weapon-perk-identities.ts").write_text(output, encoding="utf-8")
+print(f"Indexed {len(hashes)} weapon definitions and {len(resolved)} names.")
