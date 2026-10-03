@@ -19,6 +19,7 @@ import { installInventorySortProvider, inventorySortItem, type InventorySortItem
 import { readScoreSettings, SCORE_SETTING_KEYS } from './score-config';
 import { parseOwnedSnapshot } from './score-owned';
 import { canonicalScoreHash } from './score-source';
+import { findVariantByOwnedOrigin } from './weapon-variant';
 import { evaluateCategoryPerks, type EvaluatedPerk, type AvailablePerk } from './perk-evaluation';
 import { evaluateOwnedActivity, clearScoreCache, scoreCacheStats, scoreInputSource } from './score-runtime';
 import { scorePresentation, scoreDetailsHtml, bindScoreDetails } from './score-presentation';
@@ -955,6 +956,9 @@ function findAegisWeapon(
 
   // 2. Multi-variant disambiguation (when 2+ variants exist for the base name)
   if (variants.length > 1) {
+    const originVariant = findVariantByOwnedOrigin(variants, perksMap);
+    if (originVariant) return originVariant;
+
     // Gather ALL perk names & text signals attached to this item (from perksMap, activeHashes, element text)
     const allItemPerkNames: string[] = [];
     if (perksMap) {

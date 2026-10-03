@@ -82,16 +82,17 @@ fixtures cover origin maxima, unknown data, incomplete values, and rounding belo
 
 ## Validation status
 
-TypeScript, the full unit suite, and all 192 score tests pass. This includes the
+TypeScript, the full unit suite, and all 194 score tests pass. This includes the
 4,000-roll independent arithmetic oracle, 486 default grade parity cases, 7,290
 custom grade/potential cases, normal/enhanced identity checks, slot and selected-state
 regressions, and crafted recipe exclusion. The generator was rerun against the cached
 manifest; the original 100-file source snapshot has no changes.
 
-Authenticated live verification and browser fixtures are pending the coordinated
-shared-slot handoff. Existing Lucky Shot and native-search ownership live evidence
-is recorded separately; those earlier passes do not establish this broader fix's
-fresh browser verification.
+The complete Chromium browser suite, native-search ownership fixture, and nine
+percent visibility/zoom cases pass. Compare and tooltip lifecycle checks passed
+again after the live variant correction. Production bundles and all three archives
+build successfully. The installed Playwright Firefox runtime failed to launch with
+`spawn UNKNOWN`; it did not provide compatibility evidence.
 
 The bundled source audit covers 889 PvE and 932 PvP rows. It resolves 3,647 and
 3,844 ranked recommendation slots, respectively. Existing unknown/uncertain source
@@ -110,3 +111,101 @@ Best/Omni activity comparisons retain their values or explicit unavailable state
 identified 30 regressions from literal Enhanced Battery/Enhanced Heatsink names; exact
 name resolution fixed them before staging. This is a replay of earlier authenticated
 captures, not a fresh live browser pass. The underlying formulas are unchanged.
+
+## Live variant regression
+
+The first fresh Chrome standard audit compared 1,189 activity evaluations for 622
+actual legendary instances. Percentages agreed with the independent arithmetic
+oracle, but one Vow Forbearance used the Onslaught PvP grade row. Both source rows
+omit version tags; the legacy raid heuristic chose the first untagged variant.
+The grade and tooltip resolver now prefers an unambiguous verified owned origin
+before legacy name/source heuristics. Regression cases cover Souldrinker identity,
+row order, localized names, wrong socket membership, and ambiguous origin matches.
+Fresh Chrome standard and beta verification now has zero grade discrepancies
+across 1,189 activity evaluations per channel. The affected Vow roll's PvP grade
+changes from F to C, using its actual Golden Tricorn and magazine choices.
+All failing and passing attempts restored the controlled settings.
+
+## Fresh Chrome evidence — October 3, 2026
+
+Chrome 154.0.8037.59 used the persistent signed-in testing profile. Standard DIM
+8.144.0 and beta 8.144.0.4905 ran at 2560 × 1305 CSS pixels, DPR 1.5, zoom 1,
+and the saved dark DIM-SUM theme. Each pass verified four foreground animation
+frames, both active extensions, and the new per-column socket metadata.
+
+Both channels captured 622 actual legendary instances. All 1,189 available source
+activity evaluations matched the independent Best/Omni arithmetic oracle (1e-9
+value tolerance) and the grade calculation using actual socket membership,
+selected state, and saved grade rules. Ratings remain available for 601 PvE and
+554 PvP instances. Remaining source, variant, and ownership gaps stay explicit.
+
+The 12-case Grades/Scores × Best/Omni × 0/1/2-decimal matrix preserved underlying
+letter grades and full percentage evaluations. Five numeric queries retained
+identical instance matches at every precision: >=90 (57), PvE >89.99 (28),
+PvP <=80 (483), unrated (183), and Omni (1). Representative Explosive Personality
+native popup details matched actual ownership and both percentage component
+calculations on both channels. Beta required an actual pointer click; its initial
+synthetic tile click did not open a popup and is not recorded as a details pass.
+
+Actual ownership checks cover 2,864 preview alternatives, 602 masterwork-level
+changes, 602 masterwork-type changes, and 34 crafted configurations per channel,
+with zero failures. Preview and masterwork-level changes preserve owned inputs;
+masterwork type changes invalidate them; crafted recipe pools are excluded.
+
+Lucky Shot on three Long Arm copies and Trench Barrel on three Perfect Paradox
+copies passed native comparisons on standard and beta. With DIM-SUM fonts on and
+off, pointer hover and keyboard focus show the verified enhanced trait hashes
+4170193963 and 2459015849, correct manifest icons, native weapon descriptions,
+and unchanged owned sockets. Eight hover observations add zero weapon-grade or
+percentage cache misses. Observed page requests include local assets and one
+analytics POST, with no scoring API request in those observation windows.
+This page observation does not monitor all background-extension traffic.
+
+### Performance
+
+The first alternating presentation run measured 176.4 ms for Grades and 240.0 ms
+for Scores on standard. Its 100 ms pause allowed display-switch work to overlap
+measurement. A follow-up waited for the UI to settle, checked foreground frames,
+warmed each mode, and reversed block order. It measured 24 vault scans per channel
+(12 per display), each covering 1,314 native facts. Every measured scan added zero
+weapon-grade or score cache misses.
+
+| Channel | Grades median | Scores median | Scores difference |
+| --- | ---: | ---: | ---: |
+| Standard | 146.4 ms | 150.7 ms | +3.0% |
+| Beta | 171.8 ms | 174.5 ms | +1.6% |
+
+These are full native evaluator scans in the current viewport, including response
+publication and rendering work. They are not a comparison against an older build
+or a pure formula benchmark. The settled repeats are below the 10% investigation
+threshold. The initial overlapping run remains recorded locally.
+
+### Preservation and remaining verification
+
+All owned test tabs and debugging attachments were closed. Controlled Aegis
+preferences were restored exactly, including removal of previously absent keys;
+queries and temporary font-theme attributes were restored. No inventory action
+changed owned selections. Chrome-only reloads used the existing helper with an
+ignored config that reads Aegis from the isolated `dist` directory. The shared
+configuration, extension paths/IDs, and manifest version remain unchanged.
+
+Every one of the 6,245 installed DIM-SUM files in each browser matches the pre-test
+hash snapshot. Its content hash remains
+`c5dc66ea2b3c4a206ac0e54802732bb4aaae8a19877cea244e011a649de76340`.
+All 28 reserved Zen Aegis files remain unchanged, and the original 100-file local
+source snapshot has no changes. No merge or release was performed.
+
+Chrome Aegis content hash:
+`ac45fab188cbae85b2601e3fd9fc7e245f4c920f76a90119419379d1d6f0f058`.
+Main-world content hash:
+`b3d665a3aa89a1c6e1a71bda7ca2c8df96a06d184914586e26685c81ff5800ad`.
+
+Fresh Zen verification of this broader revision remains pending. The outline chat
+closed its test clients after Zen tab initialization/creation timed out, and its
+remaining outline checks are reserved. The user has been asked to foreground the
+testing Zen window. Earlier Zen evidence belongs to the preceding revision.
+
+Private captures, screenshots, cache observations, and the settled timing results
+are retained in ignored `scratch/score-live/identity-*` files. They contain account
+instance identifiers and are excluded from the PR. Checked-in fixtures contain
+public definitions and modeled inputs, with no account identifiers.

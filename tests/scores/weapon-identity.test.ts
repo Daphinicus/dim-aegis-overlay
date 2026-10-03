@@ -4,6 +4,7 @@ import { getPerkHashFromEnglish, getPerkIcon, getLocalizedPerkName, updateLocali
 import { weaponPerkBaseHash } from '../../src/weapon-perk-identity';
 import { canonicalScoreHash, canonicalScorePerk, sourceScoreSlot } from '../../src/score-source';
 import { evaluateCategoryPerks } from '../../src/perk-evaluation';
+import { findVariantByOwnedOrigin } from '../../src/weapon-variant';
 import { readDimPerks } from '../../src/dim-item-input';
 import { computeGrade, evaluateCustomRoll, defaultRules } from '../../src/grading';
 import { evaluateWeaponScore } from '../../src/score-model';
@@ -152,4 +153,19 @@ it('matches an independent Best/Omni calculation over 4,000 deterministic owned 
     expect(result.best.perfectOverall).toBe(ceiling===100&&first);
     expect(result.omni.perfectOverall).toBe(ceiling===100&&first&&full);
   }
+});
+
+describe('owned origin variant selection',()=>{
+  const onslaught:any={name:'Forbearance (Onslaught Variant)',origin:'Indomitability',source:'Onslaught'};
+  const vow:any={name:'Forbearance (Vow of the Disciple Variant)',origin:'Souldrinker',source:'Vow of the Disciple Raid'};
+  it('selects actual Vow Forbearance when both source rows omit version tags',()=>{
+    const map={3363267119:{name:'localized origin',icon:'',slots:['origin'] as any}};
+    expect(findVariantByOwnedOrigin([onslaught,vow],map)).toBe(vow);
+    expect(findVariantByOwnedOrigin([vow,onslaught],map)).toBe(vow);
+  });
+  it('does not use source labels, wrong socket membership, or ambiguous origin matches',()=>{
+    expect(findVariantByOwnedOrigin([onslaught,vow],{2054520291:{name:'Souldrinker',icon:'',slots:['perk1']}})).toBeNull();
+    expect(findVariantByOwnedOrigin([onslaught,vow],{3363267119:{name:'Souldrinker',icon:'',slots:['perk1']}})).toBeNull();
+    expect(findVariantByOwnedOrigin([vow,{...vow,name:'another version'}],{3363267119:{name:'localized',icon:'',slots:['origin']}})).toBeNull();
+  });
 });
