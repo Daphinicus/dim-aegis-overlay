@@ -180,7 +180,7 @@ publication and rendering work. They are not a comparison against an older build
 or a pure formula benchmark. The settled repeats are below the 10% investigation
 threshold. The initial overlapping run remains recorded locally.
 
-### Preservation and remaining verification
+### Chrome preservation before the Zen handoff
 
 All owned test tabs and debugging attachments were closed. Controlled Aegis
 preferences were restored exactly, including removal of previously absent keys;
@@ -200,15 +200,87 @@ Chrome Aegis content hash:
 Main-world content hash:
 `b3d665a3aa89a1c6e1a71bda7ca2c8df96a06d184914586e26685c81ff5800ad`.
 
-Fresh Zen verification of this broader revision remains pending. The outline chat
-closed its test clients after Zen tab initialization/creation timed out, and its
-remaining outline checks are reserved. The user has been asked to foreground the
-testing Zen window. Earlier Zen evidence belongs to the preceding revision.
-Until that handoff completes, the ordinary reload shortcut still reads the older
-reserved Zen Aegis directory and can restage that older build into Chrome. The
-private Chrome-only config retains the new build without changing shared defaults.
-Complete the Zen installation/handoff before using the ordinary Aegis reload
-shortcut for this revision.
+The coordinated Zen follow-up below completes verification of this revision and
+updates the shared installed Aegis source used by the ordinary reload shortcut.
+
+## Fresh Zen evidence — October 3, 2026
+
+After the outline chat completed its live checks and closed its clients, Zen
+1.22.3b ran signed-in standard DIM 8.144.0 and beta 8.144.0.4905 at
+1064 × 1826 CSS pixels, DPR 1, and zoom 1. Both channels delivered four focused,
+visible animation frames and exposed the new per-column socket metadata.
+
+Zen's saved stat-badge style uses a single activity. The first audit incorrectly
+expected Both-mode result fields while retaining that style. Matching Chrome's
+classic badge style resolved the test setup; no grade calculation change was
+needed. All attempts restored the original style and controlled preferences.
+
+Both channels captured 622 legendary instances and passed all 1,189 source
+activity grade checks and independent Best/Omni arithmetic comparisons (1e-9
+tolerance). Rated counts match Chrome: 601 PvE and 554 PvP. Each channel passed
+the 12-case display/profile/precision matrix and the same five precision-independent
+numeric searches. Actual ownership checks passed 2,864 preview alternatives,
+602 masterwork-level changes, 602 type changes, and 34 crafted configurations
+per channel. Native Explosive Personality details matched exact ownership and
+both percentage component calculations; standard and beta screenshots were
+inspected.
+
+Percent symbols passed eight On/Off/On cases across Best/Omni, precision 0/2,
+and Both activity mode. Hiding the suffix removes its visible space while keeping
+canonical labels, full percentage text, raw score attributes, and colors unchanged.
+The saved Off preference persisted in a fresh DIM context. On/Off screenshots were
+inspected at DPR 1. The existing Chrome menu-control pass covers the actual
+Scoring popup; Zen's visibility and persistence pass used preference writes.
+
+Zen's automation protocol rejected navigation to the extension popup with
+`unsupported operation`. The existing temporary token-protected testing bridge
+provided allowlisted preference writes and read-only source access. It was removed
+after exact settings restoration; stock Aegis was reloaded with the existing
+helper before the native comparison and final activation checks. No browser
+security preference was changed.
+
+Stock Lucky Shot/Long Arm and Trench Barrel/Perfect Paradox comparisons each
+used three owned rolls on standard and beta. DIM-SUM fonts On/Off, pointer hover,
+and keyboard focus showed the correct enhanced hashes 4170193963 and 2459015849,
+manifest trait icons, native weapon descriptions, and unchanged selections.
+Eight hover observations added zero grade or score cache misses. Zen page
+network traffic was not captured in these checks.
+
+### Zen performance
+
+The same settled, warmed vault-scan procedure used 24 scans per pass,
+12 per display, covering 1,314 facts per scan. Every measured scan retained
+its grade and score cache-miss counts. Standard was repeated with reversed
+block order after its first pass exceeded the 10% investigation threshold.
+
+| Channel/run | Grades median | Scores median | Scores difference |
+| --- | ---: | ---: | ---: |
+| Standard, first | 179.0 ms | 206.5 ms | +15.4% |
+| Standard, reversed repeat | 185.5 ms | 199.0 ms | +7.3% |
+| Beta | 189.5 ms | 200.5 ms | +5.8% |
+
+The first standard result remains part of the evidence. The repeated result is
+below the investigation threshold, but these variable timings do not establish
+a consistent sub-10% difference in Zen. These are full evaluator/response/rendering
+scans on the current build, not an older-build comparison or a pure arithmetic
+benchmark. No additional formula evaluation or cache-miss regression was observed.
+
+### Final preservation and cleanup
+
+All 6,245 DIM-SUM files in each browser match the post-outline handoff snapshot;
+the content hash remains `c5dc66ea2b3c4a206ac0e54802732bb4aaae8a19877cea244e011a649de76340`.
+The original 100-file local source snapshot has no changes. Stable extension
+paths and IDs, sign-in, saved databases, and controlled preferences are preserved.
+Queries and temporary font attributes were restored, and all owned tabs, input
+actions, and debugging sessions were closed. The Chrome relay was not restarted.
+
+Chrome and Zen now have the same stock Aegis content and main-world hashes listed
+above. The ordinary reload helper's stable Zen source contains this revision,
+so its Chrome staging no longer reads the preceding Aegis build. Final stock
+activation on both Zen hosts verified Aegis, DIM-SUM, four foreground frames,
+1,314 facts, the original PvE activity, and no temporary testing bridge.
+The browser/build slot was released to the outline chat. No merge or release
+was performed.
 
 Private captures, screenshots, cache observations, and the settled timing results
 are retained in ignored `scratch/score-live/identity-*` files. They contain account
