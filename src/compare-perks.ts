@@ -295,7 +295,10 @@ export function initComparePerks(options: {
     attribute(state.name, 'data-aegis-perk-status', selected?.status || 'other');
     attribute(state.name, 'title', null);
     if (!overview) property(socket, '--aegis-slot-rows', `var(--aegis-${slot}-rows, 1)`);
-    const enhancements = options.getEnhancedToNormal?.() || {};
+    const enhancements = Object.fromEntries(Object.entries(options.getEnhancedToNormal?.() || {}).filter(([enhanced, normal]) => {
+      const base = weaponPerkBaseHash(Number(enhanced), slot);
+      return base !== null && base === weaponPerkBaseHash(normal, slot);
+    }));
     const enhancedColumn = owned.some(perk => !!enhancements[perk.hash]) || native.some(node => !!node.querySelector('svg > path[fill="#eade8b"]'));
     const normalToEnhanced = new Map(Object.entries(enhancements).map(([enhanced, normal]) => [normal, Number(enhanced)]));
     const missingHash = (perk: { hash?: number; name: string }) => {

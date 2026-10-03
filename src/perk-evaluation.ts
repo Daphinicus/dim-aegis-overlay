@@ -49,7 +49,10 @@ export function evaluateCategoryPerks(
 
     const matchesRec = (p: AvailablePerk) => {
       if (p.slots && !p.slots.includes(slot)) return false;
-      if (recHash) return matchesWeaponPerk(enhancedToNormalMap[p.hash] || p.hash, recHash, slot, p.slots);
+      if (recHash) {
+        const identity = weaponPerkBaseHash(p.hash) !== null ? p.hash : enhancedToNormalMap[p.hash] || p.hash;
+        return matchesWeaponPerk(identity, recHash, slot, p.slots);
+      }
       // Unknown recommendation text must not match a different plug through fuzzy names.
       return false;
     };

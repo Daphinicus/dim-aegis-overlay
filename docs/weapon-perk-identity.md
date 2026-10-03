@@ -68,7 +68,8 @@ semantics. Wishlist and custom grade rules remain available.
 
 Owned hashes normalize within their original weapon family instead of passing through
 a global name. A barrel cannot become trait credit through the name Trench Barrel.
-Invalid bridge slot/hash combinations remain unknown. Valid existing numerical IDs
+Invalid bridge slot/hash combinations remain unknown. A stale runtime enhanced map
+cannot replace a verified definition with a different perk or socket family. Valid existing numerical IDs
 are retained, including enhanced barrel and origin representatives, so verified origin
 benchmarks keep their identities. Source revisions include a socket-identity version
 to prevent reuse of results prepared with the old identity policy.
@@ -81,7 +82,7 @@ fixtures cover origin maxima, unknown data, incomplete values, and rounding belo
 
 ## Validation status
 
-TypeScript, the full unit suite, and all 191 score tests pass. This includes the
+TypeScript, the full unit suite, and all 192 score tests pass. This includes the
 4,000-roll independent arithmetic oracle, 486 default grade parity cases, 7,290
 custom grade/potential cases, normal/enhanced identity checks, slot and selected-state
 regressions, and crafted recipe exclusion. The generator was rerun against the cached

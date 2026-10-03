@@ -3,7 +3,7 @@ import type { ScoreActivity, ScoreSource, ScoreSlot, SourceSlot } from './score-
 import { SCORE_SLOTS } from './score-config';
 import { getPerkHashFromEnglish } from './hash-translator';
 import categoryRecovery from '../data/score-weapon-categories.json';
-import { weaponPerkScoreHash, type WeaponPerkSlot } from './weapon-perk-identity';
+import { weaponPerkBaseHash, weaponPerkScoreHash, type WeaponPerkSlot } from './weapon-perk-identity';
 
 const categoryNames: Record<string, string> = categoryRecovery;
 // Exact spellings used in the source sheets, verified against Bungie's English identities.
@@ -38,7 +38,9 @@ export function canonicalScorePerk(name: string, slot?: WeaponPerkSlot): string 
 export function canonicalScoreHash(hash: number, enhanced: Record<number, number> | ScoreSlot = {}, slot?: ScoreSlot): string | null {
   if (typeof enhanced === 'string') { slot = enhanced; enhanced = {}; }
   if (slot === 'masterwork') return null;
-  const base = weaponPerkScoreHash(enhanced[hash] ?? hash, slot);
+  // Runtime enhancement maps may be stale. A verified plug keeps its original identity.
+  const identity = weaponPerkBaseHash(hash) !== null ? hash : enhanced[hash] ?? hash;
+  const base = weaponPerkScoreHash(identity, slot);
   return base ? `perk:${base}` : null;
 }
 const statAliases: Record<string, string> = { 'reload speed': 'reload', 'projectile speed': 'velocity', 'cooling efficiency': 'heat efficiency' };

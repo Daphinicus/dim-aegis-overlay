@@ -104,6 +104,16 @@ describe('grade and score input agreement',()=>{
     expect(evaluateCategoryPerks('None (Has access to Stocks instead)',available,perksMap,'barrel')).toEqual([]);
     expect(evaluateCategoryPerks('Trench Barrel, Lucky Shot',available,perksMap,'perk2')).toHaveLength(2);
   });
+  it('keeps verified identities when runtime enhanced mappings are stale',()=>{
+    const stale={2459015849:2054520291,806159697:2360754333};
+    expect(canonicalScoreHash(2459015849,stale,'perk2')).toBe('perk:2360754333');
+    expect(canonicalScoreHash(806159697,stale,'perk2')).toBeNull();
+    expect(canonicalScoreHash(806159697,stale,'barrel')).toBe('perk:806159697');
+    const map={2459015849:{name:'localized',icon:'/x.png'}};
+    const available=[{hash:2459015849,...map[2459015849],active:true,slots:['perk2'] as const}];
+    expect(evaluateCategoryPerks('Trench Barrel',available as any,map,'perk2',stale)[0].status).toBe('active');
+    expect(evaluateCategoryPerks('Lucky Shot',available as any,map,'perk2',stale)[0].status).toBe('missing');
+  });
   it('awards enhanced trait credit only in its actual slot; invalid bridge hashes stay unknown',()=>{
     const map={2459015849:{name:'localized',icon:'/x.png'}};
     expect(evaluateCategoryPerks('Trench Barrel',[{hash:2459015849,...map[2459015849],active:true,slots:['perk2']}],map,'perk2')[0].status).toBe('active');
