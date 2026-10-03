@@ -422,3 +422,81 @@ All owned tabs, CDP attachments, and BiDi sessions close before the explicit
 handoff to the scrolling chat. Its existing Chrome target and shared relay
 remain available at its request. Stable installation paths, extension IDs,
 sign-in, and saved preferences are preserved. PR #1 remains a draft.
+
+
+## Percentage-symbol sizing — October 2, 2026
+
+Application commit: `8a4888e33c6bd1731e18397361f894a99c55f834`.
+Percent symbols now use `font-size: .55em`, a shared baseline, and inherited
+score color in the shared Aegis formatter and DIM-SUM delegated tile labels.
+The full percentage remains in plain text and accessible labels; raw values,
+precision, copying, grade labels, and the faded unavailable dash are unchanged.
+The portable three-file DIM-SUM companion patch is
+[score-percent-dimsum.patch](score-percent-dimsum.patch). It was applied as
+narrow hunks alongside the latest primary and canonical shared source.
+
+The 55% ratio follows the user's requested hierarchy.
+[Google's percentage guidance](https://developers.google.com/style/numbers#percentages)
+supports keeping the numeral and sign together without a space.
+[W3C's resize-text guidance](https://www.w3.org/WAI/WCAG22/Understanding/resize-text.html)
+supports text enlargement; relative units keep this symbol proportional.
+Neither reference prescribes a 55% ratio or baseline alignment.
+
+Validation includes 175 score tests, TypeScript, production build, and a
+Chromium typography fixture: 12/20/32 px parents, 0/50/100 and unavailable,
+at 100/125/150/200% zoom (36 symbol assertions). Size ratio, baseline, inherited
+color, and complete plain percentage text pass. Screenshots were inspected.
+These checks do not establish complete WCAG conformance. The attempted local
+headless Firefox launch returned spawn UNKNOWN; authenticated Zen checks below
+provide the Firefox compatibility evidence.
+
+The latest DIM-SUM candidate passes TypeScript, build, generated-style checks,
+and all 107 integration roles on captured standard 8.143.0 and beta
+8.143.0.4890. The channel runner resumes standard from compare-stat-bars after
+copying the required real ItemStat and Motion audit fixtures, then runs beta.
+The initial beta hover-frame raster endpoint reports a seam at 2x/96 ms; an
+unchanged rerun of that endpoint and the remaining beta checks passes. That
+fixture loads neither the changed percentage renderer nor its styles. Initial
+receipts and resumed logs are retained rather than replaced with a clean-only
+record. Percentage tile-renderer assertions pass on both captured channels.
+
+Authenticated follow-up order is Chrome standard, Chrome beta, Zen standard,
+then Zen beta. Chrome is 154.0.8037.59 at 2560 × 1305 / DPR 1.5; Zen is 1.22.3b
+at 1064 × 1826 / DPR 1. Each supplies 12 visible, focused animation frames.
+Each completes 18 combinations (72 total): Best/Omni, precision 0/1/2, and
+PvE/PvP/Both. Checks cover 729 rendered weapon labels in single activity and
+1,458 in Both, including mixed rated/unavailable labels. Numerical suffixes
+compute to 0.55 of their parent, align to the baseline, and inherit its color.
+Plain labels remain complete. All four vault screenshots were inspected.
+These counts describe rendered labels, not full-inventory score coverage.
+
+Grades and exact original saved preferences restore on all targets. The first
+Zen standard attempt checks delegated labels after 300 ms and sees 642 queued
+percent labels, despite no remaining core score spans. The unchanged product
+passes after the harness waits for both renderers to settle: standard
+673 ms, beta 877 ms. Both first and settled receipts are retained.
+This typography follow-up does not repeat the original ownership, search,
+comparison-interaction, popup-interaction, or performance matrix.
+
+The temporary Zen preference bridge is removed; official stock Aegis reloads
+and independent activation checks pass in Chrome and Zen with 1,314 native
+facts each, the inventory provider, and DIM-SUM active. Normal dist and both
+installed Aegis bundles match. content.js is
+`44a38cf31fff86363c06759ea7fbb64b58be247138383609e8b83f36156a630a`;
+popup.js is `104e3121b1ab3e7e489f85abc1521e41afe9cc96c31d245bb6eb0bf22b5f28f3`.
+Background and main-world bundles are unchanged. DIM-SUM has 6,245 files per
+browser; only tile-bridge.js and its three stylesheets change. Its content.js
+remains Shader build
+`029db24a4068c253b72b896d150b322affaf47fc87400939d49e8f319da3c59b`;
+tile-bridge.js is
+`ac0bd706d8586060919634c23ee402b9d0eaf738655758252875ac5e723bac6a`.
+All 6,241 other DIM-SUM files per browser are preserved. The original Aegis
+checkout still matches its initial 100-file local source snapshot. Stable
+installation paths, extension IDs, sign-in, and saved settings are preserved.
+
+All owned tabs, attachments, and BiDi sessions close; the shared relay stops
+before the explicit handoff to the Compare chat. No equipment writes occur.
+Private receipts, screenshots, fixture results, preservation hashes, and
+reload logs are retained in ignored scratch/score-live with the percent prefix.
+The typography audit in both shared DIM-SUM source copies records this scoped
+unit role. PR #1 remains a draft; no merge or release is performed.
