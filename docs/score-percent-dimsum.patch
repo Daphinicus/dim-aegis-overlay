@@ -23,7 +23,7 @@ index 70395f6..f8c4986 100644
    letter-spacing: 0; white-space: nowrap; z-index: 5;
    transform: scale(var(--dimsum-grade-scale, 1)); transform-origin: left center;
  }
-+.dimsum-grade-percent { font-size: .55em; line-height: 1; vertical-align: baseline; }
++.dimsum-grade-percent { font-size: .65em; line-height: 1; vertical-align: baseline; }
  .dimsum-tile-upgrade { display: inline-grid; place-items: center; flex: none; width: 9px; height: 9px; font: 700 8px/1 sans-serif; border: 1px solid #c5ffd4; border-radius: 50%; color: white; background: #28b758; }
  .dimsum-tile-lock {
    /* The detail gradient covers the corner; native Power stays above both. */
@@ -39,7 +39,7 @@ index 17ac972..e4fdf71 100644
 +    await page.waitForFunction(() => document.querySelector('#late .dimsum-tile-grade').textContent === '✦ 94.23% / —');
 +    assert.equal(await page.locator('#late .dimsum-grade-percent').count(), 1, 'Only rated percent symbols receive secondary sizing');
 +    const percent = await page.locator('#late .dimsum-grade-percent').evaluate(n => ({ ratio: parseFloat(getComputedStyle(n).fontSize) / parseFloat(getComputedStyle(n.parentElement).fontSize), align: getComputedStyle(n).verticalAlign, color: getComputedStyle(n).color }));
-+    assert.ok(Math.abs(percent.ratio - .55) < .001, 'Percent symbol scales with its score');
++    assert.ok(Math.abs(percent.ratio - .65) < .001, 'Percent symbol scales with its score');
 +    assert.equal(percent.align, 'baseline'); assert.equal(percent.color, 'rgb(18, 58, 188)');
 +    assert.equal(await page.locator('#late .dimsum-grade-value').last().evaluate(n => getComputedStyle(n).color), 'rgba(218, 232, 242, 0.4)', 'Unavailable ink remains faded');
      await page.evaluate(() => {

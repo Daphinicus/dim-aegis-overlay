@@ -6142,7 +6142,7 @@ button.aegis-perk-layout-toggle { position: static; flex-shrink: 0; }
 .aegis-badge.aegis-score.aegis-badge-split { padding: 0 !important; }
 .aegis-score .aegis-split-half { min-width: 0; width: auto; padding-inline: 4px; }
 .aegis-score-value { font-variant-numeric: tabular-nums; }
-.aegis-score-percent { font-size: .55em; line-height: 1; vertical-align: baseline; }
+.aegis-score-percent { font-size: .65em; line-height: 1; vertical-align: baseline; }
 .aegis-score-details {
   color: #d8dee9;
   font-size: 11px;
