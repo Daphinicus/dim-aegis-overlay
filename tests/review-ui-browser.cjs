@@ -55,10 +55,34 @@ const assert=require('node:assert/strict');const fs=require('node:fs');const pat
     }
     assert.equal(await page.evaluate(()=>writes.length),0);await page.locator('.aegis-inline-search').focus();await page.keyboard.press('Control+A');const copied=await page.locator('.aegis-inline-search').evaluate(el=>{const event=new ClipboardEvent('copy',{clipboardData:new DataTransfer(),bubbles:true,cancelable:true});el.dispatchEvent(event);return event.clipboardData.getData('text/plain');});assert.equal(copied,raw);
     await page.evaluate(()=>{stopEditor();review.setLanguage('en');});
-    const metrics=[];
+    const metrics=[];let tooltipCase='setup';
+    // Each case starts from an anchor hover. Leaving the preceding card at its
+    // old pointer coordinates is a real dismissal, not a placement regression.
+    const showFromAnchor=async(left,top=443)=>{
+      await page.evaluate(({left,top})=>{review.hideTooltip();const target=document.getElementById('item');target.style.left=left+'px';target.style.top=top+'px';},{left,top});
+      await page.locator('#item').hover();
+      await page.evaluate(()=>review.show(document.getElementById('item')));
+      await page.locator('#aegis-hover-tooltip').waitFor({state:'visible'});
+      assert.equal(await page.locator('.aegis-score-details').getAttribute('open'),null,'new tooltip starts collapsed');
+    };
+    const openScoreDetails=async()=>{
+      await page.locator('.aegis-score-details summary').click();
+      assert.equal(await page.locator('.aegis-score-details').evaluate(el=>el.open),true,tooltipCase+': native click opens disclosure');
+      assert.equal(await page.locator('#aegis-hover-tooltip').isVisible(),true,tooltipCase+': disclosure tooltip remains visible');
+    };
+    await page.evaluate(()=>{
+      window.reviewTooltipEvents=[];window.reviewTooltipPointer=null;
+      document.addEventListener('mousemove',event=>{window.reviewTooltipPointer={x:event.clientX,y:event.clientY};});
+      for(const type of ['mouseenter','mouseleave'])document.addEventListener(type,event=>{
+        if(!['item','aegis-hover-tooltip'].includes(event.target.id))return;
+        const card=document.getElementById('aegis-hover-tooltip');reviewTooltipEvents.push({type,target:event.target.id,related:event.relatedTarget?.id||event.relatedTarget?.nodeName||null,at:performance.now(),hidden:card?.classList.contains('hidden'),rect:card?.getBoundingClientRect().toJSON()});
+      },true);
+    });
+    try{
     for(const motion of ['no-preference','reduce'])for(const forced of ['none','active'])for(const side of ['right','left']){
-      await page.emulateMedia({reducedMotion:motion,forcedColors:forced});await page.evaluate(side=>{const target=document.getElementById('item');target.style.left=side==='right'?'30px':'1010px';review.show(target);},side);
-      await page.locator('.aegis-score-details summary').click();await page.waitForFunction(()=>{const r=document.querySelector('#aegis-hover-tooltip').getBoundingClientRect();return r.bottom<=window.innerHeight-11;});
+      tooltipCase=side+' / motion='+motion+' / forced-colors='+forced;console.log('Tooltip case: '+tooltipCase);
+      await page.emulateMedia({reducedMotion:motion,forcedColors:forced});await showFromAnchor(side==='right'?30:1010);
+      await openScoreDetails();await page.waitForFunction(()=>{const r=document.querySelector('#aegis-hover-tooltip').getBoundingClientRect();return r.bottom<=window.innerHeight-11;});
       const rect=await page.locator('#aegis-hover-tooltip').boundingBox();assert.ok(rect.y>=12 && rect.y+rect.height<=757);const copy=await page.locator('.aegis-copy-score-details').boundingBox();assert.ok(copy.y+copy.height<=757);metrics.push({motion,forced,side,rect,copy});
       await page.screenshot({path:path.join(evidence,`tooltip-${side}-${motion}-${forced}.png`)});
       await page.evaluate(()=>{const details=document.querySelector('.aegis-score-details');const long=document.createElement('p');long.textContent='oversized content '.repeat(500);details.insertBefore(long,details.lastElementChild);});
@@ -66,8 +90,18 @@ const assert=require('node:assert/strict');const fs=require('node:fs');const pat
       await page.locator('.aegis-copy-score-details').focus();await page.waitForFunction(()=>document.querySelector('.aegis-copy-score-details').getBoundingClientRect().bottom<=window.innerHeight-11);assert.equal(await page.locator('#aegis-hover-tooltip').evaluate(el=>getComputedStyle(el).overflowY),'auto');
       await page.evaluate(()=>review.hideTooltip());assert.equal(await page.evaluate(()=>activeReviewResizeObservers),0,'hide releases geometry observer');assert.equal(await page.locator('#aegis-hover-tooltip').isVisible(),false);
     }
-    await page.setViewportSize({width:450,height:300});await page.evaluate(()=>{const target=document.getElementById('item');target.style.left='350px';target.style.top='180px';review.show(target);});await page.locator('.aegis-score-details summary').click();await page.waitForFunction(()=>document.querySelector('#aegis-hover-tooltip').getBoundingClientRect().bottom<=289);await page.screenshot({path:path.join(evidence,'tooltip-narrow.png')});
+    tooltipCase='narrow 450x300';console.log('Tooltip case: '+tooltipCase);await page.setViewportSize({width:450,height:300});await showFromAnchor(350,180);await openScoreDetails();await page.waitForFunction(()=>document.querySelector('#aegis-hover-tooltip').getBoundingClientRect().bottom<=289);await page.screenshot({path:path.join(evidence,'tooltip-narrow.png')});
     await page.evaluate(()=>document.getElementById('item').remove());await page.waitForFunction(()=>activeReviewResizeObservers===0);assert.equal(await page.locator('#aegis-hover-tooltip').isVisible(),false,'removed anchor hides tooltip');await page.evaluate(()=>review.hideTooltip());fs.writeFileSync(path.join(evidence,'tooltip-geometry.json'),JSON.stringify(metrics,null,2));
+    }catch(error){
+      const state=await page.evaluate(()=>{
+        const card=document.getElementById('aegis-hover-tooltip'),summary=card?.querySelector('summary'),details=card?.querySelector('details');
+        const geometry=el=>el?{rect:el.getBoundingClientRect().toJSON(),display:getComputedStyle(el).display,visibility:getComputedStyle(el).visibility,classes:el.className,scrollTop:el.scrollTop,scrollHeight:el.scrollHeight,clientHeight:el.clientHeight}:null;
+        return {card:geometry(card),summary:geometry(summary),anchor:geometry(document.getElementById('item')),open:details?.open,active:document.activeElement?.outerHTML,pointer:window.reviewTooltipPointer,events:window.reviewTooltipEvents,viewport:{width:innerWidth,height:innerHeight,scrollX,scrollY},observers:window.activeReviewResizeObservers};
+      });
+      console.error('Tooltip failure case: '+tooltipCase+' '+JSON.stringify(state));
+      fs.writeFileSync(path.join(evidence,'tooltip-failure.json'),JSON.stringify({case:tooltipCase,message:error.message,state},null,2));
+      await page.screenshot({path:path.join(evidence,'tooltip-failure.png')});throw error;
+    }
     assert.deepEqual(errors,[]);console.log('PASS A06/A07/A11/A12/A13: real keyboard, six-language AX state and mounted chips, raw copy, automatic modal, both tooltip sides, oversized scroll, reduced motion, forced colors, narrow viewport.');
   }finally{await browser.close();}
 })().catch(error=>{console.error(error);process.exitCode=1;});
