@@ -1,3 +1,4 @@
+import { canonicalLightggGrade, normalizeLightggData } from './external-text';
 /**
  * DIM Aegis Overlay - Light.gg Content Script (ISOLATED world)
  *
@@ -25,29 +26,22 @@ let completionTimer: ReturnType<typeof setTimeout> | null = null;
 /**
  * Merges a grades map into chrome.storage.local and updates the count.
  */
-function saveGrades(grades: Record<string, string>, source: string) {
-  const count = Object.keys(grades).length;
-  if (count === 0) return;
-
-  chrome.storage.local.get('lightggData', (res) => {
-    const existing = res.lightggData || {};
-    let changed = false;
-    
-    for (const [id, grade] of Object.entries(grades)) {
-      if (existing[id] !== grade) {
-        existing[id] = grade;
-        changed = true;
+let pendingSaves: Promise<void> = Promise.resolve();
+function saveGrades(raw: Record<string, string>, source: string) {
+  const grades = normalizeLightggData(raw);
+  if (!Object.keys(grades).length) return;
+  const save = new Promise<void>(resolve => {
+    chrome.runtime.sendMessage({ action: 'saveLightggGrades', grades }, response => {
+      if (chrome.runtime.lastError || !response?.success) {
+        console.warn('[DIM Aegis Overlay LGG] Grade save failed', chrome.runtime.lastError?.message || response?.error);
+      } else {
+        totalGradesFound = response.count;
+        console.log(`[DIM Aegis Overlay LGG] [${source}] Total cached: ${totalGradesFound}`);
       }
-    }
-
-    if (!changed) return;
-
-    const total = Object.keys(existing).length;
-    chrome.storage.local.set({ lightggData: existing, lightggLastSync: Date.now() }, () => {
-      console.log(`[DIM Aegis Overlay LGG] [${source}] Saved ${count} new/updated grades. Total cached: ${total}`);
-      totalGradesFound = total;
+      resolve();
     });
   });
+  pendingSaves = Promise.all([pendingSaves, save]).then(() => {});
 }
 
 /**
@@ -58,14 +52,14 @@ function signalCompletion() {
   if (completionSignaled) return;
   completionSignaled = true;
   console.log('[DIM Aegis Overlay LGG] Signaling completion to background script.');
-  chrome.storage.local.set({ lightggSyncStatus: 'done', lightggLastSync: Date.now() });
+  void pendingSaves.then(() => chrome.storage.local.set({ lightggSyncStatus: 'done', lightggLastSync: Date.now() }));
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Strategy 1: Listen for grades from the MAIN world API interceptor
 // ─────────────────────────────────────────────────────────────────────────────
 document.addEventListener('__aegis_lgg_grades__', (e: Event) => {
-  const { grades, source } = (e as CustomEvent).detail as { grades: Record<string, string>; source: string };
+  const { grades, source } = (e as CustomEvent).detail || {};
   if (grades && Object.keys(grades).length > 0) {
     apiGradesReceived = true;
     saveGrades(grades, `api-intercept:${source}`);
@@ -157,7 +151,8 @@ function scrapeLightGGGrades(): Record<string, string> {
     }
 
     if (grade) {
-      gradesMap[instanceId] = grade;
+      const canonical = canonicalLightggGrade(grade);
+      if (canonical) gradesMap[instanceId] = canonical;
     }
   }
 

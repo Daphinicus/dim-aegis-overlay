@@ -76,6 +76,8 @@ export function compareGrades(itemGrade: string, queryStr: string): boolean {
     return compareGrades(equippedPart, queryStr) || compareGrades(potentialPart, queryStr);
   }
 
+  // Empty or unavailable values are not ratings and must never compare as zero.
+  if (!/^(?:[sabcdef][+-]?){1,2}$/.test(normalizedGrade)) return false;
   const isArmor = normalizedGrade.includes('/');
   const isTwoTier = !isArmor && (normalizedGrade.length > 2 || (normalizedGrade.length === 2 && !normalizedGrade.endsWith('+') && !normalizedGrade.endsWith('-')));
   const rollGradePart = isTwoTier ? normalizedGrade.substring(1) : normalizedGrade;
@@ -192,8 +194,8 @@ export function matchesAegisArgument(targetQuery: string, data: AegisSearchData,
       isMatch = false;
     } else {
       const isSplit = grade.includes('|');
-      const pvePart = rollGradeDisplay(result?.pveGrade || (isSplit ? grade.split('|')[0] : ''));
-      const pvpPart = rollGradeDisplay(result?.pvpGrade || (isSplit ? grade.split('|')[1] : ''));
+      const pvePart = rollGradeDisplay(result?.pveGrade || (isSplit ? grade.split('|')[0] : context.mode === 'pve' ? grade : ''));
+      const pvpPart = rollGradeDisplay(result?.pvpGrade || (isSplit ? grade.split('|')[1] : context.mode === 'pvp' ? grade : ''));
 
       const weaponRank = sheetW?.tier || '';
       const perkRank = isSplit ? '' : rollGradeDisplay(grade);

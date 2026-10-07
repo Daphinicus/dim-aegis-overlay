@@ -13,8 +13,8 @@ function load(name) {
 }
 const { parseAegisArgument, matchesAegisArgument: match, compareGrades, finalizeSearchGrade, aegisQuery, compactSearchData } = load('aegis-search');
 const context = { mode: 'pve', chase: false };
-// Captured from the pre-integration DOM matcher. The intentional exception is
-// unrated items: rating queries must not include these in native bulk actions.
+// Captured from the pre-integration DOM matcher, with A02 activity-grade corrections.
+// Unrated items must not enter native bulk actions through rating comparisons.
 for (const fixture of JSON.parse(fs.readFileSync(path.join(__dirname, 'fixtures/aegis-search-parity.json'), 'utf8'))) {
   for (const [query, expected] of Object.entries(fixture.expected)) {
     const unratedRatingQuery = !fixture.data.result.grade && !/^(?:(?:s|source):|(?:shopping|shop|priority)(?::|$)|chase$|bis$|bestinclass$)/.test(query);

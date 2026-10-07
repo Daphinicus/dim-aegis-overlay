@@ -1,3 +1,4 @@
+import { initLanguageCombobox, initChangelogModal } from './popup-accessibility';
 import { refreshOptionDescriptions } from './compact-options';
 import { resolveActivityMode } from './activity-mode';
 import { updateOptionsPreview, renderOptionsPreview } from './options-preview';
@@ -20,6 +21,13 @@ const DEFAULT_URL =
   'https://raw.githubusercontent.com/charlesxcaliber/DIMAegisWeaponWishlist/main/MrCharlesWishlist_MRB_PPC2.txt';
 
 document.addEventListener('DOMContentLoaded', () => {
+  const changelogModal = document.getElementById('changelog-modal')!;
+  const changelog = initChangelogModal(changelogModal, () => {
+    chrome.storage.local.set({ lastSeenChangelogVersion: chrome.runtime.getManifest().version });
+  });
+  document.getElementById('open-changelog-btn')?.addEventListener('click', changelog.show);
+  document.getElementById('changelog-close-btn')?.addEventListener('click', changelog.hide);
+  document.getElementById('changelog-ack-btn')?.addEventListener('click', changelog.hide);
   const refreshGradeLanguage = initGradeSettings();
   const urlInput = document.getElementById('wishlist-url') as HTMLInputElement;
   const syncBtn = document.getElementById('sync-button') as HTMLButtonElement;
@@ -94,10 +102,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Auto-show Changelog Modal once for new version updates
         const currentVer = chrome.runtime.getManifest().version;
         if (res.lastSeenChangelogVersion !== currentVer) {
-          const changelogModal = document.getElementById('changelog-modal');
-          if (changelogModal) {
-            changelogModal.classList.remove('hidden');
-          }
+          changelog.show();
         }
 
         // Handle Extension Update warning banner
@@ -173,6 +178,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         const langOptions = document.querySelectorAll('#aegis-language-options .aegis-combobox-option');
         langOptions.forEach(opt => {
+          opt.setAttribute('aria-selected', String(opt.getAttribute('data-value') === langVal));
           if (opt.getAttribute('data-value') === langVal) {
             opt.classList.add('selected');
           } else {
@@ -234,6 +240,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ]) {
           document.getElementById(id)?.querySelectorAll<HTMLButtonElement>('button').forEach(button => {
             button.classList.toggle('active', button.dataset.value === value);
+            button.setAttribute('aria-pressed', String(button.dataset.value === value));
             button.disabled = !scoreAvailable && (id !== 'aegis-rating-display-segmented' || button.dataset.value === 'scores');
           });
         }
@@ -570,42 +577,10 @@ document.addEventListener('DOMContentLoaded', () => {
     );
   }
 
-  // Handle Language dropdown toggle and selection
   const langDropdown = document.getElementById('aegis-language-dropdown');
-  const langMenu = document.getElementById('aegis-language-menu');
-  if (langDropdown && langMenu) {
-    langDropdown.addEventListener('click', (e) => {
-      const target = e.target as HTMLElement;
-      const option = target.closest('.aegis-combobox-option') as HTMLElement;
-      if (option) {
-        const val = option.getAttribute('data-value');
-        if (val) {
-          chrome.storage.local.set({ aegisLanguage: val }, () => {
-            langDropdown.classList.remove('active');
-            langMenu.classList.add('hidden');
-            updateUI();
-          });
-        }
-      } else {
-        const isHidden = langMenu.classList.contains('hidden');
-        if (isHidden) {
-          langDropdown.classList.add('active');
-          langMenu.classList.remove('hidden');
-        } else {
-          langDropdown.classList.remove('active');
-          langMenu.classList.add('hidden');
-        }
-      }
-    });
-
-    // Dismiss language menu when clicking outside
-    document.addEventListener('click', (e) => {
-      if (!langDropdown.contains(e.target as Node)) {
-        langDropdown.classList.remove('active');
-        langMenu.classList.add('hidden');
-      }
-    });
-  }
+  if (langDropdown) initLanguageCombobox(langDropdown, value => {
+    chrome.storage.local.set({ aegisLanguage: value }, updateUI);
+  });
 
   for (const [id, key] of [
     ['aegis-rating-display-segmented', 'aegisRatingDisplay'],
@@ -1243,34 +1218,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   }
-
-  // --- Changelog Modal Handlers ---
-  const changelogModal = document.getElementById('changelog-modal') as HTMLDivElement | null;
-  const openChangelogBtn = document.getElementById('open-changelog-btn') as HTMLButtonElement | null;
-  const changelogCloseBtn = document.getElementById('changelog-close-btn') as HTMLButtonElement | null;
-  const changelogAckBtn = document.getElementById('changelog-ack-btn') as HTMLButtonElement | null;
-
-  const showChangelog = () => {
-    if (changelogModal) changelogModal.classList.remove('hidden');
-  };
-
-  const hideChangelog = () => {
-    if (changelogModal) changelogModal.classList.add('hidden');
-    const currentVersion = chrome.runtime.getManifest().version;
-    chrome.storage.local.set({ lastSeenChangelogVersion: currentVersion });
-  };
-
-  if (openChangelogBtn) openChangelogBtn.addEventListener('click', showChangelog);
-  if (changelogCloseBtn) changelogCloseBtn.addEventListener('click', hideChangelog);
-  if (changelogAckBtn) changelogAckBtn.addEventListener('click', hideChangelog);
-  if (changelogModal) {
-    changelogModal.addEventListener('click', (e) => {
-      if (e.target === changelogModal) {
-        hideChangelog();
-      }
-    });
-  }
-
 
   // Listen for storage updates in real-time
   chrome.storage.onChanged.addListener((_changes, namespace) => {

@@ -49,7 +49,8 @@ describe('official weapon identities', () => {
       expect(getPerkHashFromEnglish(name,'perk2')).toBeNull();
     }
     expect(canonicalScorePerk('Enhanced Incandescent','perk2')).toBe(canonicalScorePerk('Incandescent','perk2'));
-    expect(canonicalScorePerk('Enhanced Fluted Barrel Barrel','barrel')).toBe(canonicalScorePerk('Fluted Barrel','barrel'));
+    // A made-up enhancement prefix cannot turn a component alias into a verified plug.
+    expect(canonicalScorePerk('Enhanced Fluted Barrel Barrel','barrel')).toBeNull();
   });
   it('preserves Hailstorm and Hail Storm as different exact traits',()=>{
     updateLocalizedRegistries(Object.fromEntries([2041229079,2000464223].map(hash=>[hash,{name:defs[hash].displayProperties.name,icon:defs[hash].displayProperties.icon}])));

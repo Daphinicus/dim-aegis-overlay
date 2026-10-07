@@ -323,7 +323,9 @@ function parseWeaponRows(rows, categoryName, weapons, variants, categories) {
     if (!variants[baseNormalized]) {
       variants[baseNormalized] = [];
     }
-    if (!variants[baseNormalized].some(v => v.name === weaponName)) {
+    if (!variants[baseNormalized].some(v => v.sourceRowId && weaponData.sourceRowId
+      ? v.sourceRowId === weaponData.sourceRowId
+      : [v.categoryKey, v.name, v.versionTag, v.frame].join('|') === [weaponData.categoryKey, weaponData.name, weaponData.versionTag, weaponData.frame].join('|'))) {
       variants[baseNormalized].push(weaponData);
     }
 

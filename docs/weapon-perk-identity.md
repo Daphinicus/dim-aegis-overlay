@@ -286,3 +286,64 @@ Private captures, screenshots, cache observations, and the settled timing result
 are retained in ignored `scratch/score-live/identity-*` files. They contain account
 instance identifiers and are excluded from the PR. Checked-in fixtures contain
 public definitions and modeled inputs, with no account identifiers.
+## October 7 review corrections: enhancement links and duplicate editions
+
+The offline generator now consumes the checked-in `data/trait-to-enhanced-trait.json`
+from DIM's public `src/data/d2/trait-to-enhanced-trait.json` table. The cached local
+DIM source supplied 425 relationships; 224 have both definitions in this manifest's
+verified trait socket family. Input SHA-256:
+`7df83e9542ec6d45eb953d1778ef9bfe8be7540fe3c03e49c45188b6d605d457`.
+The generator validates both endpoints' socket families before sharing their identity.
+It does not infer enhancement equivalence by removing words from display names.
+This covers Golden Tricorn (2610012052) and Golden Tricorn Enhanced (4290541820),
+whose exact names differ. An `Enhanced <trait>` source alias is emitted only for a
+verified hash link. Literal Enhanced Battery and Enhanced Heatsink remain magazine
+components; fabricated enhanced barrel names are unresolved.
+
+The regenerated registry retains 1,140 definitions and includes 900 exact/verified
+source names. Regenerate using the existing manifest command; optionally pass
+`--enhancement-links <DIM-table.json>` when updating the verified input.
+
+The score source index retains duplicate display names by stable row identity;
+fallback identities include category, name, version, and frame. Unique display names
+remain convenient lookup aliases. Hash-specific frame metadata is projected from
+the bundled public weapon manifest into `data/score-weapon-frames.json` by
+`node scripts/generate-score-weapon-frames.mjs` (2,270 entries). The shared edition
+resolver matches an unambiguous verified frame before owned-origin resolution.
+Unknown metadata, missing source frames, and multiple matching frames do not
+resolve through the metadata helper. Cross-frame or cross-category editions must
+remain unresolved unless verified item metadata or owned origin identifies one row;
+same-frame/category editions retain their existing fallback behavior. A cached category-row index repairs older name-only variant payloads
+without scanning source categories for every item. The `score-source-socket-v3`
+revision includes source frame metadata and invalidates previous identity results.
+
+Modeled regression evidence reproduces Optative's enhanced first choice dropping
+Best/Omni from 65/65 to 42.25/42.25 and grade S+ to C on the pinned baseline. With
+verified enhancement identity it retains 65/65 and S+. Public legacy High Albedo
+hash 1197486957 selects the Primary Adaptive Burst row regardless of category order
+and retains Best 50 / Omni 49.1071428571; the Special Micro-Missile hash 2662459958
+selects its distinct row. These are modeled public-data regressions, not fresh live
+inventory or browser verification. A root-owned content integration patch uses the
+same category index and frame resolver for grade-row selection.
+
+Cached PvP snapshots also omit the source Type/category metadata. The generator
+projects frame-qualified source categories only for names spanning more than one
+PvE category into `data/score-weapon-category-frames.json` (currently High Albedo).
+Legacy Adaptive Burst and current Micro-Missile retain Sidearms and Rocket Sidearms,
+respectively; an unrecognized source frame remains unavailable instead of falling
+through to the flat name category registry.
+
+### Actual content resolver boundary follow-up
+
+An extracted-function regression against the combined content source found that
+the initial integration still reached the old perk-overlap and row-order fallbacks
+when cross-family metadata was unknown or ambiguous. The category-row index now
+caches whether a name spans distinct normalized frames or source categories.
+`weaponVariantsNeedIdentity(db, name)` supplies the content guard after verified
+item metadata and owned-origin matching, before every legacy name/perk heuristic.
+The guard preserves existing same-family fallback behavior. Actual resolver tests
+cover both public High Albedo hashes, reversed source order, unknown hashes,
+multiple matching frames, categories-only ambiguity, verified owned origin, and
+same-family compatibility. Baseline combined source fails two of five cases; the
+exact guard modeled in memory passes all five. Root owns the content edit and
+final actual combined-source verification.

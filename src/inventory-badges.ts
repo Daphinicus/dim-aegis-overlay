@@ -2,9 +2,11 @@ import { STAT_BAR_SELECTOR, INVENTORY_BADGE_SELECTOR } from './stat-grade';
 import { COMPARE_BUCKET_SELECTOR } from './compare-selectors';
 import type { DimSearchInput } from './dim-item-input';
 import type { BadgeCategory } from './badge-presentation';
-import type { ScoringResult } from './types';
+import type { ScoringResult, WeaponEvaluationPayload } from './types';
 
 interface InventoryBadge {
+  kind: DimSearchInput['kind'];
+  presentation?: Pick<WeaponEvaluationPayload, 'sheetArmor' | 'scoreEvaluations'> & { kind: DimSearchInput['kind'] };
   category: BadgeCategory;
   result: ScoringResult;
   signature: string;
@@ -64,14 +66,15 @@ export function createInventoryBadges(render: (tile: HTMLElement, badge: Invento
   const leave = (event: PageTransitionEvent) => { if (!event.persisted) dispose(); };
   window.addEventListener('pagehide', leave);
   return {
-    add(item: DimSearchInput, result: ScoringResult) {
+    add(item: DimSearchInput, result: ScoringResult, data?: WeaponEvaluationPayload) {
       if (disposed) return;
       const category = item.kind === 'armor' ? 'armor' : item.isExotic ? 'exotic' : 'weapon';
-      const signature = JSON.stringify([item.hash, category, result.grade, result.weaponGrade, result.isOmniRoll,
+      const presentation = data ? { kind: item.kind, sheetArmor: data.sheetArmor, scoreEvaluations: data.scoreEvaluations } : { kind: item.kind };
+      const signature = JSON.stringify([presentation, item.hash, category, result.grade, result.weaponGrade, result.isOmniRoll,
         result.isPerfect5of5, result.upgradeAvailable, result.pveRollQuality, result.pvpRollQuality, result.customGrading]);
       const index = item.index || item.id;
       const previous = current.get(index);
-      next.set(index, previous?.signature === signature ? previous : { category, result: { ...result }, signature });
+      next.set(index, previous?.signature === signature ? previous : { kind: item.kind, presentation, category, result: { ...result }, signature });
     },
     status(status: 'pending' | 'ready' | 'unavailable') {
       if (disposed) return;

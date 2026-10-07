@@ -1,3 +1,4 @@
+import { t } from './i18n';
 import { parseAegisArgument } from './aegis-search';
 import { tokenizeSearch } from './search-syntax';
 
@@ -18,32 +19,93 @@ const breakerIcons: Record<string, string> = {
   unstoppable: '825a438c85404efd6472ff9e97fc7251',
 };
 const nativeLabels: Record<string, string> = {
-  weapon: 'Weapon', armor: 'Armor', exotic: 'Exotic', legendary: 'Legendary', rare: 'Rare',
-  common: 'Common', uncommon: 'Uncommon', kinetic: 'Kinetic', energy: 'Energy', heavy: 'Heavy',
-  primary: 'Primary', special: 'Special', arc: 'Arc', solar: 'Solar', void: 'Void', stasis: 'Stasis',
-  strand: 'Strand', prismatic: 'Prismatic', hunter: 'Hunter', titan: 'Titan', warlock: 'Warlock',
-  locked: 'Locked', unlocked: 'Unlocked', crafted: 'Crafted', masterwork: 'Masterworked',
-  handcannon: 'Hand cannon', autorifle: 'Auto rifle', pulserifle: 'Pulse rifle', scoutrifle: 'Scout rifle',
-  sidearm: 'Sidearm', smg: 'Submachine gun', submachinegun: 'Submachine gun', bow: 'Bow',
-  shotgun: 'Shotgun', sniperrifle: 'Sniper rifle', fusionrifle: 'Fusion rifle',
-  linearfusionrifle: 'Linear fusion rifle', trace: 'Trace rifle', tracerifle: 'Trace rifle',
-  grenadelauncher: 'Grenade launcher', rocketlauncher: 'Rocket launcher', machinegun: 'Machine gun',
-  sword: 'Sword', glaive: 'Glaive', helmet: 'Helmet', gauntlets: 'Gauntlets', chest: 'Chest armor',
-  leg: 'Leg armor', classitem: 'Class item',
+  "weapon": 'searchLabelWeapon',
+  "armor": 'searchLabelArmor',
+  "exotic": 'searchLabelExotic',
+  "legendary": 'searchLabelLegendary',
+  "rare": 'searchLabelRare',
+  "common": 'searchLabelCommon',
+  "uncommon": 'searchLabelUncommon',
+  "kinetic": 'searchLabelKinetic',
+  "energy": 'searchLabelEnergy',
+  "heavy": 'searchLabelHeavy',
+  "primary": 'searchLabelPrimary',
+  "special": 'searchLabelSpecial',
+  "arc": 'searchLabelArc',
+  "solar": 'searchLabelSolar',
+  "void": 'searchLabelVoid',
+  "stasis": 'searchLabelStasis',
+  "strand": 'searchLabelStrand',
+  "prismatic": 'searchLabelPrismatic',
+  "hunter": 'searchLabelHunter',
+  "titan": 'searchLabelTitan',
+  "warlock": 'searchLabelWarlock',
+  "locked": 'searchLabelLocked',
+  "unlocked": 'searchLabelUnlocked',
+  "crafted": 'searchLabelCrafted',
+  "masterwork": 'searchLabelMasterwork',
+  "handcannon": 'searchLabelHandcannon',
+  "autorifle": 'searchLabelAutorifle',
+  "pulserifle": 'searchLabelPulserifle',
+  "scoutrifle": 'searchLabelScoutrifle',
+  "sidearm": 'searchLabelSidearm',
+  "smg": 'searchLabelSmg',
+  "submachinegun": 'searchLabelSmg',
+  "bow": 'searchLabelBow',
+  "shotgun": 'searchLabelShotgun',
+  "sniperrifle": 'searchLabelSniperrifle',
+  "fusionrifle": 'searchLabelFusionrifle',
+  "linearfusionrifle": 'searchLabelLinearfusionrifle',
+  "trace": 'searchLabelTrace',
+  "tracerifle": 'searchLabelTrace',
+  "grenadelauncher": 'searchLabelGrenadelauncher',
+  "rocketlauncher": 'searchLabelRocketlauncher',
+  "machinegun": 'searchLabelMachinegun',
+  "sword": 'searchLabelSword',
+  "glaive": 'searchLabelGlaive',
+  "helmet": 'searchLabelHelmet',
+  "gauntlets": 'searchLabelGauntlets',
+  "chest": 'searchLabelChest',
+  "leg": 'searchLabelLeg',
+  "classitem": 'searchLabelClassitem',
 };
 const aegisLabels: Record<string, string> = {
-  god: 'Perk ≥ S', '5/5': 'Perfect roll', perfect: 'Perfect roll', '5of5': 'Perfect roll', godroll: 'Perfect roll',
-  omni: 'Omni roll', master: 'Omni roll', allperks: 'Omni roll',
-  upgrade: 'Upgrade available', upgradeable: 'Upgrade available', upgradable: 'Upgrade available',
-  bis: 'Best in class', bestinclass: 'Best in class', chase: 'Chase list',
-  shopping: 'Shopping list', shop: 'Shopping list', 'shopping:high': 'Shopping: high priority',
-  'priority:1': 'Shopping: high priority', 'priority:high': 'Shopping: high priority',
-  'shopping:ready': 'Shopping: ready', 'shopping:farm': 'Shopping: farm', 'shopping:suboptimal': 'Shopping: farm',
-  'shopping:alt': 'Shopping: alternative', 'shopping:alternative': 'Shopping: alternative',
+  "god": 'searchLabelPerk',
+  "5/5": 'searchLabelPerfect',
+  "perfect": 'searchLabelPerfect',
+  "5of5": 'searchLabelPerfect',
+  "godroll": 'searchLabelPerfect',
+  "omni": 'searchLabelOmni',
+  "master": 'searchLabelOmni',
+  "allperks": 'searchLabelOmni',
+  "upgrade": 'searchLabelUpgrade',
+  "upgradeable": 'searchLabelUpgrade',
+  "upgradable": 'searchLabelUpgrade',
+  "bis": 'searchLabelBis',
+  "bestinclass": 'searchLabelBis',
+  "chase": 'searchLabelChase',
+  "shopping": 'searchLabelShopping',
+  "shop": 'searchLabelShopping',
+  "shopping:high": 'searchLabelShoppingHigh',
+  "priority:1": 'searchLabelShoppingHigh',
+  "priority:high": 'searchLabelShoppingHigh',
+  "shopping:ready": 'searchLabelShoppingReady',
+  "shopping:farm": 'searchLabelShoppingFarm',
+  "shopping:suboptimal": 'searchLabelShoppingFarm',
+  "shopping:alt": 'searchLabelShoppingAlt',
+  "shopping:alternative": 'searchLabelShoppingAlt',
 };
 const targets: Record<string, string> = {
-  p: 'Perk', perk: 'Perk', w: 'Weapon', weapon: 'Weapon', pve: 'PvE perk', pvp: 'PvP perk',
-  '2p': 'Armor 2-piece', '2piece': 'Armor 2-piece', '4p': 'Armor 4-piece', '4piece': 'Armor 4-piece',
+  "p": 'searchLabelPerk',
+  "perk": 'searchLabelPerk',
+  "w": 'searchLabelWeapon',
+  "weapon": 'searchLabelWeapon',
+  "pve": 'searchLabelPve',
+  "pvp": 'searchLabelPvp',
+  "2p": 'searchLabelPiece2',
+  "2piece": 'searchLabelPiece2',
+  "4p": 'searchLabelPiece4',
+  "4piece": 'searchLabelPiece4',
 };
 const operators: Record<string, string> = { '>=': '≥', '<=': '≤', '>': '>', '<': '<', '=': '=', '==': '=' };
 
@@ -60,12 +122,12 @@ export function readableSearchTerm(raw: string): SearchTermLabel {
   const key = raw.slice(0, separator).toLowerCase();
   const value = unquote(raw.slice(separator + 1)), lower = value.toLowerCase();
   if (key === 'aegis' && parseAegisArgument(value).ok) {
-    if (aegisLabels[lower]) return { text: aegisLabels[lower], operator: lower === 'god' ? '≥' : undefined };
-    if (/^(s|source):/i.test(value)) return { text: 'Source: ' + value.slice(value.indexOf(':') + 1) };
-    let rest = value, label = 'Rating';
-    if (/^(a|armor):/i.test(rest)) { label = 'Armor'; rest = rest.slice(rest.indexOf(':') + 1); }
+    if (aegisLabels[lower]) return { text: lower === 'god' ? `${t(aegisLabels[lower])} ≥ S` : t(aegisLabels[lower]), operator: lower === 'god' ? '≥' : undefined };
+    if (/^(s|source):/i.test(value)) return { text: t('searchLabelSource') + ': ' + value.slice(value.indexOf(':') + 1) };
+    let rest = value, label = t('searchLabelRating');
+    if (/^(a|armor):/i.test(rest)) { label = t('searchLabelArmor'); rest = rest.slice(rest.indexOf(':') + 1); }
     const target = rest.slice(0, rest.indexOf(':')).toLowerCase();
-    if (rest.includes(':') && targets[target]) { label = targets[target]; rest = rest.slice(rest.indexOf(':') + 1); }
+    if (rest.includes(':') && targets[target]) { label = t(targets[target]); rest = rest.slice(rest.indexOf(':') + 1); }
     const match = /^(>=|<=|>|<|==|=)?([sabcdef+➔/\-]+)$/i.exec(rest);
     if (match) {
       const operator = operators[match[1]];
@@ -73,17 +135,17 @@ export function readableSearchTerm(raw: string): SearchTermLabel {
     }
   }
   if (key === 'breaker' && Object.hasOwn(breakerIcons, lower)) return {
-    text: lower[0].toUpperCase() + lower.slice(1),
+    text: t('searchLabel' + lower[0].toUpperCase() + lower.slice(1)),
     icon: `https://www.bungie.net/common/destiny2_content/icons/DestinyBreakerTypeDefinition_${breakerIcons[lower]}.png`,
   };
-  if (key === 'is' && Object.hasOwn(nativeLabels, lower)) return { text: nativeLabels[lower] };
-  const named: Record<string, string> = { name: 'Name', notes: 'Notes', source: 'Source', tag: 'Tag' };
-  if (Object.hasOwn(named, key) && value) return { text: `${named[key]}: ${value}` };
+  if (key === 'is' && Object.hasOwn(nativeLabels, lower)) return { text: t(nativeLabels[lower]) };
+  const named: Record<string, string> = { name: 'searchLabelName', notes: 'searchLabelNotes', source: 'searchLabelSource', tag: 'searchLabelTag' };
+  if (Object.hasOwn(named, key) && value) return { text: `${t(named[key])}: ${value}` };
   if (key === 'power' || key === 'light') {
     const match = /^(>=|<=|>|<|==|=)?(\d+)$/.exec(value);
     if (match) {
       const operator = operators[match[1]];
-      return { text: `Power ${operator ? operator + ' ' : ''}${match[2]}`, operator };
+      return { text: `${t('searchLabelPower')} ${operator ? operator + ' ' : ''}${match[2]}`, operator };
     }
   }
   return { text: raw };

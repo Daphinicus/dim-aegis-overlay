@@ -3,9 +3,11 @@ import type { ScoreActivity, ScoreSource, ScoreSlot, SourceSlot } from './score-
 import { SCORE_SLOTS } from './score-config';
 import { getPerkHashFromEnglish } from './hash-translator';
 import categoryRecovery from '../data/score-weapon-categories.json';
+import categoryFrameRecovery from '../data/score-weapon-category-frames.json';
 import { weaponPerkBaseHash, weaponPerkScoreHash, type WeaponPerkSlot } from './weapon-perk-identity';
 
 const categoryNames: Record<string, string> = categoryRecovery;
+const categoryFrames: Record<string, Record<string, string | null>> = categoryFrameRecovery;
 // Exact spellings used in the source sheets, verified against Bungie's English identities.
 const sourcePerkAliases: Readonly<Record<string, string>> = {
   'hammer-forged rifling rifling': 'Hammer-forged Rifling',
@@ -28,11 +30,7 @@ const sourcePerkAliases: Readonly<Record<string, string>> = {
 };
 export function canonicalScorePerk(name: string, slot?: WeaponPerkSlot): string | null {
   const raw = name.trim();
-  let hash = getPerkHashFromEnglish(sourcePerkAliases[raw.toLowerCase()] ?? raw, slot);
-  if (!hash && /^enhanced\s+/i.test(raw)) {
-    const alias = sourcePerkAliases[raw.replace(/^enhanced\s+/i, '').toLowerCase()];
-    if (alias) hash = getPerkHashFromEnglish(alias, slot);
-  }
+  const hash = getPerkHashFromEnglish(sourcePerkAliases[raw.toLowerCase()] ?? raw, slot);
   return hash ? canonicalScoreHash(hash, {}, slot) : null;
 }
 export function canonicalScoreHash(hash: number, enhanced: Record<number, number> | ScoreSlot = {}, slot?: ScoreSlot): string | null {
@@ -70,14 +68,19 @@ export function scoreCategory(weapon: AegisSheetWeapon, category: string, activi
   if (activity === 'pve' && category !== 'Legendary Weapons') return category;
   if (weapon.weaponType) return weapon.weaponType;
   const name = weapon.name.toLowerCase().trim().replace(/\s*\([^)]*\)\s*$/, '');
+  const frames = categoryFrames[name];
+  if (frames) {
+    const frame = weapon.frame?.toLowerCase().replace(/\bframe\b/g, '').replace(/[^a-z0-9]/g, '') ?? '';
+    return frames[frame] ?? '';
+  }
   return categoryNames[name] ?? '';
 }
 export function sourceRevision(db: AegisSheetDatabase): string {
   // Exclude translated notes: language changes must not change numerical inputs.
-  const text = JSON.stringify(Object.entries(db.categories).map(([category, rows]) => [category, rows.map(w => [w.name, w.categoryKey, w.weaponType, w.versionTag, w.tier, w.rank, w.barrel, w.mag, w.perk1, w.perk2, w.mw, w.origin])]));
+  const text = JSON.stringify(Object.entries(db.categories).map(([category, rows]) => [category, rows.map(w => [w.name, w.categoryKey, w.weaponType, w.versionTag, w.frame, w.tier, w.rank, w.barrel, w.mag, w.perk1, w.perk2, w.mw, w.origin])]));
   let hash = 2166136261;
   for (let i = 0; i < text.length; i++) hash = Math.imul(hash ^ text.charCodeAt(i), 16777619);
-  return `score-source-socket-v2-${(hash >>> 0).toString(16)}-${text.length}`;
+  return `score-source-socket-v3-${(hash >>> 0).toString(16)}-${text.length}`;
 }
 export function buildScoreSourceIndex(db: AegisSheetDatabase, activity: ScoreActivity): Map<string, ScoreSource> {
   const revision = sourceRevision(db);
@@ -85,7 +88,7 @@ export function buildScoreSourceIndex(db: AegisSheetDatabase, activity: ScoreAct
   const peers = new Map<string, number[]>();
   const seen = new Set<string>();
   for (const { weapon, key } of entries) {
-    const id = weapon.sourceRowId ?? `${key}:${weapon.name}:${weapon.versionTag ?? ''}`;
+    const id = weapon.sourceRowId ?? `${key}:${weapon.name}:${weapon.versionTag ?? ''}:${weapon.frame ?? ''}`;
     if (seen.has(id)) continue;
     seen.add(id);
     if (!key || !/^\d+$/.test(weapon.rank.trim())) continue;
@@ -94,14 +97,22 @@ export function buildScoreSourceIndex(db: AegisSheetDatabase, activity: ScoreAct
     ranks.push(Number(weapon.rank)); peers.set(peerKey, ranks);
   }
   const index = new Map<string, ScoreSource>();
+  const nameCounts = new Map<string, number>();
+  for (const { weapon } of entries) {
+    const name = weapon.name.toLowerCase().trim();
+    nameCounts.set(name, (nameCounts.get(name) ?? 0) + 1);
+  }
   for (const { category, weapon, key } of entries) {
     const ranks = peers.get(`${key}:${weapon.tier}`);
-    const source: ScoreSource = { activity, rowId: weapon.sourceRowId ?? `${key}:${weapon.name}:${weapon.versionTag ?? ''}`, sourceRevision: revision,
+    const source: ScoreSource = { activity, rowId: weapon.sourceRowId ?? `${key}:${weapon.name}:${weapon.versionTag ?? ''}:${weapon.frame ?? ''}`, sourceRevision: revision,
+      weaponName: weapon.name, frame: weapon.frame, versionTag: weapon.versionTag,
       categoryKey: key, tier: weapon.tier.trim(), rank: /^\d+$/.test(weapon.rank.trim()) ? Number(weapon.rank) : null,
       rankBounds: ranks?.length ? [Math.min(...ranks), Math.max(...ranks)] : null,
       slots: Object.fromEntries(SCORE_SLOTS.map(slot => [slot, sourceScoreSlot(weapon[slot === 'masterwork' ? 'mw' : slot], slot)])) as Record<ScoreSlot, SourceSlot>,
       reason: category === 'Exotic Weapons' || weapon.source === 'Exotic' ? 'unsupported-exotic' : !key ? 'unresolved-category' : weapon.rank.trim() && !/^\d+$/.test(weapon.rank.trim()) ? 'unresolved-ranking' : undefined };
-    index.set(weapon.name.toLowerCase().trim(), source);
+    const name = weapon.name.toLowerCase().trim();
+    // A display name is a lookup alias, not a row identity. Keep every edition.
+    index.set(nameCounts.get(name) === 1 ? name : `row:${source.rowId}`, source);
   }
   return index;
 }

@@ -5,6 +5,7 @@ import { evaluateWeaponScore, unratedScore } from './score-model';
 import { getEnglishWeaponNameFromHash } from './hash-translator';
 import { ORIGIN_BENCHMARK_REVISION, resolveOriginSets } from './score-origins';
 import { SCORE_MODEL_VERSION } from './score-config';
+import { findVariantByItemMetadata } from './weapon-variant';
 
 interface SourceIndex { rows: Map<string, ScoreSource>; families: Map<string, ScoreSource[]> }
 const indexes = new WeakMap<AegisSheetDatabase, Partial<Record<ScoreActivity, SourceIndex>>>();
@@ -27,7 +28,7 @@ export function evaluateOwnedActivity(db: AegisSheetDatabase | null, activity: S
     const rows = buildScoreSourceIndex(db, activity);
     const families = new Map<string, ScoreSource[]>();
     for (const [name, source] of rows) {
-      const family = baseName(name), group = families.get(family) ?? [];
+      const family = baseName(source.weaponName ?? name), group = families.get(family) ?? [];
       group.push(source); families.set(family, group);
     }
     index = { rows, families }; byActivity[activity] = index;
@@ -38,10 +39,12 @@ export function evaluateOwnedActivity(db: AegisSheetDatabase | null, activity: S
   let source: ScoreSource | undefined;
   if (candidates.length === 1) source = candidates[0];
   else if (candidates.length > 1) {
+    const metadata = findVariantByItemMetadata(candidates, owned.itemHash);
+    if (metadata) source = metadata;
     const origin = owned.slots.origin;
     const discriminated = origin.state === 'known' ? candidates.filter(c => c.slots.origin.state === 'ranked' && c.slots.origin.recommendations.some(id => origin.available.includes(id))) : [];
-    if (discriminated.length === 1) source = discriminated[0];
-    else {
+    if (!source && discriminated.length === 1) source = discriminated[0];
+    else if (!source) {
       // Exact named special editions can resolve identity; a generic name cannot select a reissue by perk quality.
       const exact = candidates.filter(c => index.rows.get(english) === c);
       if (english !== base && exact.length === 1) source = exact[0];

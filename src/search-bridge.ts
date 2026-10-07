@@ -50,7 +50,7 @@ let disposePreviousEvaluator: (() => void) | undefined;
 export function initSearchEvaluator(evaluate: (item: DimSearchInput) => SearchFact,
   ready: () => boolean, availability: () => SearchAvailability, cacheStats: () => unknown = () => ({}),
   onStatus: (status: SearchResponse['status']) => void = () => {},
-  onSnapshot: (status: SearchResponse['status'], response?: SearchResponse) => void = () => {}): { invalidate: () => void; dispose: () => void } {
+  onSnapshot: (status: SearchResponse['status'], response?: SearchResponse, request?: SearchRequest) => void = () => {}): { invalidate: () => void; dispose: () => void } {
   disposePreviousEvaluator?.();
   let generation = 0;
   let disposed = false;
@@ -74,7 +74,7 @@ export function initSearchEvaluator(evaluate: (item: DimSearchInput) => SearchFa
       onStatus(status);
       const { session, accountEpoch, inventoryRevision, evaluationRevision } = request;
       const response: SearchResponse = { session, accountEpoch, inventoryRevision, evaluationRevision, status, facts, available: availability() };
-      onSnapshot(status, response);
+      onSnapshot(status, response, request);
       publishSearchMessage(SEARCH_RESPONSE, response);
     };
     respond('pending');

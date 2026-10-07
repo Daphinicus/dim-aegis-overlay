@@ -6167,3 +6167,6 @@ html[data-aegis-score-percent="off"] .dimsum-grade-percent {
 #aegis-score-controls button:disabled, #aegis-rating-display-segmented button:disabled { opacity: .45; cursor: default; }
 
 .aegis-stat-grade.aegis-score { font-size: calc(var(--item-size) * .125); color: #dae8f2; }
+
+/* Keyboard navigation retains the existing language menu surface. */
+#aegis-language-options .keyboard-active { outline: 2px solid #ffd700; outline-offset: -2px; }

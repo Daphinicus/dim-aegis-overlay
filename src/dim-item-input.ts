@@ -7,6 +7,7 @@ export type PerkInfo = { name: string; icon: string; slots?: WeaponPerkSlot[]; a
 export interface DimSearchInput {
   id: string; hash: number; name: string; kind: 'weapon' | 'armor';
   perkHashes: number[]; activeHashes: number[]; perksMap: Record<number, PerkInfo>;
+  armorPerks?: string[]; armorStats?: Record<string, number>;
   scoreOwned?: string; masterwork: string; variantText: string; ready: boolean; isExotic?: boolean; index?: string;
 }
 export function readDimMasterwork(item: any): string {
@@ -89,6 +90,13 @@ export function projectDimItem(item: any): DimSearchInput | null {
   const { perkHashes, activeHashes, perksMap } = readDimPerks(item);
   const sockets = item.sockets?.allSockets;
   return { id: item.id, hash: item.hash, name: item.name || '', kind, perkHashes, activeHashes, perksMap,
+    armorPerks: kind === 'armor' ? (Array.isArray(sockets) ? sockets : []).map((socket: any) => socket?.plugged?.plugDef?.displayProperties?.name)
+      .filter((name: unknown): name is string => typeof name === 'string' && !/shader|ornament|energy/i.test(name)) : undefined,
+    armorStats: kind === 'armor' && Array.isArray(item.stats) ? Object.fromEntries(item.stats.flatMap((stat: any) => {
+      const name = stat.stat?.displayProperties?.name || stat.name;
+      const value = stat.base ?? stat.value;
+      return typeof name === 'string' && Number.isFinite(value) ? [[name.toLowerCase().trim(), value]] : [];
+    })) : undefined,
     scoreOwned: kind === 'weapon' ? JSON.stringify(extractRawOwnedSnapshot(item)) : undefined,
     masterwork: readDimMasterwork(item), variantText: item.name || '', isExotic: item.isExotic === true,
     index: typeof item.index === 'string' ? item.index : item.id,

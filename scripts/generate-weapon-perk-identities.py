@@ -11,6 +11,7 @@ import re
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument("manifest", type=Path)
 parser.add_argument("--version", required=True, help="Bungie manifest version")
+parser.add_argument("--enhancement-links", type=Path, help="Verified DIM trait-to-enhanced-trait table")
 args = parser.parse_args()
 root = Path(__file__).resolve().parents[1]
 definitions = json.loads(args.manifest.read_text(encoding="utf-8"))
@@ -38,6 +39,18 @@ for definition in definitions.values():
     key = re.sub(r"\s+", " ", name.lower().strip())
     names.setdefault(key, {}).setdefault(category, []).append(definition)
 
+# Enhancement equivalence comes from DIM's verified hash links, never display-name stripping.
+links = json.loads((args.enhancement_links or root / "data/trait-to-enhanced-trait.json").read_text(encoding="utf-8"))
+enhanced_to_normal = {}
+for normal_hash, enhanced_hash in links.items():
+    normal, enhanced = definitions.get(str(normal_hash)), definitions.get(str(enhanced_hash))
+    if not normal or not enhanced:
+        continue
+    normal_family = categories.get(normal.get("plug", {}).get("plugCategoryIdentifier"))
+    enhanced_family = categories.get(enhanced.get("plug", {}).get("plugCategoryIdentifier"))
+    if normal_family == enhanced_family == "trait":
+        enhanced_to_normal[int(enhanced_hash)] = int(normal_hash)
+
 hashes = {}
 resolved = {}
 for key, groups in sorted(names.items()):
@@ -53,6 +66,15 @@ for key, groups in sorted(names.items()):
         resolved[key][category] = preferred
         for definition in candidates:
             hashes[definition["hash"]] = [category, preferred]
+
+for enhanced_hash, normal_hash in enhanced_to_normal.items():
+    if enhanced_hash in hashes and normal_hash in hashes:
+        hashes[enhanced_hash] = hashes[normal_hash]
+        normal_name = re.sub(r"\s+", " ", definitions[str(normal_hash)]["displayProperties"]["name"].lower().strip())
+        enhanced_name = re.sub(r"\s+", " ", definitions[str(enhanced_hash)]["displayProperties"]["name"].lower().strip())
+        resolved[enhanced_name]["trait"] = hashes[normal_hash][1]
+        # Accepted sheet spelling is created only when the exact hash relationship is verified.
+        resolved.setdefault("enhanced " + normal_name, {})["trait"] = hashes[normal_hash][1]
 
 alias_candidates = {}
 for name, families in resolved.items():

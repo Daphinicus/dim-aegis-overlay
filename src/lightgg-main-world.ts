@@ -1,3 +1,4 @@
+import { canonicalLightggGrade } from './external-text';
 /**
  * DIM Aegis Overlay - Light.gg MAIN World Interceptor
  *
@@ -9,10 +10,6 @@
  * Also intercepts XMLHttpRequest as a fallback.
  */
 
-const GRADE_PATTERNS = [
-  // Letter grades (S+, S, A, B, C, D, F and variants)
-  /[SABCDF][+-]?/i,
-];
 
 /**
  * Attempts to extract a grade map { instanceId -> grade } from
@@ -40,10 +37,10 @@ function extractGradesFromJson(data: any): Record<string, string> | null {
         item.rollGrade ||
         item.rollQuality;
 
-      if (id && id.length >= 10 && grade && typeof grade === 'string') {
-        const match = grade.match(/[SABCDF][+-]?/i);
+      if (/^\d{10,20}$/.test(id) && grade && typeof grade === 'string') {
+        const match = canonicalLightggGrade(grade);
         if (match) {
-          result[id.replace(/^[^0-9]+/, '')] = match[0].toUpperCase();
+          result[id.replace(/^[^0-9]+/, '')] = match;
         }
       }
     }
@@ -53,9 +50,9 @@ function extractGradesFromJson(data: any): Record<string, string> | null {
   // Pattern B: object keyed by instanceId
   for (const [key, val] of Object.entries(data)) {
     if (typeof key === 'string' && /^\d{10,20}$/.test(key) && typeof val === 'string') {
-      const match = val.match(/[SABCDF][+-]?/i);
+      const match = canonicalLightggGrade(val);
       if (match) {
-        result[key] = match[0].toUpperCase();
+        result[key] = match;
       }
     }
     // Nested object with grade property
@@ -64,9 +61,9 @@ function extractGradesFromJson(data: any): Record<string, string> | null {
       const id = String(inner.instanceId || inner.instance_id || inner.id || key || '');
       const grade = inner.grade || inner.quality || inner.rank || inner.rating;
       if (id && /^\d{10,20}$/.test(id) && grade && typeof grade === 'string') {
-        const match = grade.match(/[SABCDF][+-]?/i);
+        const match = canonicalLightggGrade(grade);
         if (match) {
-          result[id.replace(/^[^0-9]+/, '')] = match[0].toUpperCase();
+          result[id.replace(/^[^0-9]+/, '')] = match;
         }
       }
     }
@@ -106,7 +103,7 @@ function isLightGGApiUrl(url: string): boolean {
   try {
     const u = new URL(url, window.location.href);
     // Must be on light.gg domain
-    if (!u.hostname.includes('light.gg')) return false;
+    if (u.hostname !== 'light.gg' && u.hostname !== 'www.light.gg') return false;
     // Skip static assets and CDN
     if (/\.(js|css|png|jpg|svg|ico|woff|woff2)(\?|$)/i.test(u.pathname)) return false;
     // Skip Bungie API proxied calls that just return manifest data
@@ -128,19 +125,12 @@ window.fetch = async function (input: RequestInfo | URL, init?: RequestInit): Pr
   if (isLightGGApiUrl(url)) {
     try {
       const clone = response.clone();
-      const text = await clone.text();
-      // Quick check: must contain a letter grade pattern to bother parsing
-      if (/[SABCDF][+-]?/i.test(text) && (text.includes('"instanceId"') || text.includes('"id"') || text.includes('instance'))) {
+      void clone.text().then(text => {
         try {
-          const json = JSON.parse(text);
-          const grades = extractGradesFromJson(json);
-          if (grades) {
-            dispatchGrades(grades, `fetch:${url}`);
-          }
-        } catch {
-          // Not JSON — ignore
-        }
-      }
+          const grades = extractGradesFromJson(JSON.parse(text));
+          if (grades) dispatchGrades(grades, `fetch:${url}`);
+        } catch { /* Not a supported JSON grade response. */ }
+      }).catch(() => { /* Clone body inspection must not reject the page request. */ });
     } catch (e) {
       // Never block the original request
     }

@@ -1,3 +1,4 @@
+import { t, getCurrentLanguage, LANGUAGE_CHANGE_EVENT } from './i18n';
 import { findNativeSearchInput, isNativeSearchInput } from './native-search-input';
 import { removeSearchTerm, tokenizeSearch, type SearchToken } from './search-syntax';
 import { isNativeSearchTermValid } from './dim-search-adapter';
@@ -186,8 +187,7 @@ export function attachInlineSearchEditor(input: HTMLInputElement, validTerm = is
             const remove = document.createElement('button');
             remove.type = 'button'; remove.contentEditable = 'false'; remove.tabIndex = -1;
             remove.className = 'aegis-search-token-remove';
-            remove.setAttribute('aria-label', `Remove ${token.text}`);
-            remove.title = `Remove ${token.text}`;
+            remove.setAttribute('aria-label', t('searchRemoveTerm', { term: token.text }));
             remove.textContent = '×'; span.append(remove);
           }
         }
@@ -201,8 +201,8 @@ export function attachInlineSearchEditor(input: HTMLInputElement, validTerm = is
       } else if (text instanceof Text && text.data !== token.text) text.data = token.text;
       if (badge && segment.node instanceof HTMLElement) {
         const span = segment.node, remove = span.lastElementChild as HTMLElement;
-        if (span.dataset.display !== mode || span.dataset.searchRaw !== token.text) {
-          span.dataset.display = mode; span.dataset.searchRaw = token.text; span.title = token.text;
+        if (span.dataset.display !== mode || span.dataset.searchRaw !== token.text || span.dataset.language !== getCurrentLanguage()) {
+          span.dataset.language = getCurrentLanguage(); span.dataset.display = mode; span.dataset.searchRaw = token.text; span.title = token.text;
           const presentation = mode === 'readable' ? readableSearchTerm(token.text) : { text: token.text };
           const label = span.querySelector<HTMLElement>('.aegis-search-token-label')!;
           label.replaceChildren();
@@ -221,6 +221,8 @@ export function attachInlineSearchEditor(input: HTMLInputElement, validTerm = is
         }
         if (span.dataset.start !== String(token.start)) span.dataset.start = String(token.start);
         if (span.dataset.end !== String(token.end)) span.dataset.end = String(token.end);
+        remove.setAttribute('aria-label', t('searchRemoveTerm', { term: token.text }));
+        remove.title = t('searchRemoveTerm', { term: token.text });
         if (remove.dataset.searchRemove !== String(token.start)) remove.dataset.searchRemove = String(token.start);
       }
     }
@@ -324,7 +326,7 @@ export function attachInlineSearchEditor(input: HTMLInputElement, validTerm = is
   }, options);
   editor.addEventListener('compositionstart', () => { composing = true; }, options);
   editor.addEventListener('compositionend', () => {
-    composing = false; change(read(editor), selection());
+    composing = false; change(read(editor), selection()); render(selection());
     if (pendingMode) setMode(pendingMode);
   }, options);
   editor.addEventListener('beforeinput', event => {
@@ -454,6 +456,10 @@ export function attachInlineSearchEditor(input: HTMLInputElement, validTerm = is
   const timer = setInterval(sync, 100);
   const attributes = new MutationObserver(sync);
   attributes.observe(input, { attributes: true });
+  document.addEventListener(LANGUAGE_CHANGE_EVENT, () => {
+    if (composing) return;
+    render(document.activeElement === editor ? selection() : undefined);
+  }, options);
   render(undefined, true); sync();
   function setMode(next: SearchDisplayMode) {
     if (disposed) return;

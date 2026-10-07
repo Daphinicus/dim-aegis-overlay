@@ -1,3 +1,4 @@
+import { escapeHtml } from './external-text';
 import { isTileTooltipSuppressed } from './popup-interaction';
 import type { ScoreEvaluations, ScoreSettings } from './score-types';
 import { scorePresentation, scoreDetailsHtml, bindScoreDetails } from './score-presentation';
@@ -18,12 +19,54 @@ interface PerkInfo {
 }
 
 let tooltipEl: HTMLDivElement | null = null;
+let stopTooltipPlacement: (() => void) | undefined;
+const placementHost = window as Window & { __aegisTooltipPlacementDispose?: () => void };
+
+/** Observe only the displayed singleton; previews retain their owner's geometry. */
+function trackTooltipPlacement(target: HTMLElement, tooltip: HTMLElement) {
+  stopTooltipPlacement?.();
+  let frame = 0;
+  const reposition = () => {
+    if (!target.isConnected || !tooltip.isConnected || tooltip.classList.contains('hidden')) {
+      hideTooltip(); return;
+    }
+    positionTooltip(target, tooltip);
+  };
+  const schedule = () => {
+    if (!frame) frame = requestAnimationFrame(() => { frame = 0; reposition(); });
+  };
+  // Native details toggles are delivered after their content's layout changes.
+  const toggle = () => reposition();
+  const sizes = new ResizeObserver(schedule);
+  sizes.observe(tooltip); sizes.observe(target);
+  const content = new MutationObserver(schedule);
+  content.observe(tooltip, { childList: true, subtree: true, characterData: true, attributes: true, attributeFilter: ['open'] });
+  const removal = new MutationObserver(() => {
+    if (!target.isConnected || !tooltip.isConnected) hideTooltip();
+  });
+  removal.observe(document.body, { childList: true, subtree: true });
+  tooltip.addEventListener('toggle', toggle, true);
+  window.addEventListener('resize', schedule);
+  window.addEventListener('scroll', schedule, true);
+  const dispose = () => {
+    if (placementHost.__aegisTooltipPlacementDispose === dispose) delete placementHost.__aegisTooltipPlacementDispose;
+    cancelAnimationFrame(frame); frame = 0; sizes.disconnect(); content.disconnect(); removal.disconnect();
+    tooltip.removeEventListener('toggle', toggle, true);
+    window.removeEventListener('resize', schedule); window.removeEventListener('scroll', schedule, true);
+    window.removeEventListener('pagehide', dispose);
+    stopTooltipPlacement = undefined;
+  };
+  stopTooltipPlacement = dispose;
+  placementHost.__aegisTooltipPlacementDispose = dispose;
+  window.addEventListener('pagehide', dispose);
+}
 
 /**
  * Ensures the global hover tooltip element exists in the DOM.
  */
 export function initTooltip(): HTMLDivElement {
   if (!tooltipEl?.isConnected) {
+    placementHost.__aegisTooltipPlacementDispose?.();
     document.getElementById('aegis-hover-tooltip')?.remove();
     tooltipEl = document.createElement('div');
     tooltipEl.id = 'aegis-hover-tooltip';
@@ -111,12 +154,17 @@ function positionTooltip(target: HTMLElement, tooltip: HTMLElement) {
     tooltip.style.width = `${measurePerkCardWidth(tooltip, dual ? 500 : 280)}px`;
   }
 
+  // Set the viewport limit before measuring: offsetHeight then includes the cap.
+  // Keep the cap even when collapsed so later disclosure content remains scrollable.
+  const margin = 12;
+  tooltip.style.maxHeight = `${Math.max(0, window.innerHeight - 2 * margin)}px`;
+  tooltip.style.overflowY = 'auto';
+  tooltip.style.boxSizing = 'border-box';
   const targetRect = target.getBoundingClientRect();
   const tooltipWidth = tooltip.offsetWidth || 320;
   const tooltipHeight = tooltip.offsetHeight || 260;
 
   const gap = 10;
-  const margin = 12;
   const innerW = window.innerWidth;
   const innerH = window.innerHeight;
 
@@ -134,15 +182,7 @@ function positionTooltip(target: HTMLElement, tooltip: HTMLElement) {
     top = innerH - tooltipHeight - margin;
   }
 
-  // 3. Viewport boundary clamping & scrollability
-  if (top < margin) {
-    top = margin;
-    tooltip.style.maxHeight = `${innerH - 2 * margin}px`;
-    tooltip.style.overflowY = 'auto';
-  } else {
-    tooltip.style.maxHeight = '';
-    tooltip.style.overflowY = '';
-  }
+  top = Math.max(margin, top);
 
   tooltip.style.top = `${top + window.scrollY}px`;
   tooltip.style.left = `${left + window.scrollX}px`;
@@ -503,7 +543,7 @@ export function showTooltip(
           <div style="display: flex; align-items: center; gap: 6px;">
             ${options?.contentHost ? '' : `<span class="aegis-tooltip-weapon-name" style="color: #88c0d0;">${renderLocalizedName('weapon', weaponName)}</span>`}
           </div>
-          <span class="aegis-tooltip-grade aegis-grade-s" style="font-size: 13px;">${result.grade}</span>
+          <span class="aegis-tooltip-grade aegis-grade-s" style="font-size: 13px;">${escapeHtml(result.grade)}</span>
         </div>
         <div class="aegis-tooltip-sheet-meta">
           <span class="aegis-tooltip-sheet-badge aegis-tier-source" style="background: linear-gradient(135deg, #1abc9c, #16a085) !important;">${sheetArmor.sourceType}</span>
@@ -535,6 +575,7 @@ export function showTooltip(
       return;
     }
     positionTooltip(target, tooltip);
+    trackTooltipPlacement(target, tooltip);
     tooltip.classList.remove('hidden');
     return;
   }
@@ -547,7 +588,7 @@ export function showTooltip(
   const baseGradeLetter = isTwoTier 
     ? gradeStr.substring(1).charAt(0).toLowerCase() 
     : (gradeStr ? gradeStr.charAt(0).toLowerCase() : '');
-  const gradeClass = `aegis-grade-${baseGradeLetter}`;
+  const gradeClass = `aegis-grade-${/^[sabcdf]$/.test(baseGradeLetter) ? baseGradeLetter : 'none'}`;
 
   // Parse PvP/PvE tags
   let tagsHtml = '';
@@ -767,9 +808,9 @@ export function showTooltip(
     };
     const pveLetter = getLetter(pveStr);
     const pvpLetter = getLetter(pvpStr);
-    gradeBadgeHtml = `<span class="aegis-tooltip-grade aegis-tooltip-split-grade"><span class="aegis-split-half aegis-split-left aegis-badge-${pveLetter}">${pveStr}</span><span class="aegis-split-half aegis-split-right aegis-badge-${pvpLetter}">${pvpStr}</span></span>`;
+    gradeBadgeHtml = `<span class="aegis-tooltip-grade aegis-tooltip-split-grade"><span class="aegis-split-half aegis-split-left aegis-badge-${pveLetter}">${escapeHtml(pveStr)}</span><span class="aegis-split-half aegis-split-right aegis-badge-${pvpLetter}">${escapeHtml(pvpStr)}</span></span>`;
   } else {
-    gradeBadgeHtml = `<span class="aegis-tooltip-grade ${gradeClass}">${result.grade}</span>`;
+    gradeBadgeHtml = `<span class="aegis-tooltip-grade ${gradeClass}">${escapeHtml(result.grade)}</span>`;
   }
 
   // Assemble premium HTML content
@@ -951,7 +992,7 @@ export function showTooltip(
     html += `
       <div class="aegis-tooltip-section aegis-notes-section">
         <div class="aegis-tooltip-section-title">${sectionTitle}</div>
-        <div class="aegis-tooltip-notes-text">${showNotes}</div>
+        <div class="aegis-tooltip-notes-text">${escapeHtml(showNotes).replace(/\n/g, '<br>')}</div>
       </div>
     `;
   }
@@ -970,6 +1011,7 @@ export function showTooltip(
     return;
   }
   positionTooltip(target, tooltip);
+  trackTooltipPlacement(target, tooltip);
   tooltip.classList.remove('hidden');
 }
 
@@ -977,6 +1019,7 @@ export function showTooltip(
  * Hides the tooltip element.
  */
 export function hideTooltip() {
+  stopTooltipPlacement?.();
   if (tooltipEl) {
     tooltipEl.classList.add('hidden');
   }
@@ -991,12 +1034,12 @@ export function formatFormattedNotes(text: string): string {
   if (lines.length > 1) {
     const listItems = lines.map(line => {
       const cleanLine = line.replace(/^[•\-\*]\s*/, '');
-      return `<li style="margin-bottom: 3px; line-height: 1.5;">${highlightKeyTerms(cleanLine)}</li>`;
+      return `<li style="margin-bottom: 3px; line-height: 1.5;">${highlightKeyTerms(escapeHtml(cleanLine))}</li>`;
     }).join('');
     return `<ul style="margin: 3px 0 0 0; padding-left: 14px; list-style-type: disc;">${listItems}</ul>`;
   }
 
-  return highlightKeyTerms(text);
+  return highlightKeyTerms(escapeHtml(text));
 }
 
 // Static Bungie CDN Icon URLs

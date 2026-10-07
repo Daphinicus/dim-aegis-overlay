@@ -1,3 +1,4 @@
+import { normalizeLightggData } from './external-text';
 import { findNativeSearchInput } from './native-search-input';
 import { installScrollHover } from './scroll-hover';
 import { renderStatGrade, renderStatScore, removeStatGrade, setStatGradeLayout, type StatGradeBasis } from './stat-grade';
@@ -19,7 +20,7 @@ import { installInventorySortProvider, inventorySortItem, type InventorySortItem
 import { readScoreSettings, SCORE_SETTING_KEYS } from './score-config';
 import { parseOwnedSnapshot } from './score-owned';
 import { canonicalScoreHash } from './score-source';
-import { findVariantByOwnedOrigin } from './weapon-variant';
+import { findVariantByOwnedOrigin, findVariantByItemMetadata, weaponVariants, weaponVariantsNeedIdentity } from './weapon-variant';
 import { evaluateCategoryPerks, type EvaluatedPerk, type AvailablePerk } from './perk-evaluation';
 import { evaluateOwnedActivity, clearScoreCache, scoreCacheStats, scoreInputSource } from './score-runtime';
 import { scorePresentation, scoreDetailsHtml, bindScoreDetails } from './score-presentation';
@@ -49,7 +50,7 @@ import { attachSearchDisplayControl } from './search-display-control';
 initPerkAnalysisBridge();
 
 /** Strongly typed, GC-safe storage for weapon/armor evaluation data attached to DOM tiles */
-export const weaponDataMap = new WeakMap<HTMLElement, WeaponEvaluationPayload>();
+export const weaponDataMap = new WeakMap<HTMLElement, WeaponEvaluationPayload & { kind?: DimSearchInput['kind'] }>();
 const weaponEvaluations = createEvaluationCache<ReturnType<typeof computeWeaponEvaluation>>();
 const armorEvaluations = createEvaluationCache<WeaponEvaluationPayload>();
 const inventoryEvaluations = new Map<string, {
@@ -270,7 +271,7 @@ document.addEventListener('aegis-diagnostic-log', (e: any) => {
 let wishlistDb: WishlistDatabase = {};
 let enhancedToNormalMap: Record<number, number> = {};
 let scoringSource = 'aegis';
-const nativeScoreData = new Map<string, Pick<WeaponEvaluationPayload, 'scoreOwned' | 'scoreEvaluations'>>();
+const nativeScoreData = new Map<string, WeaponEvaluationPayload & { kind: DimSearchInput['kind'] }>();
 let scoreSettings: ScoreSettings = readScoreSettings({});
 const scoresEnabled = (): boolean => scoreSettings.aegisRatingDisplay === 'scores' && scoringSource === 'aegis' && aegisDbMode !== 'wishlist';
 let aegisLayoutSide = 'side';
@@ -441,7 +442,8 @@ interface PlayerOwnedItemInfo {
   scoreEvaluations?: ScoreEvaluations;
   name: string;
   grade: string;
-  element: HTMLElement;
+  element?: HTMLElement;
+  data?: WeaponEvaluationPayload;
   isPerfect: boolean;
   hash: number;
   armorPerks?: string[];
@@ -456,6 +458,8 @@ interface PlayerOwnedItemInfo {
   isPerfect5of5?: boolean;
 }
 const playerVaultInventory = new Map<string, PlayerOwnedItemInfo[]>();
+const nativeOwnedInventory = new Map<string, PlayerOwnedItemInfo>();
+let nativeOwnershipAuthoritative = false;
 let hoveredElement: HTMLElement | null = null;
 let registryObserver: MutationObserver | null = null;
 let nameToHash: Record<string, number> = {};
@@ -952,12 +956,16 @@ function findAegisWeapon(
   const baseNormalized = cleanWeaponNameBase(normalized);
 
   // 1. Get variants array for this base weapon name
-  const variants = db.variants?.[baseNormalized] || db.variants?.[normalized] || [];
+  const variants = weaponVariants(db, baseNormalized);
 
   // 2. Multi-variant disambiguation (when 2+ variants exist for the base name)
   if (variants.length > 1) {
+    const metadataVariant = findVariantByItemMetadata(variants, itemHash || 0);
+    if (metadataVariant) return metadataVariant;
     const originVariant = findVariantByOwnedOrigin(variants, perksMap);
     if (originVariant) return originVariant;
+    // Distinct weapon families cannot be inferred from perk quality or row order.
+    if (weaponVariantsNeedIdentity(db, baseNormalized)) return null;
 
     // Gather ALL perk names & text signals attached to this item (from perksMap, activeHashes, element text)
     const allItemPerkNames: string[] = [];
@@ -1702,12 +1710,12 @@ function orderOwnedCopies(copies: PlayerOwnedItemInfo[], armor = false): PlayerO
   if (!scoresEnabled() || armor) return copies;
   const activity = comparisonActivity(), profile = scoreSettings.aegisScoreProfile;
   return [...copies].sort((a, b) => compareScores(
-    (weaponDataMap.get(a.element)?.scoreEvaluations || a.scoreEvaluations)?.[activity]?.[profile],
-    (weaponDataMap.get(b.element)?.scoreEvaluations || b.scoreEvaluations)?.[activity]?.[profile]) || (a.instanceId || '').localeCompare(b.instanceId || ''));
+    ((a.element ? weaponDataMap.get(a.element) : a.data)?.scoreEvaluations || a.scoreEvaluations)?.[activity]?.[profile],
+    ((b.element ? weaponDataMap.get(b.element) : b.data)?.scoreEvaluations || b.scoreEvaluations)?.[activity]?.[profile]) || (a.instanceId || '').localeCompare(b.instanceId || ''));
 }
 
 function getLiveEvaluatedCopyInfo(copy: PlayerOwnedItemInfo, sheetWFallback?: AegisSheetWeapon | null) {
-  const data = weaponDataMap.get(copy.element);
+  const data = (copy.element ? weaponDataMap.get(copy.element) : copy.data);
   if (scoresEnabled() && !data?.sheetArmor) {
     return { grade: copy.grade, potentialGrade: undefined, upgradeAvailable: false,
       isOmniRoll: !!data?.scoreEvaluations?.[comparisonActivity()]?.fullCoverage,
@@ -2215,7 +2223,7 @@ function renderResults() {
                       }).join('');
                     }
                   } else {
-                    const data = weaponDataMap.get(copy.element);
+                    const data = (copy.element ? weaponDataMap.get(copy.element) : copy.data);
                     let traitChips: { name: string; icon?: string }[] = [];
 
                     if (data?.sheetPerks) {
@@ -2340,9 +2348,11 @@ function renderResults() {
         const instanceId = row.getAttribute('data-copy-instance-id');
         const copy = instanceId ? owned.find(item => item.instanceId === instanceId) : owned[cIdx];
 
-        if (copy && copy.element) {
+        if (copy && (copy.element || copy.data)) {
+          const copyElement = copy.element || row as HTMLElement;
+          if (!copy.element && copy.data) weaponDataMap.set(copyElement, copy.data);
           row.addEventListener('mouseenter', () => {
-            showTooltipForElement(copy.element, row as HTMLElement);
+            showTooltipForElement(copyElement, row as HTMLElement);
           });
           row.addEventListener('mouseleave', () => {
             hideTooltip();
@@ -2359,8 +2369,10 @@ function renderResults() {
         const copy = owned.length > 0 ? (scoresEnabled() ? orderOwnedCopies(owned)[0] : owned[0]) : null;
 
         row.addEventListener('mouseenter', () => {
-          if (copy && copy.element) {
-            showTooltipForElement(copy.element, row as HTMLElement);
+          if (copy && (copy.element || copy.data)) {
+            const copyElement = copy.element || row as HTMLElement;
+            if (!copy.element && copy.data) weaponDataMap.set(copyElement, copy.data);
+            showTooltipForElement(copyElement, row as HTMLElement);
           } else {
             const sheetW = db.weapons[norm] || db.weapons[normName(altName.replace(/\s*\([^)]+\)\s*$/, '').trim())];
             if (sheetW) {
@@ -3817,7 +3829,7 @@ function showWinnowerWelcomeModal() {
 
 
 const inventoryBadges = IS_WINNOWER_HOST ? null : createInventoryBadges((tile, badge) => {
-  if (badge.result.grade || scoresEnabled()) injectBadge(tile, badge.result, badge.category);
+  if (badge.result.grade || (scoresEnabled() && badge.kind === 'weapon')) injectBadge(tile, badge.result, badge.category, badge.presentation);
   else removeBadge(tile);
 });
 let searchSettingsReady = false;
@@ -3840,13 +3852,32 @@ const nativeSearchEvaluator = IS_WINNOWER_HOST ? null : initSearchEvaluator(eval
       source: sheet, armor: !!getAegisArmorDatabase(), chase: searchSettingsReady,
     };
   }, () => ({ weapons: weaponEvaluations.stats(), armor: armorEvaluations.stats(), scores: scoreCacheStats() }),
-  status => inventoryBadges?.status(status), (status, response) => {
+  status => inventoryBadges?.status(status), (status, response, request) => {
+    nativeOwnershipAuthoritative = true;
+    if (status !== 'ready') {
+      nativeOwnedInventory.clear(); nativeScoreData.clear(); playerVaultInventory.clear();
+    } else {
+      playerVaultInventory.clear();
+      for (const item of request?.items || []) {
+        const info = nativeOwnedInventory.get(item.id);
+        if (!info) continue;
+        const canonical = getEnglishWeaponNameFromHash(item.hash) || getEnglishPerkNameFromHash(item.hash) || item.name;
+        const keys = new Set([normName(canonical), normName(item.name), normName(info.data?.sheetArmor?.setName || '')]);
+        for (const key of keys) {
+          if (!key) continue;
+          const owned = playerVaultInventory.get(key) || [];
+          owned.push(info); playerVaultInventory.set(key, owned);
+        }
+      }
+    }
     if (status !== 'ready') inventorySortItems.clear();
     const items = status === 'ready' ? (response?.facts || []).flatMap(fact => {
       const item = inventorySortItems.get(fact.id);
       return item && item.hash === fact.hash ? [item] : [];
     }) : [];
     inventorySortProvider?.publish(status, response, items);
+    const explorerPanel = document.querySelector('.aegis-explorer-panel');
+    if (explorerPanel && !explorerPanel.classList.contains('hidden')) renderResults();
   });
 
 function evaluateArmorItem(weaponName: string, hash: number): WeaponEvaluationPayload {
@@ -3902,19 +3933,31 @@ function computeArmorEvaluation(weaponName: string, hash: number): WeaponEvaluat
 /** Evaluate state-backed inputs with the same scorer and finalization as badges. */
 function evaluateSearchItem(item: DimSearchInput): SearchFact {
   let data: WeaponEvaluationPayload;
+  let ownedResult: ScoringResult;
   if (item.kind === 'armor') {
     data = evaluateArmorItem(item.name, item.hash);
+    ownedResult = data.result;
   } else {
     const evaluation = evaluateWeapon(item.name, item.hash, item.perkHashes, item.perksMap,
       item.activeHashes, item.variantText, item.id, item.masterwork);
+    ownedResult = evaluation.result;
     const result = { ...evaluation.result };
     finalizeSearchGrade(result, evaluation.sheetWeapon, aegisMode, aegisGradeDisplayMode, aegisTwoTier);
     const scores = evaluateScoreInput(item.name, item.hash, item.id, item.scoreOwned);
-    nativeScoreData.set(item.id, scores);
-    data = { ...evaluation, ...scores, name: item.name, perksMap: {}, result };
+    data = { ...evaluation, ...scores, name: item.name, perksMap: item.perksMap, activeHashes: item.activeHashes, equippedMasterwork: item.masterwork, result };
   }
+  nativeScoreData.set(item.id, { ...data, kind: item.kind });
+  const armor = data.sheetArmor;
+  const grade = armor ? (getGradeValue(armor.piece2Rating) >= getGradeValue(armor.piece4Rating) ? armor.piece2Rating : armor.piece4Rating) : ownedResult.grade || '';
+  nativeOwnedInventory.set(item.id, {
+    name: item.name, grade, hash: item.hash, instanceId: item.id, data, scoreEvaluations: data.scoreEvaluations,
+    isPerfect: !!ownedResult.isPerfect5of5, isPerfect5of5: ownedResult.isPerfect5of5, isOmniRoll: ownedResult.isOmniRoll,
+    potentialGrade: ownedResult.potentialGrade, upgradeAvailable: ownedResult.upgradeAvailable,
+    matchedPerks: data.sheetPerks?.matched, perkHashes: item.perkHashes, equippedMasterwork: item.masterwork,
+    armorPerks: item.armorPerks, armorStats: item.armorStats,
+  });
   inventorySortItems.set(item.id, inventorySortItem(item, data, inventorySortSettings()));
-  inventoryBadges?.add(item, data.result);
+  inventoryBadges?.add(item, data.result, data);
   const name = item.name.toLowerCase().trim();
   return { id: item.id, hash: item.hash, data: compactSearchData(data), context: { mode: aegisMode, kind: item.kind, scoreProfile: scoreSettings.aegisScoreProfile, chase: !!chaseList[normName(name)],
     source: aegisSheetDb?.weapons[name]?.source || aegisSheetDbPvE?.weapons[name]?.source || aegisSheetDbPvP?.weapons[name]?.source } };
@@ -3975,7 +4018,7 @@ chrome.storage.local.get([...SCORE_SETTING_KEYS,'wishlistData', 'enhancedToNorma
   aegisTooltipWidth = typeof res.aegisTooltipWidth === 'number' ? res.aegisTooltipWidth : 280;
   applyTooltipWidthStyles();
   aegisArmorSource = res.aegisArmorSource || 'lowco';
-  lightggDb = res.lightggData || {};
+  lightggDb = normalizeLightggData(res.lightggData);
   aegisSheetDb = res.aegisSheetDb || null;
   aegisSheetDbPvE = res.aegisSheetDbPvE || null;
   aegisSheetDbPvP = res.aegisSheetDbPvP || null;
@@ -4263,7 +4306,7 @@ chrome.storage.onChanged.addListener((changes, namespace) => {
       changed = true;
     }
     if (changes.lightggData) {
-      lightggDb = changes.lightggData.newValue || {};
+      lightggDb = normalizeLightggData(changes.lightggData.newValue);
       changed = true;
     }
     if (changes.aegisSheetDb) {
@@ -5677,8 +5720,8 @@ function scheduleBadgePresentation() {
   }, 100);
 }
 
-function getBadgeTemplate(result: ScoringResult, styleKey: string, scoreData?: Pick<WeaponEvaluationPayload, 'scoreEvaluations' | 'sheetArmor'>): HTMLDivElement {
-  const scoreDisplay = scoresEnabled() && !scoreData?.sheetArmor ? scorePresentation(scoreData?.scoreEvaluations, aegisMode, scoreSettings) : undefined;
+function getBadgeTemplate(result: ScoringResult, styleKey: string, scoreData?: Pick<WeaponEvaluationPayload, 'scoreEvaluations' | 'sheetArmor'> & { kind?: DimSearchInput['kind'] }): HTMLDivElement {
+  const scoreDisplay = scoresEnabled() && scoreData?.kind !== 'armor' && !scoreData?.sheetArmor ? scorePresentation(scoreData?.scoreEvaluations, aegisMode, scoreSettings) : undefined;
   const key = JSON.stringify([
     scoreDisplay?.html, scoreDisplay?.label, result.grade, result.isOmniRoll, result.isPerfect5of5, result.upgradeAvailable,
     result.pveRollQuality, result.pvpRollQuality, aegisShowPerfectStar, aegisShowOmniStar,
@@ -5820,11 +5863,11 @@ function getBadgeTemplate(result: ScoringResult, styleKey: string, scoreData?: P
 
 /** Publish cached evaluation data independently of Aegis badge visibility.
  * DIM-SUM owns its own presentation; native Aegis settings remain unchanged. */
-function publishInventoryGrade(container: HTMLElement, result: ScoringResult) {
+function publishInventoryGrade(container: HTMLElement, result: ScoringResult, presentation?: Pick<WeaponEvaluationPayload, 'sheetArmor' | 'scoreEvaluations'> & { kind?: DimSearchInput['kind'] }) {
   if (IS_WINNOWER_HOST) return;
   const tile = container.matches('.item') ? container : container.querySelector<HTMLElement>('.item');
   if (!tile) return;
-  const scoreData = weaponDataMap.get(container) || nativeScoreData.get(container.getAttribute('data-aegis-instance-id') || container.id.replace('item-', ''));
+  const scoreData = presentation || weaponDataMap.get(container) || nativeScoreData.get(container.getAttribute('data-aegis-instance-id') || container.id.replace('item-', ''));
   const template = getBadgeTemplate(result, 'classic', scoreData);
   const halves = [...template.querySelectorAll<HTMLElement>('.aegis-split-half')];
   const scoreParts = template.classList.contains('aegis-score') ? scorePresentation(scoreData?.scoreEvaluations, aegisMode, scoreSettings).parts : undefined;
@@ -5837,7 +5880,7 @@ function publishInventoryGrade(container: HTMLElement, result: ScoringResult) {
   if (tile.getAttribute('data-aegis-inventory-grade') !== value) tile.setAttribute('data-aegis-inventory-grade', value);
 }
 
-function injectBadge(el: HTMLElement, result: ScoringResult, category?: BadgeCategory) {
+function injectBadge(el: HTMLElement, result: ScoringResult, category?: BadgeCategory, presentation?: Pick<WeaponEvaluationPayload, 'sheetArmor' | 'scoreEvaluations'> & { kind?: DimSearchInput['kind'] }) {
   // Never inject badges inside popup toolbars, tag controls, or stat rows.
   // DIM-only: on Winnower an ancestor class containing "sheet" would false-positive.
   if (!IS_WINNOWER_HOST &&
@@ -5850,7 +5893,7 @@ function injectBadge(el: HTMLElement, result: ScoringResult, category?: BadgeCat
   // Deduplicate: Find root item container to ensure EXACTLY 1 badge per item tile in DIM Stable and Beta
   const itemContainer = (el.closest('[data-aegis-item-hash]') as HTMLElement) || el;
   badgeResults.set(itemContainer, result);
-  publishInventoryGrade(itemContainer, result);
+  publishInventoryGrade(itemContainer, result, presentation);
   let badgeTarget: HTMLElement | null;
   const visibility = aegisBadgeVisibility[category ?? badgeCategory(itemContainer)];
   const gradeTile = itemContainer.matches('.item') ? itemContainer : itemContainer.querySelector<HTMLElement>('.item');
@@ -5891,8 +5934,8 @@ function injectBadge(el: HTMLElement, result: ScoringResult, category?: BadgeCat
 
   if (aegisBadgeStyle === 'stat' && !IS_WINNOWER_HOST && badgeTarget.matches('.item')) {
     itemContainer.querySelectorAll<HTMLElement>('.aegis-badge').forEach(badge => { releaseFooterSize(badge); badge.remove(); });
-    const data = weaponDataMap.get(el) || nativeScoreData.get(el.getAttribute('data-aegis-instance-id') || el.id.replace('item-', ''));
-    if (scoresEnabled() && !('sheetArmor' in (data || {}))) {
+    const data = presentation || weaponDataMap.get(el) || nativeScoreData.get(el.getAttribute('data-aegis-instance-id') || el.id.replace('item-', ''));
+    if (scoresEnabled() && data?.kind !== 'armor' && !('sheetArmor' in (data || {}))) {
       const display = scorePresentation(data?.scoreEvaluations, aegisMode, scoreSettings);
       renderStatScore(badgeTarget, display.parts.map(part => part.html).join(' | '), display.label);
     } else renderStatGrade(badgeTarget, result, aegisStatGradeBasis);
@@ -5905,7 +5948,7 @@ function injectBadge(el: HTMLElement, result: ScoringResult, category?: BadgeCat
   // Compare, Armory, vendors, and item pickers use the same DIM tile without a drag wrapper.
   // Keep the inline fallback for Winnower's name-cell slot and targets without DIM's tile layout.
   const styleKey = aegisBadgeStyle === 'stat' ? 'classic' : aegisBadgeStyle === 'footer' && (IS_WINNOWER_HOST || !badgeTarget.matches('.item')) ? 'notch' : aegisBadgeStyle;
-  const scoreData = weaponDataMap.get(el) || nativeScoreData.get(el.getAttribute('data-aegis-instance-id') || el.id.replace('item-', ''));
+  const scoreData = presentation || weaponDataMap.get(el) || nativeScoreData.get(el.getAttribute('data-aegis-instance-id') || el.id.replace('item-', ''));
   const template = getBadgeTemplate(result, styleKey, scoreData);
   const badge = (existingBadges[0] || template.cloneNode(true)) as HTMLDivElement;
   if (existingBadges.length) {
@@ -6316,7 +6359,7 @@ function processElement(el: HTMLElement) {
       const normAName = normName(weaponName);
       const armorSetName = sheetArmor ? normName(sheetArmor.setName) : '';
 
-      if (sheetArmor || shoppingItem || shoppingAlt) {
+      if (!nativeOwnershipAuthoritative && (sheetArmor || shoppingItem || shoppingAlt)) {
         const rating2Val = getGradeValue(sheetArmor?.piece2Rating || '');
         const rating4Val = getGradeValue(sheetArmor?.piece4Rating || '');
         const bestRating = sheetArmor ? (rating2Val >= rating4Val ? sheetArmor.piece2Rating : sheetArmor.piece4Rating) : '';
@@ -6562,7 +6605,7 @@ function processElement(el: HTMLElement) {
 
     managedPreview?.refresh(el);
     // Index into playerVaultInventory for Shopping List Audit
-    if ((result.grade || scoresEnabled()) && !el.closest(COMPARE_BUCKET_SELECTOR)) {
+    if (!nativeOwnershipAuthoritative && (result.grade || scoresEnabled()) && !el.closest(COMPARE_BUCKET_SELECTOR)) {
       const lookupKey = normWName;
       const existing = playerVaultInventory.get(lookupKey) || [];
       const instanceId = el.getAttribute('data-aegis-instance-id') || el.getAttribute('data-aegis-item-id') || undefined;
@@ -6993,7 +7036,7 @@ function reprocessAllElements() {
   setupSearchWidget();
 
   // Prune detached items to prevent memory leaks across route changes
-  for (const [key, items] of playerVaultInventory.entries()) {
+  for (const [key, items] of nativeOwnershipAuthoritative ? [] : playerVaultInventory.entries()) {
     const valid = items.filter(item => item.element?.isConnected);
     if (valid.length === 0) {
       playerVaultInventory.delete(key);

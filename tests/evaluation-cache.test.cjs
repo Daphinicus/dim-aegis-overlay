@@ -12,7 +12,7 @@ const context=vm.createContext({
   computeWeaponEvaluation:()=>({result:{grade:++weaponCalls%2?'A':'B'}}),
   computeArmorEvaluation:()=>({result:{grade:'A/S',revision:++armorCalls}}),
   inventoryEvaluations:new Map(),weaponFallbackCache:new WeakMap(),
-  setupRegistryObserver(){},setupSearchWidget(){},playerVaultInventory:new Map(),
+  setupRegistryObserver(){},setupSearchWidget(){},playerVaultInventory:new Map(),nativeOwnershipAuthoritative:false,
   document:{querySelectorAll:()=>[],querySelector:()=>null},comparePerks:{refresh(){}},overviewPerks:{refresh(){}},
   perkNameToIcon:{},cleanPerkName:name=>name.toLowerCase(),updatePerkNameToHash(){},
   nativeSearchEvaluator:{invalidate(){invalidations++;}},

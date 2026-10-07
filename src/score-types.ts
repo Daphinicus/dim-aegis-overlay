@@ -26,6 +26,9 @@ export interface ScoreSource {
   rowId: string;
   sourceRevision: string;
   categoryKey: string;
+  weaponName?: string;
+  frame?: string;
+  versionTag?: string;
   tier: string;
   rank: number | null;
   rankBounds: readonly [number, number] | null;

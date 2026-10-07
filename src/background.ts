@@ -1,3 +1,4 @@
+import { normalizeLightggData } from './external-text';
 import { scoreRowMetadata } from '../scripts/score-sync.mjs';
 import { parseWishlist } from './parser';
 import { AegisSheetDatabase, AegisSheetWeapon, AegisArmorSet, AegisShoppingDatabase, AegisShoppingItem } from './types';
@@ -214,8 +215,10 @@ async function fetchSpreadsheetDatabase(sheetId: string, tabs: string[]): Promis
   const categories: Record<string, AegisSheetWeapon[]> = {};
 
   const discoveredTabs = await fetchHtmlViewMetadata(sheetId);
+  const completedTabs = new Set<string>();
 
-  const promises = tabs.map(async (tab) => {
+  const expectedTabs = Object.keys(discoveredTabs).length ? tabs.filter(tab => discoveredTabs[tab]) : tabs;
+  const promises = expectedTabs.map(async (tab) => {
     try {
       const gid = discoveredTabs[tab];
       const rows = await fetchTabRows(sheetId, tab, gid);
@@ -230,6 +233,8 @@ async function fetchSpreadsheetDatabase(sheetId: string, tabs: string[]): Promis
       }
 
       const header = rows[headerRowIndex];
+      if (!header.some(cell => cell.trim().toLowerCase() === 'name')) return;
+      completedTabs.add(tab);
       const idx: Record<string, number> = {};
       header.forEach((col, i) => {
         idx[col.trim()] = i;
@@ -314,7 +319,9 @@ async function fetchSpreadsheetDatabase(sheetId: string, tabs: string[]): Promis
         if (!variants[baseNormalized]) {
           variants[baseNormalized] = [];
         }
-        if (!variants[baseNormalized].some((v: any) => v.name === weaponName)) {
+        if (!variants[baseNormalized].some((v: AegisSheetWeapon) => v.sourceRowId && weaponData.sourceRowId
+          ? v.sourceRowId === weaponData.sourceRowId
+          : [v.categoryKey, v.name, v.versionTag, v.frame].join('|') === [weaponData.categoryKey, weaponData.name, weaponData.versionTag, weaponData.frame].join('|'))) {
           variants[baseNormalized].push(weaponData);
         }
 
@@ -338,6 +345,9 @@ async function fetchSpreadsheetDatabase(sheetId: string, tabs: string[]): Promis
   });
 
   await Promise.all(promises);
+  if (completedTabs.size !== expectedTabs.length || Object.keys(weapons).length === 0) {
+    throw new Error(`Incomplete spreadsheet: ${completedTabs.size}/${expectedTabs.length} tabs`);
+  }
 
   // Fetch LowCo armor sets sheet
   const armorUrl = `https://docs.google.com/spreadsheets/d/${ARMOR_SHEET_ID}/gviz/tq?tqx=out:csv&gid=${ARMOR_GID}`;
@@ -629,75 +639,69 @@ function fetchAndCachePerkRatings(force = false): Promise<void> {
   return perkRatingsSync;
 }
 
-async function fetchAndCacheAegisSheet(): Promise<{ success: boolean; error?: string }> {
+async function fetchAndCacheAegisSheet(): Promise<{ success: boolean; partial?: boolean; error?: string }> {
   await fetchAndCachePerkRatings(true);
   try {
-    let aegisSheetDbPvE: AegisSheetDatabase | null = null;
-    let aegisSheetDbPvP: AegisSheetDatabase | null = null;
-    let aegisShoppingDbPvE: AegisShoppingDatabase | null = null;
-    let aegisShoppingDbPvP: AegisShoppingDatabase | null = null;
-    let aegisShoppingDb: AegisShoppingDatabase | null = null;
-
-    // 1. Fast path: Fetch pre-compiled databases from GitHub CDN mirror using concurrent allSettled
-    try {
-      const [pveResult, pvpResult] = await Promise.allSettled([
-        fetchWithTimeout(PVE_DB_CDN_URL),
-        fetchWithTimeout(PVP_DB_CDN_URL),
-      ]);
-
-      if (pveResult.status === 'fulfilled' && pveResult.value.ok) {
-        const pveJson = (await pveResult.value.json()) as AegisSheetDatabase & { shopping?: AegisShoppingDatabase };
-        if (pveJson && pveJson.weapons && Object.keys(pveJson.weapons).length > 0) {
-          aegisSheetDbPvE = pveJson;
-          if (pveJson.shopping && pveJson.shopping.items && pveJson.shopping.items.length > 0) {
-            aegisShoppingDbPvE = pveJson.shopping;
-            aegisShoppingDb = pveJson.shopping;
-          }
+    const validSheet = (value: any): value is AegisSheetDatabase => !!value && typeof value.weapons === 'object' && !Array.isArray(value.weapons)
+      && Object.keys(value.weapons).length > 0 && Object.values(value.weapons).every((weapon: any) => typeof weapon?.name === 'string' && weapon.name.trim())
+      && !!value.categories && typeof value.categories === 'object' && !Array.isArray(value.categories)
+      && Object.values(value.categories).every(category => Array.isArray(category));
+    const validShopping = (value: any): value is AegisShoppingDatabase => !!value && Array.isArray(value.items) && value.items.length > 0
+      && !!value.byName && typeof value.byName === 'object' && !!value.alternativesMap && typeof value.alternativesMap === 'object'
+      && value.items.every((item: any) => typeof item?.name === 'string' && item.name.trim());
+    const refresh = async (url: string, sheetId: string, tabs: string[]) => {
+      let sheet: AegisSheetDatabase | undefined, shopping: AegisShoppingDatabase | undefined;
+      try {
+        const response = await fetchWithTimeout(url);
+        if (response.ok) {
+          const data = await response.json();
+          if (validSheet(data)) sheet = data;
+          if (validShopping(data?.shopping)) shopping = data.shopping;
         }
+      } catch { /* Independently try this channel's direct source. */ }
+      if (!sheet) {
+        try { const data = await fetchSpreadsheetDatabase(sheetId, tabs); if (validSheet(data)) sheet = data; } catch { /* Retain this channel's last good cache. */ }
       }
-
-      if (pvpResult.status === 'fulfilled' && pvpResult.value.ok) {
-        const pvpJson = (await pvpResult.value.json()) as AegisSheetDatabase & { shopping?: AegisShoppingDatabase };
-        if (pvpJson && pvpJson.weapons && Object.keys(pvpJson.weapons).length > 0) {
-          aegisSheetDbPvP = pvpJson;
-          if (pvpJson.shopping && pvpJson.shopping.items && pvpJson.shopping.items.length > 0) {
-            aegisShoppingDbPvP = pvpJson.shopping;
-          }
+      if (!shopping) {
+        try { const data = await fetchShoppingListDatabase(sheetId); if (validShopping(data)) shopping = data; } catch { /* Retain shopping independently. */ }
+      }
+      return { sheet, shopping };
+    };
+    const [pve, pvp] = await Promise.all([
+      refresh(PVE_DB_CDN_URL, SHEET_ID, ALL_TABS),
+      refresh(PVP_DB_CDN_URL, PVP_SHEET_ID, [...ALL_TABS, 'Legendary Weapons']),
+    ]);
+    // Source requests may take seconds; choose aliases and retained data from current preferences.
+    const storage = await chrome.storage.local.get(['aegisMode', 'aegisSheetDbPvE', 'aegisSheetDbPvP', 'aegisSheetDb', 'aegisShoppingDbPvE', 'aegisShoppingDbPvP', 'aegisShoppingDb']);
+    const updates: Record<string, unknown> = {};
+    for (const [mode, result] of [['PvE', pve], ['PvP', pvp]] as const) {
+      if (result.sheet) {
+        const previous = storage['aegisSheetDb' + mode];
+        // Optional armor sources can fail independently of weapon tabs.
+        for (const key of ['armor', 'armorAegis'] as const) {
+          if ((!result.sheet[key] || !Object.keys(result.sheet[key]!).length) && previous?.[key]) result.sheet[key] = previous[key];
         }
+        updates['aegisSheetDb' + mode] = result.sheet;
+        updates['aegisSheetLastSync' + mode] = Date.now();
       }
-    } catch (cdnErr) {
-      console.warn('DIM Aegis Overlay: CDN mirror fetch failed, falling back to direct spreadsheet sync:', cdnErr);
+      if (result.shopping) updates['aegisShoppingDb' + mode] = result.shopping;
     }
-
-    // 2. Fallback path: Direct Google Spreadsheet extraction if CDN was unavailable
-    if (!aegisSheetDbPvE || !aegisSheetDbPvP) {
-      aegisSheetDbPvE = aegisSheetDbPvE || (await fetchSpreadsheetDatabase(SHEET_ID, ALL_TABS));
-      const pvpTabs = [...ALL_TABS, 'Legendary Weapons'];
-      aegisSheetDbPvP = aegisSheetDbPvP || (await fetchSpreadsheetDatabase(PVP_SHEET_ID, pvpTabs));
-      aegisShoppingDbPvE = aegisShoppingDbPvE || (await fetchShoppingListDatabase(SHEET_ID));
-      aegisShoppingDb = aegisShoppingDb || aegisShoppingDbPvE;
-    }
-
-    const storage = await chrome.storage.local.get(['aegisMode']);
-    const aegisMode = storage.aegisMode || 'pve';
-    const activeDb = aegisMode === 'pvp' ? aegisSheetDbPvP : aegisSheetDbPvE;
-    const activeShopping = aegisMode === 'pvp' ? (aegisShoppingDbPvP || aegisShoppingDbPvE) : (aegisShoppingDbPvE || aegisShoppingDbPvP);
-
-    await chrome.storage.local.set({
-      aegisSheetDbPvE,
-      aegisSheetDbPvP,
-      aegisSheetDb: activeDb,
-      aegisShoppingDbPvE,
-      aegisShoppingDbPvP,
-      aegisShoppingDb: activeShopping,
-      aegisSheetLastSync: Date.now(),
-    });
-
-    return { success: true };
-  } catch (err: any) {
-    const errMsg = err.message || String(err);
-    console.error('DIM Aegis Overlay: Failed to fetch/cache Aegis spreadsheet:', errMsg);
-    return { success: false, error: errMsg };
+    const merged = { ...storage, ...updates };
+    const active = storage.aegisMode === 'pvp' ? 'PvP' : 'PvE';
+    const activeDb = merged['aegisSheetDb' + active];
+    const activeShopping = merged['aegisShoppingDb' + active] || merged.aegisShoppingDbPvE || merged.aegisShoppingDbPvP;
+    if (activeDb) updates.aegisSheetDb = activeDb;
+    if (activeShopping) updates.aegisShoppingDb = activeShopping;
+    const failed = [!pve.sheet && 'PvE weapons', !pvp.sheet && 'PvP weapons', !pve.shopping && 'PvE shopping', !pvp.shopping && 'PvP shopping'].filter(Boolean);
+    const success = failed.length === 0;
+    if (success) updates.aegisSheetLastSync = Date.now();
+    const error = success ? null : `Failed to refresh ${failed.join(' and ')}; retained last good caches`;
+    updates.aegisSheetSyncStatus = success ? 'success' : pve.sheet || pvp.sheet || pve.shopping || pvp.shopping ? 'partial' : 'error';
+    updates.aegisSheetSyncError = error;
+    await chrome.storage.local.set(updates);
+    return success ? { success: true } : { success: false, partial: !!pve.sheet || !!pvp.sheet || !!pve.shopping || !!pvp.shopping, error: error! };
+  } catch (err: unknown) {
+    return { success: false, error: err instanceof Error ? err.message : String(err) };
   }
 }
 
@@ -837,8 +841,29 @@ function notifyDimTabsOfUpdate(updatedCount: number) {
   });
 }
 
+// One service-worker owner serializes all tabs' grade merges; no caller sends a stale cache snapshot.
+let lightggWriteQueue: Promise<unknown> = Promise.resolve();
+function mergeLightggGrades(raw: unknown): Promise<number> {
+  const grades = normalizeLightggData(raw);
+  const operation = lightggWriteQueue.then(async () => {
+    const stored = await chrome.storage.local.get('lightggData');
+    const existing = normalizeLightggData(stored.lightggData);
+    const merged = { ...existing, ...grades };
+    await chrome.storage.local.set({ lightggData: merged, lightggLastSync: Date.now() });
+    return Object.keys(merged).length;
+  });
+  lightggWriteQueue = operation.catch(() => {});
+  return operation;
+}
+
 // Listen for messages from settings popup
 chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
+  if (message.action === 'saveLightggGrades') {
+    if (!/^https:\/\/(?:www\.)?light\.gg\//i.test(_sender.url || '')) return false;
+    mergeLightggGrades(message.grades).then(count => sendResponse({ success: true, count }))
+      .catch(error => sendResponse({ success: false, error: String(error) }));
+    return true;
+  }
   if (message.action === 'dimLaunched') {
     handleDimLaunched().catch(console.error);
     return false;

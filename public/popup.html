@@ -177,7 +177,7 @@
         <h2 data-i18n="languageLayoutTitle">Scoring, Layout & Languages</h2>
         <p class="description" data-i18n="languageLayoutDesc">Select your preferred language and overlay options.</p>
         <div class="input-group input-group-compact">
-          <label data-i18n="displayLanguage">Display Language</label>
+          <label id="aegis-language-label" for="language-select-input" data-i18n="displayLanguage">Display Language</label>
           <div class="aegis-combobox-wrapper popup-dropdown-wrapper" id="aegis-language-dropdown" style="width: 100% !important; flex: none !important; position: relative;">
             <input type="text" class="aegis-combobox-input popup-dropdown-input" id="language-select-input" readonly placeholder="Auto (DIM / Browser)" style="cursor: pointer; padding-right: 28px; width: 100% !important;" />
             <span class="aegis-combobox-arrow">▼</span>
@@ -224,8 +224,8 @@
           </div>
         </div>
         <div class="input-group input-group-compact">
-          <label data-i18n="ratingDisplay">Rating display</label>
-          <div class="segmented-control" id="aegis-rating-display-segmented">
+          <label id="aegis-rating-display-label" data-i18n="ratingDisplay">Rating display</label>
+          <div class="segmented-control" id="aegis-rating-display-segmented" role="group" aria-labelledby="aegis-rating-display-label">
             <button type="button" data-value="grades" class="active" data-i18n="ratingGrades">Grades</button>
             <button type="button" data-value="scores" data-i18n="ratingScores">Scores</button>
           </div>
@@ -233,30 +233,30 @@
         </div>
         <div id="aegis-score-controls" class="hidden">
           <div class="input-group input-group-compact">
-            <label data-i18n="scoreBasis">Score basis</label>
-            <div class="segmented-control" id="aegis-score-profile-segmented">
+            <label id="aegis-score-profile-label" data-i18n="scoreBasis">Score basis</label>
+            <div class="segmented-control" id="aegis-score-profile-segmented" role="group" aria-labelledby="aegis-score-profile-label">
               <button type="button" data-value="best" class="active" data-i18n="scoreBest">Best selections</button>
               <button type="button" data-value="omni" data-i18n="scoreOmni">Omni coverage</button>
             </div>
           </div>
           <div class="input-group input-group-compact">
-            <label data-i18n="scorePrecision">Decimal places</label>
-            <div class="segmented-control" id="aegis-score-precision-segmented">
+            <label id="aegis-score-precision-label" data-i18n="scorePrecision">Decimal places</label>
+            <div class="segmented-control" id="aegis-score-precision-segmented" role="group" aria-labelledby="aegis-score-precision-label">
               <button type="button" data-value="0" class="active">0</button>
               <button type="button" data-value="1">1</button>
               <button type="button" data-value="2">2</button>
             </div>
           </div>
           <div class="input-group input-group-compact">
-            <label data-i18n="scorePercentSymbols">Percent symbols</label>
-            <div class="segmented-control" id="aegis-score-percent-segmented">
+            <label id="aegis-score-percent-label" data-i18n="scorePercentSymbols">Percent symbols</label>
+            <div class="segmented-control" id="aegis-score-percent-segmented" role="group" aria-labelledby="aegis-score-percent-label">
               <button type="button" data-value="true" class="active" data-i18n="inlineOn">On</button>
               <button type="button" data-value="false" data-i18n="inlineOff">Off</button>
             </div>
           </div>
           <div id="aegis-score-comparison-group" class="input-group input-group-compact">
-            <label data-i18n="scoreComparisonActivity">Compare drops by</label>
-            <div class="segmented-control" id="aegis-score-comparison-segmented">
+            <label id="aegis-score-comparison-label" data-i18n="scoreComparisonActivity">Compare drops by</label>
+            <div class="segmented-control" id="aegis-score-comparison-segmented" role="group" aria-labelledby="aegis-score-comparison-label">
               <button type="button" data-value="pve" class="active">PvE</button>
               <button type="button" data-value="pvp">PvP</button>
             </div>
@@ -611,8 +611,8 @@
           <span class="changelog-version-tag">v1.9.5</span>
           <span class="changelog-date-tag">Changelog</span>
         </div>
-        <h2 class="changelog-title">v1.9.5 Release Notes</h2>
-        <button type="button" id="changelog-close-btn" class="changelog-close-x">&times;</button>
+        <h2 id="changelog-title" class="changelog-title">v1.9.5 Release Notes</h2>
+        <button type="button" id="changelog-close-btn" data-i18n-aria-label="closeChangelog" aria-label="Close" class="changelog-close-x">&times;</button>
       </div>
 
       <div class="changelog-modal-body">

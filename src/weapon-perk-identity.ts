@@ -7,10 +7,8 @@ const nameKey = (name: string) => name.toLowerCase().replace(/[^a-z0-9]/g, '');
 export function resolveWeaponPerkHash(name: string, slot?: WeaponPerkSlot): number | null {
   const raw = name.toLowerCase().trim().replace(/\s+/g, ' ');
   // Enhanced Battery and Enhanced Heatsink are literal part names. Resolve the
-  // complete name before interpreting Enhanced as a variant prefix.
-  const base = raw.replace(/^enhanced\s+/i, '');
-  const candidates = WEAPON_PERK_NAMES[raw] ?? WEAPON_PERK_ALIASES[nameKey(raw)]
-    ?? WEAPON_PERK_NAMES[base] ?? WEAPON_PERK_ALIASES[nameKey(base)];
+  // complete name; enhancement aliases exist only for verified hash links.
+  const candidates = WEAPON_PERK_NAMES[raw] ?? WEAPON_PERK_ALIASES[nameKey(raw)];
   if (!candidates) return null;
   if (slot) return candidates[family(slot)] ?? null;
   // Trait names take precedence over cosmetics and same-named equipment parts.
@@ -20,8 +18,7 @@ export function resolveWeaponPerkHash(name: string, slot?: WeaponPerkSlot): numb
 export function isAmbiguousWeaponPerkName(name: string, slot?: WeaponPerkSlot): boolean {
   const raw = name.toLowerCase().trim().replace(/\s+/g, ' ');
   if (WEAPON_PERK_NAMES[raw]) return false;
-  const base = raw.replace(/^enhanced\s+/i, '');
-  const conflicts = WEAPON_PERK_AMBIGUOUS[nameKey(raw)] ?? WEAPON_PERK_AMBIGUOUS[nameKey(base)];
+  const conflicts = WEAPON_PERK_AMBIGUOUS[nameKey(raw)];
   return !!conflicts?.length && (!slot || conflicts.includes(family(slot)));
 }
 /** Preserve exact plug-family identity while collapsing normal/enhanced duplicates. */
