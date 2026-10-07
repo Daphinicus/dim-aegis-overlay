@@ -1,13 +1,15 @@
 // DIM uses this stable class on the positioned root. Its generated ItemPopup
 // classes also occur on headers and action rails, which are not popup roots.
 const popupSelector = '.item-popup';
+// The persistent Details panel leaves the inventory available for hover.
+const blockingPopupSelector = '.item-popup:not([data-dimsum-workspace-native="details"])';
 const tileSelector = '.item, .item-tile, [id^="item-"], [class*="StoreItem"], [class*="InventoryItem"], [class*="ItemTile"]';
 let enabled = false;
 let clickedTile: HTMLElement | null = null;
 let openingUntil = 0;
 const popupAnchors = new WeakMap<HTMLElement, HTMLElement | null>();
 export function isTileTooltipSuppressed(): boolean {
-  return enabled && (Date.now() < openingUntil || !!document.querySelector(popupSelector));
+  return enabled && (Date.now() < openingUntil || !!document.querySelector(blockingPopupSelector));
 }
 
 export function initPopupInteraction(dismissTooltip: () => void) {
@@ -53,7 +55,7 @@ export function initPopupInteraction(dismissTooltip: () => void) {
         else if (!popup.hasAttribute('data-aegis-native-popup-layout')) geometryObserver.observe(popup, { attributes: true, attributeFilter: ['style', 'data-popper-placement'] });
       }
     }
-    if (popups.length) dismissTooltip();
+    if ([...popups].some(popup => popup.matches(blockingPopupSelector))) dismissTooltip();
   });
   observer.observe(document.documentElement, { childList: true, subtree: true });
   window.addEventListener('resize', () => {

@@ -451,7 +451,9 @@ export function showTooltip(
     contentHost?: HTMLElement;
   }
 ) {
-  if (isTileTooltipSuppressed()) {
+  // An embedded preview owns its visibility and dialog guards. Only standalone
+  // Aegis tooltips inherit the native popup suppression policy.
+  if (!options?.contentHost && isTileTooltipSuppressed()) {
     hideTooltip();
     return;
   }
