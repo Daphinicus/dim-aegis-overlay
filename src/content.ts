@@ -1813,8 +1813,15 @@ function renderExplorerRowHtml(m: { weapon: AegisSheetWeapon; category: string }
   `;
 }
 
+function getOpenExplorerPanel(): HTMLElement | null {
+  const panel = explorerUi?.panel;
+  return panel?.isConnected && panel.classList.contains('open') ? panel : null;
+}
+
 function renderNextExplorerChunk(): boolean {
-  const resultsContainer = document.querySelector('.aegis-explorer-results') as HTMLElement;
+  const panel = getOpenExplorerPanel();
+  if (!panel) return false;
+  const resultsContainer = panel.querySelector('.aegis-explorer-results') as HTMLElement;
   if (!resultsContainer || renderedExplorerCount >= currentExplorerMatches.length) return false;
 
   const nextSlice = currentExplorerMatches.slice(renderedExplorerCount, renderedExplorerCount + EXPLORER_CHUNK_SIZE);
@@ -1835,15 +1842,16 @@ function renderNextExplorerChunk(): boolean {
 }
 
 function renderResults() {
-  const resultsContainer = document.querySelector('.aegis-explorer-results') as HTMLElement;
+  const panel = getOpenExplorerPanel();
+  if (!panel) return;
+  const resultsContainer = panel.querySelector('.aegis-explorer-results') as HTMLElement;
   if (!resultsContainer) return;
   const savedScrollTop = resultsContainer.scrollTop;
 
   const db = aegisSheetDb;
   addDiagnosticLog(`renderResults called. activeTab: "${activeTab}". Has db: ${!!db}. Weapons count: ${db ? Object.keys(db.weapons || {}).length : 0}. Items in chaseList: ${JSON.stringify(Object.keys(chaseList))}`);
 
-  const panel = document.querySelector('.aegis-explorer-panel') as HTMLElement | null;
-  const searchGroup = panel?.querySelector('.aegis-explorer-search-group') as HTMLElement | null;
+  const searchGroup = panel.querySelector('.aegis-explorer-search-group') as HTMLElement | null;
   if (searchGroup) {
     searchGroup.style.display = activeTab === 'chase' ? 'none' : 'flex';
   }
@@ -3877,8 +3885,7 @@ const nativeSearchEvaluator = IS_WINNOWER_HOST ? null : initSearchEvaluator(eval
       return item && item.hash === fact.hash ? [item] : [];
     }) : [];
     inventorySortProvider?.publish(status, response, items);
-    const explorerPanel = document.querySelector('.aegis-explorer-panel');
-    if (explorerPanel && !explorerPanel.classList.contains('hidden')) renderResults();
+    if (getOpenExplorerPanel()) renderResults();
   });
 
 function evaluateArmorItem(weaponName: string, hash: number): WeaponEvaluationPayload {
@@ -5716,8 +5723,7 @@ function scheduleBadgePresentation() {
     document.querySelectorAll<HTMLElement>('[data-aegis-item-hash]').forEach(item => {
       if (badgeResults.has(item)) badgePresentationQueue.add(item);
     });
-    const explorer = document.querySelector('.aegis-explorer-panel');
-    if (explorer && !explorer.classList.contains('hidden')) renderResults();
+    if (getOpenExplorerPanel()) renderResults();
   }, 100);
 }
 
@@ -7050,8 +7056,7 @@ function reprocessAllElements() {
   for (let i = 0; i < elements.length; i++) {
     processElement(elements[i]);
   }
-  const explorerPanel = document.querySelector('.aegis-explorer-panel');
-  if (explorerPanel && !explorerPanel.classList.contains('hidden')) {
+  if (getOpenExplorerPanel()) {
     renderResults();
   }
   comparePerks.refresh();

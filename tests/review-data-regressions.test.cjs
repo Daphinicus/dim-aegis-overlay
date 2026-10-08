@@ -43,8 +43,8 @@ async function refresh(pve, pvp, shopping = null) {
         const native = new Map();
         const item = { id: '100000000000000001', hash: 1, name: 'Test', kind: 'weapon', perkHashes: [], activeHashes: [], perksMap: {}, masterwork: '', variantText: 'Test' };
         const data = { result: { grade: 'S+', matchedPerks: [], missingPerks: [] }, normWName: 'test' };
-        const context = { IS_WINNOWER_HOST: false, initSearchEvaluator: (evaluate, _r, _a, _c, _s, onSnapshot) => { snapshot = { evaluate, onSnapshot }; }, evaluateSearchItem: undefined, searchSettingsReady: true, searchLocaleReady: true, inventorySortItems: new Map(), inventorySortProvider: { publish() { } }, inventoryBadges: { add() { }, status() { } }, nativeScoreData: native, playerVaultInventory: vault, pendingOwnedInventory: pending, nativeOwnedInventory: pending, normName: s => s.toLowerCase().trim(), getEnglishWeaponNameFromHash: () => null, getEnglishPerkNameFromHash: () => null, inventorySortItem: () => ({ hash: 1 }), inventorySortSettings: () => ({}), evaluateWeapon: () => data, evaluateScoreInput: () => ({}), finalizeSearchGrade() { }, compactSearchData: d => d, aegisMode: 'pve', aegisGradeDisplayMode: 'active', aegisTwoTier: false, scoreSettings: {}, chaseList: {}, aegisSheetDb: null, aegisSheetDbPvE: null, aegisSheetDbPvP: null, renderResults() { }, document: { querySelector: () => null } };
-        vm.runInNewContext(transpile(fn('content.ts', 'evaluateSearchItem') + '\n' + declaration.getText(sf)), context);
+        const context = { explorerUi: null, IS_WINNOWER_HOST: false, initSearchEvaluator: (evaluate, _r, _a, _c, _s, onSnapshot) => { snapshot = { evaluate, onSnapshot }; }, evaluateSearchItem: undefined, searchSettingsReady: true, searchLocaleReady: true, inventorySortItems: new Map(), inventorySortProvider: { publish() { } }, inventoryBadges: { add() { }, status() { } }, nativeScoreData: native, playerVaultInventory: vault, pendingOwnedInventory: pending, nativeOwnedInventory: pending, normName: s => s.toLowerCase().trim(), getEnglishWeaponNameFromHash: () => null, getEnglishPerkNameFromHash: () => null, inventorySortItem: () => ({ hash: 1 }), inventorySortSettings: () => ({}), evaluateWeapon: () => data, evaluateScoreInput: () => ({}), finalizeSearchGrade() { }, compactSearchData: d => d, aegisMode: 'pve', aegisGradeDisplayMode: 'active', aegisTwoTier: false, scoreSettings: {}, chaseList: {}, aegisSheetDb: null, aegisSheetDbPvE: null, aegisSheetDbPvP: null, renderResults() { }, document: { querySelector: () => null } };
+        vm.runInNewContext(transpile(fn('content.ts', 'getOpenExplorerPanel') + '\n' + fn('content.ts', 'evaluateSearchItem') + '\n' + declaration.getText(sf)), context);
         const revision = { session: 'one', accountEpoch: 1, inventoryRevision: 1, evaluationRevision: 1 };
         snapshot.onSnapshot('pending', { ...revision, facts: [] }, { ...revision, items: [item] });
         const fact = snapshot.evaluate(item);
@@ -257,12 +257,13 @@ async function refresh(pve, pvp, shopping = null) {
         const sf = ts.createSourceFile('content.ts', src('content.ts'), ts.ScriptTarget.Latest, true);
         const declaration = sf.statements.find(node => ts.isVariableStatement(node) && node.declarationList.declarations.some(value => value.name.getText(sf) === 'nativeSearchEvaluator'));
         let snapshot;
-        let hidden = false;
+        const auditDom = new JSDOM('<div class="aegis-explorer-panel open"></div>');
+        const auditPanel = auditDom.window.document.querySelector('.aegis-explorer-panel');
         const rendered = [];
         const owned = new Map();
         const vault = new Map();
-        const context = { IS_WINNOWER_HOST: false, initSearchEvaluator: (_evaluate, _ready, _available, _cache, _status, onSnapshot) => { snapshot = onSnapshot; }, evaluateSearchItem: () => ({}), nativeOwnedInventory: owned, nativeScoreData: new Map(), playerVaultInventory: vault, inventorySortItems: new Map(), inventorySortProvider: { publish() {} }, normName: value => value.toLowerCase().trim(), getEnglishWeaponNameFromHash: () => null, getEnglishPerkNameFromHash: () => null, document: { querySelector: () => ({ classList: { contains: () => hidden } }) }, renderResults: () => rendered.push(vault.get('test')?.length || 0) };
-        vm.runInNewContext(transpile(declaration.getText(sf)), context);
+        const context = { explorerUi: { panel: auditPanel }, IS_WINNOWER_HOST: false, initSearchEvaluator: (_evaluate, _ready, _available, _cache, _status, onSnapshot) => { snapshot = onSnapshot; }, evaluateSearchItem: () => ({}), nativeOwnedInventory: owned, nativeScoreData: new Map(), playerVaultInventory: vault, inventorySortItems: new Map(), inventorySortProvider: { publish() {} }, normName: value => value.toLowerCase().trim(), getEnglishWeaponNameFromHash: () => null, getEnglishPerkNameFromHash: () => null, document: auditDom.window.document, renderResults: () => rendered.push(vault.get('test')?.length || 0) };
+        vm.runInNewContext(transpile(fn('content.ts', 'getOpenExplorerPanel') + '\n' + declaration.getText(sf)), context);
         snapshot('pending', { facts: [] }, { items: [] });
         assert.deepEqual(rendered, [0], 'pending account state immediately clears visible old Shopping counts');
         owned.set('1', { name: 'Test', grade: 'S+', hash: 1, instanceId: '1', data: {} });
@@ -271,9 +272,10 @@ async function refresh(pve, pvp, shopping = null) {
         assert.deepEqual(rendered, [0, 1], 'complete READY snapshot repaints the already open audit without tile mounting');
         snapshot('unavailable');
         assert.deepEqual(rendered, [0, 1, 0], 'disposal/unavailability repaints cleared ownership');
-        hidden = true;
+        auditPanel.classList.remove('open');
         snapshot('pending');
         assert.deepEqual(rendered, [0, 1, 0], 'hidden audit does not incur rendering');
+        auditDom.window.close();
     });
     await test('A03 follow-up slow refresh uses mode saved at commit for active aliases', async () => {
         let release;

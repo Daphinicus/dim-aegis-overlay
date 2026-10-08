@@ -5,13 +5,13 @@ const ts = require('typescript');
 const source = fs.readFileSync('src/content.ts','utf8');
 const parsed = ts.createSourceFile('content.ts',source,ts.ScriptTarget.Latest,true);
 const functions = parsed.statements.filter(node=>ts.isFunctionDeclaration(node) &&
-  ['evaluateWeapon','evaluateArmorItem','reprocessAllElements','updatePerkNameToIcon'].includes(node.name?.text)).map(node=>node.getText(parsed)).join('\n');
+  ['evaluateWeapon','evaluateArmorItem','reprocessAllElements','updatePerkNameToIcon','getOpenExplorerPanel'].includes(node.name?.text)).map(node=>node.getText(parsed)).join('\n');
 const cacheSource = fs.readFileSync('src/evaluation-cache.ts','utf8').replace('export function','function');
 let weaponCalls=0,armorCalls=0,invalidations=0;
 const context=vm.createContext({
   computeWeaponEvaluation:()=>({result:{grade:++weaponCalls%2?'A':'B'}}),
   computeArmorEvaluation:()=>({result:{grade:'A/S',revision:++armorCalls}}),
-  inventoryEvaluations:new Map(),weaponFallbackCache:new WeakMap(),
+  inventoryEvaluations:new Map(),weaponFallbackCache:new WeakMap(),explorerUi:null,
   setupRegistryObserver(){},setupSearchWidget(){},playerVaultInventory:new Map(),nativeOwnershipAuthoritative:false,
   document:{querySelectorAll:()=>[],querySelector:()=>null},comparePerks:{refresh(){}},overviewPerks:{refresh(){}},
   perkNameToIcon:{},cleanPerkName:name=>name.toLowerCase(),updatePerkNameToHash(){},

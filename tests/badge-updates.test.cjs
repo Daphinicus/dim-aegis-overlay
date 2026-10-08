@@ -6,6 +6,7 @@ const source = fs.readFileSync('src/content.ts', 'utf8');
 const scheduler = source.slice(source.indexOf('const badgeResults ='), source.indexOf('function getBadgeTemplate'));
 // Select the badge settings listener itself; unrelated listeners may precede it.
 const sourceFile = ts.createSourceFile('content.ts', source, ts.ScriptTarget.Latest, true);
+const explorerVisibility = sourceFile.statements.find(node => ts.isFunctionDeclaration(node) && node.name?.text === 'getOpenExplorerPanel').getText(sourceFile);
 const badgeListeners = sourceFile.statements.filter(node =>
   ts.isExpressionStatement(node) && ts.isCallExpression(node.expression) &&
   node.expression.expression.getText(sourceFile) === 'chrome.storage.onChanged.addListener' &&
@@ -19,7 +20,7 @@ const rootStyles = new Map();
 const items = Array.from({length: 120}, (_, id) => ({id, isConnected:true,
   getBoundingClientRect: () => ({top:0,bottom:60,left:0,right:60,width:60,height:60})}));
 const ctx = vm.createContext({
-  SCORE_SETTING_KEYS: [],
+  SCORE_SETTING_KEYS: [], explorerUi: null,
   nativeSearchEvaluator: { invalidate() {} },
   activityModeProvider: { refresh() {} },
   managedPreview: { refresh() {} },
@@ -35,7 +36,7 @@ const ctx = vm.createContext({
   aegisBadgeStyle:'classic', aegisBadgePosition:'bottom-left', aegisFadeHover:false,
   injectBadge:(item,result)=>{now+=2;renders.push([item.id,ctx.aegisBadgeStyle,result.grade]);},
 });
-const code = ts.transpileModule(queue + scheduler + listener, {compilerOptions:{target:ts.ScriptTarget.ES2022}}).outputText;
+const code = ts.transpileModule(queue + explorerVisibility + scheduler + listener, {compilerOptions:{target:ts.ScriptTarget.ES2022}}).outputText;
 vm.runInContext(code,ctx);
 ctx.items=items;
 vm.runInContext("items.forEach(item=>badgeResults.set(item,{grade:'A'}))",ctx);
