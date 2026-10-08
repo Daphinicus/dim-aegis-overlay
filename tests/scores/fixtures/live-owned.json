@@ -1,0 +1,2629 @@
+{
+  "capturedAt": "2026-10-02",
+  "application": "DIM standard",
+  "provenance": "Captured live runtime sockets; instance IDs omitted. Recipe pool sizes are metadata, not owned choices.",
+  "items": [
+    {
+      "name": "ALLEN 05",
+      "itemHash": 423677697,
+      "crafted": false,
+      "fromDefinitions": false,
+      "masterworkStats": [
+        {
+          "hash": 943549884,
+          "isPrimary": true,
+          "value": 5
+        }
+      ],
+      "sockets": [
+        {
+          "socketIndex": 1,
+          "category": "barrels",
+          "plugged": 1124871858,
+          "hasRandomizedPlugItems": true,
+          "reusable": [
+            {
+              "plugItemHash": 1124871858,
+              "enabled": true,
+              "canInsert": true
+            },
+            {
+              "plugItemHash": 2860123632,
+              "enabled": true,
+              "canInsert": true
+            }
+          ],
+          "options": [
+            {
+              "hash": 1124871858,
+              "name": "Fluted Barrel"
+            },
+            {
+              "hash": 2860123632,
+              "name": "Smallbore"
+            }
+          ],
+          "crafting": false,
+          "recipeCount": 22
+        },
+        {
+          "socketIndex": 2,
+          "category": "magazines",
+          "plugged": 3267421167,
+          "hasRandomizedPlugItems": true,
+          "reusable": [
+            {
+              "plugItemHash": 3267421167,
+              "enabled": true,
+              "canInsert": true
+            },
+            {
+              "plugItemHash": 550838496,
+              "enabled": true,
+              "canInsert": true
+            }
+          ],
+          "options": [
+            {
+              "hash": 3267421167,
+              "name": "Accurized Rounds"
+            },
+            {
+              "hash": 550838496,
+              "name": "Alloy Magazine"
+            }
+          ],
+          "crafting": false,
+          "recipeCount": 10
+        },
+        {
+          "socketIndex": 3,
+          "category": "frames",
+          "plugged": 3244229373,
+          "hasRandomizedPlugItems": true,
+          "reusable": [
+            {
+              "plugItemHash": 3244229373,
+              "enabled": true,
+              "canInsert": true
+            },
+            {
+              "plugItemHash": 2840833776,
+              "enabled": true,
+              "canInsert": true
+            },
+            {
+              "plugItemHash": 4170193963,
+              "enabled": true,
+              "canInsert": true
+            }
+          ],
+          "options": [
+            {
+              "hash": 3244229373,
+              "name": "Tear"
+            },
+            {
+              "hash": 2840833776,
+              "name": "Shoot to Loot"
+            },
+            {
+              "hash": 4170193963,
+              "name": "Lucky Shot"
+            }
+          ],
+          "crafting": false,
+          "recipeCount": 14
+        },
+        {
+          "socketIndex": 4,
+          "category": "frames",
+          "plugged": 395388285,
+          "hasRandomizedPlugItems": true,
+          "reusable": [
+            {
+              "plugItemHash": 395388285,
+              "enabled": true,
+              "canInsert": true
+            },
+            {
+              "plugItemHash": 2216535938,
+              "enabled": true,
+              "canInsert": true
+            },
+            {
+              "plugItemHash": 3416609154,
+              "enabled": true,
+              "canInsert": true
+            }
+          ],
+          "options": [
+            {
+              "hash": 395388285,
+              "name": "Firing Line"
+            },
+            {
+              "hash": 2216535938,
+              "name": "Butterfly"
+            },
+            {
+              "hash": 3416609154,
+              "name": "To the Pain"
+            }
+          ],
+          "crafting": false,
+          "recipeCount": 14
+        },
+        {
+          "socketIndex": 7,
+          "category": "v400.plugs.weapons.masterworks.stat.handling",
+          "plugged": 518224751,
+          "hasRandomizedPlugItems": false,
+          "reusable": [
+            {
+              "plugItemHash": 518224748,
+              "enabled": true,
+              "canInsert": true
+            }
+          ],
+          "options": [
+            {
+              "hash": 518224751,
+              "name": "Tier 5: Handling"
+            }
+          ],
+          "crafting": false,
+          "recipeCount": 167
+        },
+        {
+          "socketIndex": 8,
+          "category": "origins",
+          "plugged": 843406310,
+          "hasRandomizedPlugItems": false,
+          "reusable": [
+            {
+              "plugItemHash": 843406310,
+              "enabled": true,
+              "canInsert": true
+            }
+          ],
+          "options": [
+            {
+              "hash": 843406310,
+              "name": "Carrion Munitions"
+            }
+          ],
+          "crafting": false,
+          "recipeCount": 0
+        }
+      ]
+    },
+    {
+      "name": "Uriel's Gift",
+      "itemHash": 3762467076,
+      "crafted": false,
+      "fromDefinitions": false,
+      "sockets": [
+        {
+          "socketIndex": 1,
+          "category": "scopes",
+          "plugged": 1628165637,
+          "hasRandomizedPlugItems": false,
+          "options": [
+            {
+              "hash": 1409978308,
+              "name": "Spark PS"
+            },
+            {
+              "hash": 1628165637,
+              "name": "Flash HS5"
+            }
+          ],
+          "crafting": false,
+          "recipeCount": 2
+        },
+        {
+          "socketIndex": 2,
+          "category": "magazines",
+          "plugged": 3177308360,
+          "hasRandomizedPlugItems": false,
+          "options": [
+            {
+              "hash": 1561002382,
+              "name": "High-Caliber Rounds"
+            },
+            {
+              "hash": 3177308360,
+              "name": "Steady Rounds"
+            }
+          ],
+          "crafting": false,
+          "recipeCount": 2
+        },
+        {
+          "socketIndex": 3,
+          "category": "frames",
+          "plugged": 1890422124,
+          "hasRandomizedPlugItems": false,
+          "options": [
+            {
+              "hash": 1890422124,
+              "name": "Tap the Trigger"
+            }
+          ],
+          "crafting": false,
+          "recipeCount": 1
+        }
+      ]
+    },
+    {
+      "name": "Lotus-Eater",
+      "itemHash": 837298567,
+      "crafted": false,
+      "fromDefinitions": false,
+      "masterworkStats": [
+        {
+          "hash": 155624089,
+          "isPrimary": false,
+          "value": 5
+        },
+        {
+          "hash": 943549884,
+          "isPrimary": false,
+          "value": 5
+        },
+        {
+          "hash": 2523465841,
+          "isPrimary": false,
+          "value": 5
+        },
+        {
+          "hash": 3614673599,
+          "isPrimary": false,
+          "value": 5
+        },
+        {
+          "hash": 4188031367,
+          "isPrimary": false,
+          "value": 5
+        }
+      ],
+      "sockets": [
+        {
+          "socketIndex": 1,
+          "category": "tubes",
+          "plugged": 3471392239,
+          "hasRandomizedPlugItems": true,
+          "reusable": [
+            {
+              "plugItemHash": 3471392239,
+              "enabled": true,
+              "canInsert": true
+            },
+            {
+              "plugItemHash": 564443854,
+              "enabled": true,
+              "canInsert": true
+            }
+          ],
+          "options": [
+            {
+              "hash": 3471392239,
+              "name": "Confined Launch"
+            },
+            {
+              "hash": 564443854,
+              "name": "Hard Launch"
+            }
+          ],
+          "crafting": false,
+          "recipeCount": 14
+        },
+        {
+          "socketIndex": 2,
+          "category": "magazines",
+          "plugged": 550838496,
+          "hasRandomizedPlugItems": true,
+          "reusable": [
+            {
+              "plugItemHash": 550838496,
+              "enabled": true,
+              "canInsert": true
+            },
+            {
+              "plugItemHash": 2108812838,
+              "enabled": true,
+              "canInsert": true
+            }
+          ],
+          "options": [
+            {
+              "hash": 550838496,
+              "name": "Alloy Magazine"
+            },
+            {
+              "hash": 2108812838,
+              "name": "High-Velocity Rounds"
+            }
+          ],
+          "crafting": false,
+          "recipeCount": 16
+        },
+        {
+          "socketIndex": 3,
+          "category": "frames",
+          "plugged": 461595545,
+          "hasRandomizedPlugItems": true,
+          "reusable": [
+            {
+              "plugItemHash": 461595545,
+              "enabled": true,
+              "canInsert": true
+            },
+            {
+              "plugItemHash": 3291427296,
+              "enabled": true,
+              "canInsert": true
+            },
+            {
+              "plugItemHash": 1077019636,
+              "enabled": true,
+              "canInsert": true
+            }
+          ],
+          "options": [
+            {
+              "hash": 461595545,
+              "name": "Reconstruction"
+            },
+            {
+              "hash": 3291427296,
+              "name": "Air Trigger"
+            },
+            {
+              "hash": 1077019636,
+              "name": "Danger Zone"
+            }
+          ],
+          "crafting": false,
+          "recipeCount": 12
+        },
+        {
+          "socketIndex": 4,
+          "category": "frames",
+          "plugged": 1926441324,
+          "hasRandomizedPlugItems": true,
+          "reusable": [
+            {
+              "plugItemHash": 1926441324,
+              "enabled": true,
+              "canInsert": true
+            },
+            {
+              "plugItemHash": 3007133316,
+              "enabled": true,
+              "canInsert": true
+            },
+            {
+              "plugItemHash": 781192741,
+              "enabled": true,
+              "canInsert": true
+            }
+          ],
+          "options": [
+            {
+              "hash": 1926441324,
+              "name": "Destabilizing Rounds"
+            },
+            {
+              "hash": 3007133316,
+              "name": "Frenzy"
+            },
+            {
+              "hash": 781192741,
+              "name": "Surrounded"
+            }
+          ],
+          "crafting": false,
+          "recipeCount": 12
+        },
+        {
+          "socketIndex": 7,
+          "category": "v400.plugs.weapons.masterworks.stat.range",
+          "plugged": 622249644,
+          "hasRandomizedPlugItems": false,
+          "options": [
+            {
+              "hash": 622249644,
+              "name": "Masterworked: Range"
+            }
+          ],
+          "crafting": false,
+          "recipeCount": 167
+        },
+        {
+          "socketIndex": 8,
+          "category": "origins",
+          "plugged": 2671305723,
+          "hasRandomizedPlugItems": false,
+          "reusable": [
+            {
+              "plugItemHash": 2671305723,
+              "enabled": true,
+              "canInsert": true
+            },
+            {
+              "plugItemHash": 2223800157,
+              "enabled": true,
+              "canInsert": true
+            },
+            {
+              "plugItemHash": 1621842933,
+              "enabled": true,
+              "canInsert": true
+            }
+          ],
+          "options": [
+            {
+              "hash": 2671305723,
+              "name": "Accelerated Assault"
+            },
+            {
+              "hash": 2223800157,
+              "name": "Problem Solver"
+            },
+            {
+              "hash": 1621842933,
+              "name": "Vanguard Determination"
+            }
+          ],
+          "crafting": false,
+          "recipeCount": 0
+        }
+      ]
+    },
+    {
+      "name": "Sullen Claw",
+      "itemHash": 1085743380,
+      "crafted": false,
+      "fromDefinitions": false,
+      "masterworkStats": [
+        {
+          "hash": 209426660,
+          "isPrimary": false,
+          "value": 5
+        },
+        {
+          "hash": 3022301683,
+          "isPrimary": false,
+          "value": 5
+        },
+        {
+          "hash": 3736848092,
+          "isPrimary": false,
+          "value": 5
+        },
+        {
+          "hash": 4043523819,
+          "isPrimary": true,
+          "value": 6
+        }
+      ],
+      "sockets": [
+        {
+          "socketIndex": 1,
+          "category": "blades",
+          "plugged": 766579919,
+          "hasRandomizedPlugItems": true,
+          "reusable": [
+            {
+              "plugItemHash": 1498024248,
+              "enabled": true,
+              "canInsert": true
+            },
+            {
+              "plugItemHash": 3959569796,
+              "enabled": true,
+              "canInsert": true
+            },
+            {
+              "plugItemHash": 766579919,
+              "enabled": true,
+              "canInsert": true
+            }
+          ],
+          "options": [
+            {
+              "hash": 1498024248,
+              "name": "Hungry Edge"
+            },
+            {
+              "hash": 3959569796,
+              "name": "Jagged Edge"
+            },
+            {
+              "hash": 766579919,
+              "name": "Tempered Edge"
+            }
+          ],
+          "crafting": false,
+          "recipeCount": 10
+        },
+        {
+          "socketIndex": 2,
+          "category": "guards",
+          "plugged": 125241418,
+          "hasRandomizedPlugItems": true,
+          "reusable": [
+            {
+              "plugItemHash": 2338887882,
+              "enabled": true,
+              "canInsert": true
+            },
+            {
+              "plugItemHash": 125241418,
+              "enabled": true,
+              "canInsert": true
+            }
+          ],
+          "options": [
+            {
+              "hash": 2338887882,
+              "name": "Balanced Guard"
+            },
+            {
+              "hash": 125241418,
+              "name": "Swordmaster's Guard"
+            }
+          ],
+          "crafting": false,
+          "recipeCount": 10
+        },
+        {
+          "socketIndex": 3,
+          "category": "frames",
+          "plugged": 1618208178,
+          "hasRandomizedPlugItems": true,
+          "reusable": [
+            {
+              "plugItemHash": 4085959009,
+              "enabled": true,
+              "canInsert": true
+            },
+            {
+              "plugItemHash": 1618208178,
+              "enabled": true,
+              "canInsert": true
+            },
+            {
+              "plugItemHash": 3418165135,
+              "enabled": true,
+              "canInsert": true
+            }
+          ],
+          "options": [
+            {
+              "hash": 4085959009,
+              "name": "Relentless Strikes"
+            },
+            {
+              "hash": 1618208178,
+              "name": "Eager Edge"
+            },
+            {
+              "hash": 3418165135,
+              "name": "Vorpal Weapon"
+            }
+          ],
+          "crafting": false,
+          "recipeCount": 14
+        },
+        {
+          "socketIndex": 4,
+          "category": "frames",
+          "plugged": 147913470,
+          "hasRandomizedPlugItems": true,
+          "reusable": [
+            {
+              "plugItemHash": 147913470,
+              "enabled": true,
+              "canInsert": true
+            },
+            {
+              "plugItemHash": 1145640183,
+              "enabled": true,
+              "canInsert": true
+            },
+            {
+              "plugItemHash": 983853954,
+              "enabled": true,
+              "canInsert": true
+            }
+          ],
+          "options": [
+            {
+              "hash": 147913470,
+              "name": "Whirlwind Blade"
+            },
+            {
+              "hash": 1145640183,
+              "name": "Counterattack"
+            },
+            {
+              "hash": 983853954,
+              "name": "Binary Orbit"
+            }
+          ],
+          "crafting": false,
+          "recipeCount": 14
+        },
+        {
+          "socketIndex": 7,
+          "category": "v400.plugs.weapons.masterworks.stat.damage",
+          "plugged": 2638039968,
+          "hasRandomizedPlugItems": false,
+          "options": [
+            {
+              "hash": 2638039968,
+              "name": "Masterworked: Impact"
+            }
+          ],
+          "crafting": false,
+          "recipeCount": 167
+        },
+        {
+          "socketIndex": 8,
+          "category": "origins",
+          "plugged": 2957461671,
+          "hasRandomizedPlugItems": false,
+          "reusable": [
+            {
+              "plugItemHash": 2957461671,
+              "enabled": true,
+              "canInsert": true
+            }
+          ],
+          "options": [
+            {
+              "hash": 2957461671,
+              "name": "Imperial Allegiance"
+            }
+          ],
+          "crafting": false,
+          "recipeCount": 0
+        }
+      ]
+    },
+    {
+      "name": "Hushed Whisper",
+      "itemHash": 1175295126,
+      "crafted": false,
+      "fromDefinitions": false,
+      "masterworkStats": [
+        {
+          "hash": 4188031367,
+          "isPrimary": true,
+          "value": 5
+        }
+      ],
+      "sockets": [
+        {
+          "socketIndex": 1,
+          "category": "bowstrings",
+          "plugged": 4201007276,
+          "hasRandomizedPlugItems": true,
+          "reusable": [
+            {
+              "plugItemHash": 4201007276,
+              "enabled": true,
+              "canInsert": true
+            },
+            {
+              "plugItemHash": 4185607275,
+              "enabled": true,
+              "canInsert": true
+            }
+          ],
+          "options": [
+            {
+              "hash": 4201007276,
+              "name": "Agile Bowstring"
+            },
+            {
+              "hash": 4185607275,
+              "name": "High Tension String"
+            }
+          ],
+          "crafting": false,
+          "recipeCount": 14
+        },
+        {
+          "socketIndex": 2,
+          "category": "arrows",
+          "plugged": 1111219233,
+          "hasRandomizedPlugItems": true,
+          "reusable": [
+            {
+              "plugItemHash": 1111219233,
+              "enabled": true,
+              "canInsert": true
+            },
+            {
+              "plugItemHash": 3819272442,
+              "enabled": true,
+              "canInsert": true
+            }
+          ],
+          "options": [
+            {
+              "hash": 1111219233,
+              "name": "Carbon Arrow Shaft"
+            },
+            {
+              "hash": 3819272442,
+              "name": "Natural Fletching"
+            }
+          ],
+          "crafting": false,
+          "recipeCount": 12
+        },
+        {
+          "socketIndex": 3,
+          "category": "frames",
+          "plugged": 2073244114,
+          "hasRandomizedPlugItems": true,
+          "reusable": [
+            {
+              "plugItemHash": 2073244114,
+              "enabled": true,
+              "canInsert": true
+            },
+            {
+              "plugItemHash": 1661646271,
+              "enabled": true,
+              "canInsert": true
+            },
+            {
+              "plugItemHash": 4116820839,
+              "enabled": true,
+              "canInsert": true
+            }
+          ],
+          "options": [
+            {
+              "hash": 2073244114,
+              "name": "Lone Wolf"
+            },
+            {
+              "hash": 1661646271,
+              "name": "Lead From Light"
+            },
+            {
+              "hash": 4116820839,
+              "name": "Snapshot Sights"
+            }
+          ],
+          "crafting": false,
+          "recipeCount": 14
+        },
+        {
+          "socketIndex": 4,
+          "category": "frames",
+          "plugged": 2662236651,
+          "hasRandomizedPlugItems": true,
+          "reusable": [
+            {
+              "plugItemHash": 2662236651,
+              "enabled": true,
+              "canInsert": true
+            },
+            {
+              "plugItemHash": 3684445958,
+              "enabled": true,
+              "canInsert": true
+            },
+            {
+              "plugItemHash": 2562668800,
+              "enabled": true,
+              "canInsert": true
+            }
+          ],
+          "options": [
+            {
+              "hash": 2662236651,
+              "name": "Archer's Gambit"
+            },
+            {
+              "hash": 3684445958,
+              "name": "Collective Pugilism"
+            },
+            {
+              "hash": 2562668800,
+              "name": "Collective Action"
+            }
+          ],
+          "crafting": false,
+          "recipeCount": 14
+        },
+        {
+          "socketIndex": 7,
+          "category": "v400.plugs.weapons.masterworks.stat.reload",
+          "plugged": 4283235139,
+          "hasRandomizedPlugItems": false,
+          "reusable": [
+            {
+              "plugItemHash": 4283235136,
+              "enabled": true,
+              "canInsert": true
+            }
+          ],
+          "options": [
+            {
+              "hash": 4283235139,
+              "name": "Tier 5: Reload Speed"
+            }
+          ],
+          "crafting": false,
+          "recipeCount": 167
+        },
+        {
+          "socketIndex": 8,
+          "category": "origins",
+          "plugged": 2873651103,
+          "hasRandomizedPlugItems": false,
+          "reusable": [
+            {
+              "plugItemHash": 2873651103,
+              "enabled": true,
+              "canInsert": true
+            },
+            {
+              "plugItemHash": 501821599,
+              "enabled": true,
+              "canInsert": true
+            }
+          ],
+          "options": [
+            {
+              "hash": 2873651103,
+              "name": "Search Party"
+            },
+            {
+              "hash": 501821599,
+              "name": "Wild Card"
+            }
+          ],
+          "crafting": false,
+          "recipeCount": 0
+        }
+      ]
+    },
+    {
+      "name": "The Heron",
+      "itemHash": 2246386812,
+      "crafted": false,
+      "fromDefinitions": false,
+      "masterworkStats": [
+        {
+          "hash": 4188031367,
+          "isPrimary": true,
+          "value": 5
+        }
+      ],
+      "sockets": [
+        {
+          "socketIndex": 1,
+          "category": "hafts",
+          "plugged": 2154730217,
+          "hasRandomizedPlugItems": true,
+          "reusable": [
+            {
+              "plugItemHash": 2154730217,
+              "enabled": true,
+              "canInsert": true
+            },
+            {
+              "plugItemHash": 2364577709,
+              "enabled": true,
+              "canInsert": true
+            }
+          ],
+          "options": [
+            {
+              "hash": 2154730217,
+              "name": "Ballistic Tuning"
+            },
+            {
+              "hash": 2364577709,
+              "name": "Lightweight Emitter"
+            }
+          ],
+          "crafting": false,
+          "recipeCount": 12
+        },
+        {
+          "socketIndex": 2,
+          "category": "magazines",
+          "plugged": 550838496,
+          "hasRandomizedPlugItems": true,
+          "reusable": [
+            {
+              "plugItemHash": 550838496,
+              "enabled": true,
+              "canInsert": true
+            },
+            {
+              "plugItemHash": 1065371964,
+              "enabled": true,
+              "canInsert": true
+            }
+          ],
+          "options": [
+            {
+              "hash": 550838496,
+              "name": "Alloy Magazine"
+            },
+            {
+              "hash": 1065371964,
+              "name": "Appended Mag"
+            }
+          ],
+          "crafting": false,
+          "recipeCount": 12
+        },
+        {
+          "socketIndex": 3,
+          "category": "frames",
+          "plugged": 2541826827,
+          "hasRandomizedPlugItems": true,
+          "reusable": [
+            {
+              "plugItemHash": 820036316,
+              "enabled": true,
+              "canInsert": true
+            },
+            {
+              "plugItemHash": 1592669035,
+              "enabled": true,
+              "canInsert": true
+            },
+            {
+              "plugItemHash": 2541826827,
+              "enabled": true,
+              "canInsert": true
+            }
+          ],
+          "options": [
+            {
+              "hash": 820036316,
+              "name": "Proximity Power"
+            },
+            {
+              "hash": 1592669035,
+              "name": "Replenishing Aegis"
+            },
+            {
+              "hash": 2541826827,
+              "name": "Repulsor Brace"
+            }
+          ],
+          "crafting": false,
+          "recipeCount": 14
+        },
+        {
+          "socketIndex": 4,
+          "category": "frames",
+          "plugged": 855168139,
+          "hasRandomizedPlugItems": true,
+          "reusable": [
+            {
+              "plugItemHash": 1926441324,
+              "enabled": true,
+              "canInsert": true
+            },
+            {
+              "plugItemHash": 855168139,
+              "enabled": true,
+              "canInsert": true
+            },
+            {
+              "plugItemHash": 2241043034,
+              "enabled": true,
+              "canInsert": true
+            }
+          ],
+          "options": [
+            {
+              "hash": 1926441324,
+              "name": "Destabilizing Rounds"
+            },
+            {
+              "hash": 855168139,
+              "name": "Unrelenting"
+            },
+            {
+              "hash": 2241043034,
+              "name": "Close to Melee"
+            }
+          ],
+          "crafting": false,
+          "recipeCount": 14
+        },
+        {
+          "socketIndex": 7,
+          "category": "v400.plugs.weapons.masterworks.stat.reload",
+          "plugged": 4283235139,
+          "hasRandomizedPlugItems": false,
+          "reusable": [
+            {
+              "plugItemHash": 4283235136,
+              "enabled": true,
+              "canInsert": true
+            }
+          ],
+          "options": [
+            {
+              "hash": 4283235139,
+              "name": "Tier 5: Reload Speed"
+            }
+          ],
+          "crafting": false,
+          "recipeCount": 167
+        },
+        {
+          "socketIndex": 8,
+          "category": "origins",
+          "plugged": 1209885908,
+          "hasRandomizedPlugItems": false,
+          "reusable": [
+            {
+              "plugItemHash": 1209885908,
+              "enabled": true,
+              "canInsert": true
+            }
+          ],
+          "options": [
+            {
+              "hash": 1209885908,
+              "name": "Nail, Meet Hammer"
+            }
+          ],
+          "crafting": false,
+          "recipeCount": 0
+        }
+      ]
+    },
+    {
+      "name": "Opaque Hourglass",
+      "itemHash": 1553681400,
+      "crafted": false,
+      "fromDefinitions": false,
+      "masterworkStats": [
+        {
+          "hash": 2523465841,
+          "isPrimary": true,
+          "value": 1
+        }
+      ],
+      "sockets": [
+        {
+          "socketIndex": 1,
+          "category": "rails",
+          "plugged": 4088731040,
+          "hasRandomizedPlugItems": true,
+          "reusable": [
+            {
+              "plugItemHash": 4088731040,
+              "enabled": true,
+              "canInsert": true
+            },
+            {
+              "plugItemHash": 3786062476,
+              "enabled": true,
+              "canInsert": true
+            }
+          ],
+          "options": [
+            {
+              "hash": 4088731040,
+              "name": "Quickload Rail"
+            },
+            {
+              "hash": 3786062476,
+              "name": "Frictionless Rail"
+            }
+          ],
+          "crafting": false,
+          "recipeCount": 12
+        },
+        {
+          "socketIndex": 2,
+          "category": "bolts",
+          "plugged": 3603807747,
+          "hasRandomizedPlugItems": true,
+          "reusable": [
+            {
+              "plugItemHash": 3603807747,
+              "enabled": true,
+              "canInsert": true
+            },
+            {
+              "plugItemHash": 1202133695,
+              "enabled": true,
+              "canInsert": true
+            }
+          ],
+          "options": [
+            {
+              "hash": 3603807747,
+              "name": "Explosive Bolts"
+            },
+            {
+              "hash": 1202133695,
+              "name": "Heavy Bolts"
+            }
+          ],
+          "crafting": false,
+          "recipeCount": 10
+        },
+        {
+          "socketIndex": 3,
+          "category": "frames",
+          "plugged": 2633604463,
+          "hasRandomizedPlugItems": true,
+          "reusable": [
+            {
+              "plugItemHash": 2633604463,
+              "enabled": true,
+              "canInsert": true
+            },
+            {
+              "plugItemHash": 2675361166,
+              "enabled": true,
+              "canInsert": true
+            }
+          ],
+          "options": [
+            {
+              "hash": 2633604463,
+              "name": "Rolling Storm"
+            },
+            {
+              "hash": 2675361166,
+              "name": "Wellspring"
+            }
+          ],
+          "crafting": false,
+          "recipeCount": 14
+        },
+        {
+          "socketIndex": 4,
+          "category": "frames",
+          "plugged": 2963273944,
+          "hasRandomizedPlugItems": true,
+          "reusable": [
+            {
+              "plugItemHash": 2963273944,
+              "enabled": true,
+              "canInsert": true
+            },
+            {
+              "plugItemHash": 983853954,
+              "enabled": true,
+              "canInsert": true
+            }
+          ],
+          "options": [
+            {
+              "hash": 2963273944,
+              "name": "Master of Arms"
+            },
+            {
+              "hash": 983853954,
+              "name": "Binary Orbit"
+            }
+          ],
+          "crafting": false,
+          "recipeCount": 14
+        },
+        {
+          "socketIndex": 7,
+          "category": "v400.plugs.weapons.masterworks.stat.projectile_speed",
+          "plugged": 4105787909,
+          "hasRandomizedPlugItems": false,
+          "reusable": [
+            {
+              "plugItemHash": 4105787910,
+              "enabled": true,
+              "canInsert": true
+            }
+          ],
+          "options": [
+            {
+              "hash": 4105787909,
+              "name": "Tier 1: Velocity"
+            }
+          ],
+          "crafting": false,
+          "recipeCount": 167
+        },
+        {
+          "socketIndex": 8,
+          "category": "origins",
+          "plugged": 2597494435,
+          "hasRandomizedPlugItems": false,
+          "reusable": [
+            {
+              "plugItemHash": 2597494435,
+              "enabled": true,
+              "canInsert": true
+            }
+          ],
+          "options": [
+            {
+              "hash": 2597494435,
+              "name": "Frame of Reference"
+            }
+          ],
+          "crafting": false,
+          "recipeCount": 0
+        }
+      ]
+    },
+    {
+      "name": "High Tyrant",
+      "itemHash": 2873508409,
+      "crafted": false,
+      "fromDefinitions": false,
+      "masterworkStats": [
+        {
+          "hash": 1240592695,
+          "isPrimary": true,
+          "value": 3
+        }
+      ],
+      "sockets": [
+        {
+          "socketIndex": 1,
+          "category": "barrels",
+          "plugged": 1932356121,
+          "hasRandomizedPlugItems": true,
+          "reusable": [
+            {
+              "plugItemHash": 1932356121,
+              "enabled": true,
+              "canInsert": true
+            },
+            {
+              "plugItemHash": 1871180748,
+              "enabled": true,
+              "canInsert": true
+            }
+          ],
+          "options": [
+            {
+              "hash": 1932356121,
+              "name": "Extended Barrel"
+            },
+            {
+              "hash": 1871180748,
+              "name": "Full Bore"
+            }
+          ],
+          "crafting": false,
+          "recipeCount": 22
+        },
+        {
+          "socketIndex": 2,
+          "category": "batteries",
+          "plugged": 1454612425,
+          "hasRandomizedPlugItems": true,
+          "reusable": [
+            {
+              "plugItemHash": 1454612425,
+              "enabled": true,
+              "canInsert": true
+            },
+            {
+              "plugItemHash": 3081681954,
+              "enabled": true,
+              "canInsert": true
+            }
+          ],
+          "options": [
+            {
+              "hash": 1454612425,
+              "name": "Ionized Heatsink"
+            },
+            {
+              "hash": 3081681954,
+              "name": "Particle Repeater"
+            }
+          ],
+          "crafting": false,
+          "recipeCount": 16
+        },
+        {
+          "socketIndex": 3,
+          "category": "frames",
+          "plugged": 2541826827,
+          "hasRandomizedPlugItems": true,
+          "reusable": [
+            {
+              "plugItemHash": 2541826827,
+              "enabled": true,
+              "canInsert": true
+            },
+            {
+              "plugItemHash": 2039482529,
+              "enabled": true,
+              "canInsert": true
+            },
+            {
+              "plugItemHash": 1906147653,
+              "enabled": true,
+              "canInsert": true
+            }
+          ],
+          "options": [
+            {
+              "hash": 2541826827,
+              "name": "Repulsor Brace"
+            },
+            {
+              "hash": 2039482529,
+              "name": "Cooling Baubles"
+            },
+            {
+              "hash": 1906147653,
+              "name": "Demolitionist"
+            }
+          ],
+          "crafting": false,
+          "recipeCount": 14
+        },
+        {
+          "socketIndex": 4,
+          "category": "frames",
+          "plugged": 2904194311,
+          "hasRandomizedPlugItems": true,
+          "reusable": [
+            {
+              "plugItemHash": 2904194311,
+              "enabled": true,
+              "canInsert": true
+            },
+            {
+              "plugItemHash": 3590359704,
+              "enabled": true,
+              "canInsert": true
+            },
+            {
+              "plugItemHash": 4196156997,
+              "enabled": true,
+              "canInsert": true
+            }
+          ],
+          "options": [
+            {
+              "hash": 2904194311,
+              "name": "Withering Gaze"
+            },
+            {
+              "hash": 3590359704,
+              "name": "Thermal Atomization"
+            },
+            {
+              "hash": 4196156997,
+              "name": "Meganeura"
+            }
+          ],
+          "crafting": false,
+          "recipeCount": 14
+        },
+        {
+          "socketIndex": 7,
+          "category": "v400.plugs.weapons.masterworks.stat.range",
+          "plugged": 150943605,
+          "hasRandomizedPlugItems": false,
+          "reusable": [
+            {
+              "plugItemHash": 150943602,
+              "enabled": true,
+              "canInsert": true
+            }
+          ],
+          "options": [
+            {
+              "hash": 150943605,
+              "name": "Tier 3: Range"
+            }
+          ],
+          "crafting": false,
+          "recipeCount": 167
+        },
+        {
+          "socketIndex": 8,
+          "category": "origins",
+          "plugged": 2957461671,
+          "hasRandomizedPlugItems": false,
+          "reusable": [
+            {
+              "plugItemHash": 2957461671,
+              "enabled": true,
+              "canInsert": true
+            }
+          ],
+          "options": [
+            {
+              "hash": 2957461671,
+              "name": "Imperial Allegiance"
+            }
+          ],
+          "crafting": false,
+          "recipeCount": 0
+        }
+      ]
+    },
+    {
+      "name": "Psychopomp",
+      "itemHash": 1835232052,
+      "crafted": false,
+      "fromDefinitions": false,
+      "masterworkStats": [
+        {
+          "hash": 155624089,
+          "isPrimary": false,
+          "value": 5
+        },
+        {
+          "hash": 943549884,
+          "isPrimary": true,
+          "value": 13
+        },
+        {
+          "hash": 2523465841,
+          "isPrimary": false,
+          "value": 5
+        },
+        {
+          "hash": 3614673599,
+          "isPrimary": false,
+          "value": 0
+        },
+        {
+          "hash": 4188031367,
+          "isPrimary": false,
+          "value": 5
+        }
+      ],
+      "sockets": [
+        {
+          "socketIndex": 1,
+          "category": "tubes",
+          "plugged": 3250572790,
+          "hasRandomizedPlugItems": true,
+          "reusable": [
+            {
+              "plugItemHash": 3471392239,
+              "enabled": true,
+              "canInsert": true
+            },
+            {
+              "plugItemHash": 3250572790,
+              "enabled": true,
+              "canInsert": true
+            }
+          ],
+          "options": [
+            {
+              "hash": 3471392239,
+              "name": "Confined Launch"
+            },
+            {
+              "hash": 3250572790,
+              "name": "Quick Launch"
+            }
+          ],
+          "crafting": false,
+          "recipeCount": 14
+        },
+        {
+          "socketIndex": 2,
+          "category": "magazines_gl",
+          "plugged": 2108812838,
+          "hasRandomizedPlugItems": true,
+          "reusable": [
+            {
+              "plugItemHash": 2108812838,
+              "enabled": true,
+              "canInsert": true
+            },
+            {
+              "plugItemHash": 3807404750,
+              "enabled": true,
+              "canInsert": true
+            }
+          ],
+          "options": [
+            {
+              "hash": 2108812838,
+              "name": "High-Velocity Rounds"
+            },
+            {
+              "hash": 3807404750,
+              "name": "Implosion Rounds"
+            }
+          ],
+          "crafting": false,
+          "recipeCount": 6
+        },
+        {
+          "socketIndex": 3,
+          "category": "frames",
+          "plugged": 3528046508,
+          "hasRandomizedPlugItems": true,
+          "reusable": [
+            {
+              "plugItemHash": 1906147653,
+              "enabled": true,
+              "canInsert": true
+            },
+            {
+              "plugItemHash": 3696140595,
+              "enabled": true,
+              "canInsert": true
+            },
+            {
+              "plugItemHash": 3528046508,
+              "enabled": true,
+              "canInsert": true
+            }
+          ],
+          "options": [
+            {
+              "hash": 1906147653,
+              "name": "Demolitionist"
+            },
+            {
+              "hash": 3696140595,
+              "name": "Blast Distributor"
+            },
+            {
+              "hash": 3528046508,
+              "name": "Auto-Loading Holster"
+            }
+          ],
+          "crafting": false,
+          "recipeCount": 14
+        },
+        {
+          "socketIndex": 4,
+          "category": "frames",
+          "plugged": 984655331,
+          "hasRandomizedPlugItems": true,
+          "reusable": [
+            {
+              "plugItemHash": 1720528630,
+              "enabled": true,
+              "canInsert": true
+            },
+            {
+              "plugItemHash": 984655331,
+              "enabled": true,
+              "canInsert": true
+            },
+            {
+              "plugItemHash": 4065965131,
+              "enabled": true,
+              "canInsert": true
+            }
+          ],
+          "options": [
+            {
+              "hash": 1720528630,
+              "name": "Voltshot"
+            },
+            {
+              "hash": 984655331,
+              "name": "Attrition Orbs"
+            },
+            {
+              "hash": 4065965131,
+              "name": "Gear Shift"
+            }
+          ],
+          "crafting": false,
+          "recipeCount": 14
+        },
+        {
+          "socketIndex": 7,
+          "category": "v400.plugs.weapons.masterworks.stat.handling",
+          "plugged": 905637376,
+          "hasRandomizedPlugItems": false,
+          "options": [
+            {
+              "hash": 905637376,
+              "name": "Masterworked: Handling"
+            }
+          ],
+          "crafting": false,
+          "recipeCount": 167
+        },
+        {
+          "socketIndex": 8,
+          "category": "origins",
+          "plugged": 2710582428,
+          "hasRandomizedPlugItems": false,
+          "reusable": [
+            {
+              "plugItemHash": 2710582428,
+              "enabled": true,
+              "canInsert": true
+            },
+            {
+              "plugItemHash": 3991242828,
+              "enabled": true,
+              "canInsert": true
+            }
+          ],
+          "options": [
+            {
+              "hash": 2710582428,
+              "name": "Heretical Behavior"
+            },
+            {
+              "hash": 3991242828,
+              "name": "Willing Vessel"
+            }
+          ],
+          "crafting": false,
+          "recipeCount": 0
+        }
+      ]
+    },
+    {
+      "name": "Regnant",
+      "itemHash": 268260372,
+      "crafted": "crafted",
+      "fromDefinitions": false,
+      "masterworkStats": [
+        {
+          "hash": 155624089,
+          "isPrimary": false,
+          "value": 5
+        },
+        {
+          "hash": 943549884,
+          "isPrimary": true,
+          "value": 15
+        },
+        {
+          "hash": 2523465841,
+          "isPrimary": false,
+          "value": 5
+        },
+        {
+          "hash": 3614673599,
+          "isPrimary": false,
+          "value": 5
+        },
+        {
+          "hash": 4188031367,
+          "isPrimary": false,
+          "value": 5
+        }
+      ],
+      "sockets": [
+        {
+          "socketIndex": 1,
+          "category": "tubes",
+          "plugged": 3250572790,
+          "hasRandomizedPlugItems": true,
+          "reusable": [
+            {
+              "plugItemHash": 3250572790,
+              "enabled": true,
+              "canInsert": true
+            }
+          ],
+          "options": [
+            {
+              "hash": 3250572790,
+              "name": "Quick Launch"
+            }
+          ],
+          "crafting": false,
+          "recipeCount": 14
+        },
+        {
+          "socketIndex": 2,
+          "category": "magazines_gl",
+          "plugged": 409713597,
+          "hasRandomizedPlugItems": true,
+          "reusable": [
+            {
+              "plugItemHash": 409713597,
+              "enabled": true,
+              "canInsert": true
+            }
+          ],
+          "options": [
+            {
+              "hash": 409713597,
+              "name": "Spike Grenades"
+            }
+          ],
+          "crafting": false,
+          "recipeCount": 20
+        },
+        {
+          "socketIndex": 3,
+          "category": "frames",
+          "plugged": 3528046508,
+          "hasRandomizedPlugItems": true,
+          "reusable": [
+            {
+              "plugItemHash": 3528046508,
+              "enabled": true,
+              "canInsert": true
+            }
+          ],
+          "options": [
+            {
+              "hash": 3528046508,
+              "name": "Auto-Loading Holster"
+            }
+          ],
+          "crafting": true,
+          "recipeCount": 15
+        },
+        {
+          "socketIndex": 4,
+          "category": "frames",
+          "plugged": 2275087323,
+          "hasRandomizedPlugItems": true,
+          "reusable": [
+            {
+              "plugItemHash": 2275087323,
+              "enabled": true,
+              "canInsert": true
+            }
+          ],
+          "options": [
+            {
+              "hash": 2275087323,
+              "name": "Explosive Light"
+            }
+          ],
+          "crafting": true,
+          "recipeCount": 15
+        },
+        {
+          "socketIndex": 8,
+          "category": "origins",
+          "plugged": 270582335,
+          "hasRandomizedPlugItems": false,
+          "reusable": [
+            {
+              "plugItemHash": 270582335,
+              "enabled": true,
+              "canInsert": true
+            }
+          ],
+          "options": [
+            {
+              "hash": 270582335,
+              "name": "Noble Deeds"
+            }
+          ],
+          "crafting": false,
+          "recipeCount": 1
+        }
+      ]
+    },
+    {
+      "name": "Khvostov 7G-02",
+      "itemHash": 4209476803,
+      "crafted": "enhanced",
+      "fromDefinitions": false,
+      "masterworkStats": [
+        {
+          "hash": 943549884,
+          "isPrimary": true,
+          "value": 10
+        }
+      ],
+      "sockets": [
+        {
+          "socketIndex": 1,
+          "category": "barrels",
+          "plugged": 3250034553,
+          "hasRandomizedPlugItems": false,
+          "options": [
+            {
+              "hash": 3250034553,
+              "name": "Hammer-Forged Rifling"
+            },
+            {
+              "hash": 202670084,
+              "name": "Full Bore"
+            },
+            {
+              "hash": 1392496348,
+              "name": "Polygonal Rifling"
+            }
+          ],
+          "crafting": false,
+          "recipeCount": 3
+        },
+        {
+          "socketIndex": 2,
+          "category": "magazines",
+          "plugged": 1431678320,
+          "hasRandomizedPlugItems": false,
+          "options": [
+            {
+              "hash": 1431678320,
+              "name": "Alloy Magazine"
+            },
+            {
+              "hash": 3177308360,
+              "name": "Steady Rounds"
+            },
+            {
+              "hash": 2420895100,
+              "name": "Extended Mag"
+            }
+          ],
+          "crafting": false,
+          "recipeCount": 3
+        },
+        {
+          "socketIndex": 3,
+          "category": "frames",
+          "plugged": 3523296417,
+          "hasRandomizedPlugItems": false,
+          "reusable": [
+            {
+              "plugItemHash": 880644845,
+              "enabled": true,
+              "canInsert": true
+            },
+            {
+              "plugItemHash": 691659142,
+              "enabled": true,
+              "canInsert": true
+            },
+            {
+              "plugItemHash": 3523296417,
+              "enabled": true,
+              "canInsert": true
+            }
+          ],
+          "options": [
+            {
+              "hash": 880644845,
+              "name": "Strategist"
+            },
+            {
+              "hash": 691659142,
+              "name": "Pugilist"
+            },
+            {
+              "hash": 3523296417,
+              "name": "Demolitionist"
+            }
+          ],
+          "crafting": false,
+          "recipeCount": 0
+        },
+        {
+          "socketIndex": 4,
+          "category": "frames",
+          "plugged": 243981275,
+          "hasRandomizedPlugItems": false,
+          "reusable": [
+            {
+              "plugItemHash": 2458213969,
+              "enabled": true,
+              "canInsert": true
+            },
+            {
+              "plugItemHash": 243981275,
+              "enabled": true,
+              "canInsert": true
+            }
+          ],
+          "options": [
+            {
+              "hash": 2458213969,
+              "name": "Multikill Clip"
+            },
+            {
+              "hash": 243981275,
+              "name": "Attrition Orbs"
+            }
+          ],
+          "crafting": false,
+          "recipeCount": 0
+        },
+        {
+          "socketIndex": 8,
+          "category": "origins",
+          "plugged": 1988485648,
+          "hasRandomizedPlugItems": false,
+          "options": [
+            {
+              "hash": 1988485648,
+              "name": "Dealer's Choice"
+            }
+          ],
+          "crafting": false,
+          "recipeCount": 1
+        }
+      ]
+    },
+    {
+      "name": "Explosive Personality",
+      "itemHash": 4096943616,
+      "crafted": false,
+      "fromDefinitions": false,
+      "masterworkStats": [
+        {
+          "hash": 3614673599,
+          "isPrimary": true,
+          "value": 10
+        }
+      ],
+      "sockets": [
+        {
+          "socketIndex": 1,
+          "category": "tubes",
+          "plugged": 3798852852,
+          "hasRandomizedPlugItems": true,
+          "reusable": [
+            {
+              "plugItemHash": 981914802,
+              "enabled": true,
+              "canInsert": true
+            },
+            {
+              "plugItemHash": 3798852852,
+              "enabled": true,
+              "canInsert": true
+            }
+          ],
+          "options": [
+            {
+              "hash": 981914802,
+              "name": "Hard Launch"
+            },
+            {
+              "hash": 3798852852,
+              "name": "Smart Drift Control"
+            }
+          ],
+          "crafting": false,
+          "recipeCount": 14
+        },
+        {
+          "socketIndex": 2,
+          "category": "magazines_gl",
+          "plugged": 2822142346,
+          "hasRandomizedPlugItems": true,
+          "reusable": [
+            {
+              "plugItemHash": 2822142346,
+              "enabled": true,
+              "canInsert": true
+            },
+            {
+              "plugItemHash": 3492396210,
+              "enabled": true,
+              "canInsert": true
+            }
+          ],
+          "options": [
+            {
+              "hash": 2822142346,
+              "name": "High-Velocity Rounds"
+            },
+            {
+              "hash": 3492396210,
+              "name": "Implosion Rounds"
+            }
+          ],
+          "crafting": false,
+          "recipeCount": 6
+        },
+        {
+          "socketIndex": 3,
+          "category": "frames",
+          "plugged": 2779035018,
+          "hasRandomizedPlugItems": true,
+          "reusable": [
+            {
+              "plugItemHash": 2779035018,
+              "enabled": true,
+              "canInsert": true
+            },
+            {
+              "plugItemHash": 3300816228,
+              "enabled": true,
+              "canInsert": true
+            }
+          ],
+          "options": [
+            {
+              "hash": 2779035018,
+              "name": "Feeding Frenzy"
+            },
+            {
+              "hash": 3300816228,
+              "name": "Auto-Loading Holster"
+            }
+          ],
+          "crafting": true,
+          "recipeCount": 13
+        },
+        {
+          "socketIndex": 4,
+          "category": "frames",
+          "plugged": 3108830275,
+          "hasRandomizedPlugItems": true,
+          "reusable": [
+            {
+              "plugItemHash": 3108830275,
+              "enabled": true,
+              "canInsert": true
+            }
+          ],
+          "options": [
+            {
+              "hash": 3108830275,
+              "name": "Unrelenting"
+            }
+          ],
+          "crafting": true,
+          "recipeCount": 13
+        },
+        {
+          "socketIndex": 7,
+          "category": "v400.plugs.weapons.masterworks.stat.blast_radius",
+          "plugged": 3803457565,
+          "hasRandomizedPlugItems": false,
+          "options": [
+            {
+              "hash": 3803457565,
+              "name": "Masterworked: Blast Radius"
+            }
+          ],
+          "crafting": false,
+          "recipeCount": 167
+        },
+        {
+          "socketIndex": 8,
+          "category": "origins",
+          "plugged": 1536798515,
+          "hasRandomizedPlugItems": false,
+          "reusable": [
+            {
+              "plugItemHash": 1536798515,
+              "enabled": true,
+              "canInsert": true
+            }
+          ],
+          "options": [
+            {
+              "hash": 1536798515,
+              "name": "Land Tank"
+            }
+          ],
+          "crafting": false,
+          "recipeCount": 1
+        }
+      ]
+    },
+    {
+      "name": "All or Nothing",
+      "itemHash": 3984776322,
+      "crafted": false,
+      "fromDefinitions": false,
+      "masterworkStats": [
+        {
+          "hash": 4006394725,
+          "isPrimary": true,
+          "value": 2
+        }
+      ],
+      "sockets": [
+        {
+          "socketIndex": 1,
+          "category": "barrels",
+          "plugged": 839105230,
+          "hasRandomizedPlugItems": true,
+          "reusable": [
+            {
+              "plugItemHash": 839105230,
+              "enabled": true,
+              "canInsert": true
+            },
+            {
+              "plugItemHash": 1467527085,
+              "enabled": true,
+              "canInsert": true
+            }
+          ],
+          "options": [
+            {
+              "hash": 839105230,
+              "name": "Arrowhead Brake"
+            },
+            {
+              "hash": 1467527085,
+              "name": "Extended Barrel"
+            }
+          ],
+          "crafting": false,
+          "recipeCount": 22
+        },
+        {
+          "socketIndex": 2,
+          "category": "batteries",
+          "plugged": 1806718225,
+          "hasRandomizedPlugItems": true,
+          "reusable": [
+            {
+              "plugItemHash": 1806718225,
+              "enabled": true,
+              "canInsert": true
+            },
+            {
+              "plugItemHash": 769709866,
+              "enabled": true,
+              "canInsert": true
+            }
+          ],
+          "options": [
+            {
+              "hash": 1806718225,
+              "name": "Accelerated Heatsink"
+            },
+            {
+              "hash": 769709866,
+              "name": "Tactical Heatsink"
+            }
+          ],
+          "crafting": false,
+          "recipeCount": 16
+        },
+        {
+          "socketIndex": 3,
+          "category": "frames",
+          "plugged": 3422796781,
+          "hasRandomizedPlugItems": true,
+          "reusable": [
+            {
+              "plugItemHash": 3422796781,
+              "enabled": true,
+              "canInsert": true
+            },
+            {
+              "plugItemHash": 1748774930,
+              "enabled": true,
+              "canInsert": true
+            }
+          ],
+          "options": [
+            {
+              "hash": 3422796781,
+              "name": "Slice"
+            },
+            {
+              "hash": 1748774930,
+              "name": "Zen Moment"
+            }
+          ],
+          "crafting": false,
+          "recipeCount": 14
+        },
+        {
+          "socketIndex": 4,
+          "category": "frames",
+          "plugged": 102912326,
+          "hasRandomizedPlugItems": true,
+          "reusable": [
+            {
+              "plugItemHash": 4045335048,
+              "enabled": true,
+              "canInsert": true
+            },
+            {
+              "plugItemHash": 102912326,
+              "enabled": true,
+              "canInsert": true
+            }
+          ],
+          "options": [
+            {
+              "hash": 4045335048,
+              "name": "Headseeker"
+            },
+            {
+              "hash": 102912326,
+              "name": "Hatchling"
+            }
+          ],
+          "crafting": false,
+          "recipeCount": 14
+        },
+        {
+          "socketIndex": 7,
+          "category": "v400.plugs.weapons.masterworks.stat.heat_efficiency",
+          "plugged": 154072942,
+          "hasRandomizedPlugItems": false,
+          "reusable": [
+            {
+              "plugItemHash": 154072943,
+              "enabled": true,
+              "canInsert": true
+            }
+          ],
+          "options": [
+            {
+              "hash": 154072942,
+              "name": "Tier 4: Cooling Efficiency"
+            }
+          ],
+          "crafting": false,
+          "recipeCount": 167
+        },
+        {
+          "socketIndex": 8,
+          "category": "origins",
+          "plugged": 1309453587,
+          "hasRandomizedPlugItems": false,
+          "reusable": [
+            {
+              "plugItemHash": 1309453587,
+              "enabled": true,
+              "canInsert": true
+            }
+          ],
+          "options": [
+            {
+              "hash": 1309453587,
+              "name": "Air-Cooled Core"
+            }
+          ],
+          "crafting": false,
+          "recipeCount": 0
+        }
+      ]
+    },
+    {
+      "name": "Biting Winds",
+      "itemHash": 2485400469,
+      "crafted": false,
+      "fromDefinitions": false,
+      "masterworkStats": [
+        {
+          "hash": 155624089,
+          "isPrimary": false,
+          "value": 5
+        },
+        {
+          "hash": 447667954,
+          "isPrimary": false,
+          "value": -17
+        },
+        {
+          "hash": 943549884,
+          "isPrimary": false,
+          "value": 5
+        },
+        {
+          "hash": 1591432999,
+          "isPrimary": true,
+          "value": 10
+        },
+        {
+          "hash": 4188031367,
+          "isPrimary": false,
+          "value": 5
+        }
+      ],
+      "sockets": [
+        {
+          "socketIndex": 1,
+          "category": "bowstrings",
+          "plugged": 2276384431,
+          "hasRandomizedPlugItems": true,
+          "reusable": [
+            {
+              "plugItemHash": 2276384431,
+              "enabled": true,
+              "canInsert": true
+            },
+            {
+              "plugItemHash": 1301083363,
+              "enabled": true,
+              "canInsert": true
+            }
+          ],
+          "options": [
+            {
+              "hash": 2276384431,
+              "name": "Tactile String"
+            },
+            {
+              "hash": 1301083363,
+              "name": "Natural String"
+            }
+          ],
+          "crafting": false,
+          "recipeCount": 14
+        },
+        {
+          "socketIndex": 2,
+          "category": "arrows",
+          "plugged": 52802868,
+          "hasRandomizedPlugItems": true,
+          "reusable": [
+            {
+              "plugItemHash": 1111219233,
+              "enabled": true,
+              "canInsert": true
+            },
+            {
+              "plugItemHash": 52802868,
+              "enabled": true,
+              "canInsert": true
+            }
+          ],
+          "options": [
+            {
+              "hash": 1111219233,
+              "name": "Carbon Arrow Shaft"
+            },
+            {
+              "hash": 52802868,
+              "name": "Fiberglass Arrow Shaft"
+            }
+          ],
+          "crafting": false,
+          "recipeCount": 12
+        },
+        {
+          "socketIndex": 3,
+          "category": "frames",
+          "plugged": 3914874605,
+          "hasRandomizedPlugItems": true,
+          "reusable": [
+            {
+              "plugItemHash": 536173722,
+              "enabled": true,
+              "canInsert": true
+            },
+            {
+              "plugItemHash": 3914874605,
+              "enabled": true,
+              "canInsert": true
+            },
+            {
+              "plugItemHash": 1961144892,
+              "enabled": true,
+              "canInsert": true
+            }
+          ],
+          "options": [
+            {
+              "hash": 536173722,
+              "name": "Pugilist"
+            },
+            {
+              "hash": 3914874605,
+              "name": "Bewildering Burst"
+            },
+            {
+              "hash": 1961144892,
+              "name": "Quickdraw"
+            }
+          ],
+          "crafting": false,
+          "recipeCount": 14
+        },
+        {
+          "socketIndex": 4,
+          "category": "frames",
+          "plugged": 1549370717,
+          "hasRandomizedPlugItems": true,
+          "reusable": [
+            {
+              "plugItemHash": 1549370717,
+              "enabled": true,
+              "canInsert": true
+            },
+            {
+              "plugItemHash": 2889515627,
+              "enabled": true,
+              "canInsert": true
+            },
+            {
+              "plugItemHash": 617966211,
+              "enabled": true,
+              "canInsert": true
+            }
+          ],
+          "options": [
+            {
+              "hash": 1549370717,
+              "name": "Kinetic Tremors"
+            },
+            {
+              "hash": 2889515627,
+              "name": "Adagio"
+            },
+            {
+              "hash": 617966211,
+              "name": "Successful Warm-Up"
+            }
+          ],
+          "crafting": false,
+          "recipeCount": 14
+        },
+        {
+          "socketIndex": 7,
+          "category": "v400.plugs.weapons.masterworks.stat.accuracy",
+          "plugged": 3481828396,
+          "hasRandomizedPlugItems": false,
+          "options": [
+            {
+              "hash": 3481828396,
+              "name": "Masterworked: Target Acquisition"
+            }
+          ],
+          "crafting": false,
+          "recipeCount": 167
+        },
+        {
+          "socketIndex": 8,
+          "category": "origins",
+          "plugged": 136447464,
+          "hasRandomizedPlugItems": false,
+          "reusable": [
+            {
+              "plugItemHash": 136447464,
+              "enabled": true,
+              "canInsert": true
+            }
+          ],
+          "options": [
+            {
+              "hash": 136447464,
+              "name": "Winterized Gear"
+            }
+          ],
+          "crafting": false,
+          "recipeCount": 0
+        }
+      ]
+    },
+    {
+      "name": "Ecliptic Distaff",
+      "itemHash": 3001205424,
+      "crafted": false,
+      "fromDefinitions": false,
+      "masterworkStats": [
+        {
+          "hash": 1842278586,
+          "isPrimary": true,
+          "value": 10
+        }
+      ],
+      "sockets": [
+        {
+          "socketIndex": 1,
+          "category": "hafts",
+          "plugged": 1263609309,
+          "hasRandomizedPlugItems": false,
+          "options": [
+            {
+              "hash": 1263609309,
+              "name": "Ballistic Tuning"
+            }
+          ],
+          "crafting": false,
+          "recipeCount": 1
+        },
+        {
+          "socketIndex": 2,
+          "category": "magazines",
+          "plugged": 1431678320,
+          "hasRandomizedPlugItems": false,
+          "options": [
+            {
+              "hash": 1431678320,
+              "name": "Alloy Magazine"
+            }
+          ],
+          "crafting": false,
+          "recipeCount": 1
+        },
+        {
+          "socketIndex": 3,
+          "category": "frames",
+          "plugged": 1966281507,
+          "hasRandomizedPlugItems": false,
+          "options": [
+            {
+              "hash": 1966281507,
+              "name": "Replenishing Aegis"
+            },
+            {
+              "hash": 3800201097,
+              "name": "Immovable Object"
+            }
+          ],
+          "crafting": false,
+          "recipeCount": 2
+        },
+        {
+          "socketIndex": 4,
+          "category": "frames",
+          "plugged": 1782407750,
+          "hasRandomizedPlugItems": false,
+          "options": [
+            {
+              "hash": 1782407750,
+              "name": "Close to Melee"
+            },
+            {
+              "hash": 2048641572,
+              "name": "Destabilizing Rounds"
+            }
+          ],
+          "crafting": false,
+          "recipeCount": 2
+        },
+        {
+          "socketIndex": 7,
+          "category": "v600.plugs.weapons.masterworks.stat.shield_duration",
+          "plugged": 3557020689,
+          "hasRandomizedPlugItems": false,
+          "options": [
+            {
+              "hash": 3557020689,
+              "name": "Masterworked: Shield Duration"
+            }
+          ],
+          "crafting": false,
+          "recipeCount": 1
+        },
+        {
+          "socketIndex": 10,
+          "category": "origins",
+          "plugged": 744217850,
+          "hasRandomizedPlugItems": false,
+          "options": [
+            {
+              "hash": 744217850,
+              "name": "Vanguard's Vindication"
+            },
+            {
+              "hash": 4091460919,
+              "name": "One Quiet Moment"
+            },
+            {
+              "hash": 515704826,
+              "name": "Gun and Run"
+            }
+          ],
+          "crafting": false,
+          "recipeCount": 3
+        }
+      ]
+    }
+  ]
+}

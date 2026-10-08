@@ -1,32 +1,34 @@
-import { initLanguage, t } from './i18n';
+import { initLanguageCombobox, initChangelogModal } from './popup-accessibility';
+import { refreshOptionDescriptions } from './compact-options';
+import { resolveActivityMode } from './activity-mode';
+import { updateOptionsPreview, renderOptionsPreview } from './options-preview';
+import { refreshOptionHighlights, revealOption } from './options-motion';
+import { initGradeSettings } from './grade-settings';
+import { normalizeGradeSettings } from './grading';
+import { setGradeColors, setBadgeColor, resolveBadgeColor, resolveTileGlow } from './grade-colors';
+import { initLanguage, t, localizeElements } from './i18n';
+import { readScoreSettings, SCORE_SETTING_KEYS } from './score-config';
 import { LocalStorageSchema, AegisMode } from './types';
+import { normalizeBadgeSize, normalizeBadgeVisibility, type BadgeCategory, type BadgeVisibility } from './badge-presentation';
+import { initVersionPill } from './version-pill';
 
 function localizePopup(storedLang?: string) {
   initLanguage(storedLang);
-  document.querySelectorAll('[data-i18n]').forEach((el) => {
-    const key = el.getAttribute('data-i18n');
-    if (key) {
-      el.textContent = t(key);
-    }
-  });
-  document.querySelectorAll('[data-i18n-placeholder]').forEach((el) => {
-    const key = el.getAttribute('data-i18n-placeholder');
-    if (key && (el instanceof HTMLInputElement || el instanceof HTMLTextAreaElement)) {
-      el.placeholder = t(key);
-    }
-  });
-  document.querySelectorAll('[data-i18n-title]').forEach((el) => {
-    const key = el.getAttribute('data-i18n-title');
-    if (key && el instanceof HTMLElement) {
-      el.title = t(key);
-    }
-  });
+  localizeElements();
 }
 
 const DEFAULT_URL =
   'https://raw.githubusercontent.com/charlesxcaliber/DIMAegisWeaponWishlist/main/MrCharlesWishlist_MRB_PPC2.txt';
 
 document.addEventListener('DOMContentLoaded', () => {
+  const changelogModal = document.getElementById('changelog-modal')!;
+  const changelog = initChangelogModal(changelogModal, () => {
+    chrome.storage.local.set({ lastSeenChangelogVersion: chrome.runtime.getManifest().version });
+  });
+  document.getElementById('open-changelog-btn')?.addEventListener('click', changelog.show);
+  document.getElementById('changelog-close-btn')?.addEventListener('click', changelog.hide);
+  document.getElementById('changelog-ack-btn')?.addEventListener('click', changelog.hide);
+  const refreshGradeLanguage = initGradeSettings();
   const urlInput = document.getElementById('wishlist-url') as HTMLInputElement;
   const syncBtn = document.getElementById('sync-button') as HTMLButtonElement;
   const syncStatus = document.getElementById('sync-status') as HTMLSpanElement;
@@ -44,6 +46,8 @@ document.addEventListener('DOMContentLoaded', () => {
   function updateUI() {
     chrome.storage.local.get(
       [
+        'aegisGradeSettings',
+        'aegisGradeColors',
         'wishlistUrl',
         'lastUpdated',
         'parsedCount',
@@ -52,20 +56,33 @@ document.addEventListener('DOMContentLoaded', () => {
         'scoringSource',
         'lightggData',
         'lightggLastSync',
+        ...SCORE_SETTING_KEYS,
         'aegisLayoutSide',
         'aegisPerkOrder',
         'aegisDbMode',
         'aegisMode',
         'aegisTwoTier',
+        'aegisTwoTierColors',
+        'aegisBadgeColor',
+        'aegisMaxTierGlow',
+        'aegisTileGlow',
         'aegisBadgePosition',
-        'aegisBadgeStyle',
+        'aegisBadgeStyle', 'aegisStatGradeMode', 'aegisStatGradeBasis',
+        'aegisUpgradeStyle',
+        'aegisShowPerfectStar',
+        'aegisShowOmniStar',
         'aegisBadgeScale',
+        'aegisBadgeSize',
+        'aegisBadgeVisibility',
         'aegisFadeHover',
         'aegisGradeDisplayMode',
         'aegisHoverEnabled',
         'aegisCompactPerksMatrix',
-        'aegisInlineHeader',
         'aegisPopupSummaryMode',
+        'aegisArmoryEnabled',
+        'aegisPerkAnalysisEnabled',
+        'aegisCompareRecommendations',
+        'aegisOverviewRecommendations',
         'aegisAutoMaxHeight',
         'aegisTooltipWidthMode',
         'aegisTooltipWidth',
@@ -77,14 +94,15 @@ document.addEventListener('DOMContentLoaded', () => {
       ],
       (res: any) => {
         localizePopup(res.aegisLanguage);
+        refreshGradeLanguage?.();
+        setGradeColors(normalizeGradeSettings(res.aegisGradeSettings, res.aegisGradeColors));
+        const badgeColor = resolveBadgeColor(res.aegisBadgeColor, res.aegisTwoTierColors);
+        setBadgeColor(res.aegisTwoTier === true ? badgeColor : 'perk');
 
         // Auto-show Changelog Modal once for new version updates
         const currentVer = chrome.runtime.getManifest().version;
         if (res.lastSeenChangelogVersion !== currentVer) {
-          const changelogModal = document.getElementById('changelog-modal');
-          if (changelogModal) {
-            changelogModal.classList.remove('hidden');
-          }
+          changelog.show();
         }
 
         // Handle Extension Update warning banner
@@ -160,6 +178,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         const langOptions = document.querySelectorAll('#aegis-language-options .aegis-combobox-option');
         langOptions.forEach(opt => {
+          opt.setAttribute('aria-selected', String(opt.getAttribute('data-value') === langVal));
           if (opt.getAttribute('data-value') === langVal) {
             opt.classList.add('selected');
           } else {
@@ -181,9 +200,9 @@ document.addEventListener('DOMContentLoaded', () => {
           const dbToggleGroup = document.getElementById('aegis-db-toggle-group');
           if (dbToggleGroup) {
             if (sourceVal === 'lightgg') {
-              dbToggleGroup.style.display = 'none';
+              revealOption(dbToggleGroup, false);
             } else {
-              dbToggleGroup.style.display = 'block';
+              revealOption(dbToggleGroup, true);
             }
           }
         }
@@ -201,16 +220,39 @@ document.addEventListener('DOMContentLoaded', () => {
           });
           const aegisModeGroup = document.getElementById('aegis-mode-toggle-group');
           if (aegisModeGroup) {
-            if (dbModeVal === 'wishlist' || sourceVal === 'lightgg') {
-              aegisModeGroup.style.display = 'none';
+            if (res.aegisBadgeStyle === 'stat' || dbModeVal === 'wishlist' || sourceVal === 'lightgg') {
+              revealOption(aegisModeGroup, false);
             } else {
-              aegisModeGroup.style.display = 'block';
+              revealOption(aegisModeGroup, true);
             }
           }
         }
 
+        const scoreSettings = readScoreSettings(res);
+        const scoreAvailable = sourceVal === 'aegis' && dbModeVal !== 'wishlist';
+        const showScores = scoreAvailable && scoreSettings.aegisRatingDisplay === 'scores';
+        for (const [id, value] of [
+          ['aegis-rating-display-segmented', scoreSettings.aegisRatingDisplay],
+          ['aegis-score-profile-segmented', scoreSettings.aegisScoreProfile],
+          ['aegis-score-precision-segmented', String(scoreSettings.aegisScorePrecision)],
+          ['aegis-score-percent-segmented', String(scoreSettings.aegisScoreShowPercent)],
+          ['aegis-score-comparison-segmented', scoreSettings.aegisScoreComparisonActivity]
+        ]) {
+          document.getElementById(id)?.querySelectorAll<HTMLButtonElement>('button').forEach(button => {
+            button.classList.toggle('active', button.dataset.value === value);
+            button.setAttribute('aria-pressed', String(button.dataset.value === value));
+            button.disabled = !scoreAvailable && (id !== 'aegis-rating-display-segmented' || button.dataset.value === 'scores');
+          });
+        }
+        document.getElementById('aegis-score-source-help')?.classList.toggle('hidden', scoreAvailable);
+        document.getElementById('aegis-score-controls')?.classList.toggle('hidden', !showScores);
+        document.getElementById('aegis-score-comparison-group')?.classList.toggle('hidden', (res.aegisMode || 'pve') !== 'both');
+        for (const id of ['aegis-two-tier-segmented', 'aegis-grade-display-segmented']) {
+          document.getElementById(id)?.closest('.input-group')?.classList.toggle('hidden', showScores);
+        }
+
         // Set Aegis Mode (PvE vs PvP) segmented control
-        const aegisModeVal = res.aegisMode || 'pve';
+        const aegisModeVal = resolveActivityMode(sourceVal, res.aegisMode);
         const aegisModeSegmented = document.getElementById('aegis-mode-segmented');
         if (aegisModeSegmented) {
           aegisModeSegmented.querySelectorAll('button').forEach(btn => {
@@ -249,6 +291,15 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // Set Aegis Two-Tier segmented control
+        const twoTierColorsGroup = document.getElementById('aegis-two-tier-options');
+        if (twoTierColorsGroup) revealOption(twoTierColorsGroup, res.aegisBadgeStyle !== 'stat' && res.aegisTwoTier === true);
+        document.querySelectorAll<HTMLButtonElement>('#aegis-badge-color-segmented button').forEach(button => {
+          const active = button.dataset.value === badgeColor;
+          button.classList.toggle('active', active);
+          button.setAttribute('aria-pressed', String(active));
+        });
+        const tileGlow = document.getElementById('aegis-tile-glow') as HTMLSelectElement | null;
+        if (tileGlow) tileGlow.value = resolveTileGlow(res.aegisTileGlow, res.aegisMaxTierGlow);
         const twoTierVal = res.aegisTwoTier ? 'true' : 'false';
         const twoTierSegmented = document.getElementById('aegis-two-tier-segmented');
         if (twoTierSegmented) {
@@ -276,10 +327,39 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Set Aegis Badge Style segmented control
         const badgeStyleVal = res.aegisBadgeStyle || 'classic';
+        const statLetter = badgeStyleVal === 'stat';
+        revealOption(document.getElementById('aegis-two-tier-segmented')!.closest<HTMLElement>('.input-group')!, !statLetter);
+        document.querySelectorAll<HTMLButtonElement>('[data-badge-category] button[data-value="color"]').forEach(button => { button.disabled = statLetter; });
+        revealOption(document.getElementById('aegis-stat-grade-options')!, statLetter);
+        for (const [id, value] of [
+          ['aegis-stat-grade-mode', res.aegisStatGradeMode === 'pvp' ? 'pvp' : 'pve'],
+          ['aegis-stat-grade-basis', res.aegisStatGradeBasis === 'weapon' ? 'weapon' : 'perk'],
+        ]) {
+          document.querySelectorAll<HTMLButtonElement>('#' + id + ' button').forEach(button => {
+            const active = button.dataset.value === value;
+            button.classList.toggle('active', active);
+            button.setAttribute('aria-pressed', String(active));
+          });
+        }
+        for (const id of ['aegis-roll-stars-group', 'aegis-upgrade-style-group']) revealOption(document.getElementById(id)!, !statLetter);
+        for (const id of ['aegis-badge-scale-slider', 'aegis-badge-size-slider']) revealOption(document.getElementById(id)!.closest<HTMLElement>('.input-group')!, !statLetter);
         const badgeStyleSegmented = document.getElementById('aegis-badge-style-segmented');
         if (badgeStyleSegmented) {
           badgeStyleSegmented.querySelectorAll('button').forEach(btn => {
             if (btn.getAttribute('data-value') === badgeStyleVal) {
+              btn.classList.add('active');
+            } else {
+              btn.classList.remove('active');
+            }
+          });
+        }
+
+        // Set Aegis Upgrade Style segmented control
+        const upgradeStyleVal = (res.aegisUpgradeStyle === 'triangle' || res.aegisUpgradeStyle === 'chevron' || res.aegisUpgradeStyle === 'none') ? res.aegisUpgradeStyle : 'circle';
+        const upgradeStyleSegmented = document.getElementById('aegis-upgrade-style-segmented');
+        if (upgradeStyleSegmented) {
+          upgradeStyleSegmented.querySelectorAll('button').forEach(btn => {
+            if (btn.getAttribute('data-value') === upgradeStyleVal) {
               btn.classList.add('active');
             } else {
               btn.classList.remove('active');
@@ -298,43 +378,31 @@ document.addEventListener('DOMContentLoaded', () => {
           scaleValueText.textContent = `${badgeScaleVal}%`;
         }
         document.documentElement.style.setProperty('--aegis-badge-scale', (badgeScaleVal / 100).toString());
-
-        // Update Live Interactive Weapon Tile Preview
-        const mockBadge = document.getElementById('mock-aegis-badge');
-        if (mockBadge) {
-          // Remove old position and style classes
-          mockBadge.classList.remove('aegis-pos-bl', 'aegis-pos-tl', 'aegis-pos-tr', 'aegis-pos-br');
-          mockBadge.classList.remove('aegis-style-classic', 'aegis-style-pill', 'aegis-style-notch');
-
-          const posKey = badgePosVal.replace('bottom-left', 'bl').replace('top-left', 'tl').replace('top-right', 'tr').replace('bottom-right', 'br');
-          mockBadge.classList.add(`aegis-pos-${posKey}`);
-          mockBadge.classList.add(`aegis-style-${badgeStyleVal}`);
-
-          const isTwoTier = res.aegisTwoTier === true;
-          if (aegisModeVal === 'both') {
-            mockBadge.classList.add('aegis-badge-split', 'aegis-badge-wide');
-            const pveStr = isTwoTier ? 'SS+' : 'S+';
-            const pvpStr = isTwoTier ? 'AA' : 'A';
-            mockBadge.innerHTML = `<span class="aegis-split-half aegis-split-left aegis-badge-s">${pveStr}</span><span class="aegis-split-half aegis-split-right aegis-badge-a">${pvpStr}</span>`;
-          } else {
-            mockBadge.classList.remove('aegis-badge-split');
-            mockBadge.textContent = isTwoTier ? 'SS+' : 'S+';
-          }
-        }
-
-        const cornerTargets = document.querySelectorAll('.interactive-weapon-tile .corner-target');
-        cornerTargets.forEach(target => {
-          if (target.getAttribute('data-pos') === badgePosVal) {
-            target.classList.add('active-corner');
-          } else {
-            target.classList.remove('active-corner');
-          }
+        const badgeSize = normalizeBadgeSize(res.aegisBadgeSize);
+        (document.getElementById('aegis-badge-size-slider') as HTMLInputElement).value = String(badgeSize);
+        document.getElementById('badge-size-value')!.textContent = `${badgeSize}%`;
+        document.documentElement.style.setProperty('--aegis-badge-size', String(badgeSize / 100));
+        const visibility = normalizeBadgeVisibility(res.aegisBadgeVisibility);
+        document.querySelectorAll<HTMLElement>('[data-badge-category]').forEach(group => {
+          group.querySelectorAll<HTMLButtonElement>('button').forEach(button => {
+            const active = visibility[group.dataset.badgeCategory as BadgeCategory] === button.dataset.value;
+            button.classList.toggle('active', active);
+            button.setAttribute('aria-pressed', String(active));
+          });
         });
+
+        (document.getElementById('aegis-show-perfect-star') as HTMLInputElement).checked = res.aegisShowPerfectStar !== false;
+        (document.getElementById('aegis-show-omni-star') as HTMLInputElement).checked = res.aegisShowOmniStar !== false;
+        updateOptionsPreview(res);
+
+        revealOption(document.getElementById('aegis-badge-position-group')!, !statLetter && badgeStyleVal !== 'notch' && badgeStyleVal !== 'footer');
 
         // Set Aegis Fade on Hover segmented control
         const fadeHoverVal = res.aegisFadeHover === true ? 'true' : 'false';
         const fadeHoverSegmented = document.getElementById('aegis-fade-hover-segmented');
         if (fadeHoverSegmented) {
+          const fadeHoverGroup = fadeHoverSegmented.closest<HTMLElement>('.input-group');
+          if (fadeHoverGroup) revealOption(fadeHoverGroup, !statLetter && badgeStyleVal !== 'footer');
           fadeHoverSegmented.querySelectorAll('button').forEach(btn => {
             if (btn.getAttribute('data-value') === fadeHoverVal) {
               btn.classList.add('active');
@@ -346,6 +414,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Set Aegis Grade Display Mode segmented control (equipped, dual, potential)
         const gradeDisplayVal = res.aegisGradeDisplayMode || 'equipped';
+        document.documentElement.style.setProperty('--aegis-split-footer-height', gradeDisplayVal === 'dual' ? '25px' : '16px');
         const gradeDisplaySegmented = document.getElementById('aegis-grade-display-segmented');
         if (gradeDisplaySegmented) {
           gradeDisplaySegmented.querySelectorAll('button').forEach(btn => {
@@ -396,18 +465,25 @@ document.addEventListener('DOMContentLoaded', () => {
           });
         }
 
-        // Set Aegis Inline Header segmented control
-        const inlineHeaderVal = res.aegisInlineHeader !== false ? 'true' : 'false';
-        const inlineHeaderSegmented = document.getElementById('aegis-inline-header-segmented');
-        if (inlineHeaderSegmented) {
-          inlineHeaderSegmented.querySelectorAll('button').forEach(btn => {
-            if (btn.getAttribute('data-value') === inlineHeaderVal) {
+        // Set Aegis Armory Enabled segmented control
+        const armoryEnabledVal = res.aegisArmoryEnabled !== false ? 'true' : 'false';
+        const armoryEnabledSegmented = document.getElementById('aegis-armory-enabled-segmented');
+        if (armoryEnabledSegmented) {
+          armoryEnabledSegmented.querySelectorAll('button').forEach(btn => {
+            if (btn.getAttribute('data-value') === armoryEnabledVal) {
               btn.classList.add('active');
             } else {
               btn.classList.remove('active');
             }
           });
         }
+
+        const perkAnalysisCheckbox = document.getElementById('aegis-perk-analysis-enabled') as HTMLInputElement | null;
+        if (perkAnalysisCheckbox) perkAnalysisCheckbox.checked = res.aegisPerkAnalysisEnabled !== false;
+        const compareRecommendations = document.getElementById('aegis-compare-recommendations') as HTMLInputElement | null;
+        if (compareRecommendations) compareRecommendations.checked = res.aegisCompareRecommendations !== false;
+        const overviewRecommendations = document.getElementById('aegis-overview-recommendations') as HTMLInputElement | null;
+        if (overviewRecommendations) overviewRecommendations.checked = res.aegisOverviewRecommendations === true;
 
         // Set Aegis Auto Max-Height segmented control
         const autoMaxHeightVal = res.aegisAutoMaxHeight !== false ? 'true' : 'false';
@@ -424,6 +500,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Set Aegis Tooltip Width Mode segmented control
         const tooltipWidthModeVal = res.aegisTooltipWidthMode || 'fixed';
+        revealOption(document.getElementById('aegis-tooltip-width-slider-group')!, tooltipWidthModeVal === 'fixed');
         const tooltipWidthModeSegmented = document.getElementById('aegis-tooltip-width-mode-segmented');
         if (tooltipWidthModeSegmented) {
           tooltipWidthModeSegmented.querySelectorAll('button').forEach(btn => {
@@ -450,15 +527,17 @@ document.addEventListener('DOMContentLoaded', () => {
         const armorSourceVal = res.aegisArmorSource || 'lowco';
         const armorSourceSegmented = document.getElementById('aegis-armor-source-segmented');
         if (armorSourceSegmented) {
-          const armorAegisBtn = armorSourceSegmented.querySelector('button[data-value="aegis"]');
+          const armorAegisBtn = armorSourceSegmented.querySelector<HTMLButtonElement>('button[data-value="aegis"]');
           if (armorAegisBtn) {
-            if (aegisModeVal === 'pvp') {
-              armorAegisBtn.textContent = t('armorFinnald');
-            } else if (aegisModeVal === 'both') {
-              armorAegisBtn.textContent = t('armorDual');
+            const heading = armorAegisBtn.querySelector('span');
+            const label = aegisModeVal === 'pvp' ? t('inlineFinnald') : aegisModeVal === 'both' ? t('sourceBoth') : t('inlineAegis');
+            if (heading) {
+              heading.textContent = label;
             } else {
-              armorAegisBtn.textContent = t('armorAegis');
+              armorAegisBtn.textContent = label;
             }
+            armorAegisBtn.title = aegisModeVal === 'pvp' ? t('armorFinnald') : aegisModeVal === 'both' ? t('armorDual') : t('armorAegis');
+            armorAegisBtn.setAttribute('aria-label', armorAegisBtn.title);
           }
           armorSourceSegmented.querySelectorAll('button').forEach(btn => {
             if (btn.getAttribute('data-value') === armorSourceVal) {
@@ -492,44 +571,31 @@ document.addEventListener('DOMContentLoaded', () => {
           syncStatus.classList.add('status-success');
           setLoadingState(false);
         }
+        refreshOptionDescriptions();
+        refreshOptionHighlights();
       }
     );
   }
 
-  // Handle Language dropdown toggle and selection
   const langDropdown = document.getElementById('aegis-language-dropdown');
-  const langMenu = document.getElementById('aegis-language-menu');
-  if (langDropdown && langMenu) {
-    langDropdown.addEventListener('click', (e) => {
-      const target = e.target as HTMLElement;
-      const option = target.closest('.aegis-combobox-option') as HTMLElement;
-      if (option) {
-        const val = option.getAttribute('data-value');
-        if (val) {
-          chrome.storage.local.set({ aegisLanguage: val }, () => {
-            langDropdown.classList.remove('active');
-            langMenu.classList.add('hidden');
-            updateUI();
-          });
-        }
-      } else {
-        const isHidden = langMenu.classList.contains('hidden');
-        if (isHidden) {
-          langDropdown.classList.add('active');
-          langMenu.classList.remove('hidden');
-        } else {
-          langDropdown.classList.remove('active');
-          langMenu.classList.add('hidden');
-        }
-      }
-    });
+  if (langDropdown) initLanguageCombobox(langDropdown, value => {
+    chrome.storage.local.set({ aegisLanguage: value }, updateUI);
+  });
 
-    // Dismiss language menu when clicking outside
-    document.addEventListener('click', (e) => {
-      if (!langDropdown.contains(e.target as Node)) {
-        langDropdown.classList.remove('active');
-        langMenu.classList.add('hidden');
-      }
+  for (const [id, key] of [
+    ['aegis-rating-display-segmented', 'aegisRatingDisplay'],
+    ['aegis-score-profile-segmented', 'aegisScoreProfile'],
+    ['aegis-score-precision-segmented', 'aegisScorePrecision'],
+    ['aegis-score-percent-segmented', 'aegisScoreShowPercent'],
+    ['aegis-score-comparison-segmented', 'aegisScoreComparisonActivity']
+  ]) {
+    document.getElementById(id)?.addEventListener('click', event => {
+      const button = (event.target as HTMLElement).closest<HTMLButtonElement>('button[data-value]');
+      if (!button || button.disabled) return;
+      const raw = key === 'aegisScorePrecision' ? Number(button.dataset.value)
+        : key === 'aegisScoreShowPercent' ? button.dataset.value === 'true' : button.dataset.value;
+      const validated = readScoreSettings({ [key]: raw });
+      chrome.storage.local.set({ [key]: validated[key as keyof typeof validated] }, updateUI);
     });
   }
 
@@ -586,13 +652,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 updateObj.aegisShoppingDb = activeShoppingDb;
               }
 
-              // Automatically switch tooltip width mode to fit-content (auto) in dual mode, and reset to fixed in single mode
-              if (val === 'both') {
-                updateObj.aegisTooltipWidthMode = 'auto';
-              } else {
-                updateObj.aegisTooltipWidthMode = 'fixed';
-              }
-
               chrome.storage.local.set(updateObj, () => {
                 updateUI();
               });
@@ -612,7 +671,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const val = target.getAttribute('data-value');
         if (val) {
           chrome.storage.local.set({ aegisLayoutSide: val }, () => {
-            console.log(`[DIM Aegis Overlay] Aegis layout changed to: ${val}`);
             updateUI();
           });
         }
@@ -629,7 +687,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const val = target.getAttribute('data-value');
         if (val) {
           chrome.storage.local.set({ aegisPerkOrder: val }, () => {
-            console.log(`[DIM Aegis Overlay] Aegis perk order changed to: ${val}`);
             updateUI();
           });
         }
@@ -669,20 +726,29 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Handle Inline Header segmented control click
-  const inlineHeaderSegmented = document.getElementById('aegis-inline-header-segmented');
-  if (inlineHeaderSegmented) {
-    inlineHeaderSegmented.addEventListener('click', (e) => {
+  // Handle Armory Enabled segmented control click
+  const armoryEnabledSegmented = document.getElementById('aegis-armory-enabled-segmented');
+  if (armoryEnabledSegmented) {
+    armoryEnabledSegmented.addEventListener('click', (e) => {
       const target = e.target as HTMLButtonElement;
       if (target && target.tagName === 'BUTTON') {
         const val = target.getAttribute('data-value');
         if (val) {
-          chrome.storage.local.set({ aegisInlineHeader: val === 'true' }, () => {
+          chrome.storage.local.set({ aegisArmoryEnabled: val === 'true' }, () => {
             updateUI();
           });
         }
       }
     });
+  }
+
+  const perkAnalysisCheckbox = document.getElementById('aegis-perk-analysis-enabled') as HTMLInputElement | null;
+  perkAnalysisCheckbox?.addEventListener('change', () => {
+    chrome.storage.local.set({ aegisPerkAnalysisEnabled: perkAnalysisCheckbox.checked }, updateUI);
+  });
+  for (const [id, key] of [['aegis-compare-recommendations', 'aegisCompareRecommendations'], ['aegis-overview-recommendations', 'aegisOverviewRecommendations']]) {
+    const checkbox = document.getElementById(id) as HTMLInputElement | null;
+    checkbox?.addEventListener('change', () => chrome.storage.local.set({ [key]: checkbox.checked }, updateUI));
   }
 
   // Handle Auto Max-Height segmented control click
@@ -745,7 +811,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const val = target.getAttribute('data-value');
         if (val) {
           chrome.storage.local.set({ aegisTwoTier: val === 'true' }, () => {
-            console.log(`[DIM Aegis Overlay] Aegis Two-Tier grade changed to: ${val === 'true'}`);
             updateUI();
           });
         }
@@ -762,7 +827,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const val = target.getAttribute('data-value');
         if (val) {
           chrome.storage.local.set({ aegisBadgePosition: val }, () => {
-            console.log(`[DIM Aegis Overlay] Aegis Badge Position changed to: ${val}`);
             updateUI();
           });
         }
@@ -780,11 +844,27 @@ document.addEventListener('DOMContentLoaded', () => {
         const pos = hotspot.getAttribute('data-pos');
         if (pos) {
           chrome.storage.local.set({ aegisBadgePosition: pos }, () => {
-            console.log(`[DIM Aegis Overlay] Interactive tile position set to: ${pos}`);
             updateUI();
           });
         }
       }
+    });
+  }
+
+  document.querySelectorAll<HTMLButtonElement>('#aegis-badge-color-segmented button').forEach(button => {
+    button.addEventListener('click', () => {
+      chrome.storage.local.set({ aegisBadgeColor: resolveBadgeColor(button.dataset.value) }, updateUI);
+    });
+  });
+
+  const tileGlow = document.getElementById('aegis-tile-glow') as HTMLSelectElement | null;
+  tileGlow?.addEventListener('change', () => {
+    chrome.storage.local.set({ aegisTileGlow: resolveTileGlow(tileGlow.value) }, updateUI);
+  });
+
+  for (const [id, key] of [['aegis-stat-grade-mode', 'aegisStatGradeMode'], ['aegis-stat-grade-basis', 'aegisStatGradeBasis']]) {
+    document.querySelectorAll<HTMLButtonElement>('#' + id + ' button').forEach(button => {
+      button.addEventListener('click', () => chrome.storage.local.set({ [key]: button.dataset.value }));
     });
   }
 
@@ -796,14 +876,57 @@ document.addEventListener('DOMContentLoaded', () => {
       if (target && target.tagName === 'BUTTON') {
         const val = target.getAttribute('data-value');
         if (val) {
-          chrome.storage.local.set({ aegisBadgeStyle: val }, () => {
-            console.log(`[DIM Aegis Overlay] Aegis Badge Style changed to: ${val}`);
+          // The storage listener refreshes the UI; don't duplicate its read
+          // and preview render for every style click.
+          chrome.storage.local.set({ aegisBadgeStyle: val });
+        }
+      }
+    });
+  }
+
+  for (const [id, key] of [
+    ['aegis-show-perfect-star', 'aegisShowPerfectStar'],
+    ['aegis-show-omni-star', 'aegisShowOmniStar'],
+  ] as const) {
+    const checkbox = document.getElementById(id) as HTMLInputElement;
+    checkbox.addEventListener('change', () => {
+      chrome.storage.local.set({ [key]: checkbox.checked });
+    });
+  }
+
+  // Handle Upgrade Style segmented control click
+  const upgradeStyleSegmented = document.getElementById('aegis-upgrade-style-segmented');
+  if (upgradeStyleSegmented) {
+    upgradeStyleSegmented.addEventListener('click', (e) => {
+      const target = e.target as HTMLButtonElement;
+      if (target && target.tagName === 'BUTTON') {
+        const val = target.getAttribute('data-value');
+        if (val) {
+          chrome.storage.local.set({ aegisUpgradeStyle: val }, () => {
             updateUI();
           });
         }
       }
     });
   }
+
+  document.querySelectorAll<HTMLElement>('[data-badge-category]').forEach(group => {
+    group.addEventListener('click', async event => {
+      const button = (event.target as HTMLElement).closest<HTMLButtonElement>('button[data-value]');
+      if (!button) return;
+      const stored = await chrome.storage.local.get(['aegisBadgeVisibility']);
+      const visibility = normalizeBadgeVisibility(stored.aegisBadgeVisibility);
+      visibility[group.dataset.badgeCategory as BadgeCategory] = button.dataset.value as BadgeVisibility;
+      await chrome.storage.local.set({ aegisBadgeVisibility: visibility });
+    });
+  });
+  const sizeSlider = document.getElementById('aegis-badge-size-slider') as HTMLInputElement;
+  sizeSlider.addEventListener('input', () => {
+    const value = normalizeBadgeSize(Number(sizeSlider.value));
+    document.getElementById('badge-size-value')!.textContent = `${value}%`;
+    document.documentElement.style.setProperty('--aegis-badge-size', String(value / 100));
+    chrome.storage.local.set({ aegisBadgeSize: value });
+  });
 
   // Handle Badge Scale Slider
   const scaleSlider = document.getElementById('aegis-badge-scale-slider') as HTMLInputElement;
@@ -815,14 +938,7 @@ document.addEventListener('DOMContentLoaded', () => {
         scaleValueText.textContent = `${val}%`;
       }
       document.documentElement.style.setProperty('--aegis-badge-scale', (val / 100).toString());
-    });
-
-    scaleSlider.addEventListener('change', () => {
-      const val = parseInt(scaleSlider.value, 10) || 100;
-      chrome.storage.local.set({ aegisBadgeScale: val }, () => {
-        console.log(`[DIM Aegis Overlay] Aegis Badge Scale changed to: ${val}%`);
-        updateUI();
-      });
+      chrome.storage.local.set({ aegisBadgeScale: val });
     });
   }
 
@@ -835,7 +951,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const val = target.getAttribute('data-value');
         if (val) {
           chrome.storage.local.set({ aegisFadeHover: val === 'true' }, () => {
-            console.log(`[DIM Aegis Overlay] Aegis Fade Hover changed to: ${val === 'true'}`);
             updateUI();
           });
         }
@@ -852,7 +967,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const val = target.getAttribute('data-value');
         if (val) {
           chrome.storage.local.set({ aegisGradeDisplayMode: val }, () => {
-            console.log(`[DIM Aegis Overlay] Aegis Grade Display Mode changed to: ${val}`);
             updateUI();
           });
         }
@@ -869,7 +983,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const val = target.getAttribute('data-value');
         if (val) {
           chrome.storage.local.set({ aegisHoverEnabled: val === 'true' }, () => {
-            console.log(`[DIM Aegis Overlay] Aegis Hover Enabled changed to: ${val === 'true'}`);
             updateUI();
           });
         }
@@ -886,7 +999,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const val = target.getAttribute('data-value');
         if (val) {
           chrome.storage.local.set({ aegisArmorSource: val }, () => {
-            console.log(`[DIM Aegis Overlay] Aegis Armor Source changed to: ${val}`);
             updateUI();
           });
         }
@@ -964,46 +1076,15 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // Version click listener to check for updates
-  const updateCheckStatus = document.getElementById('update-check-status');
-  const versionText = document.getElementById('version-text');
+  const versionText = document.getElementById('version-text') as HTMLButtonElement | null;
   if (versionText) {
-    versionText.addEventListener('click', () => {
-      versionText.style.opacity = '0.5';
-      if (updateCheckStatus) {
-        updateCheckStatus.textContent = 'Checking...';
-        updateCheckStatus.style.color = '#88888d';
-        updateCheckStatus.style.display = 'inline';
-      }
-
-      chrome.runtime.sendMessage({ action: 'checkUpdates' }, (response) => {
-        versionText.style.opacity = '1';
-        if (response && response.success) {
-          if (response.updateAvailable) {
-            if (updateCheckStatus) {
-              updateCheckStatus.textContent = 'Update available!';
-              updateCheckStatus.style.color = '#ffb300';
-              updateCheckStatus.style.display = 'inline';
-            }
-            updateUI();
-          } else {
-            if (updateCheckStatus) {
-              updateCheckStatus.textContent = 'Up to date';
-              updateCheckStatus.style.color = '#4caf50';
-              updateCheckStatus.style.display = 'inline';
-              setTimeout(() => {
-                updateCheckStatus.style.display = 'none';
-              }, 3000);
-            }
-          }
-        } else {
-          if (updateCheckStatus) {
-            updateCheckStatus.textContent = 'Check failed';
-            updateCheckStatus.style.color = '#f44336';
-            updateCheckStatus.style.display = 'inline';
-          }
-        }
+    initVersionPill(versionText, chrome.runtime.getManifest().version, () => new Promise((resolve, reject) => {
+      chrome.runtime.sendMessage({ action: 'checkUpdates' }, response => {
+        const error = chrome.runtime.lastError;
+        if (error) reject(new Error(error.message));
+        else resolve(response);
       });
-    });
+    }), updateUI);
   }
 
   // Initial UI update
@@ -1138,37 +1219,14 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // --- Changelog Modal Handlers ---
-  const changelogModal = document.getElementById('changelog-modal') as HTMLDivElement | null;
-  const openChangelogBtn = document.getElementById('open-changelog-btn') as HTMLButtonElement | null;
-  const changelogCloseBtn = document.getElementById('changelog-close-btn') as HTMLButtonElement | null;
-  const changelogAckBtn = document.getElementById('changelog-ack-btn') as HTMLButtonElement | null;
-
-  const showChangelog = () => {
-    if (changelogModal) changelogModal.classList.remove('hidden');
-  };
-
-  const hideChangelog = () => {
-    if (changelogModal) changelogModal.classList.add('hidden');
-    const currentVersion = chrome.runtime.getManifest().version;
-    chrome.storage.local.set({ lastSeenChangelogVersion: currentVersion });
-  };
-
-  if (openChangelogBtn) openChangelogBtn.addEventListener('click', showChangelog);
-  if (changelogCloseBtn) changelogCloseBtn.addEventListener('click', hideChangelog);
-  if (changelogAckBtn) changelogAckBtn.addEventListener('click', hideChangelog);
-  if (changelogModal) {
-    changelogModal.addEventListener('click', (e) => {
-      if (e.target === changelogModal) {
-        hideChangelog();
-      }
-    });
-  }
-
-
   // Listen for storage updates in real-time
   chrome.storage.onChanged.addListener((_changes, namespace) => {
     if (namespace === 'local') {
+      if (_changes.aegisGradeColors && Object.keys(_changes).length === 1) {
+        setGradeColors(normalizeGradeSettings(_changes.aegisGradeColors.newValue));
+        renderOptionsPreview();
+        return;
+      }
       updateUI();
     }
   });

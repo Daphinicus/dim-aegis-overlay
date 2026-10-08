@@ -1,0 +1,1690 @@
+{
+  "capturedAt": "2026-10-02T02:34:10.948Z",
+  "application": "Signed-in DIM standard in the persistent Chrome testing profile",
+  "provenance": "Actual base intrinsic, empty masterwork, and current equipped sockets. Instance and account identifiers omitted.",
+  "items": [
+    {
+      "name": "Perpetualis",
+      "hash": 392008588,
+      "crafted": "crafted",
+      "masterworkInfo": null,
+      "sockets": {
+        "fromDefinitions": false,
+        "allSockets": [
+          {
+            "socketIndex": 0,
+            "hasRandomizedPlugItems": false,
+            "plugged": {
+              "plugDef": {
+                "hash": 1294026524,
+                "plug": {
+                  "plugCategoryIdentifier": "intrinsics"
+                },
+                "investmentStats": []
+              },
+              "stats": {}
+            }
+          },
+          {
+            "socketIndex": 1,
+            "hasRandomizedPlugItems": true,
+            "plugged": {
+              "plugDef": {
+                "hash": 1467527085,
+                "plug": {
+                  "plugCategoryIdentifier": "barrels"
+                }
+              }
+            }
+          },
+          {
+            "socketIndex": 2,
+            "hasRandomizedPlugItems": true,
+            "plugged": {
+              "plugDef": {
+                "hash": 1431678320,
+                "plug": {
+                  "plugCategoryIdentifier": "magazines"
+                }
+              }
+            }
+          },
+          {
+            "socketIndex": 3,
+            "hasRandomizedPlugItems": true,
+            "plugged": {
+              "plugDef": {
+                "hash": 1866048759,
+                "plug": {
+                  "plugCategoryIdentifier": "frames"
+                }
+              }
+            }
+          },
+          {
+            "socketIndex": 4,
+            "hasRandomizedPlugItems": true,
+            "plugged": {
+              "plugDef": {
+                "hash": 2416023159,
+                "plug": {
+                  "plugCategoryIdentifier": "frames"
+                }
+              }
+            }
+          },
+          {
+            "socketIndex": 7,
+            "hasRandomizedPlugItems": false,
+            "plugged": {
+              "plugDef": {
+                "hash": 233125175,
+                "plug": {
+                  "plugCategoryIdentifier": "v400.plugs.weapons.masterworks"
+                },
+                "investmentStats": []
+              },
+              "stats": {}
+            }
+          },
+          {
+            "socketIndex": 8,
+            "hasRandomizedPlugItems": false,
+            "plugged": {
+              "plugDef": {
+                "hash": 1823011807,
+                "plug": {
+                  "plugCategoryIdentifier": "origins"
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Ammit AR2",
+      "hash": 2119346509,
+      "crafted": "crafted",
+      "masterworkInfo": null,
+      "sockets": {
+        "fromDefinitions": false,
+        "allSockets": [
+          {
+            "socketIndex": 0,
+            "hasRandomizedPlugItems": false,
+            "plugged": {
+              "plugDef": {
+                "hash": 1636108362,
+                "plug": {
+                  "plugCategoryIdentifier": "intrinsics"
+                },
+                "investmentStats": []
+              },
+              "stats": {}
+            }
+          },
+          {
+            "socketIndex": 1,
+            "hasRandomizedPlugItems": true,
+            "plugged": {
+              "plugDef": {
+                "hash": 1467527085,
+                "plug": {
+                  "plugCategoryIdentifier": "barrels"
+                }
+              }
+            }
+          },
+          {
+            "socketIndex": 2,
+            "hasRandomizedPlugItems": true,
+            "plugged": {
+              "plugDef": {
+                "hash": 1431678320,
+                "plug": {
+                  "plugCategoryIdentifier": "magazines"
+                }
+              }
+            }
+          },
+          {
+            "socketIndex": 3,
+            "hasRandomizedPlugItems": true,
+            "plugged": {
+              "plugDef": {
+                "hash": 1359896290,
+                "plug": {
+                  "plugCategoryIdentifier": "frames"
+                }
+              }
+            }
+          },
+          {
+            "socketIndex": 4,
+            "hasRandomizedPlugItems": true,
+            "plugged": {
+              "plugDef": {
+                "hash": 1048183818,
+                "plug": {
+                  "plugCategoryIdentifier": "frames"
+                }
+              }
+            }
+          },
+          {
+            "socketIndex": 7,
+            "hasRandomizedPlugItems": false,
+            "plugged": {
+              "plugDef": {
+                "hash": 233125175,
+                "plug": {
+                  "plugCategoryIdentifier": "v400.plugs.weapons.masterworks"
+                },
+                "investmentStats": []
+              },
+              "stats": {}
+            }
+          },
+          {
+            "socketIndex": 8,
+            "hasRandomizedPlugItems": false,
+            "plugged": {
+              "plugDef": {
+                "hash": 2839173408,
+                "plug": {
+                  "plugCategoryIdentifier": "origins"
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Without Remorse",
+      "hash": 1478986057,
+      "crafted": "crafted",
+      "masterworkInfo": null,
+      "sockets": {
+        "fromDefinitions": false,
+        "allSockets": [
+          {
+            "socketIndex": 0,
+            "hasRandomizedPlugItems": false,
+            "plugged": {
+              "plugDef": {
+                "hash": 1458010786,
+                "plug": {
+                  "plugCategoryIdentifier": "intrinsics"
+                },
+                "investmentStats": []
+              },
+              "stats": {}
+            }
+          },
+          {
+            "socketIndex": 1,
+            "hasRandomizedPlugItems": true,
+            "plugged": {
+              "plugDef": {
+                "hash": 1482024992,
+                "plug": {
+                  "plugCategoryIdentifier": "barrels"
+                }
+              }
+            }
+          },
+          {
+            "socketIndex": 2,
+            "hasRandomizedPlugItems": true,
+            "plugged": {
+              "plugDef": {
+                "hash": 3177308360,
+                "plug": {
+                  "plugCategoryIdentifier": "magazines"
+                }
+              }
+            }
+          },
+          {
+            "socketIndex": 3,
+            "hasRandomizedPlugItems": true,
+            "plugged": {
+              "plugDef": {
+                "hash": 1866048759,
+                "plug": {
+                  "plugCategoryIdentifier": "frames"
+                }
+              }
+            }
+          },
+          {
+            "socketIndex": 4,
+            "hasRandomizedPlugItems": true,
+            "plugged": {
+              "plugDef": {
+                "hash": 3511092054,
+                "plug": {
+                  "plugCategoryIdentifier": "frames"
+                }
+              }
+            }
+          },
+          {
+            "socketIndex": 7,
+            "hasRandomizedPlugItems": false,
+            "plugged": {
+              "plugDef": {
+                "hash": 233125175,
+                "plug": {
+                  "plugCategoryIdentifier": "v400.plugs.weapons.masterworks"
+                },
+                "investmentStats": []
+              },
+              "stats": {}
+            }
+          },
+          {
+            "socketIndex": 8,
+            "hasRandomizedPlugItems": false,
+            "plugged": {
+              "plugDef": {
+                "hash": 1250481499,
+                "plug": {
+                  "plugCategoryIdentifier": "origins"
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Come to Pass",
+      "hash": 927567426,
+      "crafted": "crafted",
+      "masterworkInfo": null,
+      "sockets": {
+        "fromDefinitions": false,
+        "allSockets": [
+          {
+            "socketIndex": 0,
+            "hasRandomizedPlugItems": false,
+            "plugged": {
+              "plugDef": {
+                "hash": 1019291327,
+                "plug": {
+                  "plugCategoryIdentifier": "intrinsics"
+                },
+                "investmentStats": []
+              },
+              "stats": {}
+            }
+          },
+          {
+            "socketIndex": 1,
+            "hasRandomizedPlugItems": true,
+            "plugged": {
+              "plugDef": {
+                "hash": 1392496348,
+                "plug": {
+                  "plugCategoryIdentifier": "barrels"
+                }
+              }
+            }
+          },
+          {
+            "socketIndex": 2,
+            "hasRandomizedPlugItems": true,
+            "plugged": {
+              "plugDef": {
+                "hash": 3177308360,
+                "plug": {
+                  "plugCategoryIdentifier": "magazines"
+                }
+              }
+            }
+          },
+          {
+            "socketIndex": 3,
+            "hasRandomizedPlugItems": true,
+            "plugged": {
+              "plugDef": {
+                "hash": 3096702027,
+                "plug": {
+                  "plugCategoryIdentifier": "frames"
+                }
+              }
+            }
+          },
+          {
+            "socketIndex": 4,
+            "hasRandomizedPlugItems": true,
+            "plugged": {
+              "plugDef": {
+                "hash": 2848615171,
+                "plug": {
+                  "plugCategoryIdentifier": "frames"
+                }
+              }
+            }
+          },
+          {
+            "socketIndex": 7,
+            "hasRandomizedPlugItems": false,
+            "plugged": {
+              "plugDef": {
+                "hash": 233125175,
+                "plug": {
+                  "plugCategoryIdentifier": "v400.plugs.weapons.masterworks"
+                },
+                "investmentStats": []
+              },
+              "stats": {}
+            }
+          },
+          {
+            "socketIndex": 8,
+            "hasRandomizedPlugItems": false,
+            "plugged": {
+              "plugDef": {
+                "hash": 883366072,
+                "plug": {
+                  "plugCategoryIdentifier": "origins"
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Beloved",
+      "hash": 3107853529,
+      "crafted": "crafted",
+      "masterworkInfo": null,
+      "sockets": {
+        "fromDefinitions": false,
+        "allSockets": [
+          {
+            "socketIndex": 0,
+            "hasRandomizedPlugItems": false,
+            "plugged": {
+              "plugDef": {
+                "hash": 1294026524,
+                "plug": {
+                  "plugCategoryIdentifier": "intrinsics"
+                },
+                "investmentStats": []
+              },
+              "stats": {}
+            }
+          },
+          {
+            "socketIndex": 1,
+            "hasRandomizedPlugItems": true,
+            "plugged": {
+              "plugDef": {
+                "hash": 1392496348,
+                "plug": {
+                  "plugCategoryIdentifier": "barrels"
+                }
+              }
+            }
+          },
+          {
+            "socketIndex": 2,
+            "hasRandomizedPlugItems": true,
+            "plugged": {
+              "plugDef": {
+                "hash": 1087426260,
+                "plug": {
+                  "plugCategoryIdentifier": "magazines"
+                }
+              }
+            }
+          },
+          {
+            "socketIndex": 3,
+            "hasRandomizedPlugItems": true,
+            "plugged": {
+              "plugDef": {
+                "hash": 280464955,
+                "plug": {
+                  "plugCategoryIdentifier": "frames"
+                }
+              }
+            }
+          },
+          {
+            "socketIndex": 4,
+            "hasRandomizedPlugItems": true,
+            "plugged": {
+              "plugDef": {
+                "hash": 3425386926,
+                "plug": {
+                  "plugCategoryIdentifier": "frames"
+                }
+              }
+            }
+          },
+          {
+            "socketIndex": 7,
+            "hasRandomizedPlugItems": false,
+            "plugged": {
+              "plugDef": {
+                "hash": 233125175,
+                "plug": {
+                  "plugCategoryIdentifier": "v400.plugs.weapons.masterworks"
+                },
+                "investmentStats": []
+              },
+              "stats": {}
+            }
+          },
+          {
+            "socketIndex": 8,
+            "hasRandomizedPlugItems": false,
+            "plugged": {
+              "plugDef": {
+                "hash": 1905044254,
+                "plug": {
+                  "plugCategoryIdentifier": "origins"
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Drang (Baroque)",
+      "hash": 502356570,
+      "crafted": "crafted",
+      "masterworkInfo": null,
+      "sockets": {
+        "fromDefinitions": false,
+        "allSockets": [
+          {
+            "socketIndex": 0,
+            "hasRandomizedPlugItems": false,
+            "plugged": {
+              "plugDef": {
+                "hash": 1282254042,
+                "plug": {
+                  "plugCategoryIdentifier": "intrinsics"
+                },
+                "investmentStats": []
+              },
+              "stats": {}
+            }
+          },
+          {
+            "socketIndex": 1,
+            "hasRandomizedPlugItems": true,
+            "plugged": {
+              "plugDef": {
+                "hash": 1392496348,
+                "plug": {
+                  "plugCategoryIdentifier": "barrels"
+                }
+              }
+            }
+          },
+          {
+            "socketIndex": 2,
+            "hasRandomizedPlugItems": true,
+            "plugged": {
+              "plugDef": {
+                "hash": 3177308360,
+                "plug": {
+                  "plugCategoryIdentifier": "magazines"
+                }
+              }
+            }
+          },
+          {
+            "socketIndex": 3,
+            "hasRandomizedPlugItems": true,
+            "plugged": {
+              "plugDef": {
+                "hash": 588594999,
+                "plug": {
+                  "plugCategoryIdentifier": "frames"
+                }
+              }
+            }
+          },
+          {
+            "socketIndex": 4,
+            "hasRandomizedPlugItems": true,
+            "plugged": {
+              "plugDef": {
+                "hash": 2387244414,
+                "plug": {
+                  "plugCategoryIdentifier": "frames"
+                }
+              }
+            }
+          },
+          {
+            "socketIndex": 7,
+            "hasRandomizedPlugItems": false,
+            "plugged": {
+              "plugDef": {
+                "hash": 233125175,
+                "plug": {
+                  "plugCategoryIdentifier": "v400.plugs.weapons.masterworks"
+                },
+                "investmentStats": []
+              },
+              "stats": {}
+            }
+          },
+          {
+            "socketIndex": 8,
+            "hasRandomizedPlugItems": false,
+            "plugged": {
+              "plugDef": {
+                "hash": 1905044254,
+                "plug": {
+                  "plugCategoryIdentifier": "origins"
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Sweet Sorrow",
+      "hash": 1248372789,
+      "crafted": "crafted",
+      "masterworkInfo": null,
+      "sockets": {
+        "fromDefinitions": false,
+        "allSockets": [
+          {
+            "socketIndex": 0,
+            "hasRandomizedPlugItems": false,
+            "plugged": {
+              "plugDef": {
+                "hash": 878286503,
+                "plug": {
+                  "plugCategoryIdentifier": "intrinsics"
+                },
+                "investmentStats": []
+              },
+              "stats": {}
+            }
+          },
+          {
+            "socketIndex": 1,
+            "hasRandomizedPlugItems": true,
+            "plugged": {
+              "plugDef": {
+                "hash": 1392496348,
+                "plug": {
+                  "plugCategoryIdentifier": "barrels"
+                }
+              }
+            }
+          },
+          {
+            "socketIndex": 2,
+            "hasRandomizedPlugItems": true,
+            "plugged": {
+              "plugDef": {
+                "hash": 3177308360,
+                "plug": {
+                  "plugCategoryIdentifier": "magazines"
+                }
+              }
+            }
+          },
+          {
+            "socketIndex": 3,
+            "hasRandomizedPlugItems": true,
+            "plugged": {
+              "plugDef": {
+                "hash": 972757866,
+                "plug": {
+                  "plugCategoryIdentifier": "frames"
+                }
+              }
+            }
+          },
+          {
+            "socketIndex": 4,
+            "hasRandomizedPlugItems": true,
+            "plugged": {
+              "plugDef": {
+                "hash": 1890422124,
+                "plug": {
+                  "plugCategoryIdentifier": "frames"
+                }
+              }
+            }
+          },
+          {
+            "socketIndex": 7,
+            "hasRandomizedPlugItems": false,
+            "plugged": {
+              "plugDef": {
+                "hash": 233125175,
+                "plug": {
+                  "plugCategoryIdentifier": "v400.plugs.weapons.masterworks"
+                },
+                "investmentStats": []
+              },
+              "stats": {}
+            }
+          },
+          {
+            "socketIndex": 8,
+            "hasRandomizedPlugItems": false,
+            "plugged": {
+              "plugDef": {
+                "hash": 1536798515,
+                "plug": {
+                  "plugCategoryIdentifier": "origins"
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Under Your Skin",
+      "hash": 232928045,
+      "crafted": "crafted",
+      "masterworkInfo": null,
+      "sockets": {
+        "fromDefinitions": false,
+        "allSockets": [
+          {
+            "socketIndex": 0,
+            "hasRandomizedPlugItems": false,
+            "plugged": {
+              "plugDef": {
+                "hash": 715195141,
+                "plug": {
+                  "plugCategoryIdentifier": "intrinsics"
+                },
+                "investmentStats": []
+              },
+              "stats": {}
+            }
+          },
+          {
+            "socketIndex": 1,
+            "hasRandomizedPlugItems": true,
+            "plugged": {
+              "plugDef": {
+                "hash": 3768438372,
+                "plug": {
+                  "plugCategoryIdentifier": "bowstrings"
+                }
+              }
+            }
+          },
+          {
+            "socketIndex": 2,
+            "hasRandomizedPlugItems": true,
+            "plugged": {
+              "plugDef": {
+                "hash": 2154191829,
+                "plug": {
+                  "plugCategoryIdentifier": "arrows"
+                }
+              }
+            }
+          },
+          {
+            "socketIndex": 3,
+            "hasRandomizedPlugItems": true,
+            "plugged": {
+              "plugDef": {
+                "hash": 3108830275,
+                "plug": {
+                  "plugCategoryIdentifier": "frames"
+                }
+              }
+            }
+          },
+          {
+            "socketIndex": 4,
+            "hasRandomizedPlugItems": true,
+            "plugged": {
+              "plugDef": {
+                "hash": 3365897133,
+                "plug": {
+                  "plugCategoryIdentifier": "frames"
+                }
+              }
+            }
+          },
+          {
+            "socketIndex": 7,
+            "hasRandomizedPlugItems": false,
+            "plugged": {
+              "plugDef": {
+                "hash": 233125175,
+                "plug": {
+                  "plugCategoryIdentifier": "v400.plugs.weapons.masterworks"
+                },
+                "investmentStats": []
+              },
+              "stats": {}
+            }
+          },
+          {
+            "socketIndex": 8,
+            "hasRandomizedPlugItems": false,
+            "plugged": {
+              "plugDef": {
+                "hash": 1536798515,
+                "plug": {
+                  "plugCategoryIdentifier": "origins"
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Explosive Personality",
+      "hash": 4096943616,
+      "crafted": "crafted",
+      "masterworkInfo": null,
+      "sockets": {
+        "fromDefinitions": false,
+        "allSockets": [
+          {
+            "socketIndex": 0,
+            "hasRandomizedPlugItems": false,
+            "plugged": {
+              "plugDef": {
+                "hash": 1395789926,
+                "plug": {
+                  "plugCategoryIdentifier": "intrinsics"
+                },
+                "investmentStats": []
+              },
+              "stats": {}
+            }
+          },
+          {
+            "socketIndex": 1,
+            "hasRandomizedPlugItems": true,
+            "plugged": {
+              "plugDef": {
+                "hash": 1844523823,
+                "plug": {
+                  "plugCategoryIdentifier": "tubes"
+                }
+              }
+            }
+          },
+          {
+            "socketIndex": 2,
+            "hasRandomizedPlugItems": true,
+            "plugged": {
+              "plugDef": {
+                "hash": 2822142346,
+                "plug": {
+                  "plugCategoryIdentifier": "magazines_gl"
+                }
+              }
+            }
+          },
+          {
+            "socketIndex": 3,
+            "hasRandomizedPlugItems": true,
+            "plugged": {
+              "plugDef": {
+                "hash": 3096702027,
+                "plug": {
+                  "plugCategoryIdentifier": "frames"
+                }
+              }
+            }
+          },
+          {
+            "socketIndex": 4,
+            "hasRandomizedPlugItems": true,
+            "plugged": {
+              "plugDef": {
+                "hash": 1683379515,
+                "plug": {
+                  "plugCategoryIdentifier": "frames"
+                }
+              }
+            }
+          },
+          {
+            "socketIndex": 7,
+            "hasRandomizedPlugItems": false,
+            "plugged": {
+              "plugDef": {
+                "hash": 233125175,
+                "plug": {
+                  "plugCategoryIdentifier": "v400.plugs.weapons.masterworks"
+                },
+                "investmentStats": []
+              },
+              "stats": {}
+            }
+          },
+          {
+            "socketIndex": 8,
+            "hasRandomizedPlugItems": false,
+            "plugged": {
+              "plugDef": {
+                "hash": 1536798515,
+                "plug": {
+                  "plugCategoryIdentifier": "origins"
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Found Verdict",
+      "hash": 694500607,
+      "crafted": "crafted",
+      "masterworkInfo": null,
+      "sockets": {
+        "fromDefinitions": false,
+        "allSockets": [
+          {
+            "socketIndex": 0,
+            "hasRandomizedPlugItems": false,
+            "plugged": {
+              "plugDef": {
+                "hash": 3983457027,
+                "plug": {
+                  "plugCategoryIdentifier": "intrinsics"
+                },
+                "investmentStats": []
+              },
+              "stats": {}
+            }
+          },
+          {
+            "socketIndex": 1,
+            "hasRandomizedPlugItems": true,
+            "plugged": {
+              "plugDef": {
+                "hash": 466087222,
+                "plug": {
+                  "plugCategoryIdentifier": "barrels"
+                }
+              }
+            }
+          },
+          {
+            "socketIndex": 2,
+            "hasRandomizedPlugItems": true,
+            "plugged": {
+              "plugDef": {
+                "hash": 3177308360,
+                "plug": {
+                  "plugCategoryIdentifier": "magazines"
+                }
+              }
+            }
+          },
+          {
+            "socketIndex": 3,
+            "hasRandomizedPlugItems": true,
+            "plugged": {
+              "plugDef": {
+                "hash": 1126264488,
+                "plug": {
+                  "plugCategoryIdentifier": "frames"
+                }
+              }
+            }
+          },
+          {
+            "socketIndex": 4,
+            "hasRandomizedPlugItems": true,
+            "plugged": {
+              "plugDef": {
+                "hash": 2679249093,
+                "plug": {
+                  "plugCategoryIdentifier": "frames"
+                }
+              }
+            }
+          },
+          {
+            "socketIndex": 7,
+            "hasRandomizedPlugItems": false,
+            "plugged": {
+              "plugDef": {
+                "hash": 233125175,
+                "plug": {
+                  "plugCategoryIdentifier": "v400.plugs.weapons.masterworks"
+                },
+                "investmentStats": []
+              },
+              "stats": {}
+            }
+          },
+          {
+            "socketIndex": 8,
+            "hasRandomizedPlugItems": false,
+            "plugged": {
+              "plugDef": {
+                "hash": 2589407652,
+                "plug": {
+                  "plugCategoryIdentifier": "origins"
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Someday",
+      "hash": 3232203524,
+      "crafted": "crafted",
+      "masterworkInfo": null,
+      "sockets": {
+        "fromDefinitions": false,
+        "allSockets": [
+          {
+            "socketIndex": 0,
+            "hasRandomizedPlugItems": false,
+            "plugged": {
+              "plugDef": {
+                "hash": 895140517,
+                "plug": {
+                  "plugCategoryIdentifier": "intrinsics"
+                },
+                "investmentStats": []
+              },
+              "stats": {}
+            }
+          },
+          {
+            "socketIndex": 1,
+            "hasRandomizedPlugItems": true,
+            "plugged": {
+              "plugDef": {
+                "hash": 466087222,
+                "plug": {
+                  "plugCategoryIdentifier": "barrels"
+                }
+              }
+            }
+          },
+          {
+            "socketIndex": 2,
+            "hasRandomizedPlugItems": true,
+            "plugged": {
+              "plugDef": {
+                "hash": 3177308360,
+                "plug": {
+                  "plugCategoryIdentifier": "magazines"
+                }
+              }
+            }
+          },
+          {
+            "socketIndex": 3,
+            "hasRandomizedPlugItems": true,
+            "plugged": {
+              "plugDef": {
+                "hash": 880644845,
+                "plug": {
+                  "plugCategoryIdentifier": "frames"
+                }
+              }
+            }
+          },
+          {
+            "socketIndex": 4,
+            "hasRandomizedPlugItems": true,
+            "plugged": {
+              "plugDef": {
+                "hash": 4082225868,
+                "plug": {
+                  "plugCategoryIdentifier": "frames"
+                }
+              }
+            }
+          },
+          {
+            "socketIndex": 7,
+            "hasRandomizedPlugItems": false,
+            "plugged": {
+              "plugDef": {
+                "hash": 233125175,
+                "plug": {
+                  "plugCategoryIdentifier": "v400.plugs.weapons.masterworks"
+                },
+                "investmentStats": []
+              },
+              "stats": {}
+            }
+          },
+          {
+            "socketIndex": 8,
+            "hasRandomizedPlugItems": false,
+            "plugged": {
+              "plugDef": {
+                "hash": 1988485648,
+                "plug": {
+                  "plugCategoryIdentifier": "origins"
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Recurrent Impact",
+      "hash": 1572896086,
+      "crafted": "crafted",
+      "masterworkInfo": null,
+      "sockets": {
+        "fromDefinitions": false,
+        "allSockets": [
+          {
+            "socketIndex": 0,
+            "hasRandomizedPlugItems": false,
+            "plugged": {
+              "plugDef": {
+                "hash": 878286503,
+                "plug": {
+                  "plugCategoryIdentifier": "intrinsics"
+                },
+                "investmentStats": []
+              },
+              "stats": {}
+            }
+          },
+          {
+            "socketIndex": 1,
+            "hasRandomizedPlugItems": true,
+            "plugged": {
+              "plugDef": {
+                "hash": 1467527085,
+                "plug": {
+                  "plugCategoryIdentifier": "barrels"
+                }
+              }
+            }
+          },
+          {
+            "socketIndex": 2,
+            "hasRandomizedPlugItems": true,
+            "plugged": {
+              "plugDef": {
+                "hash": 3177308360,
+                "plug": {
+                  "plugCategoryIdentifier": "magazines"
+                }
+              }
+            }
+          },
+          {
+            "socketIndex": 3,
+            "hasRandomizedPlugItems": true,
+            "plugged": {
+              "plugDef": {
+                "hash": 3096702027,
+                "plug": {
+                  "plugCategoryIdentifier": "frames"
+                }
+              }
+            }
+          },
+          {
+            "socketIndex": 4,
+            "hasRandomizedPlugItems": true,
+            "plugged": {
+              "plugDef": {
+                "hash": 1771339417,
+                "plug": {
+                  "plugCategoryIdentifier": "frames"
+                }
+              }
+            }
+          },
+          {
+            "socketIndex": 7,
+            "hasRandomizedPlugItems": false,
+            "plugged": {
+              "plugDef": {
+                "hash": 233125175,
+                "plug": {
+                  "plugCategoryIdentifier": "v400.plugs.weapons.masterworks"
+                },
+                "investmentStats": []
+              },
+              "stats": {}
+            }
+          },
+          {
+            "socketIndex": 8,
+            "hasRandomizedPlugItems": false,
+            "plugged": {
+              "plugDef": {
+                "hash": 1536798515,
+                "plug": {
+                  "plugCategoryIdentifier": "origins"
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Tarnation",
+      "hash": 2721157927,
+      "crafted": "crafted",
+      "masterworkInfo": null,
+      "sockets": {
+        "fromDefinitions": false,
+        "allSockets": [
+          {
+            "socketIndex": 0,
+            "hasRandomizedPlugItems": false,
+            "plugged": {
+              "plugDef": {
+                "hash": 2353477480,
+                "plug": {
+                  "plugCategoryIdentifier": "intrinsics"
+                },
+                "investmentStats": []
+              },
+              "stats": {}
+            }
+          },
+          {
+            "socketIndex": 1,
+            "hasRandomizedPlugItems": true,
+            "plugged": {
+              "plugDef": {
+                "hash": 1844523823,
+                "plug": {
+                  "plugCategoryIdentifier": "tubes"
+                }
+              }
+            }
+          },
+          {
+            "socketIndex": 2,
+            "hasRandomizedPlugItems": true,
+            "plugged": {
+              "plugDef": {
+                "hash": 1771897777,
+                "plug": {
+                  "plugCategoryIdentifier": "magazines_gl"
+                }
+              }
+            }
+          },
+          {
+            "socketIndex": 3,
+            "hasRandomizedPlugItems": true,
+            "plugged": {
+              "plugDef": {
+                "hash": 972757866,
+                "plug": {
+                  "plugCategoryIdentifier": "frames"
+                }
+              }
+            }
+          },
+          {
+            "socketIndex": 4,
+            "hasRandomizedPlugItems": true,
+            "plugged": {
+              "plugDef": {
+                "hash": 960810156,
+                "plug": {
+                  "plugCategoryIdentifier": "frames"
+                }
+              }
+            }
+          },
+          {
+            "socketIndex": 7,
+            "hasRandomizedPlugItems": false,
+            "plugged": {
+              "plugDef": {
+                "hash": 233125175,
+                "plug": {
+                  "plugCategoryIdentifier": "v400.plugs.weapons.masterworks"
+                },
+                "investmentStats": []
+              },
+              "stats": {}
+            }
+          },
+          {
+            "socketIndex": 8,
+            "hasRandomizedPlugItems": false,
+            "plugged": {
+              "plugDef": {
+                "hash": 79448657,
+                "plug": {
+                  "plugCategoryIdentifier": "origins"
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Firefright",
+      "hash": 2778013407,
+      "crafted": "crafted",
+      "masterworkInfo": null,
+      "sockets": {
+        "fromDefinitions": false,
+        "allSockets": [
+          {
+            "socketIndex": 0,
+            "hasRandomizedPlugItems": false,
+            "plugged": {
+              "plugDef": {
+                "hash": 1636108362,
+                "plug": {
+                  "plugCategoryIdentifier": "intrinsics"
+                },
+                "investmentStats": []
+              },
+              "stats": {}
+            }
+          },
+          {
+            "socketIndex": 1,
+            "hasRandomizedPlugItems": true,
+            "plugged": {
+              "plugDef": {
+                "hash": 1392496348,
+                "plug": {
+                  "plugCategoryIdentifier": "barrels"
+                }
+              }
+            }
+          },
+          {
+            "socketIndex": 2,
+            "hasRandomizedPlugItems": true,
+            "plugged": {
+              "plugDef": {
+                "hash": 1431678320,
+                "plug": {
+                  "plugCategoryIdentifier": "magazines"
+                }
+              }
+            }
+          },
+          {
+            "socketIndex": 3,
+            "hasRandomizedPlugItems": true,
+            "plugged": {
+              "plugDef": {
+                "hash": 4071163871,
+                "plug": {
+                  "plugCategoryIdentifier": "frames"
+                }
+              }
+            }
+          },
+          {
+            "socketIndex": 4,
+            "hasRandomizedPlugItems": true,
+            "plugged": {
+              "plugDef": {
+                "hash": 3513791699,
+                "plug": {
+                  "plugCategoryIdentifier": "frames"
+                }
+              }
+            }
+          },
+          {
+            "socketIndex": 7,
+            "hasRandomizedPlugItems": false,
+            "plugged": {
+              "plugDef": {
+                "hash": 233125175,
+                "plug": {
+                  "plugCategoryIdentifier": "v400.plugs.weapons.masterworks"
+                },
+                "investmentStats": []
+              },
+              "stats": {}
+            }
+          },
+          {
+            "socketIndex": 8,
+            "hasRandomizedPlugItems": false,
+            "plugged": {
+              "plugDef": {
+                "hash": 1250481499,
+                "plug": {
+                  "plugCategoryIdentifier": "origins"
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Thoughtless",
+      "hash": 4067556514,
+      "crafted": "crafted",
+      "masterworkInfo": null,
+      "sockets": {
+        "fromDefinitions": false,
+        "allSockets": [
+          {
+            "socketIndex": 0,
+            "hasRandomizedPlugItems": false,
+            "plugged": {
+              "plugDef": {
+                "hash": 1294026524,
+                "plug": {
+                  "plugCategoryIdentifier": "intrinsics"
+                },
+                "investmentStats": []
+              },
+              "stats": {}
+            }
+          },
+          {
+            "socketIndex": 1,
+            "hasRandomizedPlugItems": true,
+            "plugged": {
+              "plugDef": {
+                "hash": 1392496348,
+                "plug": {
+                  "plugCategoryIdentifier": "barrels"
+                }
+              }
+            }
+          },
+          {
+            "socketIndex": 2,
+            "hasRandomizedPlugItems": true,
+            "plugged": {
+              "plugDef": {
+                "hash": 1431678320,
+                "plug": {
+                  "plugCategoryIdentifier": "magazines"
+                }
+              }
+            }
+          },
+          {
+            "socketIndex": 3,
+            "hasRandomizedPlugItems": true,
+            "plugged": {
+              "plugDef": {
+                "hash": 3643424744,
+                "plug": {
+                  "plugCategoryIdentifier": "frames"
+                }
+              }
+            }
+          },
+          {
+            "socketIndex": 4,
+            "hasRandomizedPlugItems": true,
+            "plugged": {
+              "plugDef": {
+                "hash": 706527188,
+                "plug": {
+                  "plugCategoryIdentifier": "frames"
+                }
+              }
+            }
+          },
+          {
+            "socketIndex": 7,
+            "hasRandomizedPlugItems": false,
+            "plugged": {
+              "plugDef": {
+                "hash": 233125175,
+                "plug": {
+                  "plugCategoryIdentifier": "v400.plugs.weapons.masterworks"
+                },
+                "investmentStats": []
+              },
+              "stats": {}
+            }
+          },
+          {
+            "socketIndex": 8,
+            "hasRandomizedPlugItems": false,
+            "plugged": {
+              "plugDef": {
+                "hash": 1536798515,
+                "plug": {
+                  "plugCategoryIdentifier": "origins"
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Bump in the Night",
+      "hash": 1959650777,
+      "crafted": "crafted",
+      "masterworkInfo": null,
+      "sockets": {
+        "fromDefinitions": false,
+        "allSockets": [
+          {
+            "socketIndex": 0,
+            "hasRandomizedPlugItems": false,
+            "plugged": {
+              "plugDef": {
+                "hash": 3468089894,
+                "plug": {
+                  "plugCategoryIdentifier": "intrinsics"
+                },
+                "investmentStats": []
+              },
+              "stats": {}
+            }
+          },
+          {
+            "socketIndex": 1,
+            "hasRandomizedPlugItems": true,
+            "plugged": {
+              "plugDef": {
+                "hash": 1844523823,
+                "plug": {
+                  "plugCategoryIdentifier": "tubes"
+                }
+              }
+            }
+          },
+          {
+            "socketIndex": 2,
+            "hasRandomizedPlugItems": true,
+            "plugged": {
+              "plugDef": {
+                "hash": 2822142346,
+                "plug": {
+                  "plugCategoryIdentifier": "magazines_gl"
+                }
+              }
+            }
+          },
+          {
+            "socketIndex": 3,
+            "hasRandomizedPlugItems": true,
+            "plugged": {
+              "plugDef": {
+                "hash": 1583705720,
+                "plug": {
+                  "plugCategoryIdentifier": "frames"
+                }
+              }
+            }
+          },
+          {
+            "socketIndex": 4,
+            "hasRandomizedPlugItems": true,
+            "plugged": {
+              "plugDef": {
+                "hash": 2978966579,
+                "plug": {
+                  "plugCategoryIdentifier": "frames"
+                }
+              }
+            }
+          },
+          {
+            "socketIndex": 7,
+            "hasRandomizedPlugItems": false,
+            "plugged": {
+              "plugDef": {
+                "hash": 233125175,
+                "plug": {
+                  "plugCategoryIdentifier": "v400.plugs.weapons.masterworks"
+                },
+                "investmentStats": []
+              },
+              "stats": {}
+            }
+          },
+          {
+            "socketIndex": 8,
+            "hasRandomizedPlugItems": false,
+            "plugged": {
+              "plugDef": {
+                "hash": 1250481499,
+                "plug": {
+                  "plugCategoryIdentifier": "origins"
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Iterative Loop",
+      "hash": 1289796511,
+      "crafted": "crafted",
+      "masterworkInfo": null,
+      "sockets": {
+        "fromDefinitions": false,
+        "allSockets": [
+          {
+            "socketIndex": 0,
+            "hasRandomizedPlugItems": false,
+            "plugged": {
+              "plugDef": {
+                "hash": 878286503,
+                "plug": {
+                  "plugCategoryIdentifier": "intrinsics"
+                },
+                "investmentStats": []
+              },
+              "stats": {}
+            }
+          },
+          {
+            "socketIndex": 1,
+            "hasRandomizedPlugItems": true,
+            "plugged": {
+              "plugDef": {
+                "hash": 1467527085,
+                "plug": {
+                  "plugCategoryIdentifier": "barrels"
+                }
+              }
+            }
+          },
+          {
+            "socketIndex": 2,
+            "hasRandomizedPlugItems": true,
+            "plugged": {
+              "plugDef": {
+                "hash": 2680121939,
+                "plug": {
+                  "plugCategoryIdentifier": "batteries"
+                }
+              }
+            }
+          },
+          {
+            "socketIndex": 3,
+            "hasRandomizedPlugItems": true,
+            "plugged": {
+              "plugDef": {
+                "hash": 744594675,
+                "plug": {
+                  "plugCategoryIdentifier": "frames"
+                }
+              }
+            }
+          },
+          {
+            "socketIndex": 4,
+            "hasRandomizedPlugItems": true,
+            "plugged": {
+              "plugDef": {
+                "hash": 691659142,
+                "plug": {
+                  "plugCategoryIdentifier": "frames"
+                }
+              }
+            }
+          },
+          {
+            "socketIndex": 7,
+            "hasRandomizedPlugItems": false,
+            "plugged": {
+              "plugDef": {
+                "hash": 233125175,
+                "plug": {
+                  "plugCategoryIdentifier": "v400.plugs.weapons.masterworks"
+                },
+                "investmentStats": []
+              },
+              "stats": {}
+            }
+          },
+          {
+            "socketIndex": 8,
+            "hasRandomizedPlugItems": false,
+            "plugged": {
+              "plugDef": {
+                "hash": 164468655,
+                "plug": {
+                  "plugCategoryIdentifier": "origins"
+                }
+              }
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

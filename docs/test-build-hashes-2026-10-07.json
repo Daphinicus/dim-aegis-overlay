@@ -1,0 +1,15 @@
+{
+  "version": "1.9.5",
+  "sourceHead": "65a3560a3584f47db00cbe6599ffcc9247d66030",
+  "baseHead": "65a3560a3584f47db00cbe6599ffcc9247d66030",
+  "buildHashes": {
+    "background.js": "c98628a1cfc862d3be4bc577e493046fe566f6059b796c2410dfd3f4e93b31ed",
+    "compact-options.css": "c2191dffaabde510f2ac4399e4bc38f85d44725a417a4085c8f3cd515d540469",
+    "content.js": "b504b9b9681ecd08529ef0f680d54b16df09e6eb280e59a33f5234f78b819324",
+    "lightgg-content.js": "97d3c203b2dfb0f18f46a6c5a759b732962610de135b277d3ba35aa1dd37df19",
+    "lightgg-main-world.js": "973706d2fd55c61368267e3a968c511fb7cd288d4996cce92157f87c7faefec7",
+    "main-world-content.js": "b3d665a3aa89a1c6e1a71bda7ca2c8df96a06d184914586e26685c81ff5800ad",
+    "popup.js": "56adb64b2e8a71cbfcf49b9bfbf9fc076fd535525657a5b37e7bc3bfdd6e664a",
+    "styles.css": "7426d235d4e5c2dd8eea2aa055b4d3cf880fbb1340abf188fed4a0cf52bef06d"
+  }
+}

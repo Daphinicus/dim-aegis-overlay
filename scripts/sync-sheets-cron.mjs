@@ -1,3 +1,4 @@
+import { scoreRowMetadata } from './score-sync.mjs';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -286,6 +287,7 @@ function parseWeaponRows(rows, categoryName, weapons, variants, categories) {
 
     const weaponData = {
       name: weaponName,
+      ...scoreRowMetadata(getVal, row, categoryName, r),
       energy: getVal(row, ['Energy', 'INFO Energy', 'Slot', 'Affinity', 'Type']),
       frame: getVal(row, ['Frame', 'Tags']),
       barrel: getVal(row, ['PERKS Barrel', 'Barrel']),
@@ -321,7 +323,9 @@ function parseWeaponRows(rows, categoryName, weapons, variants, categories) {
     if (!variants[baseNormalized]) {
       variants[baseNormalized] = [];
     }
-    if (!variants[baseNormalized].some(v => v.name === weaponName)) {
+    if (!variants[baseNormalized].some(v => v.sourceRowId && weaponData.sourceRowId
+      ? v.sourceRowId === weaponData.sourceRowId
+      : [v.categoryKey, v.name, v.versionTag, v.frame].join('|') === [weaponData.categoryKey, weaponData.name, weaponData.versionTag, weaponData.frame].join('|'))) {
       variants[baseNormalized].push(weaponData);
     }
 
@@ -484,7 +488,7 @@ async function buildPvEDatabase() {
   }
 
   console.log(`✓ PvE Database built: ${Object.keys(weapons).length} weapons, ${shopping.items.length} shopping items.`);
-  return { weapons, variants, categories, armor, armorAegis, shopping };
+  return { scoreSchemaVersion: 1, weapons, variants, categories, armor, armorAegis, shopping };
 }
 
 async function buildPvPDatabase() {
@@ -609,7 +613,7 @@ async function buildPvPDatabase() {
   }
 
   console.log(`✓ PvP Database built: ${Object.keys(weapons).length} weapons, ${shopping.items.length} shopping items.`);
-  return { weapons, variants, categories, armor, armorAegis, shopping };
+  return { scoreSchemaVersion: 1, weapons, variants, categories, armor, armorAegis, shopping };
 }
 
 async function main() {

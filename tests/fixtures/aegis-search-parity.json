@@ -1,0 +1,3782 @@
+[
+  {
+    "name": "null/pve/false",
+    "data": {
+      "name": "Test",
+      "result": {
+        "grade": null,
+        "isPerfect5of5": false,
+        "isOmniRoll": false,
+        "upgradeAvailable": false
+      },
+      "sheetWeapon": {
+        "tier": "B",
+        "source": "Raid"
+      },
+      "sheetWeaponPvE": {
+        "tier": "S",
+        "source": "King's Fall"
+      },
+      "sheetWeaponPvP": {
+        "tier": "A",
+        "source": "Crucible"
+      },
+      "shoppingItem": null,
+      "shoppingItemPvE": null,
+      "shoppingItemPvP": null,
+      "shoppingAlt": null,
+      "isBestInClass": false,
+      "isBestInClassPvE": false,
+      "isBestInClassPvP": false
+    },
+    "context": {
+      "mode": "pve",
+      "chase": true,
+      "source": "Raid"
+    },
+    "expected": {
+      "5/5": false,
+      "godroll": false,
+      "omni": false,
+      "upgrade": false,
+      "god": false,
+      "bis": false,
+      "chase": true,
+      "shopping": false,
+      "shopping:high": false,
+      "shopping:ready": false,
+      "shopping:farm": false,
+      "shopping:alt": false,
+      "pve:>=a": false,
+      "pvp:>=s": false,
+      "s:raid": false,
+      "source:fall": true,
+      "w:s": true,
+      "weapon:>=a": true,
+      "p:>=a": false,
+      "perk:f": false,
+      "a": false,
+      ">=s": true,
+      "<a": true,
+      "==b": false,
+      "a:2p:a": false,
+      "armor:4piece:s": false,
+      "a/s": false,
+      "2p:>=a": false,
+      "4p:s": false
+    }
+  },
+  {
+    "name": "null/pve/true",
+    "data": {
+      "name": "Test",
+      "result": {
+        "grade": null,
+        "isPerfect5of5": true,
+        "isOmniRoll": true,
+        "upgradeAvailable": true
+      },
+      "sheetWeapon": {
+        "tier": "B",
+        "source": "Raid"
+      },
+      "sheetWeaponPvE": {
+        "tier": "S",
+        "source": "King's Fall"
+      },
+      "sheetWeaponPvP": {
+        "tier": "A",
+        "source": "Crucible"
+      },
+      "shoppingItem": {
+        "priority": "high"
+      },
+      "shoppingItemPvE": {
+        "priority": "medium"
+      },
+      "shoppingItemPvP": {
+        "priority": "high"
+      },
+      "shoppingAlt": {},
+      "isBestInClass": true,
+      "isBestInClassPvE": true,
+      "isBestInClassPvP": false
+    },
+    "context": {
+      "mode": "pve",
+      "chase": true,
+      "source": "Raid"
+    },
+    "expected": {
+      "5/5": true,
+      "godroll": true,
+      "omni": true,
+      "upgrade": true,
+      "god": false,
+      "bis": true,
+      "chase": true,
+      "shopping": true,
+      "shopping:high": false,
+      "shopping:ready": false,
+      "shopping:farm": true,
+      "shopping:alt": true,
+      "pve:>=a": false,
+      "pvp:>=s": false,
+      "s:raid": false,
+      "source:fall": true,
+      "w:s": true,
+      "weapon:>=a": true,
+      "p:>=a": false,
+      "perk:f": false,
+      "a": false,
+      ">=s": true,
+      "<a": true,
+      "==b": false,
+      "a:2p:a": false,
+      "armor:4piece:s": false,
+      "a/s": false,
+      "2p:>=a": false,
+      "4p:s": false
+    }
+  },
+  {
+    "name": "null/pvp/false",
+    "data": {
+      "name": "Test",
+      "result": {
+        "grade": null,
+        "isPerfect5of5": false,
+        "isOmniRoll": false,
+        "upgradeAvailable": false
+      },
+      "sheetWeapon": {
+        "tier": "B",
+        "source": "Raid"
+      },
+      "sheetWeaponPvE": {
+        "tier": "S",
+        "source": "King's Fall"
+      },
+      "sheetWeaponPvP": {
+        "tier": "A",
+        "source": "Crucible"
+      },
+      "shoppingItem": null,
+      "shoppingItemPvE": null,
+      "shoppingItemPvP": null,
+      "shoppingAlt": null,
+      "isBestInClass": false,
+      "isBestInClassPvE": false,
+      "isBestInClassPvP": false
+    },
+    "context": {
+      "mode": "pvp",
+      "chase": true,
+      "source": "Raid"
+    },
+    "expected": {
+      "5/5": false,
+      "godroll": false,
+      "omni": false,
+      "upgrade": false,
+      "god": false,
+      "bis": false,
+      "chase": true,
+      "shopping": false,
+      "shopping:high": false,
+      "shopping:ready": false,
+      "shopping:farm": false,
+      "shopping:alt": false,
+      "pve:>=a": false,
+      "pvp:>=s": false,
+      "s:raid": false,
+      "source:fall": false,
+      "w:s": false,
+      "weapon:>=a": true,
+      "p:>=a": false,
+      "perk:f": false,
+      "a": true,
+      ">=s": false,
+      "<a": true,
+      "==b": false,
+      "a:2p:a": false,
+      "armor:4piece:s": false,
+      "a/s": false,
+      "2p:>=a": false,
+      "4p:s": false
+    }
+  },
+  {
+    "name": "null/pvp/true",
+    "data": {
+      "name": "Test",
+      "result": {
+        "grade": null,
+        "isPerfect5of5": true,
+        "isOmniRoll": true,
+        "upgradeAvailable": true
+      },
+      "sheetWeapon": {
+        "tier": "B",
+        "source": "Raid"
+      },
+      "sheetWeaponPvE": {
+        "tier": "S",
+        "source": "King's Fall"
+      },
+      "sheetWeaponPvP": {
+        "tier": "A",
+        "source": "Crucible"
+      },
+      "shoppingItem": {
+        "priority": "high"
+      },
+      "shoppingItemPvE": {
+        "priority": "medium"
+      },
+      "shoppingItemPvP": {
+        "priority": "high"
+      },
+      "shoppingAlt": {},
+      "isBestInClass": true,
+      "isBestInClassPvE": true,
+      "isBestInClassPvP": false
+    },
+    "context": {
+      "mode": "pvp",
+      "chase": true,
+      "source": "Raid"
+    },
+    "expected": {
+      "5/5": true,
+      "godroll": true,
+      "omni": true,
+      "upgrade": true,
+      "god": false,
+      "bis": false,
+      "chase": true,
+      "shopping": true,
+      "shopping:high": true,
+      "shopping:ready": false,
+      "shopping:farm": true,
+      "shopping:alt": false,
+      "pve:>=a": false,
+      "pvp:>=s": false,
+      "s:raid": false,
+      "source:fall": false,
+      "w:s": false,
+      "weapon:>=a": true,
+      "p:>=a": false,
+      "perk:f": false,
+      "a": true,
+      ">=s": false,
+      "<a": true,
+      "==b": false,
+      "a:2p:a": false,
+      "armor:4piece:s": false,
+      "a/s": false,
+      "2p:>=a": false,
+      "4p:s": false
+    }
+  },
+  {
+    "name": "null/both/false",
+    "data": {
+      "name": "Test",
+      "result": {
+        "grade": null,
+        "isPerfect5of5": false,
+        "isOmniRoll": false,
+        "upgradeAvailable": false
+      },
+      "sheetWeapon": {
+        "tier": "B",
+        "source": "Raid"
+      },
+      "sheetWeaponPvE": {
+        "tier": "S",
+        "source": "King's Fall"
+      },
+      "sheetWeaponPvP": {
+        "tier": "A",
+        "source": "Crucible"
+      },
+      "shoppingItem": null,
+      "shoppingItemPvE": null,
+      "shoppingItemPvP": null,
+      "shoppingAlt": null,
+      "isBestInClass": false,
+      "isBestInClassPvE": false,
+      "isBestInClassPvP": false
+    },
+    "context": {
+      "mode": "both",
+      "chase": true,
+      "source": "Raid"
+    },
+    "expected": {
+      "5/5": false,
+      "godroll": false,
+      "omni": false,
+      "upgrade": false,
+      "god": false,
+      "bis": false,
+      "chase": true,
+      "shopping": false,
+      "shopping:high": false,
+      "shopping:ready": false,
+      "shopping:farm": false,
+      "shopping:alt": false,
+      "pve:>=a": false,
+      "pvp:>=s": false,
+      "s:raid": false,
+      "source:fall": true,
+      "w:s": true,
+      "weapon:>=a": true,
+      "p:>=a": false,
+      "perk:f": false,
+      "a": false,
+      ">=s": true,
+      "<a": true,
+      "==b": false,
+      "a:2p:a": false,
+      "armor:4piece:s": false,
+      "a/s": false,
+      "2p:>=a": false,
+      "4p:s": false
+    }
+  },
+  {
+    "name": "null/both/true",
+    "data": {
+      "name": "Test",
+      "result": {
+        "grade": null,
+        "isPerfect5of5": true,
+        "isOmniRoll": true,
+        "upgradeAvailable": true
+      },
+      "sheetWeapon": {
+        "tier": "B",
+        "source": "Raid"
+      },
+      "sheetWeaponPvE": {
+        "tier": "S",
+        "source": "King's Fall"
+      },
+      "sheetWeaponPvP": {
+        "tier": "A",
+        "source": "Crucible"
+      },
+      "shoppingItem": {
+        "priority": "high"
+      },
+      "shoppingItemPvE": {
+        "priority": "medium"
+      },
+      "shoppingItemPvP": {
+        "priority": "high"
+      },
+      "shoppingAlt": {},
+      "isBestInClass": true,
+      "isBestInClassPvE": true,
+      "isBestInClassPvP": false
+    },
+    "context": {
+      "mode": "both",
+      "chase": true,
+      "source": "Raid"
+    },
+    "expected": {
+      "5/5": true,
+      "godroll": true,
+      "omni": true,
+      "upgrade": true,
+      "god": false,
+      "bis": true,
+      "chase": true,
+      "shopping": true,
+      "shopping:high": false,
+      "shopping:ready": false,
+      "shopping:farm": true,
+      "shopping:alt": true,
+      "pve:>=a": false,
+      "pvp:>=s": false,
+      "s:raid": false,
+      "source:fall": true,
+      "w:s": true,
+      "weapon:>=a": true,
+      "p:>=a": false,
+      "perk:f": false,
+      "a": false,
+      ">=s": true,
+      "<a": true,
+      "==b": false,
+      "a:2p:a": false,
+      "armor:4piece:s": false,
+      "a/s": false,
+      "2p:>=a": false,
+      "4p:s": false
+    }
+  },
+  {
+    "name": "F/pve/false",
+    "data": {
+      "name": "Test",
+      "result": {
+        "grade": "F",
+        "isPerfect5of5": false,
+        "isOmniRoll": false,
+        "upgradeAvailable": false
+      },
+      "sheetWeapon": {
+        "tier": "B",
+        "source": "Raid"
+      },
+      "sheetWeaponPvE": {
+        "tier": "S",
+        "source": "King's Fall"
+      },
+      "sheetWeaponPvP": {
+        "tier": "A",
+        "source": "Crucible"
+      },
+      "shoppingItem": null,
+      "shoppingItemPvE": null,
+      "shoppingItemPvP": null,
+      "shoppingAlt": null,
+      "isBestInClass": false,
+      "isBestInClassPvE": false,
+      "isBestInClassPvP": false
+    },
+    "context": {
+      "mode": "pve",
+      "chase": true,
+      "source": "Raid"
+    },
+    "expected": {
+      "5/5": false,
+      "godroll": false,
+      "omni": false,
+      "upgrade": false,
+      "god": false,
+      "bis": false,
+      "chase": true,
+      "shopping": false,
+      "shopping:high": false,
+      "shopping:ready": false,
+      "shopping:farm": false,
+      "shopping:alt": false,
+      "pve:>=a": false,
+      "pvp:>=s": false,
+      "s:raid": false,
+      "source:fall": true,
+      "w:s": true,
+      "weapon:>=a": true,
+      "p:>=a": false,
+      "perk:f": true,
+      "a": false,
+      ">=s": true,
+      "<a": true,
+      "==b": false,
+      "a:2p:a": false,
+      "armor:4piece:s": false,
+      "a/s": false,
+      "2p:>=a": false,
+      "4p:s": false
+    }
+  },
+  {
+    "name": "F/pve/true",
+    "data": {
+      "name": "Test",
+      "result": {
+        "grade": "F",
+        "isPerfect5of5": true,
+        "isOmniRoll": true,
+        "upgradeAvailable": true
+      },
+      "sheetWeapon": {
+        "tier": "B",
+        "source": "Raid"
+      },
+      "sheetWeaponPvE": {
+        "tier": "S",
+        "source": "King's Fall"
+      },
+      "sheetWeaponPvP": {
+        "tier": "A",
+        "source": "Crucible"
+      },
+      "shoppingItem": {
+        "priority": "high"
+      },
+      "shoppingItemPvE": {
+        "priority": "medium"
+      },
+      "shoppingItemPvP": {
+        "priority": "high"
+      },
+      "shoppingAlt": {},
+      "isBestInClass": true,
+      "isBestInClassPvE": true,
+      "isBestInClassPvP": false
+    },
+    "context": {
+      "mode": "pve",
+      "chase": true,
+      "source": "Raid"
+    },
+    "expected": {
+      "5/5": true,
+      "godroll": true,
+      "omni": true,
+      "upgrade": true,
+      "god": false,
+      "bis": true,
+      "chase": true,
+      "shopping": true,
+      "shopping:high": false,
+      "shopping:ready": false,
+      "shopping:farm": true,
+      "shopping:alt": true,
+      "pve:>=a": false,
+      "pvp:>=s": false,
+      "s:raid": false,
+      "source:fall": true,
+      "w:s": true,
+      "weapon:>=a": true,
+      "p:>=a": false,
+      "perk:f": true,
+      "a": false,
+      ">=s": true,
+      "<a": true,
+      "==b": false,
+      "a:2p:a": false,
+      "armor:4piece:s": false,
+      "a/s": false,
+      "2p:>=a": false,
+      "4p:s": false
+    }
+  },
+  {
+    "name": "F/pvp/false",
+    "data": {
+      "name": "Test",
+      "result": {
+        "grade": "F",
+        "isPerfect5of5": false,
+        "isOmniRoll": false,
+        "upgradeAvailable": false
+      },
+      "sheetWeapon": {
+        "tier": "B",
+        "source": "Raid"
+      },
+      "sheetWeaponPvE": {
+        "tier": "S",
+        "source": "King's Fall"
+      },
+      "sheetWeaponPvP": {
+        "tier": "A",
+        "source": "Crucible"
+      },
+      "shoppingItem": null,
+      "shoppingItemPvE": null,
+      "shoppingItemPvP": null,
+      "shoppingAlt": null,
+      "isBestInClass": false,
+      "isBestInClassPvE": false,
+      "isBestInClassPvP": false
+    },
+    "context": {
+      "mode": "pvp",
+      "chase": true,
+      "source": "Raid"
+    },
+    "expected": {
+      "5/5": false,
+      "godroll": false,
+      "omni": false,
+      "upgrade": false,
+      "god": false,
+      "bis": false,
+      "chase": true,
+      "shopping": false,
+      "shopping:high": false,
+      "shopping:ready": false,
+      "shopping:farm": false,
+      "shopping:alt": false,
+      "pve:>=a": false,
+      "pvp:>=s": false,
+      "s:raid": false,
+      "source:fall": false,
+      "w:s": false,
+      "weapon:>=a": true,
+      "p:>=a": false,
+      "perk:f": true,
+      "a": true,
+      ">=s": false,
+      "<a": true,
+      "==b": false,
+      "a:2p:a": false,
+      "armor:4piece:s": false,
+      "a/s": false,
+      "2p:>=a": false,
+      "4p:s": false
+    }
+  },
+  {
+    "name": "F/pvp/true",
+    "data": {
+      "name": "Test",
+      "result": {
+        "grade": "F",
+        "isPerfect5of5": true,
+        "isOmniRoll": true,
+        "upgradeAvailable": true
+      },
+      "sheetWeapon": {
+        "tier": "B",
+        "source": "Raid"
+      },
+      "sheetWeaponPvE": {
+        "tier": "S",
+        "source": "King's Fall"
+      },
+      "sheetWeaponPvP": {
+        "tier": "A",
+        "source": "Crucible"
+      },
+      "shoppingItem": {
+        "priority": "high"
+      },
+      "shoppingItemPvE": {
+        "priority": "medium"
+      },
+      "shoppingItemPvP": {
+        "priority": "high"
+      },
+      "shoppingAlt": {},
+      "isBestInClass": true,
+      "isBestInClassPvE": true,
+      "isBestInClassPvP": false
+    },
+    "context": {
+      "mode": "pvp",
+      "chase": true,
+      "source": "Raid"
+    },
+    "expected": {
+      "5/5": true,
+      "godroll": true,
+      "omni": true,
+      "upgrade": true,
+      "god": false,
+      "bis": false,
+      "chase": true,
+      "shopping": true,
+      "shopping:high": true,
+      "shopping:ready": false,
+      "shopping:farm": true,
+      "shopping:alt": false,
+      "pve:>=a": false,
+      "pvp:>=s": false,
+      "s:raid": false,
+      "source:fall": false,
+      "w:s": false,
+      "weapon:>=a": true,
+      "p:>=a": false,
+      "perk:f": true,
+      "a": true,
+      ">=s": false,
+      "<a": true,
+      "==b": false,
+      "a:2p:a": false,
+      "armor:4piece:s": false,
+      "a/s": false,
+      "2p:>=a": false,
+      "4p:s": false
+    }
+  },
+  {
+    "name": "F/both/false",
+    "data": {
+      "name": "Test",
+      "result": {
+        "grade": "F",
+        "isPerfect5of5": false,
+        "isOmniRoll": false,
+        "upgradeAvailable": false
+      },
+      "sheetWeapon": {
+        "tier": "B",
+        "source": "Raid"
+      },
+      "sheetWeaponPvE": {
+        "tier": "S",
+        "source": "King's Fall"
+      },
+      "sheetWeaponPvP": {
+        "tier": "A",
+        "source": "Crucible"
+      },
+      "shoppingItem": null,
+      "shoppingItemPvE": null,
+      "shoppingItemPvP": null,
+      "shoppingAlt": null,
+      "isBestInClass": false,
+      "isBestInClassPvE": false,
+      "isBestInClassPvP": false
+    },
+    "context": {
+      "mode": "both",
+      "chase": true,
+      "source": "Raid"
+    },
+    "expected": {
+      "5/5": false,
+      "godroll": false,
+      "omni": false,
+      "upgrade": false,
+      "god": false,
+      "bis": false,
+      "chase": true,
+      "shopping": false,
+      "shopping:high": false,
+      "shopping:ready": false,
+      "shopping:farm": false,
+      "shopping:alt": false,
+      "pve:>=a": false,
+      "pvp:>=s": false,
+      "s:raid": false,
+      "source:fall": true,
+      "w:s": true,
+      "weapon:>=a": true,
+      "p:>=a": false,
+      "perk:f": true,
+      "a": false,
+      ">=s": true,
+      "<a": true,
+      "==b": false,
+      "a:2p:a": false,
+      "armor:4piece:s": false,
+      "a/s": false,
+      "2p:>=a": false,
+      "4p:s": false
+    }
+  },
+  {
+    "name": "F/both/true",
+    "data": {
+      "name": "Test",
+      "result": {
+        "grade": "F",
+        "isPerfect5of5": true,
+        "isOmniRoll": true,
+        "upgradeAvailable": true
+      },
+      "sheetWeapon": {
+        "tier": "B",
+        "source": "Raid"
+      },
+      "sheetWeaponPvE": {
+        "tier": "S",
+        "source": "King's Fall"
+      },
+      "sheetWeaponPvP": {
+        "tier": "A",
+        "source": "Crucible"
+      },
+      "shoppingItem": {
+        "priority": "high"
+      },
+      "shoppingItemPvE": {
+        "priority": "medium"
+      },
+      "shoppingItemPvP": {
+        "priority": "high"
+      },
+      "shoppingAlt": {},
+      "isBestInClass": true,
+      "isBestInClassPvE": true,
+      "isBestInClassPvP": false
+    },
+    "context": {
+      "mode": "both",
+      "chase": true,
+      "source": "Raid"
+    },
+    "expected": {
+      "5/5": true,
+      "godroll": true,
+      "omni": true,
+      "upgrade": true,
+      "god": false,
+      "bis": true,
+      "chase": true,
+      "shopping": true,
+      "shopping:high": false,
+      "shopping:ready": false,
+      "shopping:farm": true,
+      "shopping:alt": true,
+      "pve:>=a": false,
+      "pvp:>=s": false,
+      "s:raid": false,
+      "source:fall": true,
+      "w:s": true,
+      "weapon:>=a": true,
+      "p:>=a": false,
+      "perk:f": true,
+      "a": false,
+      ">=s": true,
+      "<a": true,
+      "==b": false,
+      "a:2p:a": false,
+      "armor:4piece:s": false,
+      "a/s": false,
+      "2p:>=a": false,
+      "4p:s": false
+    }
+  },
+  {
+    "name": "A/pve/false",
+    "data": {
+      "name": "Test",
+      "result": {
+        "grade": "A",
+        "isPerfect5of5": false,
+        "isOmniRoll": false,
+        "upgradeAvailable": false
+      },
+      "sheetWeapon": {
+        "tier": "B",
+        "source": "Raid"
+      },
+      "sheetWeaponPvE": {
+        "tier": "S",
+        "source": "King's Fall"
+      },
+      "sheetWeaponPvP": {
+        "tier": "A",
+        "source": "Crucible"
+      },
+      "shoppingItem": null,
+      "shoppingItemPvE": null,
+      "shoppingItemPvP": null,
+      "shoppingAlt": null,
+      "isBestInClass": false,
+      "isBestInClassPvE": false,
+      "isBestInClassPvP": false
+    },
+    "context": {
+      "mode": "pve",
+      "chase": true,
+      "source": "Raid"
+    },
+    "expected": {
+      "5/5": false,
+      "godroll": false,
+      "omni": false,
+      "upgrade": false,
+      "god": false,
+      "bis": false,
+      "chase": true,
+      "shopping": false,
+      "shopping:high": false,
+      "shopping:ready": false,
+      "shopping:farm": false,
+      "shopping:alt": false,
+      "pve:>=a": true,
+      "pvp:>=s": false,
+      "s:raid": false,
+      "source:fall": true,
+      "w:s": true,
+      "weapon:>=a": true,
+      "p:>=a": true,
+      "perk:f": false,
+      "a": true,
+      ">=s": true,
+      "<a": false,
+      "==b": false,
+      "a:2p:a": false,
+      "armor:4piece:s": false,
+      "a/s": false,
+      "2p:>=a": false,
+      "4p:s": false
+    }
+  },
+  {
+    "name": "A/pve/true",
+    "data": {
+      "name": "Test",
+      "result": {
+        "grade": "A",
+        "isPerfect5of5": true,
+        "isOmniRoll": true,
+        "upgradeAvailable": true
+      },
+      "sheetWeapon": {
+        "tier": "B",
+        "source": "Raid"
+      },
+      "sheetWeaponPvE": {
+        "tier": "S",
+        "source": "King's Fall"
+      },
+      "sheetWeaponPvP": {
+        "tier": "A",
+        "source": "Crucible"
+      },
+      "shoppingItem": {
+        "priority": "high"
+      },
+      "shoppingItemPvE": {
+        "priority": "medium"
+      },
+      "shoppingItemPvP": {
+        "priority": "high"
+      },
+      "shoppingAlt": {},
+      "isBestInClass": true,
+      "isBestInClassPvE": true,
+      "isBestInClassPvP": false
+    },
+    "context": {
+      "mode": "pve",
+      "chase": true,
+      "source": "Raid"
+    },
+    "expected": {
+      "5/5": true,
+      "godroll": true,
+      "omni": true,
+      "upgrade": true,
+      "god": false,
+      "bis": true,
+      "chase": true,
+      "shopping": true,
+      "shopping:high": false,
+      "shopping:ready": true,
+      "shopping:farm": false,
+      "shopping:alt": true,
+      "pve:>=a": true,
+      "pvp:>=s": false,
+      "s:raid": false,
+      "source:fall": true,
+      "w:s": true,
+      "weapon:>=a": true,
+      "p:>=a": true,
+      "perk:f": false,
+      "a": true,
+      ">=s": true,
+      "<a": false,
+      "==b": false,
+      "a:2p:a": false,
+      "armor:4piece:s": false,
+      "a/s": false,
+      "2p:>=a": false,
+      "4p:s": false
+    }
+  },
+  {
+    "name": "A/pvp/false",
+    "data": {
+      "name": "Test",
+      "result": {
+        "grade": "A",
+        "isPerfect5of5": false,
+        "isOmniRoll": false,
+        "upgradeAvailable": false
+      },
+      "sheetWeapon": {
+        "tier": "B",
+        "source": "Raid"
+      },
+      "sheetWeaponPvE": {
+        "tier": "S",
+        "source": "King's Fall"
+      },
+      "sheetWeaponPvP": {
+        "tier": "A",
+        "source": "Crucible"
+      },
+      "shoppingItem": null,
+      "shoppingItemPvE": null,
+      "shoppingItemPvP": null,
+      "shoppingAlt": null,
+      "isBestInClass": false,
+      "isBestInClassPvE": false,
+      "isBestInClassPvP": false
+    },
+    "context": {
+      "mode": "pvp",
+      "chase": true,
+      "source": "Raid"
+    },
+    "expected": {
+      "5/5": false,
+      "godroll": false,
+      "omni": false,
+      "upgrade": false,
+      "god": false,
+      "bis": false,
+      "chase": true,
+      "shopping": false,
+      "shopping:high": false,
+      "shopping:ready": false,
+      "shopping:farm": false,
+      "shopping:alt": false,
+      "pve:>=a": false,
+      "pvp:>=s": false,
+      "s:raid": false,
+      "source:fall": false,
+      "w:s": false,
+      "weapon:>=a": true,
+      "p:>=a": true,
+      "perk:f": false,
+      "a": true,
+      ">=s": false,
+      "<a": false,
+      "==b": false,
+      "a:2p:a": false,
+      "armor:4piece:s": false,
+      "a/s": false,
+      "2p:>=a": false,
+      "4p:s": false
+    }
+  },
+  {
+    "name": "A/pvp/true",
+    "data": {
+      "name": "Test",
+      "result": {
+        "grade": "A",
+        "isPerfect5of5": true,
+        "isOmniRoll": true,
+        "upgradeAvailable": true
+      },
+      "sheetWeapon": {
+        "tier": "B",
+        "source": "Raid"
+      },
+      "sheetWeaponPvE": {
+        "tier": "S",
+        "source": "King's Fall"
+      },
+      "sheetWeaponPvP": {
+        "tier": "A",
+        "source": "Crucible"
+      },
+      "shoppingItem": {
+        "priority": "high"
+      },
+      "shoppingItemPvE": {
+        "priority": "medium"
+      },
+      "shoppingItemPvP": {
+        "priority": "high"
+      },
+      "shoppingAlt": {},
+      "isBestInClass": true,
+      "isBestInClassPvE": true,
+      "isBestInClassPvP": false
+    },
+    "context": {
+      "mode": "pvp",
+      "chase": true,
+      "source": "Raid"
+    },
+    "expected": {
+      "5/5": true,
+      "godroll": true,
+      "omni": true,
+      "upgrade": true,
+      "god": false,
+      "bis": false,
+      "chase": true,
+      "shopping": true,
+      "shopping:high": true,
+      "shopping:ready": true,
+      "shopping:farm": false,
+      "shopping:alt": false,
+      "pve:>=a": false,
+      "pvp:>=s": false,
+      "s:raid": false,
+      "source:fall": false,
+      "w:s": false,
+      "weapon:>=a": true,
+      "p:>=a": true,
+      "perk:f": false,
+      "a": true,
+      ">=s": false,
+      "<a": false,
+      "==b": false,
+      "a:2p:a": false,
+      "armor:4piece:s": false,
+      "a/s": false,
+      "2p:>=a": false,
+      "4p:s": false
+    }
+  },
+  {
+    "name": "A/both/false",
+    "data": {
+      "name": "Test",
+      "result": {
+        "grade": "A",
+        "isPerfect5of5": false,
+        "isOmniRoll": false,
+        "upgradeAvailable": false
+      },
+      "sheetWeapon": {
+        "tier": "B",
+        "source": "Raid"
+      },
+      "sheetWeaponPvE": {
+        "tier": "S",
+        "source": "King's Fall"
+      },
+      "sheetWeaponPvP": {
+        "tier": "A",
+        "source": "Crucible"
+      },
+      "shoppingItem": null,
+      "shoppingItemPvE": null,
+      "shoppingItemPvP": null,
+      "shoppingAlt": null,
+      "isBestInClass": false,
+      "isBestInClassPvE": false,
+      "isBestInClassPvP": false
+    },
+    "context": {
+      "mode": "both",
+      "chase": true,
+      "source": "Raid"
+    },
+    "expected": {
+      "5/5": false,
+      "godroll": false,
+      "omni": false,
+      "upgrade": false,
+      "god": false,
+      "bis": false,
+      "chase": true,
+      "shopping": false,
+      "shopping:high": false,
+      "shopping:ready": false,
+      "shopping:farm": false,
+      "shopping:alt": false,
+      "pve:>=a": false,
+      "pvp:>=s": false,
+      "s:raid": false,
+      "source:fall": true,
+      "w:s": true,
+      "weapon:>=a": true,
+      "p:>=a": true,
+      "perk:f": false,
+      "a": true,
+      ">=s": true,
+      "<a": false,
+      "==b": false,
+      "a:2p:a": false,
+      "armor:4piece:s": false,
+      "a/s": false,
+      "2p:>=a": false,
+      "4p:s": false
+    }
+  },
+  {
+    "name": "A/both/true",
+    "data": {
+      "name": "Test",
+      "result": {
+        "grade": "A",
+        "isPerfect5of5": true,
+        "isOmniRoll": true,
+        "upgradeAvailable": true
+      },
+      "sheetWeapon": {
+        "tier": "B",
+        "source": "Raid"
+      },
+      "sheetWeaponPvE": {
+        "tier": "S",
+        "source": "King's Fall"
+      },
+      "sheetWeaponPvP": {
+        "tier": "A",
+        "source": "Crucible"
+      },
+      "shoppingItem": {
+        "priority": "high"
+      },
+      "shoppingItemPvE": {
+        "priority": "medium"
+      },
+      "shoppingItemPvP": {
+        "priority": "high"
+      },
+      "shoppingAlt": {},
+      "isBestInClass": true,
+      "isBestInClassPvE": true,
+      "isBestInClassPvP": false
+    },
+    "context": {
+      "mode": "both",
+      "chase": true,
+      "source": "Raid"
+    },
+    "expected": {
+      "5/5": true,
+      "godroll": true,
+      "omni": true,
+      "upgrade": true,
+      "god": false,
+      "bis": true,
+      "chase": true,
+      "shopping": true,
+      "shopping:high": false,
+      "shopping:ready": true,
+      "shopping:farm": false,
+      "shopping:alt": true,
+      "pve:>=a": false,
+      "pvp:>=s": false,
+      "s:raid": false,
+      "source:fall": true,
+      "w:s": true,
+      "weapon:>=a": true,
+      "p:>=a": true,
+      "perk:f": false,
+      "a": true,
+      ">=s": true,
+      "<a": false,
+      "==b": false,
+      "a:2p:a": false,
+      "armor:4piece:s": false,
+      "a/s": false,
+      "2p:>=a": false,
+      "4p:s": false
+    }
+  },
+  {
+    "name": "S+/pve/false",
+    "data": {
+      "name": "Test",
+      "result": {
+        "grade": "S+",
+        "isPerfect5of5": false,
+        "isOmniRoll": false,
+        "upgradeAvailable": false
+      },
+      "sheetWeapon": {
+        "tier": "B",
+        "source": "Raid"
+      },
+      "sheetWeaponPvE": {
+        "tier": "S",
+        "source": "King's Fall"
+      },
+      "sheetWeaponPvP": {
+        "tier": "A",
+        "source": "Crucible"
+      },
+      "shoppingItem": null,
+      "shoppingItemPvE": null,
+      "shoppingItemPvP": null,
+      "shoppingAlt": null,
+      "isBestInClass": false,
+      "isBestInClassPvE": false,
+      "isBestInClassPvP": false
+    },
+    "context": {
+      "mode": "pve",
+      "chase": true,
+      "source": "Raid"
+    },
+    "expected": {
+      "5/5": false,
+      "godroll": false,
+      "omni": false,
+      "upgrade": false,
+      "god": true,
+      "bis": false,
+      "chase": true,
+      "shopping": false,
+      "shopping:high": false,
+      "shopping:ready": false,
+      "shopping:farm": false,
+      "shopping:alt": false,
+      "pve:>=a": true,
+      "pvp:>=s": false,
+      "s:raid": false,
+      "source:fall": true,
+      "w:s": true,
+      "weapon:>=a": true,
+      "p:>=a": true,
+      "perk:f": false,
+      "a": false,
+      ">=s": true,
+      "<a": false,
+      "==b": false,
+      "a:2p:a": false,
+      "armor:4piece:s": false,
+      "a/s": false,
+      "2p:>=a": false,
+      "4p:s": false
+    }
+  },
+  {
+    "name": "S+/pve/true",
+    "data": {
+      "name": "Test",
+      "result": {
+        "grade": "S+",
+        "isPerfect5of5": true,
+        "isOmniRoll": true,
+        "upgradeAvailable": true
+      },
+      "sheetWeapon": {
+        "tier": "B",
+        "source": "Raid"
+      },
+      "sheetWeaponPvE": {
+        "tier": "S",
+        "source": "King's Fall"
+      },
+      "sheetWeaponPvP": {
+        "tier": "A",
+        "source": "Crucible"
+      },
+      "shoppingItem": {
+        "priority": "high"
+      },
+      "shoppingItemPvE": {
+        "priority": "medium"
+      },
+      "shoppingItemPvP": {
+        "priority": "high"
+      },
+      "shoppingAlt": {},
+      "isBestInClass": true,
+      "isBestInClassPvE": true,
+      "isBestInClassPvP": false
+    },
+    "context": {
+      "mode": "pve",
+      "chase": true,
+      "source": "Raid"
+    },
+    "expected": {
+      "5/5": true,
+      "godroll": true,
+      "omni": true,
+      "upgrade": true,
+      "god": true,
+      "bis": true,
+      "chase": true,
+      "shopping": true,
+      "shopping:high": false,
+      "shopping:ready": true,
+      "shopping:farm": false,
+      "shopping:alt": true,
+      "pve:>=a": true,
+      "pvp:>=s": false,
+      "s:raid": false,
+      "source:fall": true,
+      "w:s": true,
+      "weapon:>=a": true,
+      "p:>=a": true,
+      "perk:f": false,
+      "a": false,
+      ">=s": true,
+      "<a": false,
+      "==b": false,
+      "a:2p:a": false,
+      "armor:4piece:s": false,
+      "a/s": false,
+      "2p:>=a": false,
+      "4p:s": false
+    }
+  },
+  {
+    "name": "S+/pvp/false",
+    "data": {
+      "name": "Test",
+      "result": {
+        "grade": "S+",
+        "isPerfect5of5": false,
+        "isOmniRoll": false,
+        "upgradeAvailable": false
+      },
+      "sheetWeapon": {
+        "tier": "B",
+        "source": "Raid"
+      },
+      "sheetWeaponPvE": {
+        "tier": "S",
+        "source": "King's Fall"
+      },
+      "sheetWeaponPvP": {
+        "tier": "A",
+        "source": "Crucible"
+      },
+      "shoppingItem": null,
+      "shoppingItemPvE": null,
+      "shoppingItemPvP": null,
+      "shoppingAlt": null,
+      "isBestInClass": false,
+      "isBestInClassPvE": false,
+      "isBestInClassPvP": false
+    },
+    "context": {
+      "mode": "pvp",
+      "chase": true,
+      "source": "Raid"
+    },
+    "expected": {
+      "5/5": false,
+      "godroll": false,
+      "omni": false,
+      "upgrade": false,
+      "god": true,
+      "bis": false,
+      "chase": true,
+      "shopping": false,
+      "shopping:high": false,
+      "shopping:ready": false,
+      "shopping:farm": false,
+      "shopping:alt": false,
+      "pve:>=a": false,
+      "pvp:>=s": true,
+      "s:raid": false,
+      "source:fall": false,
+      "w:s": false,
+      "weapon:>=a": true,
+      "p:>=a": true,
+      "perk:f": false,
+      "a": true,
+      ">=s": true,
+      "<a": false,
+      "==b": false,
+      "a:2p:a": false,
+      "armor:4piece:s": false,
+      "a/s": false,
+      "2p:>=a": false,
+      "4p:s": false
+    }
+  },
+  {
+    "name": "S+/pvp/true",
+    "data": {
+      "name": "Test",
+      "result": {
+        "grade": "S+",
+        "isPerfect5of5": true,
+        "isOmniRoll": true,
+        "upgradeAvailable": true
+      },
+      "sheetWeapon": {
+        "tier": "B",
+        "source": "Raid"
+      },
+      "sheetWeaponPvE": {
+        "tier": "S",
+        "source": "King's Fall"
+      },
+      "sheetWeaponPvP": {
+        "tier": "A",
+        "source": "Crucible"
+      },
+      "shoppingItem": {
+        "priority": "high"
+      },
+      "shoppingItemPvE": {
+        "priority": "medium"
+      },
+      "shoppingItemPvP": {
+        "priority": "high"
+      },
+      "shoppingAlt": {},
+      "isBestInClass": true,
+      "isBestInClassPvE": true,
+      "isBestInClassPvP": false
+    },
+    "context": {
+      "mode": "pvp",
+      "chase": true,
+      "source": "Raid"
+    },
+    "expected": {
+      "5/5": true,
+      "godroll": true,
+      "omni": true,
+      "upgrade": true,
+      "god": true,
+      "bis": false,
+      "chase": true,
+      "shopping": true,
+      "shopping:high": true,
+      "shopping:ready": true,
+      "shopping:farm": false,
+      "shopping:alt": false,
+      "pve:>=a": false,
+      "pvp:>=s": true,
+      "s:raid": false,
+      "source:fall": false,
+      "w:s": false,
+      "weapon:>=a": true,
+      "p:>=a": true,
+      "perk:f": false,
+      "a": true,
+      ">=s": true,
+      "<a": false,
+      "==b": false,
+      "a:2p:a": false,
+      "armor:4piece:s": false,
+      "a/s": false,
+      "2p:>=a": false,
+      "4p:s": false
+    }
+  },
+  {
+    "name": "S+/both/false",
+    "data": {
+      "name": "Test",
+      "result": {
+        "grade": "S+",
+        "isPerfect5of5": false,
+        "isOmniRoll": false,
+        "upgradeAvailable": false
+      },
+      "sheetWeapon": {
+        "tier": "B",
+        "source": "Raid"
+      },
+      "sheetWeaponPvE": {
+        "tier": "S",
+        "source": "King's Fall"
+      },
+      "sheetWeaponPvP": {
+        "tier": "A",
+        "source": "Crucible"
+      },
+      "shoppingItem": null,
+      "shoppingItemPvE": null,
+      "shoppingItemPvP": null,
+      "shoppingAlt": null,
+      "isBestInClass": false,
+      "isBestInClassPvE": false,
+      "isBestInClassPvP": false
+    },
+    "context": {
+      "mode": "both",
+      "chase": true,
+      "source": "Raid"
+    },
+    "expected": {
+      "5/5": false,
+      "godroll": false,
+      "omni": false,
+      "upgrade": false,
+      "god": true,
+      "bis": false,
+      "chase": true,
+      "shopping": false,
+      "shopping:high": false,
+      "shopping:ready": false,
+      "shopping:farm": false,
+      "shopping:alt": false,
+      "pve:>=a": false,
+      "pvp:>=s": false,
+      "s:raid": false,
+      "source:fall": true,
+      "w:s": true,
+      "weapon:>=a": true,
+      "p:>=a": true,
+      "perk:f": false,
+      "a": false,
+      ">=s": true,
+      "<a": false,
+      "==b": false,
+      "a:2p:a": false,
+      "armor:4piece:s": false,
+      "a/s": false,
+      "2p:>=a": false,
+      "4p:s": false
+    }
+  },
+  {
+    "name": "S+/both/true",
+    "data": {
+      "name": "Test",
+      "result": {
+        "grade": "S+",
+        "isPerfect5of5": true,
+        "isOmniRoll": true,
+        "upgradeAvailable": true
+      },
+      "sheetWeapon": {
+        "tier": "B",
+        "source": "Raid"
+      },
+      "sheetWeaponPvE": {
+        "tier": "S",
+        "source": "King's Fall"
+      },
+      "sheetWeaponPvP": {
+        "tier": "A",
+        "source": "Crucible"
+      },
+      "shoppingItem": {
+        "priority": "high"
+      },
+      "shoppingItemPvE": {
+        "priority": "medium"
+      },
+      "shoppingItemPvP": {
+        "priority": "high"
+      },
+      "shoppingAlt": {},
+      "isBestInClass": true,
+      "isBestInClassPvE": true,
+      "isBestInClassPvP": false
+    },
+    "context": {
+      "mode": "both",
+      "chase": true,
+      "source": "Raid"
+    },
+    "expected": {
+      "5/5": true,
+      "godroll": true,
+      "omni": true,
+      "upgrade": true,
+      "god": true,
+      "bis": true,
+      "chase": true,
+      "shopping": true,
+      "shopping:high": false,
+      "shopping:ready": true,
+      "shopping:farm": false,
+      "shopping:alt": true,
+      "pve:>=a": false,
+      "pvp:>=s": false,
+      "s:raid": false,
+      "source:fall": true,
+      "w:s": true,
+      "weapon:>=a": true,
+      "p:>=a": true,
+      "perk:f": false,
+      "a": false,
+      ">=s": true,
+      "<a": false,
+      "==b": false,
+      "a:2p:a": false,
+      "armor:4piece:s": false,
+      "a/s": false,
+      "2p:>=a": false,
+      "4p:s": false
+    }
+  },
+  {
+    "name": "BF➔S+/pve/false",
+    "data": {
+      "name": "Test",
+      "result": {
+        "grade": "BF➔S+",
+        "isPerfect5of5": false,
+        "isOmniRoll": false,
+        "upgradeAvailable": false
+      },
+      "sheetWeapon": {
+        "tier": "B",
+        "source": "Raid"
+      },
+      "sheetWeaponPvE": {
+        "tier": "S",
+        "source": "King's Fall"
+      },
+      "sheetWeaponPvP": {
+        "tier": "A",
+        "source": "Crucible"
+      },
+      "shoppingItem": null,
+      "shoppingItemPvE": null,
+      "shoppingItemPvP": null,
+      "shoppingAlt": null,
+      "isBestInClass": false,
+      "isBestInClassPvE": false,
+      "isBestInClassPvP": false
+    },
+    "context": {
+      "mode": "pve",
+      "chase": true,
+      "source": "Raid"
+    },
+    "expected": {
+      "5/5": false,
+      "godroll": false,
+      "omni": false,
+      "upgrade": false,
+      "god": true,
+      "bis": false,
+      "chase": true,
+      "shopping": false,
+      "shopping:high": false,
+      "shopping:ready": false,
+      "shopping:farm": false,
+      "shopping:alt": false,
+      "pve:>=a": true,
+      "pvp:>=s": false,
+      "s:raid": false,
+      "source:fall": true,
+      "w:s": true,
+      "weapon:>=a": true,
+      "p:>=a": true,
+      "perk:f": true,
+      "a": false,
+      ">=s": true,
+      "<a": true,
+      "==b": true,
+      "a:2p:a": false,
+      "armor:4piece:s": false,
+      "a/s": false,
+      "2p:>=a": false,
+      "4p:s": false
+    }
+  },
+  {
+    "name": "BF➔S+/pve/true",
+    "data": {
+      "name": "Test",
+      "result": {
+        "grade": "BF➔S+",
+        "isPerfect5of5": true,
+        "isOmniRoll": true,
+        "upgradeAvailable": true
+      },
+      "sheetWeapon": {
+        "tier": "B",
+        "source": "Raid"
+      },
+      "sheetWeaponPvE": {
+        "tier": "S",
+        "source": "King's Fall"
+      },
+      "sheetWeaponPvP": {
+        "tier": "A",
+        "source": "Crucible"
+      },
+      "shoppingItem": {
+        "priority": "high"
+      },
+      "shoppingItemPvE": {
+        "priority": "medium"
+      },
+      "shoppingItemPvP": {
+        "priority": "high"
+      },
+      "shoppingAlt": {},
+      "isBestInClass": true,
+      "isBestInClassPvE": true,
+      "isBestInClassPvP": false
+    },
+    "context": {
+      "mode": "pve",
+      "chase": true,
+      "source": "Raid"
+    },
+    "expected": {
+      "5/5": true,
+      "godroll": true,
+      "omni": true,
+      "upgrade": true,
+      "god": true,
+      "bis": true,
+      "chase": true,
+      "shopping": true,
+      "shopping:high": false,
+      "shopping:ready": true,
+      "shopping:farm": false,
+      "shopping:alt": true,
+      "pve:>=a": true,
+      "pvp:>=s": false,
+      "s:raid": false,
+      "source:fall": true,
+      "w:s": true,
+      "weapon:>=a": true,
+      "p:>=a": true,
+      "perk:f": true,
+      "a": false,
+      ">=s": true,
+      "<a": true,
+      "==b": true,
+      "a:2p:a": false,
+      "armor:4piece:s": false,
+      "a/s": false,
+      "2p:>=a": false,
+      "4p:s": false
+    }
+  },
+  {
+    "name": "BF➔S+/pvp/false",
+    "data": {
+      "name": "Test",
+      "result": {
+        "grade": "BF➔S+",
+        "isPerfect5of5": false,
+        "isOmniRoll": false,
+        "upgradeAvailable": false
+      },
+      "sheetWeapon": {
+        "tier": "B",
+        "source": "Raid"
+      },
+      "sheetWeaponPvE": {
+        "tier": "S",
+        "source": "King's Fall"
+      },
+      "sheetWeaponPvP": {
+        "tier": "A",
+        "source": "Crucible"
+      },
+      "shoppingItem": null,
+      "shoppingItemPvE": null,
+      "shoppingItemPvP": null,
+      "shoppingAlt": null,
+      "isBestInClass": false,
+      "isBestInClassPvE": false,
+      "isBestInClassPvP": false
+    },
+    "context": {
+      "mode": "pvp",
+      "chase": true,
+      "source": "Raid"
+    },
+    "expected": {
+      "5/5": false,
+      "godroll": false,
+      "omni": false,
+      "upgrade": false,
+      "god": true,
+      "bis": false,
+      "chase": true,
+      "shopping": false,
+      "shopping:high": false,
+      "shopping:ready": false,
+      "shopping:farm": false,
+      "shopping:alt": false,
+      "pve:>=a": false,
+      "pvp:>=s": true,
+      "s:raid": false,
+      "source:fall": false,
+      "w:s": false,
+      "weapon:>=a": true,
+      "p:>=a": true,
+      "perk:f": true,
+      "a": true,
+      ">=s": true,
+      "<a": true,
+      "==b": true,
+      "a:2p:a": false,
+      "armor:4piece:s": false,
+      "a/s": false,
+      "2p:>=a": false,
+      "4p:s": false
+    }
+  },
+  {
+    "name": "BF➔S+/pvp/true",
+    "data": {
+      "name": "Test",
+      "result": {
+        "grade": "BF➔S+",
+        "isPerfect5of5": true,
+        "isOmniRoll": true,
+        "upgradeAvailable": true
+      },
+      "sheetWeapon": {
+        "tier": "B",
+        "source": "Raid"
+      },
+      "sheetWeaponPvE": {
+        "tier": "S",
+        "source": "King's Fall"
+      },
+      "sheetWeaponPvP": {
+        "tier": "A",
+        "source": "Crucible"
+      },
+      "shoppingItem": {
+        "priority": "high"
+      },
+      "shoppingItemPvE": {
+        "priority": "medium"
+      },
+      "shoppingItemPvP": {
+        "priority": "high"
+      },
+      "shoppingAlt": {},
+      "isBestInClass": true,
+      "isBestInClassPvE": true,
+      "isBestInClassPvP": false
+    },
+    "context": {
+      "mode": "pvp",
+      "chase": true,
+      "source": "Raid"
+    },
+    "expected": {
+      "5/5": true,
+      "godroll": true,
+      "omni": true,
+      "upgrade": true,
+      "god": true,
+      "bis": false,
+      "chase": true,
+      "shopping": true,
+      "shopping:high": true,
+      "shopping:ready": true,
+      "shopping:farm": false,
+      "shopping:alt": false,
+      "pve:>=a": false,
+      "pvp:>=s": true,
+      "s:raid": false,
+      "source:fall": false,
+      "w:s": false,
+      "weapon:>=a": true,
+      "p:>=a": true,
+      "perk:f": true,
+      "a": true,
+      ">=s": true,
+      "<a": true,
+      "==b": true,
+      "a:2p:a": false,
+      "armor:4piece:s": false,
+      "a/s": false,
+      "2p:>=a": false,
+      "4p:s": false
+    }
+  },
+  {
+    "name": "BF➔S+/both/false",
+    "data": {
+      "name": "Test",
+      "result": {
+        "grade": "BF➔S+",
+        "isPerfect5of5": false,
+        "isOmniRoll": false,
+        "upgradeAvailable": false
+      },
+      "sheetWeapon": {
+        "tier": "B",
+        "source": "Raid"
+      },
+      "sheetWeaponPvE": {
+        "tier": "S",
+        "source": "King's Fall"
+      },
+      "sheetWeaponPvP": {
+        "tier": "A",
+        "source": "Crucible"
+      },
+      "shoppingItem": null,
+      "shoppingItemPvE": null,
+      "shoppingItemPvP": null,
+      "shoppingAlt": null,
+      "isBestInClass": false,
+      "isBestInClassPvE": false,
+      "isBestInClassPvP": false
+    },
+    "context": {
+      "mode": "both",
+      "chase": true,
+      "source": "Raid"
+    },
+    "expected": {
+      "5/5": false,
+      "godroll": false,
+      "omni": false,
+      "upgrade": false,
+      "god": true,
+      "bis": false,
+      "chase": true,
+      "shopping": false,
+      "shopping:high": false,
+      "shopping:ready": false,
+      "shopping:farm": false,
+      "shopping:alt": false,
+      "pve:>=a": false,
+      "pvp:>=s": false,
+      "s:raid": false,
+      "source:fall": true,
+      "w:s": true,
+      "weapon:>=a": true,
+      "p:>=a": true,
+      "perk:f": true,
+      "a": false,
+      ">=s": true,
+      "<a": true,
+      "==b": true,
+      "a:2p:a": false,
+      "armor:4piece:s": false,
+      "a/s": false,
+      "2p:>=a": false,
+      "4p:s": false
+    }
+  },
+  {
+    "name": "BF➔S+/both/true",
+    "data": {
+      "name": "Test",
+      "result": {
+        "grade": "BF➔S+",
+        "isPerfect5of5": true,
+        "isOmniRoll": true,
+        "upgradeAvailable": true
+      },
+      "sheetWeapon": {
+        "tier": "B",
+        "source": "Raid"
+      },
+      "sheetWeaponPvE": {
+        "tier": "S",
+        "source": "King's Fall"
+      },
+      "sheetWeaponPvP": {
+        "tier": "A",
+        "source": "Crucible"
+      },
+      "shoppingItem": {
+        "priority": "high"
+      },
+      "shoppingItemPvE": {
+        "priority": "medium"
+      },
+      "shoppingItemPvP": {
+        "priority": "high"
+      },
+      "shoppingAlt": {},
+      "isBestInClass": true,
+      "isBestInClassPvE": true,
+      "isBestInClassPvP": false
+    },
+    "context": {
+      "mode": "both",
+      "chase": true,
+      "source": "Raid"
+    },
+    "expected": {
+      "5/5": true,
+      "godroll": true,
+      "omni": true,
+      "upgrade": true,
+      "god": true,
+      "bis": true,
+      "chase": true,
+      "shopping": true,
+      "shopping:high": false,
+      "shopping:ready": true,
+      "shopping:farm": false,
+      "shopping:alt": true,
+      "pve:>=a": false,
+      "pvp:>=s": false,
+      "s:raid": false,
+      "source:fall": true,
+      "w:s": true,
+      "weapon:>=a": true,
+      "p:>=a": true,
+      "perk:f": true,
+      "a": false,
+      ">=s": true,
+      "<a": true,
+      "==b": true,
+      "a:2p:a": false,
+      "armor:4piece:s": false,
+      "a/s": false,
+      "2p:>=a": false,
+      "4p:s": false
+    }
+  },
+  {
+    "name": "SA/pve/false",
+    "data": {
+      "name": "Test",
+      "result": {
+        "grade": "SA",
+        "isPerfect5of5": false,
+        "isOmniRoll": false,
+        "upgradeAvailable": false
+      },
+      "sheetWeapon": {
+        "tier": "B",
+        "source": "Raid"
+      },
+      "sheetWeaponPvE": {
+        "tier": "S",
+        "source": "King's Fall"
+      },
+      "sheetWeaponPvP": {
+        "tier": "A",
+        "source": "Crucible"
+      },
+      "shoppingItem": null,
+      "shoppingItemPvE": null,
+      "shoppingItemPvP": null,
+      "shoppingAlt": null,
+      "isBestInClass": false,
+      "isBestInClassPvE": false,
+      "isBestInClassPvP": false
+    },
+    "context": {
+      "mode": "pve",
+      "chase": true,
+      "source": "Raid"
+    },
+    "expected": {
+      "5/5": false,
+      "godroll": false,
+      "omni": false,
+      "upgrade": false,
+      "god": false,
+      "bis": false,
+      "chase": true,
+      "shopping": false,
+      "shopping:high": false,
+      "shopping:ready": false,
+      "shopping:farm": false,
+      "shopping:alt": false,
+      "pve:>=a": true,
+      "pvp:>=s": false,
+      "s:raid": false,
+      "source:fall": true,
+      "w:s": true,
+      "weapon:>=a": true,
+      "p:>=a": true,
+      "perk:f": false,
+      "a": true,
+      ">=s": true,
+      "<a": false,
+      "==b": false,
+      "a:2p:a": false,
+      "armor:4piece:s": false,
+      "a/s": false,
+      "2p:>=a": false,
+      "4p:s": false
+    }
+  },
+  {
+    "name": "SA/pve/true",
+    "data": {
+      "name": "Test",
+      "result": {
+        "grade": "SA",
+        "isPerfect5of5": true,
+        "isOmniRoll": true,
+        "upgradeAvailable": true
+      },
+      "sheetWeapon": {
+        "tier": "B",
+        "source": "Raid"
+      },
+      "sheetWeaponPvE": {
+        "tier": "S",
+        "source": "King's Fall"
+      },
+      "sheetWeaponPvP": {
+        "tier": "A",
+        "source": "Crucible"
+      },
+      "shoppingItem": {
+        "priority": "high"
+      },
+      "shoppingItemPvE": {
+        "priority": "medium"
+      },
+      "shoppingItemPvP": {
+        "priority": "high"
+      },
+      "shoppingAlt": {},
+      "isBestInClass": true,
+      "isBestInClassPvE": true,
+      "isBestInClassPvP": false
+    },
+    "context": {
+      "mode": "pve",
+      "chase": true,
+      "source": "Raid"
+    },
+    "expected": {
+      "5/5": true,
+      "godroll": true,
+      "omni": true,
+      "upgrade": true,
+      "god": false,
+      "bis": true,
+      "chase": true,
+      "shopping": true,
+      "shopping:high": false,
+      "shopping:ready": true,
+      "shopping:farm": false,
+      "shopping:alt": true,
+      "pve:>=a": true,
+      "pvp:>=s": false,
+      "s:raid": false,
+      "source:fall": true,
+      "w:s": true,
+      "weapon:>=a": true,
+      "p:>=a": true,
+      "perk:f": false,
+      "a": true,
+      ">=s": true,
+      "<a": false,
+      "==b": false,
+      "a:2p:a": false,
+      "armor:4piece:s": false,
+      "a/s": false,
+      "2p:>=a": false,
+      "4p:s": false
+    }
+  },
+  {
+    "name": "SA/pvp/false",
+    "data": {
+      "name": "Test",
+      "result": {
+        "grade": "SA",
+        "isPerfect5of5": false,
+        "isOmniRoll": false,
+        "upgradeAvailable": false
+      },
+      "sheetWeapon": {
+        "tier": "B",
+        "source": "Raid"
+      },
+      "sheetWeaponPvE": {
+        "tier": "S",
+        "source": "King's Fall"
+      },
+      "sheetWeaponPvP": {
+        "tier": "A",
+        "source": "Crucible"
+      },
+      "shoppingItem": null,
+      "shoppingItemPvE": null,
+      "shoppingItemPvP": null,
+      "shoppingAlt": null,
+      "isBestInClass": false,
+      "isBestInClassPvE": false,
+      "isBestInClassPvP": false
+    },
+    "context": {
+      "mode": "pvp",
+      "chase": true,
+      "source": "Raid"
+    },
+    "expected": {
+      "5/5": false,
+      "godroll": false,
+      "omni": false,
+      "upgrade": false,
+      "god": false,
+      "bis": false,
+      "chase": true,
+      "shopping": false,
+      "shopping:high": false,
+      "shopping:ready": false,
+      "shopping:farm": false,
+      "shopping:alt": false,
+      "pve:>=a": false,
+      "pvp:>=s": false,
+      "s:raid": false,
+      "source:fall": false,
+      "w:s": false,
+      "weapon:>=a": true,
+      "p:>=a": true,
+      "perk:f": false,
+      "a": true,
+      ">=s": false,
+      "<a": false,
+      "==b": false,
+      "a:2p:a": false,
+      "armor:4piece:s": false,
+      "a/s": false,
+      "2p:>=a": false,
+      "4p:s": false
+    }
+  },
+  {
+    "name": "SA/pvp/true",
+    "data": {
+      "name": "Test",
+      "result": {
+        "grade": "SA",
+        "isPerfect5of5": true,
+        "isOmniRoll": true,
+        "upgradeAvailable": true
+      },
+      "sheetWeapon": {
+        "tier": "B",
+        "source": "Raid"
+      },
+      "sheetWeaponPvE": {
+        "tier": "S",
+        "source": "King's Fall"
+      },
+      "sheetWeaponPvP": {
+        "tier": "A",
+        "source": "Crucible"
+      },
+      "shoppingItem": {
+        "priority": "high"
+      },
+      "shoppingItemPvE": {
+        "priority": "medium"
+      },
+      "shoppingItemPvP": {
+        "priority": "high"
+      },
+      "shoppingAlt": {},
+      "isBestInClass": true,
+      "isBestInClassPvE": true,
+      "isBestInClassPvP": false
+    },
+    "context": {
+      "mode": "pvp",
+      "chase": true,
+      "source": "Raid"
+    },
+    "expected": {
+      "5/5": true,
+      "godroll": true,
+      "omni": true,
+      "upgrade": true,
+      "god": false,
+      "bis": false,
+      "chase": true,
+      "shopping": true,
+      "shopping:high": true,
+      "shopping:ready": true,
+      "shopping:farm": false,
+      "shopping:alt": false,
+      "pve:>=a": false,
+      "pvp:>=s": false,
+      "s:raid": false,
+      "source:fall": false,
+      "w:s": false,
+      "weapon:>=a": true,
+      "p:>=a": true,
+      "perk:f": false,
+      "a": true,
+      ">=s": false,
+      "<a": false,
+      "==b": false,
+      "a:2p:a": false,
+      "armor:4piece:s": false,
+      "a/s": false,
+      "2p:>=a": false,
+      "4p:s": false
+    }
+  },
+  {
+    "name": "SA/both/false",
+    "data": {
+      "name": "Test",
+      "result": {
+        "grade": "SA",
+        "isPerfect5of5": false,
+        "isOmniRoll": false,
+        "upgradeAvailable": false
+      },
+      "sheetWeapon": {
+        "tier": "B",
+        "source": "Raid"
+      },
+      "sheetWeaponPvE": {
+        "tier": "S",
+        "source": "King's Fall"
+      },
+      "sheetWeaponPvP": {
+        "tier": "A",
+        "source": "Crucible"
+      },
+      "shoppingItem": null,
+      "shoppingItemPvE": null,
+      "shoppingItemPvP": null,
+      "shoppingAlt": null,
+      "isBestInClass": false,
+      "isBestInClassPvE": false,
+      "isBestInClassPvP": false
+    },
+    "context": {
+      "mode": "both",
+      "chase": true,
+      "source": "Raid"
+    },
+    "expected": {
+      "5/5": false,
+      "godroll": false,
+      "omni": false,
+      "upgrade": false,
+      "god": false,
+      "bis": false,
+      "chase": true,
+      "shopping": false,
+      "shopping:high": false,
+      "shopping:ready": false,
+      "shopping:farm": false,
+      "shopping:alt": false,
+      "pve:>=a": false,
+      "pvp:>=s": false,
+      "s:raid": false,
+      "source:fall": true,
+      "w:s": true,
+      "weapon:>=a": true,
+      "p:>=a": true,
+      "perk:f": false,
+      "a": true,
+      ">=s": true,
+      "<a": false,
+      "==b": false,
+      "a:2p:a": false,
+      "armor:4piece:s": false,
+      "a/s": false,
+      "2p:>=a": false,
+      "4p:s": false
+    }
+  },
+  {
+    "name": "SA/both/true",
+    "data": {
+      "name": "Test",
+      "result": {
+        "grade": "SA",
+        "isPerfect5of5": true,
+        "isOmniRoll": true,
+        "upgradeAvailable": true
+      },
+      "sheetWeapon": {
+        "tier": "B",
+        "source": "Raid"
+      },
+      "sheetWeaponPvE": {
+        "tier": "S",
+        "source": "King's Fall"
+      },
+      "sheetWeaponPvP": {
+        "tier": "A",
+        "source": "Crucible"
+      },
+      "shoppingItem": {
+        "priority": "high"
+      },
+      "shoppingItemPvE": {
+        "priority": "medium"
+      },
+      "shoppingItemPvP": {
+        "priority": "high"
+      },
+      "shoppingAlt": {},
+      "isBestInClass": true,
+      "isBestInClassPvE": true,
+      "isBestInClassPvP": false
+    },
+    "context": {
+      "mode": "both",
+      "chase": true,
+      "source": "Raid"
+    },
+    "expected": {
+      "5/5": true,
+      "godroll": true,
+      "omni": true,
+      "upgrade": true,
+      "god": false,
+      "bis": true,
+      "chase": true,
+      "shopping": true,
+      "shopping:high": false,
+      "shopping:ready": true,
+      "shopping:farm": false,
+      "shopping:alt": true,
+      "pve:>=a": false,
+      "pvp:>=s": false,
+      "s:raid": false,
+      "source:fall": true,
+      "w:s": true,
+      "weapon:>=a": true,
+      "p:>=a": true,
+      "perk:f": false,
+      "a": true,
+      ">=s": true,
+      "<a": false,
+      "==b": false,
+      "a:2p:a": false,
+      "armor:4piece:s": false,
+      "a/s": false,
+      "2p:>=a": false,
+      "4p:s": false
+    }
+  },
+  {
+    "name": "A/S/pve/false",
+    "data": {
+      "name": "Test",
+      "result": {
+        "grade": "A/S",
+        "isPerfect5of5": false,
+        "isOmniRoll": false,
+        "upgradeAvailable": false
+      },
+      "sheetWeapon": {
+        "tier": "B",
+        "source": "Raid"
+      },
+      "sheetWeaponPvE": {
+        "tier": "S",
+        "source": "King's Fall"
+      },
+      "sheetWeaponPvP": {
+        "tier": "A",
+        "source": "Crucible"
+      },
+      "shoppingItem": null,
+      "shoppingItemPvE": null,
+      "shoppingItemPvP": null,
+      "shoppingAlt": null,
+      "isBestInClass": false,
+      "isBestInClassPvE": false,
+      "isBestInClassPvP": false
+    },
+    "context": {
+      "mode": "pve",
+      "chase": true,
+      "source": "Raid"
+    },
+    "expected": {
+      "5/5": false,
+      "godroll": false,
+      "omni": false,
+      "upgrade": false,
+      "god": false,
+      "bis": false,
+      "chase": false,
+      "shopping": false,
+      "shopping:high": false,
+      "shopping:ready": false,
+      "shopping:farm": false,
+      "shopping:alt": false,
+      "pve:>=a": false,
+      "pvp:>=s": false,
+      "s:raid": false,
+      "source:fall": false,
+      "w:s": false,
+      "weapon:>=a": false,
+      "p:>=a": false,
+      "perk:f": false,
+      "a": true,
+      ">=s": true,
+      "<a": false,
+      "==b": false,
+      "a:2p:a": true,
+      "armor:4piece:s": true,
+      "a/s": true,
+      "2p:>=a": true,
+      "4p:s": true
+    }
+  },
+  {
+    "name": "A/S/pve/true",
+    "data": {
+      "name": "Test",
+      "result": {
+        "grade": "A/S",
+        "isPerfect5of5": true,
+        "isOmniRoll": true,
+        "upgradeAvailable": true
+      },
+      "sheetWeapon": {
+        "tier": "B",
+        "source": "Raid"
+      },
+      "sheetWeaponPvE": {
+        "tier": "S",
+        "source": "King's Fall"
+      },
+      "sheetWeaponPvP": {
+        "tier": "A",
+        "source": "Crucible"
+      },
+      "shoppingItem": {
+        "priority": "high"
+      },
+      "shoppingItemPvE": {
+        "priority": "medium"
+      },
+      "shoppingItemPvP": {
+        "priority": "high"
+      },
+      "shoppingAlt": {},
+      "isBestInClass": true,
+      "isBestInClassPvE": true,
+      "isBestInClassPvP": false
+    },
+    "context": {
+      "mode": "pve",
+      "chase": true,
+      "source": "Raid"
+    },
+    "expected": {
+      "5/5": false,
+      "godroll": false,
+      "omni": false,
+      "upgrade": false,
+      "god": false,
+      "bis": false,
+      "chase": false,
+      "shopping": false,
+      "shopping:high": false,
+      "shopping:ready": false,
+      "shopping:farm": false,
+      "shopping:alt": false,
+      "pve:>=a": false,
+      "pvp:>=s": false,
+      "s:raid": false,
+      "source:fall": false,
+      "w:s": false,
+      "weapon:>=a": false,
+      "p:>=a": false,
+      "perk:f": false,
+      "a": true,
+      ">=s": true,
+      "<a": false,
+      "==b": false,
+      "a:2p:a": true,
+      "armor:4piece:s": true,
+      "a/s": true,
+      "2p:>=a": true,
+      "4p:s": true
+    }
+  },
+  {
+    "name": "A/S/pvp/false",
+    "data": {
+      "name": "Test",
+      "result": {
+        "grade": "A/S",
+        "isPerfect5of5": false,
+        "isOmniRoll": false,
+        "upgradeAvailable": false
+      },
+      "sheetWeapon": {
+        "tier": "B",
+        "source": "Raid"
+      },
+      "sheetWeaponPvE": {
+        "tier": "S",
+        "source": "King's Fall"
+      },
+      "sheetWeaponPvP": {
+        "tier": "A",
+        "source": "Crucible"
+      },
+      "shoppingItem": null,
+      "shoppingItemPvE": null,
+      "shoppingItemPvP": null,
+      "shoppingAlt": null,
+      "isBestInClass": false,
+      "isBestInClassPvE": false,
+      "isBestInClassPvP": false
+    },
+    "context": {
+      "mode": "pvp",
+      "chase": true,
+      "source": "Raid"
+    },
+    "expected": {
+      "5/5": false,
+      "godroll": false,
+      "omni": false,
+      "upgrade": false,
+      "god": false,
+      "bis": false,
+      "chase": false,
+      "shopping": false,
+      "shopping:high": false,
+      "shopping:ready": false,
+      "shopping:farm": false,
+      "shopping:alt": false,
+      "pve:>=a": false,
+      "pvp:>=s": false,
+      "s:raid": false,
+      "source:fall": false,
+      "w:s": false,
+      "weapon:>=a": false,
+      "p:>=a": false,
+      "perk:f": false,
+      "a": true,
+      ">=s": true,
+      "<a": false,
+      "==b": false,
+      "a:2p:a": true,
+      "armor:4piece:s": true,
+      "a/s": true,
+      "2p:>=a": true,
+      "4p:s": true
+    }
+  },
+  {
+    "name": "A/S/pvp/true",
+    "data": {
+      "name": "Test",
+      "result": {
+        "grade": "A/S",
+        "isPerfect5of5": true,
+        "isOmniRoll": true,
+        "upgradeAvailable": true
+      },
+      "sheetWeapon": {
+        "tier": "B",
+        "source": "Raid"
+      },
+      "sheetWeaponPvE": {
+        "tier": "S",
+        "source": "King's Fall"
+      },
+      "sheetWeaponPvP": {
+        "tier": "A",
+        "source": "Crucible"
+      },
+      "shoppingItem": {
+        "priority": "high"
+      },
+      "shoppingItemPvE": {
+        "priority": "medium"
+      },
+      "shoppingItemPvP": {
+        "priority": "high"
+      },
+      "shoppingAlt": {},
+      "isBestInClass": true,
+      "isBestInClassPvE": true,
+      "isBestInClassPvP": false
+    },
+    "context": {
+      "mode": "pvp",
+      "chase": true,
+      "source": "Raid"
+    },
+    "expected": {
+      "5/5": false,
+      "godroll": false,
+      "omni": false,
+      "upgrade": false,
+      "god": false,
+      "bis": false,
+      "chase": false,
+      "shopping": false,
+      "shopping:high": false,
+      "shopping:ready": false,
+      "shopping:farm": false,
+      "shopping:alt": false,
+      "pve:>=a": false,
+      "pvp:>=s": false,
+      "s:raid": false,
+      "source:fall": false,
+      "w:s": false,
+      "weapon:>=a": false,
+      "p:>=a": false,
+      "perk:f": false,
+      "a": true,
+      ">=s": true,
+      "<a": false,
+      "==b": false,
+      "a:2p:a": true,
+      "armor:4piece:s": true,
+      "a/s": true,
+      "2p:>=a": true,
+      "4p:s": true
+    }
+  },
+  {
+    "name": "A/S/both/false",
+    "data": {
+      "name": "Test",
+      "result": {
+        "grade": "A/S",
+        "isPerfect5of5": false,
+        "isOmniRoll": false,
+        "upgradeAvailable": false
+      },
+      "sheetWeapon": {
+        "tier": "B",
+        "source": "Raid"
+      },
+      "sheetWeaponPvE": {
+        "tier": "S",
+        "source": "King's Fall"
+      },
+      "sheetWeaponPvP": {
+        "tier": "A",
+        "source": "Crucible"
+      },
+      "shoppingItem": null,
+      "shoppingItemPvE": null,
+      "shoppingItemPvP": null,
+      "shoppingAlt": null,
+      "isBestInClass": false,
+      "isBestInClassPvE": false,
+      "isBestInClassPvP": false
+    },
+    "context": {
+      "mode": "both",
+      "chase": true,
+      "source": "Raid"
+    },
+    "expected": {
+      "5/5": false,
+      "godroll": false,
+      "omni": false,
+      "upgrade": false,
+      "god": false,
+      "bis": false,
+      "chase": false,
+      "shopping": false,
+      "shopping:high": false,
+      "shopping:ready": false,
+      "shopping:farm": false,
+      "shopping:alt": false,
+      "pve:>=a": false,
+      "pvp:>=s": false,
+      "s:raid": false,
+      "source:fall": false,
+      "w:s": false,
+      "weapon:>=a": false,
+      "p:>=a": false,
+      "perk:f": false,
+      "a": true,
+      ">=s": true,
+      "<a": false,
+      "==b": false,
+      "a:2p:a": true,
+      "armor:4piece:s": true,
+      "a/s": true,
+      "2p:>=a": true,
+      "4p:s": true
+    }
+  },
+  {
+    "name": "A/S/both/true",
+    "data": {
+      "name": "Test",
+      "result": {
+        "grade": "A/S",
+        "isPerfect5of5": true,
+        "isOmniRoll": true,
+        "upgradeAvailable": true
+      },
+      "sheetWeapon": {
+        "tier": "B",
+        "source": "Raid"
+      },
+      "sheetWeaponPvE": {
+        "tier": "S",
+        "source": "King's Fall"
+      },
+      "sheetWeaponPvP": {
+        "tier": "A",
+        "source": "Crucible"
+      },
+      "shoppingItem": {
+        "priority": "high"
+      },
+      "shoppingItemPvE": {
+        "priority": "medium"
+      },
+      "shoppingItemPvP": {
+        "priority": "high"
+      },
+      "shoppingAlt": {},
+      "isBestInClass": true,
+      "isBestInClassPvE": true,
+      "isBestInClassPvP": false
+    },
+    "context": {
+      "mode": "both",
+      "chase": true,
+      "source": "Raid"
+    },
+    "expected": {
+      "5/5": false,
+      "godroll": false,
+      "omni": false,
+      "upgrade": false,
+      "god": false,
+      "bis": false,
+      "chase": false,
+      "shopping": false,
+      "shopping:high": false,
+      "shopping:ready": false,
+      "shopping:farm": false,
+      "shopping:alt": false,
+      "pve:>=a": false,
+      "pvp:>=s": false,
+      "s:raid": false,
+      "source:fall": false,
+      "w:s": false,
+      "weapon:>=a": false,
+      "p:>=a": false,
+      "perk:f": false,
+      "a": true,
+      ">=s": true,
+      "<a": false,
+      "==b": false,
+      "a:2p:a": true,
+      "armor:4piece:s": true,
+      "a/s": true,
+      "2p:>=a": true,
+      "4p:s": true
+    }
+  },
+  {
+    "name": "F | S/pve/false",
+    "data": {
+      "name": "Test",
+      "result": {
+        "grade": "F | S",
+        "isPerfect5of5": false,
+        "isOmniRoll": false,
+        "upgradeAvailable": false
+      },
+      "sheetWeapon": {
+        "tier": "B",
+        "source": "Raid"
+      },
+      "sheetWeaponPvE": {
+        "tier": "S",
+        "source": "King's Fall"
+      },
+      "sheetWeaponPvP": {
+        "tier": "A",
+        "source": "Crucible"
+      },
+      "shoppingItem": null,
+      "shoppingItemPvE": null,
+      "shoppingItemPvP": null,
+      "shoppingAlt": null,
+      "isBestInClass": false,
+      "isBestInClassPvE": false,
+      "isBestInClassPvP": false
+    },
+    "context": {
+      "mode": "pve",
+      "chase": true,
+      "source": "Raid"
+    },
+    "expected": {
+      "5/5": false,
+      "godroll": false,
+      "omni": false,
+      "upgrade": false,
+      "god": true,
+      "bis": false,
+      "chase": true,
+      "shopping": false,
+      "shopping:high": false,
+      "shopping:ready": false,
+      "shopping:farm": false,
+      "shopping:alt": false,
+      "pve:>=a": false,
+      "pvp:>=s": true,
+      "s:raid": false,
+      "source:fall": true,
+      "w:s": true,
+      "weapon:>=a": true,
+      "p:>=a": true,
+      "perk:f": true,
+      "a": false,
+      ">=s": true,
+      "<a": true,
+      "==b": false,
+      "a:2p:a": false,
+      "armor:4piece:s": false,
+      "a/s": false,
+      "2p:>=a": false,
+      "4p:s": false
+    }
+  },
+  {
+    "name": "F | S/pve/true",
+    "data": {
+      "name": "Test",
+      "result": {
+        "grade": "F | S",
+        "isPerfect5of5": true,
+        "isOmniRoll": true,
+        "upgradeAvailable": true
+      },
+      "sheetWeapon": {
+        "tier": "B",
+        "source": "Raid"
+      },
+      "sheetWeaponPvE": {
+        "tier": "S",
+        "source": "King's Fall"
+      },
+      "sheetWeaponPvP": {
+        "tier": "A",
+        "source": "Crucible"
+      },
+      "shoppingItem": {
+        "priority": "high"
+      },
+      "shoppingItemPvE": {
+        "priority": "medium"
+      },
+      "shoppingItemPvP": {
+        "priority": "high"
+      },
+      "shoppingAlt": {},
+      "isBestInClass": true,
+      "isBestInClassPvE": true,
+      "isBestInClassPvP": false
+    },
+    "context": {
+      "mode": "pve",
+      "chase": true,
+      "source": "Raid"
+    },
+    "expected": {
+      "5/5": true,
+      "godroll": true,
+      "omni": true,
+      "upgrade": true,
+      "god": true,
+      "bis": true,
+      "chase": true,
+      "shopping": true,
+      "shopping:high": false,
+      "shopping:ready": true,
+      "shopping:farm": false,
+      "shopping:alt": true,
+      "pve:>=a": false,
+      "pvp:>=s": true,
+      "s:raid": false,
+      "source:fall": true,
+      "w:s": true,
+      "weapon:>=a": true,
+      "p:>=a": true,
+      "perk:f": true,
+      "a": false,
+      ">=s": true,
+      "<a": true,
+      "==b": false,
+      "a:2p:a": false,
+      "armor:4piece:s": false,
+      "a/s": false,
+      "2p:>=a": false,
+      "4p:s": false
+    }
+  },
+  {
+    "name": "F | S/pvp/false",
+    "data": {
+      "name": "Test",
+      "result": {
+        "grade": "F | S",
+        "isPerfect5of5": false,
+        "isOmniRoll": false,
+        "upgradeAvailable": false
+      },
+      "sheetWeapon": {
+        "tier": "B",
+        "source": "Raid"
+      },
+      "sheetWeaponPvE": {
+        "tier": "S",
+        "source": "King's Fall"
+      },
+      "sheetWeaponPvP": {
+        "tier": "A",
+        "source": "Crucible"
+      },
+      "shoppingItem": null,
+      "shoppingItemPvE": null,
+      "shoppingItemPvP": null,
+      "shoppingAlt": null,
+      "isBestInClass": false,
+      "isBestInClassPvE": false,
+      "isBestInClassPvP": false
+    },
+    "context": {
+      "mode": "pvp",
+      "chase": true,
+      "source": "Raid"
+    },
+    "expected": {
+      "5/5": false,
+      "godroll": false,
+      "omni": false,
+      "upgrade": false,
+      "god": true,
+      "bis": false,
+      "chase": true,
+      "shopping": false,
+      "shopping:high": false,
+      "shopping:ready": false,
+      "shopping:farm": false,
+      "shopping:alt": false,
+      "pve:>=a": false,
+      "pvp:>=s": true,
+      "s:raid": false,
+      "source:fall": false,
+      "w:s": false,
+      "weapon:>=a": true,
+      "p:>=a": true,
+      "perk:f": true,
+      "a": false,
+      ">=s": true,
+      "<a": true,
+      "==b": false,
+      "a:2p:a": false,
+      "armor:4piece:s": false,
+      "a/s": false,
+      "2p:>=a": false,
+      "4p:s": false
+    }
+  },
+  {
+    "name": "F | S/pvp/true",
+    "data": {
+      "name": "Test",
+      "result": {
+        "grade": "F | S",
+        "isPerfect5of5": true,
+        "isOmniRoll": true,
+        "upgradeAvailable": true
+      },
+      "sheetWeapon": {
+        "tier": "B",
+        "source": "Raid"
+      },
+      "sheetWeaponPvE": {
+        "tier": "S",
+        "source": "King's Fall"
+      },
+      "sheetWeaponPvP": {
+        "tier": "A",
+        "source": "Crucible"
+      },
+      "shoppingItem": {
+        "priority": "high"
+      },
+      "shoppingItemPvE": {
+        "priority": "medium"
+      },
+      "shoppingItemPvP": {
+        "priority": "high"
+      },
+      "shoppingAlt": {},
+      "isBestInClass": true,
+      "isBestInClassPvE": true,
+      "isBestInClassPvP": false
+    },
+    "context": {
+      "mode": "pvp",
+      "chase": true,
+      "source": "Raid"
+    },
+    "expected": {
+      "5/5": true,
+      "godroll": true,
+      "omni": true,
+      "upgrade": true,
+      "god": true,
+      "bis": false,
+      "chase": true,
+      "shopping": true,
+      "shopping:high": true,
+      "shopping:ready": true,
+      "shopping:farm": false,
+      "shopping:alt": false,
+      "pve:>=a": false,
+      "pvp:>=s": true,
+      "s:raid": false,
+      "source:fall": false,
+      "w:s": false,
+      "weapon:>=a": true,
+      "p:>=a": true,
+      "perk:f": true,
+      "a": false,
+      ">=s": true,
+      "<a": true,
+      "==b": false,
+      "a:2p:a": false,
+      "armor:4piece:s": false,
+      "a/s": false,
+      "2p:>=a": false,
+      "4p:s": false
+    }
+  },
+  {
+    "name": "F | S/both/false",
+    "data": {
+      "name": "Test",
+      "result": {
+        "grade": "F | S",
+        "isPerfect5of5": false,
+        "isOmniRoll": false,
+        "upgradeAvailable": false
+      },
+      "sheetWeapon": {
+        "tier": "B",
+        "source": "Raid"
+      },
+      "sheetWeaponPvE": {
+        "tier": "S",
+        "source": "King's Fall"
+      },
+      "sheetWeaponPvP": {
+        "tier": "A",
+        "source": "Crucible"
+      },
+      "shoppingItem": null,
+      "shoppingItemPvE": null,
+      "shoppingItemPvP": null,
+      "shoppingAlt": null,
+      "isBestInClass": false,
+      "isBestInClassPvE": false,
+      "isBestInClassPvP": false
+    },
+    "context": {
+      "mode": "both",
+      "chase": true,
+      "source": "Raid"
+    },
+    "expected": {
+      "5/5": false,
+      "godroll": false,
+      "omni": false,
+      "upgrade": false,
+      "god": true,
+      "bis": false,
+      "chase": true,
+      "shopping": false,
+      "shopping:high": false,
+      "shopping:ready": false,
+      "shopping:farm": false,
+      "shopping:alt": false,
+      "pve:>=a": false,
+      "pvp:>=s": true,
+      "s:raid": false,
+      "source:fall": true,
+      "w:s": true,
+      "weapon:>=a": true,
+      "p:>=a": true,
+      "perk:f": true,
+      "a": false,
+      ">=s": true,
+      "<a": true,
+      "==b": false,
+      "a:2p:a": false,
+      "armor:4piece:s": false,
+      "a/s": false,
+      "2p:>=a": false,
+      "4p:s": false
+    }
+  },
+  {
+    "name": "F | S/both/true",
+    "data": {
+      "name": "Test",
+      "result": {
+        "grade": "F | S",
+        "isPerfect5of5": true,
+        "isOmniRoll": true,
+        "upgradeAvailable": true
+      },
+      "sheetWeapon": {
+        "tier": "B",
+        "source": "Raid"
+      },
+      "sheetWeaponPvE": {
+        "tier": "S",
+        "source": "King's Fall"
+      },
+      "sheetWeaponPvP": {
+        "tier": "A",
+        "source": "Crucible"
+      },
+      "shoppingItem": {
+        "priority": "high"
+      },
+      "shoppingItemPvE": {
+        "priority": "medium"
+      },
+      "shoppingItemPvP": {
+        "priority": "high"
+      },
+      "shoppingAlt": {},
+      "isBestInClass": true,
+      "isBestInClassPvE": true,
+      "isBestInClassPvP": false
+    },
+    "context": {
+      "mode": "both",
+      "chase": true,
+      "source": "Raid"
+    },
+    "expected": {
+      "5/5": true,
+      "godroll": true,
+      "omni": true,
+      "upgrade": true,
+      "god": true,
+      "bis": true,
+      "chase": true,
+      "shopping": true,
+      "shopping:high": false,
+      "shopping:ready": true,
+      "shopping:farm": false,
+      "shopping:alt": true,
+      "pve:>=a": false,
+      "pvp:>=s": true,
+      "s:raid": false,
+      "source:fall": true,
+      "w:s": true,
+      "weapon:>=a": true,
+      "p:>=a": true,
+      "perk:f": true,
+      "a": false,
+      ">=s": true,
+      "<a": true,
+      "==b": false,
+      "a:2p:a": false,
+      "armor:4piece:s": false,
+      "a/s": false,
+      "2p:>=a": false,
+      "4p:s": false
+    }
+  },
+  {
+    "name": "S | F/pve/false",
+    "data": {
+      "name": "Test",
+      "result": {
+        "grade": "S | F",
+        "isPerfect5of5": false,
+        "isOmniRoll": false,
+        "upgradeAvailable": false
+      },
+      "sheetWeapon": {
+        "tier": "B",
+        "source": "Raid"
+      },
+      "sheetWeaponPvE": {
+        "tier": "S",
+        "source": "King's Fall"
+      },
+      "sheetWeaponPvP": {
+        "tier": "A",
+        "source": "Crucible"
+      },
+      "shoppingItem": null,
+      "shoppingItemPvE": null,
+      "shoppingItemPvP": null,
+      "shoppingAlt": null,
+      "isBestInClass": false,
+      "isBestInClassPvE": false,
+      "isBestInClassPvP": false
+    },
+    "context": {
+      "mode": "pve",
+      "chase": true,
+      "source": "Raid"
+    },
+    "expected": {
+      "5/5": false,
+      "godroll": false,
+      "omni": false,
+      "upgrade": false,
+      "god": true,
+      "bis": false,
+      "chase": true,
+      "shopping": false,
+      "shopping:high": false,
+      "shopping:ready": false,
+      "shopping:farm": false,
+      "shopping:alt": false,
+      "pve:>=a": true,
+      "pvp:>=s": false,
+      "s:raid": false,
+      "source:fall": true,
+      "w:s": true,
+      "weapon:>=a": true,
+      "p:>=a": true,
+      "perk:f": true,
+      "a": false,
+      ">=s": true,
+      "<a": true,
+      "==b": false,
+      "a:2p:a": false,
+      "armor:4piece:s": false,
+      "a/s": false,
+      "2p:>=a": false,
+      "4p:s": false
+    }
+  },
+  {
+    "name": "S | F/pve/true",
+    "data": {
+      "name": "Test",
+      "result": {
+        "grade": "S | F",
+        "isPerfect5of5": true,
+        "isOmniRoll": true,
+        "upgradeAvailable": true
+      },
+      "sheetWeapon": {
+        "tier": "B",
+        "source": "Raid"
+      },
+      "sheetWeaponPvE": {
+        "tier": "S",
+        "source": "King's Fall"
+      },
+      "sheetWeaponPvP": {
+        "tier": "A",
+        "source": "Crucible"
+      },
+      "shoppingItem": {
+        "priority": "high"
+      },
+      "shoppingItemPvE": {
+        "priority": "medium"
+      },
+      "shoppingItemPvP": {
+        "priority": "high"
+      },
+      "shoppingAlt": {},
+      "isBestInClass": true,
+      "isBestInClassPvE": true,
+      "isBestInClassPvP": false
+    },
+    "context": {
+      "mode": "pve",
+      "chase": true,
+      "source": "Raid"
+    },
+    "expected": {
+      "5/5": true,
+      "godroll": true,
+      "omni": true,
+      "upgrade": true,
+      "god": true,
+      "bis": true,
+      "chase": true,
+      "shopping": true,
+      "shopping:high": false,
+      "shopping:ready": true,
+      "shopping:farm": false,
+      "shopping:alt": true,
+      "pve:>=a": true,
+      "pvp:>=s": false,
+      "s:raid": false,
+      "source:fall": true,
+      "w:s": true,
+      "weapon:>=a": true,
+      "p:>=a": true,
+      "perk:f": true,
+      "a": false,
+      ">=s": true,
+      "<a": true,
+      "==b": false,
+      "a:2p:a": false,
+      "armor:4piece:s": false,
+      "a/s": false,
+      "2p:>=a": false,
+      "4p:s": false
+    }
+  },
+  {
+    "name": "S | F/pvp/false",
+    "data": {
+      "name": "Test",
+      "result": {
+        "grade": "S | F",
+        "isPerfect5of5": false,
+        "isOmniRoll": false,
+        "upgradeAvailable": false
+      },
+      "sheetWeapon": {
+        "tier": "B",
+        "source": "Raid"
+      },
+      "sheetWeaponPvE": {
+        "tier": "S",
+        "source": "King's Fall"
+      },
+      "sheetWeaponPvP": {
+        "tier": "A",
+        "source": "Crucible"
+      },
+      "shoppingItem": null,
+      "shoppingItemPvE": null,
+      "shoppingItemPvP": null,
+      "shoppingAlt": null,
+      "isBestInClass": false,
+      "isBestInClassPvE": false,
+      "isBestInClassPvP": false
+    },
+    "context": {
+      "mode": "pvp",
+      "chase": true,
+      "source": "Raid"
+    },
+    "expected": {
+      "5/5": false,
+      "godroll": false,
+      "omni": false,
+      "upgrade": false,
+      "god": true,
+      "bis": false,
+      "chase": true,
+      "shopping": false,
+      "shopping:high": false,
+      "shopping:ready": false,
+      "shopping:farm": false,
+      "shopping:alt": false,
+      "pve:>=a": true,
+      "pvp:>=s": false,
+      "s:raid": false,
+      "source:fall": false,
+      "w:s": false,
+      "weapon:>=a": true,
+      "p:>=a": true,
+      "perk:f": true,
+      "a": false,
+      ">=s": true,
+      "<a": true,
+      "==b": false,
+      "a:2p:a": false,
+      "armor:4piece:s": false,
+      "a/s": false,
+      "2p:>=a": false,
+      "4p:s": false
+    }
+  },
+  {
+    "name": "S | F/pvp/true",
+    "data": {
+      "name": "Test",
+      "result": {
+        "grade": "S | F",
+        "isPerfect5of5": true,
+        "isOmniRoll": true,
+        "upgradeAvailable": true
+      },
+      "sheetWeapon": {
+        "tier": "B",
+        "source": "Raid"
+      },
+      "sheetWeaponPvE": {
+        "tier": "S",
+        "source": "King's Fall"
+      },
+      "sheetWeaponPvP": {
+        "tier": "A",
+        "source": "Crucible"
+      },
+      "shoppingItem": {
+        "priority": "high"
+      },
+      "shoppingItemPvE": {
+        "priority": "medium"
+      },
+      "shoppingItemPvP": {
+        "priority": "high"
+      },
+      "shoppingAlt": {},
+      "isBestInClass": true,
+      "isBestInClassPvE": true,
+      "isBestInClassPvP": false
+    },
+    "context": {
+      "mode": "pvp",
+      "chase": true,
+      "source": "Raid"
+    },
+    "expected": {
+      "5/5": true,
+      "godroll": true,
+      "omni": true,
+      "upgrade": true,
+      "god": true,
+      "bis": false,
+      "chase": true,
+      "shopping": true,
+      "shopping:high": true,
+      "shopping:ready": true,
+      "shopping:farm": false,
+      "shopping:alt": false,
+      "pve:>=a": true,
+      "pvp:>=s": false,
+      "s:raid": false,
+      "source:fall": false,
+      "w:s": false,
+      "weapon:>=a": true,
+      "p:>=a": true,
+      "perk:f": true,
+      "a": false,
+      ">=s": true,
+      "<a": true,
+      "==b": false,
+      "a:2p:a": false,
+      "armor:4piece:s": false,
+      "a/s": false,
+      "2p:>=a": false,
+      "4p:s": false
+    }
+  },
+  {
+    "name": "S | F/both/false",
+    "data": {
+      "name": "Test",
+      "result": {
+        "grade": "S | F",
+        "isPerfect5of5": false,
+        "isOmniRoll": false,
+        "upgradeAvailable": false
+      },
+      "sheetWeapon": {
+        "tier": "B",
+        "source": "Raid"
+      },
+      "sheetWeaponPvE": {
+        "tier": "S",
+        "source": "King's Fall"
+      },
+      "sheetWeaponPvP": {
+        "tier": "A",
+        "source": "Crucible"
+      },
+      "shoppingItem": null,
+      "shoppingItemPvE": null,
+      "shoppingItemPvP": null,
+      "shoppingAlt": null,
+      "isBestInClass": false,
+      "isBestInClassPvE": false,
+      "isBestInClassPvP": false
+    },
+    "context": {
+      "mode": "both",
+      "chase": true,
+      "source": "Raid"
+    },
+    "expected": {
+      "5/5": false,
+      "godroll": false,
+      "omni": false,
+      "upgrade": false,
+      "god": true,
+      "bis": false,
+      "chase": true,
+      "shopping": false,
+      "shopping:high": false,
+      "shopping:ready": false,
+      "shopping:farm": false,
+      "shopping:alt": false,
+      "pve:>=a": true,
+      "pvp:>=s": false,
+      "s:raid": false,
+      "source:fall": true,
+      "w:s": true,
+      "weapon:>=a": true,
+      "p:>=a": true,
+      "perk:f": true,
+      "a": false,
+      ">=s": true,
+      "<a": true,
+      "==b": false,
+      "a:2p:a": false,
+      "armor:4piece:s": false,
+      "a/s": false,
+      "2p:>=a": false,
+      "4p:s": false
+    }
+  },
+  {
+    "name": "S | F/both/true",
+    "data": {
+      "name": "Test",
+      "result": {
+        "grade": "S | F",
+        "isPerfect5of5": true,
+        "isOmniRoll": true,
+        "upgradeAvailable": true
+      },
+      "sheetWeapon": {
+        "tier": "B",
+        "source": "Raid"
+      },
+      "sheetWeaponPvE": {
+        "tier": "S",
+        "source": "King's Fall"
+      },
+      "sheetWeaponPvP": {
+        "tier": "A",
+        "source": "Crucible"
+      },
+      "shoppingItem": {
+        "priority": "high"
+      },
+      "shoppingItemPvE": {
+        "priority": "medium"
+      },
+      "shoppingItemPvP": {
+        "priority": "high"
+      },
+      "shoppingAlt": {},
+      "isBestInClass": true,
+      "isBestInClassPvE": true,
+      "isBestInClassPvP": false
+    },
+    "context": {
+      "mode": "both",
+      "chase": true,
+      "source": "Raid"
+    },
+    "expected": {
+      "5/5": true,
+      "godroll": true,
+      "omni": true,
+      "upgrade": true,
+      "god": true,
+      "bis": true,
+      "chase": true,
+      "shopping": true,
+      "shopping:high": false,
+      "shopping:ready": true,
+      "shopping:farm": false,
+      "shopping:alt": true,
+      "pve:>=a": true,
+      "pvp:>=s": false,
+      "s:raid": false,
+      "source:fall": true,
+      "w:s": true,
+      "weapon:>=a": true,
+      "p:>=a": true,
+      "perk:f": true,
+      "a": false,
+      ">=s": true,
+      "<a": true,
+      "==b": false,
+      "a:2p:a": false,
+      "armor:4piece:s": false,
+      "a/s": false,
+      "2p:>=a": false,
+      "4p:s": false
+    }
+  }
+]
