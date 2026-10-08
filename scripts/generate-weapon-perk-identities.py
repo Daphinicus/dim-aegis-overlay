@@ -51,6 +51,7 @@ for normal_hash, enhanced_hash in links.items():
     if normal_family == enhanced_family == "trait":
         enhanced_to_normal[int(enhanced_hash)] = int(normal_hash)
 
+verified_normal_hashes = set(enhanced_to_normal.values())
 hashes = {}
 resolved = {}
 for key, groups in sorted(names.items()):
@@ -59,10 +60,23 @@ for key, groups in sorted(names.items()):
         normal = [candidate for candidate in candidates
                   if "Enhanced" not in candidate.get("itemTypeDisplayName", "")] or candidates
         # Retain a valid canonical normal definition; choose deterministically otherwise.
-        preferred = next(
+        preferred_definition = next(
             (candidate for candidate in normal if candidate["hash"] == canonical.get(key)),
             min(normal, key=lambda candidate: candidate["hash"]),
-        )["hash"]
+        )
+        # A score's historical canonical hash can have a retired presentation.
+        # Use the unique verified normal endpoint when its glyph differs. The
+        # relationship is established by exact trait-family definitions and DIM
+        # links; icons only determine whether presentation needs updating.
+        # Same-glyph representatives keep their existing stable identities.
+        linked_normal = [candidate for candidate in normal
+                         if candidate["hash"] in verified_normal_hashes]
+        if category == "trait" and len(linked_normal) == 1:
+            linked_icon = linked_normal[0].get("displayProperties", {}).get("icon")
+            preferred_icon = preferred_definition.get("displayProperties", {}).get("icon")
+            if linked_icon and preferred_icon and linked_icon != preferred_icon:
+                preferred_definition = linked_normal[0]
+        preferred = preferred_definition["hash"]
         resolved[key][category] = preferred
         for definition in candidates:
             hashes[definition["hash"]] = [category, preferred]

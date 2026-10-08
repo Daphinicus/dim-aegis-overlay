@@ -1,0 +1,257 @@
+{
+  "manifestVersion": "244213.26.06.29.2000-1-bnet.65864",
+  "source": "Bungie DestinyInventoryItemDefinition English manifest; exact hash projections from cached public manifest.local.json. Enhancement relationships verified against data/trait-to-enhanced-trait.json (DIM src/data/d2/trait-to-enhanced-trait.ts).",
+  "definitions": {
+    "1561789734": {
+      "hash": 1561789734,
+      "displayProperties": {
+        "description": "Precision kills with this weapon increase reload speed and cause the target to explode, dealing Solar damage to nearby enemies.",
+        "name": "Firefly",
+        "icon": "/common/destiny2_content/icons/27f84cef4d4ab2aa73fa5692792831e2.png",
+        "iconHash": 4118395513,
+        "iconSequences": [
+          {
+            "frames": [
+              "/common/destiny2_content/icons/27f84cef4d4ab2aa73fa5692792831e2.png"
+            ]
+          },
+          {
+            "frames": [
+              "/common/destiny2_content/icons/46bea3b0700a609d408097f75c0b9faf.png"
+            ]
+          }
+        ],
+        "hasIcon": true
+      },
+      "itemTypeDisplayName": "Trait",
+      "plug": {
+        "insertionRules": [],
+        "plugCategoryIdentifier": "frames",
+        "plugCategoryHash": 7906839,
+        "onActionRecreateSelf": false,
+        "actionRewardSiteHash": 0,
+        "actionRewardItemOverrideHash": 0,
+        "insertionMaterialRequirementHash": 0,
+        "previewItemOverrideHash": 0,
+        "enabledMaterialRequirementHash": 0,
+        "enabledRules": [],
+        "uiPlugLabel": "",
+        "plugStyle": 0,
+        "plugAvailability": 0,
+        "alternateUiPlugLabel": "",
+        "alternatePlugStyle": 0,
+        "isDummyPlug": false,
+        "parentItemOverride": {
+          "additionalEquipRequirementsDisplayStrings": []
+        },
+        "applyStatsToSocketOwnerItem": false
+      },
+      "perks": [
+        {
+          "requirementDisplayString": "",
+          "perkHash": 4024064276,
+          "perkVisibility": 0
+        }
+      ]
+    },
+    "3824105627": {
+      "hash": 3824105627,
+      "displayProperties": {
+        "description": "Precision kills with this weapon increase reload speed and cause the target to explode, dealing Solar damage to nearby enemies.",
+        "name": "Firefly",
+        "icon": "/common/destiny2_content/icons/629e225e6f8214326bc1eb0a911a6f6d.png",
+        "iconHash": 3824105627,
+        "hasIcon": true
+      },
+      "itemTypeDisplayName": "Trait",
+      "plug": {
+        "insertionRules": [],
+        "plugCategoryIdentifier": "frames",
+        "plugCategoryHash": 7906839,
+        "onActionRecreateSelf": false,
+        "actionRewardSiteHash": 0,
+        "actionRewardItemOverrideHash": 0,
+        "insertionMaterialRequirementHash": 0,
+        "previewItemOverrideHash": 0,
+        "enabledMaterialRequirementHash": 0,
+        "enabledRules": [],
+        "uiPlugLabel": "",
+        "plugStyle": 0,
+        "plugAvailability": 0,
+        "alternateUiPlugLabel": "",
+        "alternatePlugStyle": 0,
+        "isDummyPlug": false,
+        "parentItemOverride": {
+          "additionalEquipRequirementsDisplayStrings": []
+        },
+        "applyStatsToSocketOwnerItem": false
+      },
+      "perks": [
+        {
+          "requirementDisplayString": "",
+          "perkHash": 890589507,
+          "perkVisibility": 0
+        }
+      ]
+    },
+    "1183436451": {
+      "hash": 1183436451,
+      "displayProperties": {
+        "description": "Precision final blows with this weapon substantially increase reload speed and cause the target to explode, dealing Solar damage to nearby targets.",
+        "name": "Firefly",
+        "icon": "/common/destiny2_content/icons/629e225e6f8214326bc1eb0a911a6f6d.png",
+        "iconHash": 3824105627,
+        "hasIcon": true
+      },
+      "itemTypeDisplayName": "Enhanced Trait",
+      "plug": {
+        "insertionRules": [],
+        "plugCategoryIdentifier": "frames",
+        "plugCategoryHash": 7906839,
+        "onActionRecreateSelf": false,
+        "actionRewardSiteHash": 0,
+        "actionRewardItemOverrideHash": 0,
+        "insertionMaterialRequirementHash": 0,
+        "previewItemOverrideHash": 0,
+        "enabledMaterialRequirementHash": 0,
+        "enabledRules": [],
+        "uiPlugLabel": "",
+        "plugStyle": 0,
+        "plugAvailability": 0,
+        "alternateUiPlugLabel": "",
+        "alternatePlugStyle": 0,
+        "isDummyPlug": false,
+        "parentItemOverride": {
+          "additionalEquipRequirementsDisplayStrings": []
+        },
+        "applyStatsToSocketOwnerItem": false
+      },
+      "perks": [
+        {
+          "requirementDisplayString": "",
+          "perkHash": 789688067,
+          "perkVisibility": 2
+        }
+      ]
+    },
+    "2054520291": {
+      "hash": 2054520291,
+      "displayProperties": {
+        "description": "Reloading after a precision final blow causes precision hits to refill a round from reserves.",
+        "name": "Lucky Shot",
+        "icon": "/common/destiny2_content/icons/05ff3c3914a333ff12abdea5782ceed9.png",
+        "iconHash": 2054520291,
+        "iconSequences": [
+          {
+            "frames": [
+              "/common/destiny2_content/icons/05ff3c3914a333ff12abdea5782ceed9.png"
+            ]
+          },
+          {
+            "frames": [
+              "/common/destiny2_content/icons/f00e2bdf1b848a7c02fcb5d89f5327ba.png"
+            ]
+          }
+        ],
+        "hasIcon": true
+      },
+      "itemTypeDisplayName": "Trait",
+      "plug": {
+        "insertionRules": [],
+        "plugCategoryIdentifier": "frames",
+        "plugCategoryHash": 7906839,
+        "onActionRecreateSelf": false,
+        "actionRewardSiteHash": 0,
+        "actionRewardItemOverrideHash": 0,
+        "insertionMaterialRequirementHash": 0,
+        "previewItemOverrideHash": 0,
+        "enabledMaterialRequirementHash": 0,
+        "enabledRules": [],
+        "uiPlugLabel": "",
+        "plugStyle": 0,
+        "plugAvailability": 0,
+        "alternateUiPlugLabel": "",
+        "alternatePlugStyle": 0,
+        "isDummyPlug": false,
+        "parentItemOverride": {
+          "additionalEquipRequirementsDisplayStrings": []
+        },
+        "applyStatsToSocketOwnerItem": false
+      },
+      "perks": [
+        {
+          "requirementDisplayString": "",
+          "perkHash": 2060965435,
+          "perkVisibility": 0
+        },
+        {
+          "requirementDisplayString": "",
+          "perkHash": 3263341634,
+          "perkVisibility": 0
+        }
+      ]
+    },
+    "4170193963": {
+      "hash": 4170193963,
+      "displayProperties": {
+        "description": "Reloading after a precision final blow causes precision hits to refill a round from reserves for an improved duration.",
+        "name": "Lucky Shot",
+        "icon": "/common/destiny2_content/icons/05ff3c3914a333ff12abdea5782ceed9.png",
+        "iconHash": 2054520291,
+        "iconSequences": [
+          {
+            "frames": [
+              "/common/destiny2_content/icons/05ff3c3914a333ff12abdea5782ceed9.png"
+            ]
+          },
+          {
+            "frames": [
+              "/common/destiny2_content/icons/f00e2bdf1b848a7c02fcb5d89f5327ba.png"
+            ]
+          }
+        ],
+        "hasIcon": true
+      },
+      "itemTypeDisplayName": "Enhanced Trait",
+      "plug": {
+        "insertionRules": [],
+        "plugCategoryIdentifier": "frames",
+        "plugCategoryHash": 7906839,
+        "onActionRecreateSelf": false,
+        "actionRewardSiteHash": 0,
+        "actionRewardItemOverrideHash": 0,
+        "insertionMaterialRequirementHash": 0,
+        "previewItemOverrideHash": 0,
+        "enabledMaterialRequirementHash": 0,
+        "enabledRules": [],
+        "uiPlugLabel": "",
+        "plugStyle": 0,
+        "plugAvailability": 0,
+        "alternateUiPlugLabel": "",
+        "alternatePlugStyle": 0,
+        "isDummyPlug": false,
+        "parentItemOverride": {
+          "additionalEquipRequirementsDisplayStrings": []
+        },
+        "applyStatsToSocketOwnerItem": false
+      },
+      "perks": [
+        {
+          "requirementDisplayString": "",
+          "perkHash": 2939032683,
+          "perkVisibility": 2
+        },
+        {
+          "requirementDisplayString": "",
+          "perkHash": 3263341634,
+          "perkVisibility": 0
+        },
+        {
+          "requirementDisplayString": "",
+          "perkHash": 2060965435,
+          "perkVisibility": 2
+        }
+      ]
+    }
+  }
+}
