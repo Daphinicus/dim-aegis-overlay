@@ -2,13 +2,25 @@ import { build } from 'vite';
 import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
+import { inventory, requireAsset, recordBuild } from './package-assets.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(__dirname, '..');
 const distDir = path.join(root, 'dist');
+const publicInputs = await inventory(path.join(root, 'public'));
+for (const asset of ['manifest.json','manifest.firefox.json','popup.html','styles.css','compact-options.css','third-party-notices.txt','licenses/floating-ui.txt']) {
+  requireAsset(publicInputs, asset, 'Aegis release input');
+}
+const dataInputs = await inventory(path.join(root, 'data'));
+const requiredData = ['manifest-weapons.json','score-origin-benchmarks.json','locales/ko.json'];
+for (const asset of requiredData) {
+  requireAsset(dataInputs, asset, 'Aegis release input');
+  JSON.parse(fs.readFileSync(path.join(root, 'data', asset), 'utf8'));
+}
 
 // Clean dist dir
 if (fs.existsSync(distDir)) {
+  if (path.dirname(distDir) !== root || path.basename(distDir) !== 'dist') throw new Error('Unsafe build output path.');
   fs.rmSync(distDir, { recursive: true, force: true });
 }
 fs.mkdirSync(distDir, { recursive: true });
@@ -70,3 +82,5 @@ for (const [name, entryPath] of Object.entries(entries)) {
 }
 
 console.log('✅ All bundles built successfully without chunks!\n');
+
+await recordBuild(root, distDir, [...requiredData.map(file => "data/" + file),"compact-options.css","third-party-notices.txt","licenses/floating-ui.txt"]);
