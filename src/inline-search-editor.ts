@@ -493,7 +493,7 @@ export function attachInlineSearchEditor(input: HTMLInputElement, validTerm = is
   return Object.assign(dispose, { setMode });
 }
 
-export function initInlineSearchEditor(): void {
+export function initInlineSearchEditor(): () => void {
   const host = window as Window & { __aegisInlineSearchDispose?: () => void };
   host.__aegisInlineSearchDispose?.();
   let input: HTMLInputElement | null = null, stop: ReturnType<typeof attachInlineSearchEditor> | undefined;
@@ -508,5 +508,10 @@ export function initInlineSearchEditor(): void {
   const observer = new MutationObserver(mount);
   observer.observe(document.documentElement, { childList: true, subtree: true, attributes: true, attributeFilter: [SEARCH_DISPLAY_ATTRIBUTE] });
   mount();
-  host.__aegisInlineSearchDispose = () => { observer.disconnect(); stop?.(); };
+  const dispose = () => {
+    observer.disconnect(); stop?.();
+    if (host.__aegisInlineSearchDispose === dispose) delete host.__aegisInlineSearchDispose;
+  };
+  host.__aegisInlineSearchDispose = dispose;
+  return dispose;
 }

@@ -33,6 +33,7 @@ import { showTooltip, hideTooltip, extractRecommendedMasterwork, getRecommendedM
 import { installInventoryPreview, inventoryPreviewManaged, type InventoryPreviewLayout } from './inventory-preview';
 import { masterworkMatches } from './masterwork';
 import { initLanguage, t, getCurrentLanguage, getLocalizedElement, getLocalizedFrame, getLocalizedCategory, getLocalizedArchetypeLabel, getLocalizedRole } from './i18n';
+import { publishLanguage } from './language-bridge';
 import { updateLocalizedRegistries, resetRequestedNames, getLocalizedPerkName, getLocalizedWeaponName, getLocalizedStatName, getPerkIcon, getPerkHashFromEnglish, getEnglishWeaponNameFromHash, getEnglishPerkNameFromHash } from './hash-translator';
 import { applyEvaluationLocale, EvaluationLocaleBundle, getOriginalEvaluationText, getLocalizedSource, getLocalizedSourceText } from './evaluation-i18n';
 import { renderLocalizedName, refreshLocalizedNames } from './localized-display';
@@ -3971,7 +3972,7 @@ const activityModeProvider = IS_WINNOWER_HOST ? undefined : installActivityModeP
 });
 
 chrome.storage.local.get([...SCORE_SETTING_KEYS,'wishlistData', 'enhancedToNormal', 'scoringSource', 'lightggData', 'aegisSheetDb', 'aegisSheetDbPvE', 'aegisSheetDbPvP', 'aegisShoppingDb', 'aegisShoppingDbPvE', 'aegisShoppingDbPvP', 'perkRegistry', 'aegisLayoutSide', 'aegisPerkOrder', 'aegisDbMode', 'aegisMode', 'aegisTwoTier', 'aegisTwoTierColors', 'aegisBadgeColor', 'aegisMaxTierGlow', 'aegisTileGlow', 'aegisBadgePosition', 'aegisBadgeStyle', 'aegisStatGradeMode', 'aegisStatGradeBasis', 'aegisUpgradeStyle', 'aegisShowPerfectStar', 'aegisShowOmniStar', 'aegisBadgeScale', 'aegisBadgeSize', 'aegisBadgeVisibility', 'aegisFadeHover', 'aegisGradeDisplayMode', 'aegisHoverEnabled', 'aegisCompactPerksMatrix', 'aegisPopupSummaryMode', 'aegisArmoryEnabled', 'aegisAutoMaxHeight', 'aegisTooltipWidthMode', 'aegisTooltipWidth', 'aegisArmorSource', 'aegisCompletedWeapons', 'aegisChaseList', 'aegisWelcomeDismissed', 'aegisLanguage', 'aegisGradeSettings', 'aegisGradeColors'], (res) => {
-  initLanguage(res.aegisLanguage);
+  publishLanguage(initLanguage(res.aegisLanguage));
   scoreSettings = readScoreSettings(res);
   setScorePercentVisibility(scoreSettings.aegisScoreShowPercent);
   storedGradeSettings = res.aegisGradeSettings;
@@ -4107,7 +4108,7 @@ chrome.storage.onChanged.addListener((changes, namespace) => {
     let forceEvaluationLocaleRefresh = false;
     if (changes.aegisLanguage) {
       resetRequestedNames();
-      initLanguage(changes.aegisLanguage.newValue);
+      publishLanguage(initLanguage(changes.aegisLanguage.newValue));
       const existingPanel = document.querySelector('.aegis-explorer-panel');
       const existingFab = document.querySelector('.aegis-fab');
       if (existingPanel) existingPanel.remove();

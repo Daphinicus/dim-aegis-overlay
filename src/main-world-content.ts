@@ -1,5 +1,6 @@
 import { initDimSearch } from './dim-search-adapter';
 import { initInlineSearchEditor } from './inline-search-editor';
+import { initLanguageBridge } from './language-bridge';
 import { interceptDimPopupModules } from './native-popup-positioning';
 import { readDimMasterwork, readDimPerks, type PerkInfo } from './dim-item-input';
 import { createItemQueue } from './item-queue';
@@ -1775,4 +1776,4 @@ function startObserver() {
 startObserver();
 
 initDimSearch();
-initInlineSearchEditor();
+initLanguageBridge(initInlineSearchEditor);
