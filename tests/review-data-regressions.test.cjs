@@ -25,7 +25,7 @@ const oldPve = { weapons: { old: { name: 'Old' } }, categories: { Autos: [{ name
 const oldPvp = { weapons: { pvp: { name: 'PvP' } }, categories: { Autos: [{ name: 'PvP' }] } };
 async function refresh(pve, pvp, shopping = null) {
     const state = { aegisSheetDbPvE: oldPve, aegisSheetDbPvP: oldPvp, aegisSheetDb: oldPve, aegisShoppingDbPvE: { items: [{ name: 'Old shopping' }] }, aegisSheetLastSync: 123 };
-    const context = { console, Date, Promise, Object, PVE_DB_CDN_URL: 'pve', PVP_DB_CDN_URL: 'pvp', SHEET_ID: 'pve', PVP_SHEET_ID: 'pvp', ALL_TABS: [], fetchAndCachePerkRatings: async () => { }, fetchWithTimeout: async () => ({ ok: false }), fetchSpreadsheetDatabase: async (id) => id === 'pve' ? pve : pvp, fetchShoppingListDatabase: async () => shopping, chrome: { storage: { local: { get: async () => ({ ...state }), set: async (patch) => Object.assign(state, patch) } } } };
+    const context = { sheetSync: undefined, sheetFailureMessage: load('sync-feedback.ts').exports.sheetFailureMessage, console, Date, Promise, Object, PVE_DB_CDN_URL: 'pve', PVP_DB_CDN_URL: 'pvp', SHEET_ID: 'pve', PVP_SHEET_ID: 'pvp', ALL_TABS: [], fetchAndCachePerkRatings: async () => { }, fetchWithTimeout: async () => ({ ok: false }), fetchSpreadsheetDatabase: async (id) => id === 'pve' ? pve : pvp, fetchShoppingListDatabase: async () => shopping, chrome: { storage: { local: { get: async () => ({ ...state }), set: async (patch) => Object.assign(state, patch) } } } };
     vm.runInNewContext(transpile(fn('background.ts', 'fetchAndCacheAegisSheet')), context);
     const result = await context.fetchAndCacheAegisSheet();
     return { state, result };
@@ -287,7 +287,7 @@ async function refresh(pve, pvp, shopping = null) {
         const pve = { weapons: { pve: { name: 'PvE weapon' } }, categories: {}, shopping: pveShopping };
         const pvp = { weapons: { pvp: { name: 'PvP weapon' } }, categories: {}, shopping: pvpShopping };
         const state = { aegisMode: 'pve', aegisSheetDbPvE: oldPve, aegisSheetDbPvP: oldPvp, aegisSheetDb: oldPve };
-        const context = { console, Date, Promise, Object, PVE_DB_CDN_URL: 'pve', PVP_DB_CDN_URL: 'pvp', SHEET_ID: 'pve', PVP_SHEET_ID: 'pvp', ALL_TABS: [], fetchAndCachePerkRatings: async () => {}, fetchWithTimeout: async url => { began(); await barrier; return { ok: true, json: async () => url === 'pve' ? pve : pvp }; }, fetchSpreadsheetDatabase: async () => { throw Error('Unexpected direct fallback'); }, fetchShoppingListDatabase: async () => { throw Error('Unexpected shopping fallback'); }, chrome: { storage: { local: { get: async () => ({ ...state }), set: async patch => Object.assign(state, patch) } } } };
+        const context = { sheetSync: undefined, sheetFailureMessage: load('sync-feedback.ts').exports.sheetFailureMessage, console, Date, Promise, Object, PVE_DB_CDN_URL: 'pve', PVP_DB_CDN_URL: 'pvp', SHEET_ID: 'pve', PVP_SHEET_ID: 'pvp', ALL_TABS: [], fetchAndCachePerkRatings: async () => {}, fetchWithTimeout: async url => { began(); await barrier; return { ok: true, json: async () => url === 'pve' ? pve : pvp }; }, fetchSpreadsheetDatabase: async () => { throw Error('Unexpected direct fallback'); }, fetchShoppingListDatabase: async () => { throw Error('Unexpected shopping fallback'); }, chrome: { storage: { local: { get: async () => ({ ...state }), set: async patch => Object.assign(state, patch) } } } };
         vm.runInNewContext(transpile(fn('background.ts', 'fetchAndCacheAegisSheet')), context);
         const refresh = context.fetchAndCacheAegisSheet();
         await started;

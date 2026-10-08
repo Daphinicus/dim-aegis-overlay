@@ -87,6 +87,8 @@ export interface LocalStorageSchema extends Partial<ScoreSettings> {
   aegisCompareRecommendations?: boolean;
   aegisOverviewRecommendations?: boolean;
   aegisRecommendationLayout?: 'grid' | 'list';
+  aegisSheetSyncStatus?: 'loading' | 'success' | 'partial' | 'error';
+  aegisSheetSyncError?: string | null;
   aegisSheetLastSync?: number;
   aegisChaseList?: Record<string, AegisChaseItem>;
 }

@@ -1,3 +1,4 @@
+import { sheetFailureMessage } from './sync-feedback';
 import { normalizeLightggData } from './external-text';
 import { scoreRowMetadata } from '../scripts/score-sync.mjs';
 import { parseWishlist } from './parser';
@@ -639,9 +640,14 @@ function fetchAndCachePerkRatings(force = false): Promise<void> {
   return perkRatingsSync;
 }
 
+let sheetSync: Promise<{ success: boolean; partial?: boolean; error?: string }> | undefined;
+
 async function fetchAndCacheAegisSheet(): Promise<{ success: boolean; partial?: boolean; error?: string }> {
-  await fetchAndCachePerkRatings(true);
+  if (sheetSync) return sheetSync;
+  sheetSync = (async () => {
   try {
+    await chrome.storage.local.set({ aegisSheetSyncStatus: 'loading', aegisSheetSyncError: null });
+    await fetchAndCachePerkRatings(true);
     const validSheet = (value: any): value is AegisSheetDatabase => !!value && typeof value.weapons === 'object' && !Array.isArray(value.weapons)
       && Object.keys(value.weapons).length > 0 && Object.values(value.weapons).every((weapon: any) => typeof weapon?.name === 'string' && weapon.name.trim())
       && !!value.categories && typeof value.categories === 'object' && !Array.isArray(value.categories)
@@ -695,14 +701,19 @@ async function fetchAndCacheAegisSheet(): Promise<{ success: boolean; partial?: 
     const failed = [!pve.sheet && 'PvE weapons', !pvp.sheet && 'PvP weapons', !pve.shopping && 'PvE shopping', !pvp.shopping && 'PvP shopping'].filter(Boolean);
     const success = failed.length === 0;
     if (success) updates.aegisSheetLastSync = Date.now();
-    const error = success ? null : `Failed to refresh ${failed.join(' and ')}; retained last good caches`;
+    const error = success ? null : sheetFailureMessage(failed, merged);
     updates.aegisSheetSyncStatus = success ? 'success' : pve.sheet || pvp.sheet || pve.shopping || pvp.shopping ? 'partial' : 'error';
     updates.aegisSheetSyncError = error;
     await chrome.storage.local.set(updates);
     return success ? { success: true } : { success: false, partial: !!pve.sheet || !!pvp.sheet || !!pve.shopping || !!pvp.shopping, error: error! };
   } catch (err: unknown) {
-    return { success: false, error: err instanceof Error ? err.message : String(err) };
+    const error = err instanceof Error ? err.message : String(err);
+    await chrome.storage.local.set({ aegisSheetSyncStatus: 'error', aegisSheetSyncError: error });
+    return { success: false, error };
   }
+  })();
+  try { return await sheetSync; }
+  finally { sheetSync = undefined; }
 }
 
 async function syncAllData(url?: string): Promise<{ success: boolean; count?: number; error?: string }> {
@@ -881,6 +892,13 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
       .then((res) => sendResponse(res))
       .catch((err) => sendResponse({ success: false, error: err.message }));
     return true; // Keep message channel open for async sendResponse
+  }
+
+  if (message.action === 'getSpreadsheetsSyncState') {
+    chrome.storage.local.get(['aegisSheetSyncStatus', 'aegisSheetSyncError', 'aegisSheetLastSync']).then(data => {
+      sendResponse({ ...data, inFlight: !!sheetSync, interrupted: !sheetSync && data.aegisSheetSyncStatus === 'loading' });
+    }).catch(() => sendResponse({ inFlight: !!sheetSync }));
+    return true;
   }
 
   if (message.action === 'syncSpreadsheets') {

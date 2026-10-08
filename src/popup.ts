@@ -1,3 +1,4 @@
+import { sheetSyncFeedback, type SheetSyncStatus } from './sync-feedback';
 import { initLanguageCombobox, initChangelogModal } from './popup-accessibility';
 import { refreshOptionDescriptions } from './compact-options';
 import { resolveActivityMode } from './activity-mode';
@@ -42,8 +43,30 @@ document.addEventListener('DOMContentLoaded', () => {
   const lightggSyncStatusRow = document.getElementById('lightgg-sync-status-row') as HTMLDivElement;
   const lightggSyncStatusText = document.getElementById('lightgg-sync-status-text') as HTMLSpanElement;
 
+  const sheetsSyncStatusRow = document.getElementById('sheets-sync-status-row') as HTMLDivElement;
+  const sheetsSyncStatusText = document.getElementById('sheets-sync-status-text') as HTMLSpanElement;
+  const syncSheetsBtn = document.getElementById('sync-sheets-button') as HTMLButtonElement;
+  let sheetFeedbackGeneration = 0;
+  let manualSheetSyncGeneration = 0;
+  function renderSheetSyncStatus(data: { aegisSheetSyncStatus?: SheetSyncStatus; aegisSheetSyncError?: string | null; aegisSheetLastSync?: number }, inFlight = false) {
+    const feedback = sheetSyncFeedback(data);
+    if (sheetsSyncStatusRow) sheetsSyncStatusRow.style.display = 'block';
+    if (sheetsSyncStatusText) {
+      const message = t(feedback.key, { error: feedback.error || t('syncUnknownError') });
+      if (sheetsSyncStatusText.textContent !== message) sheetsSyncStatusText.textContent = message;
+      sheetsSyncStatusText.style.color = feedback.status === 'error' ? '#f44336' : feedback.status === 'partial' || feedback.loading ? '#ffb300' : feedback.status === 'success' ? '#4caf50' : '';
+    }
+    if (syncSheetsBtn) {
+      syncSheetsBtn.disabled = feedback.loading && inFlight;
+      syncSheetsBtn.querySelector('.spinner')?.classList.toggle('hidden', !feedback.loading);
+      const label = syncSheetsBtn.querySelector('.btn-text');
+      if (label) label.textContent = t(feedback.loading ? 'resyncing' : 'resyncSpreadsheets');
+    }
+  }
+
   // Function to refresh UI from storage
   function updateUI() {
+    const syncGeneration = ++sheetFeedbackGeneration;
     chrome.storage.local.get(
       [
         'aegisGradeSettings',
@@ -53,6 +76,9 @@ document.addEventListener('DOMContentLoaded', () => {
         'parsedCount',
         'syncStatus',
         'syncError',
+        'aegisSheetSyncStatus',
+        'aegisSheetSyncError',
+        'aegisSheetLastSync',
         'scoringSource',
         'lightggData',
         'lightggLastSync',
@@ -549,16 +575,26 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // Update status text and classes
-        const status = res.syncStatus || 'success';
+        if (syncGeneration === sheetFeedbackGeneration && res.aegisSheetSyncStatus === 'loading') {
+          chrome.runtime.sendMessage({ action: 'getSpreadsheetsSyncState' }, state => {
+            const unavailable = chrome.runtime.lastError?.message;
+            if (syncGeneration !== sheetFeedbackGeneration) return;
+            if (unavailable || state?.interrupted) {
+              renderSheetSyncStatus({ aegisSheetSyncStatus: 'error', aegisSheetSyncError: t('syncInterrupted') });
+            } else if (state) renderSheetSyncStatus(state, state.inFlight);
+            else renderSheetSyncStatus({ aegisSheetSyncStatus: 'error', aegisSheetSyncError: t('syncInterrupted') });
+          });
+        } else if (syncGeneration === sheetFeedbackGeneration) renderSheetSyncStatus(res);
+        const status = res.syncStatus || (res.lastUpdated ? 'success' : 'idle');
         syncStatus.className = 'status-value';
         errorContainer.classList.add('hidden');
 
         if (status === 'loading') {
-          syncStatus.textContent = 'Syncing...';
+          syncStatus.textContent = t('resyncing');
           syncStatus.classList.add('status-loading');
           setLoadingState(true);
         } else if (status === 'error') {
-          syncStatus.textContent = 'Failed';
+          syncStatus.textContent = t('syncFailedLabel');
           syncStatus.classList.add('status-error');
           setLoadingState(false);
 
@@ -566,8 +602,11 @@ document.addEventListener('DOMContentLoaded', () => {
             errorMessage.textContent = res.syncError;
             errorContainer.classList.remove('hidden');
           }
+        } else if (status === 'idle') {
+          syncStatus.textContent = t('syncNotYet');
+          setLoadingState(false);
         } else {
-          syncStatus.textContent = 'Synced';
+          syncStatus.textContent = t('syncDoneLabel');
           syncStatus.classList.add('status-success');
           setLoadingState(false);
         }
@@ -1035,42 +1074,19 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  const sheetsSyncStatusRow = document.getElementById('sheets-sync-status-row') as HTMLDivElement;
-  const sheetsSyncStatusText = document.getElementById('sheets-sync-status-text') as HTMLSpanElement;
-
-  // Sync spreadsheets button event listener
-  const syncSheetsBtn = document.getElementById('sync-sheets-button') as HTMLButtonElement;
+  // Background storage is authoritative for automatic sync, reopen and retries.
   if (syncSheetsBtn) {
     syncSheetsBtn.addEventListener('click', () => {
-      syncSheetsBtn.disabled = true;
-      syncSheetsBtn.querySelector('.spinner')?.classList.remove('hidden');
-      const textEl = syncSheetsBtn.querySelector('.btn-text');
-      if (textEl) textEl.textContent = 'Syncing...';
-
-      if (sheetsSyncStatusRow) sheetsSyncStatusRow.style.display = 'block';
-      if (sheetsSyncStatusText) {
-        sheetsSyncStatusText.textContent = '⏳ Syncing spreadsheets...';
-        sheetsSyncStatusText.style.color = '#ffb300';
-      }
-
+      ++sheetFeedbackGeneration;
+      const manualGeneration = ++manualSheetSyncGeneration;
+      renderSheetSyncStatus({ aegisSheetSyncStatus: 'loading' }, true);
       chrome.runtime.sendMessage({ action: 'syncSpreadsheets' }, (response) => {
-        syncSheetsBtn.disabled = false;
-        syncSheetsBtn.querySelector('.spinner')?.classList.add('hidden');
-        if (textEl) textEl.textContent = 'Resync Spreadsheets';
-
-        if (response && response.success) {
-          if (sheetsSyncStatusText) {
-            sheetsSyncStatusText.textContent = '✅ Spreadsheets synced successfully!';
-            sheetsSyncStatusText.style.color = '#4caf50';
-          }
-          updateUI();
-        } else {
-          if (sheetsSyncStatusText) {
-            const errMsg = response?.error || 'Unknown error';
-            sheetsSyncStatusText.textContent = `❌ Sheets sync failed: ${errMsg}`;
-            sheetsSyncStatusText.style.color = '#f44336';
-          }
-        }
+        const runtimeError = chrome.runtime.lastError?.message;
+        if (manualGeneration !== manualSheetSyncGeneration) return;
+        ++sheetFeedbackGeneration;
+        const error = runtimeError || response?.error;
+        renderSheetSyncStatus({ aegisSheetSyncStatus: response?.success ? 'success' : response?.partial ? 'partial' : 'error', aegisSheetSyncError: error || t('syncUnknownError') });
+        if (!runtimeError) updateUI();
       });
     });
   }
