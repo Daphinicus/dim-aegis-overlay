@@ -77,6 +77,10 @@ test('altered or unexpected built payloads are rejected',()=>fixture(async(root,
 test('packaging requires a completed build receipt',()=>fixture(async(root,dist)=>{
   await assert.rejects(validateBuild(root,dist),/No verified build receipt/);
 }));
+test('broken Git checkouts cannot bypass provenance as source archives',()=>fixture(async(root,dist)=>{
+  await fs.writeFile(path.join(root,'.git'),'gitdir: missing-fixture-git\n');
+  await assert.rejects(recordBuild(root,dist),/not a git repository|Command failed/);
+}));
 test('Git-only checkpoint changes and dirty source cannot mislabel a package',()=>fixture(async(root,dist)=>{
   const git = (...args) => execFileSync('git', ['-c', `safe.directory=${root}`, '-c','user.name=Package Contract', '-c','user.email=package-contract@example.invalid', ...args], {cwd:root,encoding:'utf8'});
   git('init','--quiet');

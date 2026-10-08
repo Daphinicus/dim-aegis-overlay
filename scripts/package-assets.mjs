@@ -62,13 +62,17 @@ export async function validatePackage(directory, extraRequired = []) {
 
 export async function inputHash(root) {
   const files = {};
-  for (const directory of ['src','public','scripts','data']) {
+  for (const directory of ['src','public','scripts','data','tests','docs','tools','font-preview','.github']) {
     try { Object.assign(files, await inventory(path.join(root, directory), directory + '/')); }
     catch (error) { if (error.code !== 'ENOENT') throw error; }
   }
   for (const name of ['package.json','package-lock.json','tsconfig.json']) {
     const bytes = await fs.readFile(path.join(root, name));
     files[name] = createHash('sha256').update(bytes).digest('hex');
+  }
+  for (const name of ['README.md','AGENTS.md','.gitignore']) {
+    try { files[name] = createHash('sha256').update(await fs.readFile(path.join(root, name))).digest('hex'); }
+    catch (error) { if (error.code !== 'ENOENT') throw error; }
   }
   return createHash('sha256').update(JSON.stringify(Object.entries(files).sort(([a],[b])=>a.localeCompare(b)))).digest('hex');
 }
@@ -78,14 +82,18 @@ export async function recordBuild(root, directory, required = []) {
   delete files['package-build.json'];
   let sourceCommit = null;
   let sourceDirty = null;
+  let isCheckout = false;
   try {
     await fs.stat(path.join(root, '.git'));
+    isCheckout = true;
+  } catch (error) { if (error.code !== 'ENOENT') throw error; }
+  if (isCheckout) {
     const git = (...args) => execFileSync('git', ['-c', `safe.directory=${root}`, ...args], {cwd:root,encoding:'utf8'});
     sourceCommit = git('rev-parse','HEAD').trim();
-    const inputs = ['src','public','scripts','data','package.json','package-lock.json','tsconfig.json'];
+    const inputs = ['src','public','scripts','data','tests','docs','tools','font-preview','.github','README.md','AGENTS.md','.gitignore','package.json','package-lock.json','tsconfig.json'];
     sourceDirty = Boolean(git('diff','--name-only','HEAD','--',...inputs).trim()
       || git('ls-files','--others','--exclude-standard','--',...inputs).trim());
-  } catch { /* Source archives rebuild without Git. */ }
+  }
   const receipt = { schema:1, sourceCommit, sourceDirty, inputHash:await inputHash(root), required, files };
   await fs.writeFile(path.join(directory, 'package-build.json'), JSON.stringify(receipt, null, 2) + '\n');
   return receipt;
