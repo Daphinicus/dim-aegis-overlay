@@ -1156,7 +1156,8 @@ let scanScheduled = false;
 
 // A simulated socket change may only update React state or an unobserved DOM property.
 function scheduleCompareScan(event: Event) {
-  const bucket = event.target instanceof Element && event.target.closest<HTMLElement>(COMPARE_BUCKET_SELECTOR);
+  if (!(event.target instanceof Element) || event.target.closest(OVERLAY_SELECTOR)) return;
+  const bucket = event.target.closest<HTMLElement>(COMPARE_BUCKET_SELECTOR);
   if (!bucket) return;
   pendingNodes.add(bucket);
   if (!scanScheduled) {
@@ -1182,7 +1183,7 @@ function flushPendingNodes() {
   }
 }
 
-const OVERLAY_SELECTOR = '.aegis-badge, .aegis-title-badge, .aegis-popup-summary, .aegis-compare-panel, .aegis-perk-label, .aegis-perk-name-sizer, [data-aegis-compare-generated], [data-aegis-details], #aegis-tooltip';
+const OVERLAY_SELECTOR = '.aegis-badge, .aegis-title-badge, .aegis-popup-summary, .aegis-compare-panel, .aegis-perk-label, .aegis-perk-name-sizer, .aegis-perk-layout-toggle, .aegis-masterwork-recommendations, .aegis-overview-footer, [data-aegis-compare-generated], [data-aegis-details], #aegis-tooltip';
 
 const observer = new MutationObserver((mutations) => {
   for (const mutation of mutations) {

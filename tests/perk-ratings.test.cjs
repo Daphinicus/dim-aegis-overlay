@@ -54,4 +54,40 @@ async function testCache() {
   assert.equal(writes,1,'Failed responses never overwrite cached ratings');
   console.log('PASS: ratings cache initialization, concurrent request deduplication, freshness, and failed-sync preservation.');
 }
-testCache().catch(error=>{console.error(error);process.exitCode=1;});
+async function testSheetSync() {
+  const background = fs.readFileSync('src/background.ts', 'utf8');
+  const source = background.slice(background.indexOf('let perkRatingsSync:'), background.indexOf('async function syncAllData'));
+  const compiled = ts.transpileModule(source, { compilerOptions: { target: ts.ScriptTarget.ES2022 } }).outputText;
+  for (const failure of ['none', 'ratings', 'sheet']) {
+    let releaseRatings, completed = false, sheetWrites = 0;
+    const pendingRatings = new Promise(resolve => { releaseRatings = resolve; });
+    let saved = structuredClone(cache);
+    const requests = [];
+    const chrome = { storage: { local: {
+      get: async key => key === 'aegisPerkRatings' ? { aegisPerkRatings: structuredClone(saved) } : { aegisMode: 'pve' },
+      set: async value => { if (value.aegisPerkRatings) saved = value.aegisPerkRatings; else sheetWrites++; },
+    } } };
+    const fetchWithTimeout = async url => {
+      requests.push(url);
+      if (url === 'pve-cdn' || url === 'pvp-cdn') return { ok: failure !== 'sheet', json: async () => ({ weapons: { test: {} } }) };
+      await pendingRatings;
+      if (failure === 'ratings') throw new Error('Ratings unavailable');
+      return { ok: true, text: async () => JSON.stringify(rows) };
+    };
+    const sync = new Function('chrome', 'fetchWithTimeout', 'parseCSV', 'parsePerkRatings', 'SHEET_ID', 'PVP_SHEET_ID', 'ALL_TABS', 'PVE_DB_CDN_URL', 'PVP_DB_CDN_URL', 'fetchSpreadsheetDatabase', 'fetchShoppingListDatabase', 'console',
+      compiled + ';return fetchAndCacheAegisSheet;')(
+      chrome, fetchWithTimeout, JSON.parse, parsePerkRatings, 'sheet', 'pvp-sheet', [], 'pve-cdn', 'pvp-cdn',
+      async () => { throw new Error('Sheet unavailable'); }, async () => { throw new Error('Unexpected shopping fallback'); }, { warn() {}, error() {} });
+    const result = sync().then(value => { completed = true; return value; });
+    assert.deepEqual(requests, ['pve-cdn', 'pvp-cdn'], 'Both CDN requests start without waiting for ratings');
+    await new Promise(resolve => setImmediate(resolve));
+    assert.equal(sheetWrites, failure === 'sheet' ? 0 : 1, 'Healthy sheet data is cached while ratings remain pending');
+    assert.equal(completed, false, 'Sync completion still waits for ratings on success and failure');
+    releaseRatings();
+    assert.deepEqual(await result, failure === 'sheet' ? { success: false, error: 'Sheet unavailable' } : { success: true });
+    if (failure === 'ratings') assert.deepEqual(saved, cache, 'Independent rating failure retains the previous tabs');
+  }
+  console.log('PASS: concurrent rating/CDN refresh, early sheet caching, awaited completion, and independent failure handling.');
+}
+
+testCache().then(testSheetSync).catch(error=>{console.error(error);process.exitCode=1;});

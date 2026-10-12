@@ -628,7 +628,7 @@ function fetchAndCachePerkRatings(force = false): Promise<void> {
 }
 
 async function fetchAndCacheAegisSheet(): Promise<{ success: boolean; error?: string }> {
-  await fetchAndCachePerkRatings(true);
+  const ratingsSync = fetchAndCachePerkRatings(true);
   try {
     let aegisSheetDbPvE: AegisSheetDatabase | null = null;
     let aegisSheetDbPvP: AegisSheetDatabase | null = null;
@@ -696,6 +696,8 @@ async function fetchAndCacheAegisSheet(): Promise<{ success: boolean; error?: st
     const errMsg = err.message || String(err);
     console.error('DIM Aegis Overlay: Failed to fetch/cache Aegis spreadsheet:', errMsg);
     return { success: false, error: errMsg };
+  } finally {
+    await ratingsSync;
   }
 }
 

@@ -247,7 +247,7 @@ export function initComparePerks(options: {
     return node;
   }
 
-  function paintSocket(socket: HTMLElement, slot: typeof slots[number], native: HTMLElement[], owned: OwnedComparePerk[], recommendations: TooltipPerk[]) {
+  function paintSocket(socket: HTMLElement, slot: typeof slots[number], native: HTMLElement[], owned: OwnedComparePerk[], recommendations: TooltipPerk[], enhancements: Record<number, number>, normalToEnhanced: Map<number, number>) {
     let state = sockets.get(socket);
     if (!state) {
       const name = document.createElement('span'); name.className = 'aegis-perk-label'; name.setAttribute('aria-hidden', 'true');
@@ -290,9 +290,8 @@ export function initComparePerks(options: {
     attribute(state.name, 'data-aegis-perk-status', selected?.status || 'other');
     attribute(state.name, 'title', null);
     if (!overview) property(socket, '--aegis-slot-rows', `var(--aegis-${slot}-rows, 1)`);
-    const enhancements = options.getEnhancedToNormal?.() || {};
-    const enhancedColumn = owned.some(perk => !!enhancements[perk.hash]) || native.some(node => !!node.querySelector('svg > path[fill="#eade8b"]'));
-    const normalToEnhanced = new Map(Object.entries(enhancements).map(([enhanced, normal]) => [normal, Number(enhanced)]));
+    const marker = native.find(node => node.querySelector('svg > path[fill="#eade8b"]'))?.querySelector('svg > path[fill="#eade8b"]');
+    const enhancedColumn = owned.some(perk => !!enhancements[perk.hash]) || !!marker;
     const missingHash = (perk: { hash?: number; name: string }) => {
       const hash = perk.hash || getPerkHashFromEnglish(perk.name) || undefined;
       if (!hash) return;
@@ -331,7 +330,6 @@ export function initComparePerks(options: {
             text.setAttribute('text-anchor', 'middle'); text.setAttribute('font-size', '45'); text.setAttribute('fill', 'white'); svg.append(text);
           }
         }
-        const marker = native.find(node => node.querySelector('svg > path[fill="#eade8b"]'))?.querySelector('svg > path[fill="#eade8b"]');
         if (enhancedColumn && marker && !svg.querySelector('path')) svg.append(marker.cloneNode(true));
         if (!enhancedColumn) svg.querySelectorAll('path').forEach(path => path.remove());
         if (node.parentElement !== socket) socket.append(node);
@@ -366,6 +364,11 @@ export function initComparePerks(options: {
     const seenMasterworks = new Set<HTMLElement>();
     let hasRecommendations = false;
     const headers = overview ? [bucket] : Array.from(bucket.querySelectorAll<HTMLElement>(COMPARE_HEADER_SELECTOR)).filter(node => node.parentElement === bucket);
+    const enhancements = options.getEnhancedToNormal?.() || {};
+    const normalToEnhanced = new Map(Object.entries(enhancements).map(([enhanced, normal]) => [normal, Number(enhanced)]));
+    // Direct grid children stay in place while sockets are decorated.
+    const children = overview ? [] : Array.from(bucket.children);
+    const rowHeaders = children.filter(node => node.getAttribute('role') === 'rowheader');
     for (const header of headers) {
       const item = overview ? bucket : header.querySelector<HTMLElement>('.item[data-aegis-item-hash]') || header.querySelector<HTMLElement>('[data-aegis-item-hash]');
       const data = item && options.getData(item);
@@ -408,9 +411,7 @@ export function initComparePerks(options: {
           const slot = candidates[0]?.slot; if (!slot) continue;
           usedSlots.add(slot);
           if (!overview) {
-            const children = Array.from(bucket.children);
             // DIM has a separate highlight column before the row labels.
-            const rowHeaders = children.filter(node => node.getAttribute('role') === 'rowheader');
             const rowHeader = rowHeaders[children.indexOf(cell) - children.indexOf(header) - 1];
             if (rowHeader instanceof HTMLElement && rowHeader.getAttribute('role') === 'rowheader') {
               attribute(rowHeader, 'data-aegis-perks-header', ''); perkHeaders.add(rowHeader);
@@ -419,7 +420,7 @@ export function initComparePerks(options: {
           if (!sheet || !perks || overview && !hasPerks) continue;
           seen.add(socket);
           perkCell = cell; perkGrid = socket.parentElement;
-          paintSocket(socket, slot, group.nodes, group.owned, all.filter(p => p.type === slot));
+          paintSocket(socket, slot, group.nodes, group.owned, all.filter(p => p.type === slot), enhancements, normalToEnhanced);
           if (socket.parentElement) {
             if (overview) attribute(socket.parentElement, 'data-aegis-overview-grid', '');
             attribute(socket.parentElement, 'data-aegis-perk-layout', overview && layout === 'grid' ? null : layout);

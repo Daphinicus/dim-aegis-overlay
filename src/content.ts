@@ -7099,6 +7099,9 @@ const observer = new MutationObserver((mutations) => {
 
     // Check if the custom data attributes were modified
     if (mutation.type === 'attributes') {
+      // Preview decoration is handled above without rescoring or rebuilding details.
+      if (mutation.attributeName === 'data-aegis-overview-active-perk-hashes' ||
+          mutation.attributeName === 'data-aegis-overview-perk-hash') continue;
       pendingProcessTargets.add(mutation.target as HTMLElement);
     }
 
